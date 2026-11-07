@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "command(uv sync*)",
+      "command(uv run pytest*)",
+      "command(uv run ruff*)",
+      "command(uv run mypy*)",
+      "command(tools/gate.sh*)",
+      "command(git status*)",
+      "command(git diff*)",
+      "command(git log*)",
+      "command(git show*)",
+      "command(git branch*)"
+    ]
+  }
+}

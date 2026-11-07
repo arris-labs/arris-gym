@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use arris-gym in your research, please cite it as below."
+title: "arris-gym: exact, deterministic scoring of CAD-code models on the arris kernel"
+type: software
+authors:
+  - family-names: Sergienko
+    given-names: Sergei
+repository-code: "https://github.com/arris-labs/arris-gym"
+url: "https://github.com/arris-labs/arris-gym"
+license:
+  - MIT
+  - Apache-2.0
+abstract: >-
+  arris-gym is a Python library that runs model-written CAD programs on the
+  arris B-Rep kernel in a sandbox, returns a typed outcome for every program,
+  and scores the result against a target exactly and deterministically,
+  counting every failure. It speaks arris.build and a CadQuery-compatible
+  subset, so existing benchmarks and models can run on it.
+keywords:
+  - CAD
+  - B-Rep
+  - CadQuery
+  - code generation
+  - benchmark
+  - reinforcement learning
