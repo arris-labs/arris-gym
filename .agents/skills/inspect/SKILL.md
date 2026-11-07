@@ -44,7 +44,10 @@ A failure that resists a first fix gets this before any theory:
    form or the construction, never from arris-gym's output) with a test that
    asserts the *desired* result, marked
    `@pytest.mark.xfail(reason="<what is wrong>")`. It is strict: the fixing
-   commit has to remove the mark. The fixture is never deleted.
+   commit has to remove the mark. The fixture is never deleted. A failure
+   that shows on only some runs repeats the program N times in one case, N
+   the smallest count that fails on every run of the unfixed code (measured,
+   in the README); otherwise a strict xfail would XPASS and flake the gate.
 3. A crash or wrong result in the kernel is also a fixture candidate for
    arris: report it in `../arris/docs/ideas/`, never fix it from here.
 
