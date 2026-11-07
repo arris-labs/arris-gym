@@ -35,6 +35,10 @@ A program worker that ended without delivering a result. Distinct from a
 refusal: something died.
 _Avoid_: panic
 
+**Measures**:
+What the kernel measures of a body (volume, area, centroid, bounds, counts,
+genus), read by the body worker and carried on the result beside the body.
+
 **Failure**:
 Any status but `ok`. Failures are counted in every aggregate. An error is
 something else: a Python exception.

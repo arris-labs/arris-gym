@@ -55,12 +55,21 @@ class ExecResult(BaseModel):
     message: str                 # what a model sees on a retry; verbatim
     refusal: ArrisRefusal | None
     body: BodyRef | None         # set exactly when status is OK or CHECKER_FAIL
+    measures: Measures | None    # set with body, read by the body worker
     violations: tuple[str, ...]  # the checker's, for CHECKER_FAIL
     program_sha256: str
     dialect: Dialect
     versions: Versions           # arris, numpy, arris-gym
     seconds: float               # outside every digest: wall-clock is not a result
 ```
+
+`BodyRef` is the worker's `write_body` bytes and their SHA-256, which it
+checks on construction. `Measures` is the volume, area, centroid, bounds,
+face and shell counts, genus and a face-kind histogram (kind and count pairs,
+sorted by kind), so a fixture or a digest needs no worker. `ExecResult`
+refuses a combination its status contradicts: a refusal without
+`ARRIS_REFUSAL`, a body without `OK` or `CHECKER_FAIL`, violations without
+`CHECKER_FAIL`.
 
 `status` is a plain enum so that `result.status is ag.Status.OK` holds as in
 SEED.md §5; the refusal's kind lives beside it. **The kind is the exception's
