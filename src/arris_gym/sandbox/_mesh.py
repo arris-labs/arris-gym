@@ -8,11 +8,12 @@ program's, so reading them is a kernel call on hostile input. Private.
 from __future__ import annotations
 
 import math
+import os
 
 import arris
 
 from arris_gym.sandbox._frame import MeshFrame
-from arris_gym.sandbox._program import exception_line, read_all, write_all
+from arris_gym.sandbox._program import exception_line, read_all, write_frame
 from arris_gym.sandbox.outcome import Status
 
 # The chord tolerance of a picture's tessellation, as a fraction of the
@@ -47,4 +48,5 @@ def tessellation(data: bytes) -> MeshFrame:
 
 def execute(payload_fd: int, result_fd: int) -> None:
     """Read the body bytes on `payload_fd`; write one frame to `result_fd`."""
-    write_all(result_fd, tessellation(read_all(payload_fd)).model_dump_json().encode())
+    worker = os.getpid()  # a forked child writes no frame (`write_frame`)
+    write_frame(result_fd, tessellation(read_all(payload_fd)), worker)

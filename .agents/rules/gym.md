@@ -58,8 +58,10 @@ Same program, same pinned versions, same bits on every machine.
   it runs only inside a sandbox worker, never in the caller's process, and
   never through `exec` anywhere else. The Python inside a worker is not a
   security boundary; nothing relies on restricting builtins.
-- **Limits are enforced from outside.** The parent owns the wall clock and
-  kills the process group; memory is a hard rlimit set before the program
+- **Limits are enforced from outside.** A warden outside the program
+  worker owns the deadline and kills the worker by its pidfd with `SIGKILL`;
+  the worker is PID 1 of its own PID namespace, so its end kills everything
+  it left behind (ADR-0002). Memory is a hard rlimit set before the program
   starts; the network is removed before the program starts.
 - **A hung or dead worker costs one program, never the run.** The result is
   a status and the pool carries on.

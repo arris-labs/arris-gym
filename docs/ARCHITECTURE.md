@@ -140,7 +140,10 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
 - The **program worker** reads the text, compiles and runs it, decides the
   status by type (the table above) and writes one **frame**, a JSON document
   of status, message, refusal and the result's `write_body` bytes (base64),
-  to the result pipe. It neither checks nor measures: the program reaches
+  to the result pipe; only the worker writes it, never a process the program
+  forked, which returns through the same code holding the same pipe, so a
+  forking program's status does not turn on scheduling. It neither checks
+  nor measures: the program reaches
   everything in its process, the `Solid`'s model included. A frame with a
   body goes to a **body worker**, a second job under the same limits and the
   same deadline, which reads the bytes into a fresh model, runs the checker

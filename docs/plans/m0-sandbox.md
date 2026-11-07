@@ -187,6 +187,7 @@ isolation guarantee whose correctness has to be established here.
   design and "`.executions` unchanged" could not hold with them in it. Its
   10% hostile programs are the fork bomb, the connect and the read outside;
   the uncacheable ones are in a test of their own, where they re-run each
-  time. The fork bomb fixture's children sleep: a bomb whose children all
-  raise writes several frames and is a `crash` (measured, 15 of 15). Gate
+  time. The fork bomb fixture is a plain `while True: os.fork()`: only the
+  program worker writes a frame, so a forked child's frame cannot turn it
+  into a `crash` (review; `regression/fork-bomb-status`). Gate
   measured at 24.6 s (32 cores), under a minute.

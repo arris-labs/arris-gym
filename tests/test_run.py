@@ -23,16 +23,15 @@ CASES = fixture_cases.load("sandbox")
 
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c.slug)
 def test_a_fixture_program_gives_its_expected_result(case: fixture_cases.Case) -> None:
-    result = ag.run(case.program)
+    result = fixture_cases.run(case)
     assert fixture_cases.check(result, case.expected) == []
     assert result.program_sha256 == hashlib.sha256(case.program.encode()).hexdigest()
     assert result.versions == _run.current_versions()
 
 
-def test_the_fixtures_cover_every_status_but_timeout() -> None:
-    # `timeout` needs a deadline of its own: test_a_program_that_never_ends_times_out.
+def test_the_fixtures_cover_every_status() -> None:
     reached = {c.expected["status"] for c in CASES}
-    assert reached == {s.value for s in ag.Status} - {"timeout"}
+    assert reached == {s.value for s in ag.Status}
 
 
 def test_an_ok_result_carries_the_bytes_of_its_digest() -> None:

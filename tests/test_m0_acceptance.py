@@ -1,8 +1,8 @@
 """M0's acceptance (docs/plans/m0-sandbox.md): the sandbox run end to end, offline.
 
-One program per status, the hostile ones contained, a deadline that holds,
-a thousand programs in submission order with a cache that answers the second
-run, and a `run` that raises on no text.
+One program per status, `timeout` included, the hostile ones contained, a
+deadline that holds, a thousand programs in submission order with a cache that
+answers the second run, and a `run` that raises on no text.
 """
 
 from __future__ import annotations
@@ -23,10 +23,10 @@ CORPUS_SIZE = 1000
 HOSTILE_EVERY = 10  # one program in ten is hostile
 
 
-def test_the_fixtures_reach_every_status_but_timeout_each_as_expected() -> None:
+def test_the_fixtures_reach_every_status_each_as_expected() -> None:
     for case in CASES:
-        assert fixture_cases.check(ag.run(case.program), case.expected) == [], case.slug
-    assert {c.expected["status"] for c in CASES} == {s.value for s in ag.Status} - {"timeout"}
+        assert fixture_cases.check(fixture_cases.run(case), case.expected) == [], case.slug
+    assert {c.expected["status"] for c in CASES} == {s.value for s in ag.Status}
 
 
 def test_the_hostile_fixtures_cost_one_runtime_status_each() -> None:

@@ -15,6 +15,7 @@ import traceback
 
 import arris
 import arris.build
+from pydantic import BaseModel
 
 from arris_gym.cq import UnsupportedApi
 from arris_gym.sandbox._frame import ProgramFrame
@@ -45,6 +46,20 @@ def write_all(fd: int, data: bytes) -> None:
     view = memoryview(data)
     while view:
         view = view[os.write(fd, view) :]
+
+
+def write_frame(fd: int, frame: BaseModel, worker: int) -> None:
+    """Write `frame` to `fd` as JSON, but only from the process `worker`.
+
+    `worker` is the pid the job's worker read when it started: PID 1 of its
+    namespace. A program can fork, and a child returns through the same
+    code with the result pipe inherited; it writes nothing here, so a job's
+    pipe carries the worker's one frame whatever the scheduling. A child
+    that writes the pipe itself is the program's own forgery, refused when
+    the frame is parsed.
+    """
+    if os.getpid() == worker:
+        write_all(fd, frame.model_dump_json().encode())
 
 
 def entity_name(entity: object) -> str:
@@ -152,6 +167,10 @@ def classify(text: str) -> ProgramFrame:
 
 
 def execute(payload_fd: int, result_fd: int) -> None:
-    """Run the program on `payload_fd`; write one frame to `result_fd`."""
+    """Run the program on `payload_fd`; write one frame to `result_fd`.
+
+    Only this worker writes it, not a child the program forked (`write_frame`).
+    """
+    worker = os.getpid()
     text = read_all(payload_fd).decode("utf-8", TEXT_ERRORS)
-    write_all(result_fd, classify(text).model_dump_json().encode())
+    write_frame(result_fd, classify(text), worker)

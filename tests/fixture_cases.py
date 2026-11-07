@@ -10,7 +10,8 @@ import json
 import pathlib
 from dataclasses import dataclass
 
-from arris_gym import ExecResult
+import arris_gym
+from arris_gym import ExecResult, Status
 
 ROOT = pathlib.Path(__file__).resolve().parent / "fixtures"
 # Relative to the larger of 1 and the expected magnitude. The kernel pads a
@@ -20,6 +21,9 @@ ROOT = pathlib.Path(__file__).resolve().parent / "fixtures"
 # (tools/check-fixtures.sh); a case that fails at this one is an xfail
 # regression fixture instead.
 DEFAULT_TOLERANCE = 1e-6
+# The deadline, in seconds, a fixture expected to end in `timeout` runs to;
+# its expected message names it. Every other fixture runs to `run`'s default.
+TIMEOUT_DEADLINE = 1.0
 
 
 @dataclass(frozen=True)
@@ -44,6 +48,13 @@ def load(area: str) -> list[Case]:
                 )
             )
     return cases
+
+
+def run(case: Case) -> ExecResult:
+    """Run a fixture's program alone, a `timeout` fixture to `TIMEOUT_DEADLINE`."""
+    if case.expected["status"] == Status.TIMEOUT.value:
+        return arris_gym.run(case.program, timeout=TIMEOUT_DEADLINE)
+    return arris_gym.run(case.program)
 
 
 def close(actual: float, expected: float, tolerance: float = DEFAULT_TOLERANCE) -> bool:
