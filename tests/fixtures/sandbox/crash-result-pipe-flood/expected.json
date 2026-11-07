@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "crash",
+  "message": "the program worker wrote more than 67108864 bytes to its result pipe"
+}

@@ -1,8 +1,8 @@
 """`run`: one program, alone in a sandbox, one `ExecResult` back.
 
 The caller's side of the program path: send the text to a program worker
-through the zygote, read how it ended, and turn the warden's record and the
-worker's frame into a result. Private; `arris_gym.run` is the public name.
+through the zygote, send the body it delivers to a body worker, and turn the
+wardens' records and the workers' frames into a result. Private; `arris_gym.run` is the public name.
 """
 
 from __future__ import annotations
@@ -14,19 +14,31 @@ import math
 import signal
 import threading
 import time
+from dataclasses import dataclass
 
 import pydantic
 
 from arris_gym.sandbox import _isolate
-from arris_gym.sandbox._frame import Frame
+from arris_gym.sandbox._frame import BodyFrame, ProgramFrame
 from arris_gym.sandbox._program import TEXT_ERRORS
 from arris_gym.sandbox._zygote import MAX_RESULT_BYTES, JobKind, Outcome, Zygote
-from arris_gym.sandbox.outcome import BodyRef, Dialect, ExecResult, Status, Versions
+from arris_gym.sandbox.outcome import (
+    ArrisRefusal,
+    BodyRef,
+    Dialect,
+    ExecResult,
+    Measures,
+    Status,
+    Versions,
+)
 
 # SEED.md §5's wall-clock limit and the roadmap's memory limit, revisited
 # with M3's numbers.
 DEFAULT_TIMEOUT = 5.0
 DEFAULT_MEMORY = 512 * 2**20
+# The workers as a crash's or a timeout's message names them.
+PROGRAM_WORKER = "program worker"
+BODY_WORKER = "body worker"
 
 _default: Zygote | None = None
 _default_lock = threading.Lock()
@@ -69,15 +81,17 @@ def check_arguments(dialect: Dialect | str, timeout: float, memory: int) -> Dial
     return resolved
 
 
-def _crash(message: str) -> Frame:
-    return Frame(
-        status=Status.CRASH,
-        message=message,
-        refusal=None,
-        body=None,
-        measures=None,
-        violations=(),
-    )
+@dataclass(frozen=True)
+class Verdict:
+    """How a job ended, as the caller decides it: the `ExecResult` fields
+    that do not describe the program itself."""
+
+    status: Status
+    message: str
+    refusal: ArrisRefusal | None = None
+    body: bytes | None = None
+    measures: Measures | None = None
+    violations: tuple[str, ...] = ()
 
 
 def _signal_name(number: int) -> str:
@@ -87,66 +101,112 @@ def _signal_name(number: int) -> str:
         return f"signal {number}"
 
 
-def frame_of(outcome: Outcome, timeout: float) -> Frame:
-    """The frame an outcome stands for: the worker's, or the crash or timeout it was.
+def _crash(what: str, outcome: Outcome) -> Verdict:
+    """A crash's verdict: `what` happened, then the tail of the worker's stderr."""
+    tail = outcome.stderr.decode("utf-8", "replace")
+    if tail:
+        what += f"; its stderr ends:\n{tail}"
+    return Verdict(Status.CRASH, what)
 
-    A frame counts only from a worker that completed its isolation and exited
-    cleanly; one that is unparseable is a crash, kept whole.
+
+def ended(outcome: Outcome, worker: str, timeout: float) -> Verdict | None:
+    """The verdict of a job that delivered nothing to trust, or None if its
+    frame is to be parsed.
+
+    A frame counts only from a worker that completed its isolation and
+    exited with code 0 and wrote at most `MAX_RESULT_BYTES`. `worker` names
+    the worker in a crash's message.
     """
     ending = outcome.ending
     if ending is None:
-        return _crash("the worker left no record: the zygote died or stopped answering")
+        return _crash(f"the {worker} left no record: the zygote died or stopped answering", outcome)
+    if outcome.overflow:
+        return _crash(
+            f"the {worker} wrote more than {MAX_RESULT_BYTES} bytes to its result pipe", outcome
+        )
     match ending.kind:
         case _isolate.EndKind.TIMED_OUT:
-            return Frame(
-                status=Status.TIMEOUT,
-                message=f"the program ran past its {timeout} s deadline",
-                refusal=None,
-                body=None,
-                measures=None,
-                violations=(),
-            )
+            return Verdict(Status.TIMEOUT, f"the {worker} ran past the {timeout} s deadline")
         case _isolate.EndKind.UNAVAILABLE:
-            return _crash(f"the worker could not isolate itself (errno {ending.value})")
+            return _crash(f"the {worker} could not isolate itself (errno {ending.value})", outcome)
         case _isolate.EndKind.SIGNALLED:
-            return _crash(f"the worker was killed by {_signal_name(ending.value)}")
+            return _crash(f"the {worker} was killed by {_signal_name(ending.value)}", outcome)
         case _isolate.EndKind.EXITED:
-            if ending.value != 0 or not ending.armed:
-                return _crash(f"the worker exited with code {ending.value}")
-    if outcome.overflow:
-        return _crash(f"the worker wrote more than {MAX_RESULT_BYTES} bytes to its result pipe")
+            if not ending.armed:
+                return _crash(f"the {worker} could not isolate itself", outcome)
+            if ending.value != 0:
+                return _crash(f"the {worker} exited with code {ending.value}", outcome)
+    if not outcome.data:
+        return _crash(f"the {worker} exited with code 0 and delivered no result", outcome)
+    return None
+
+
+def _not_a_frame(worker: str, outcome: Outcome) -> Verdict:
+    return _crash(f"the {worker} delivered a result that is not a valid frame", outcome)
+
+
+def program_verdict(outcome: Outcome, timeout: float) -> Verdict | ProgramFrame:
+    """The program worker's frame, or the crash or timeout its job was."""
+    early = ended(outcome, PROGRAM_WORKER, timeout)
+    if early is not None:
+        return early
     try:
-        return Frame.model_validate_json(outcome.data)
+        return ProgramFrame.model_validate_json(outcome.data)
     except pydantic.ValidationError:
-        return _crash("the worker delivered no valid result")
+        return _not_a_frame(PROGRAM_WORKER, outcome)
+
+
+def body_verdict(outcome: Outcome, body: bytes, timeout: float) -> Verdict:
+    """The verdict on `body` from its body worker's job: the body worker's
+    frame, or the crash or timeout its job was."""
+    early = ended(outcome, BODY_WORKER, timeout)
+    if early is not None:
+        return early
+    try:
+        frame = BodyFrame.model_validate_json(outcome.data)
+    except pydantic.ValidationError:
+        return _not_a_frame(BODY_WORKER, outcome)
+    has_body = frame.status in (Status.OK, Status.CHECKER_FAIL)
+    return Verdict(
+        frame.status,
+        frame.message,
+        body=body if has_body else None,
+        measures=frame.measures,
+        violations=frame.violations,
+    )
 
 
 def run_program(
     zygote: Zygote, program: str, dialect: Dialect, *, timeout: float, memory: int
 ) -> ExecResult:
-    """Run `program` on `zygote`; its result. Arguments are already checked."""
+    """Run `program` on `zygote`; its result. Arguments are already checked.
+
+    The program worker's frame is believed only where believing it costs the
+    program alone: a failure it reports. A body it delivers is read back,
+    checked and measured by a body worker under the same limits and the same
+    deadline (ADR-0002).
+    """
     payload = program.encode("utf-8", TEXT_ERRORS)
     start = time.monotonic()
-    outcome = zygote.execute(JobKind.PROGRAM, payload, timeout=timeout, memory=memory)
+    deadline = start + timeout
+    outcome = zygote.execute(JobKind.PROGRAM, payload, deadline=deadline, memory=memory)
+    found = program_verdict(outcome, timeout)
+    if isinstance(found, Verdict):
+        verdict = found
+    elif found.body is None:
+        verdict = Verdict(found.status, found.message, refusal=found.refusal)
+    else:
+        read = zygote.execute(JobKind.BODY, found.body, deadline=deadline, memory=memory)
+        verdict = body_verdict(read, found.body, timeout)
     seconds = time.monotonic() - start
-    frame = frame_of(outcome, timeout)
-    sha = hashlib.sha256(payload).hexdigest()
-    try:
-        return _result(frame, sha, dialect, seconds)
-    except pydantic.ValidationError:  # a frame whose fields contradict its status
-        crash = _crash("the worker delivered a result that contradicts its status")
-        return _result(crash, sha, dialect, seconds)
-
-
-def _result(frame: Frame, program_sha256: str, dialect: Dialect, seconds: float) -> ExecResult:
     return ExecResult(
-        status=frame.status,
-        message=frame.message,
-        refusal=frame.refusal,
-        body=None if frame.body is None else BodyRef.of(frame.body),
-        measures=frame.measures,
-        violations=frame.violations,
-        program_sha256=program_sha256,
+        status=verdict.status,
+        message=verdict.message,
+        refusal=verdict.refusal,
+        body=None if verdict.body is None else BodyRef.of(verdict.body),
+        measures=verdict.measures,
+        violations=verdict.violations,
+        program_sha256=hashlib.sha256(payload).hexdigest(),
         dialect=dialect,
         versions=current_versions(),
         seconds=seconds,

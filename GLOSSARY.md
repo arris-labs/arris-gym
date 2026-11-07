@@ -31,8 +31,8 @@ crash.
 _Avoid_: kernel error
 
 **Crash**:
-A program worker that ended without delivering a result. Distinct from a
-refusal: something died.
+A program worker or body worker that ended without delivering a valid frame.
+Distinct from a refusal: something died.
 _Avoid_: panic
 
 **Measures**:
@@ -66,9 +66,9 @@ and the pipes its status and result come back on.
 _Avoid_: request (a kernel task is a thread or process)
 
 **Frame**:
-The one JSON document a program worker writes to its result pipe to say how
-the program ended. The caller parses it and trusts none of it beyond what
-costs only that program (ARCHITECTURE.md §The sandbox).
+The one JSON document a program worker or a body worker writes to its result
+pipe to say how its job ended. The caller parses it and trusts none of it
+beyond what costs only that program (ARCHITECTURE.md §The sandbox).
 
 **Backstop**:
 The time past a job's deadline after which the caller gives up on its status

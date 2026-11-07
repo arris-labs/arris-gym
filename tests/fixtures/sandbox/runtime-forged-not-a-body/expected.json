@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "runtime",
+  "message": "arris.BodyMagicError: not body bytes: the magic is missing"
+}

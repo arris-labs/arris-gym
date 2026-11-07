@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "crash",
+  "message": "the program worker was killed by SIGSEGV; its stderr ends:\nthe last words\n"
+}

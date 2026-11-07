@@ -23,7 +23,7 @@ import arris.build
 import pytest
 
 from arris_gym.sandbox import _isolate, _zygote
-from arris_gym.sandbox._frame import Frame
+from arris_gym.sandbox._frame import ProgramFrame
 from arris_gym.sandbox._zygote import JobKind, Outcome, Zygote
 
 MEMORY = 512 * 2**20  # the roadmap's default memory limit
@@ -65,14 +65,15 @@ result = parts[0].fuse(*parts[1:])
 
 
 def run(zygote: Zygote, program: str, timeout: float = TIMEOUT) -> Outcome:
-    return zygote.execute(JobKind.PROGRAM, program.encode(), timeout=timeout, memory=MEMORY)
+    deadline = time.monotonic() + timeout
+    return zygote.execute(JobKind.PROGRAM, program.encode(), deadline=deadline, memory=MEMORY)
 
 
 def body(zygote: Zygote, program: str) -> bytes:
     """The body bytes of a program that ran to a clean exit, from its frame."""
     outcome = run(zygote, program)
     assert outcome.ending == CLEAN_EXIT, outcome
-    frame = Frame.model_validate_json(outcome.data)
+    frame = ProgramFrame.model_validate_json(outcome.data)
     assert frame.body is not None, frame
     return frame.body
 

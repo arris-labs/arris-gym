@@ -9,12 +9,13 @@ the deadline (a pidfd, then `SIGKILL`) and writes how the worker ended to a
 status pipe the worker never holds.
 
 The program worker, before the function runs: leaves the session, detaches
-stdio, closes every descriptor it was not given, sets its rlimits, forbids
-new privileges, enters a Landlock domain that reads only the interpreter's
-prefixes and site-packages, drops its capabilities and installs a seccomp
-filter. Then it writes one byte to the armed pipe; an ending without that
-byte is a worker whose isolation was never complete, and the function did
-not run. Nothing here trusts the function: every limit is one it cannot lift.
+stdin and stdout (stderr goes where the caller says), closes every
+descriptor it was not given, sets its rlimits, forbids new privileges,
+enters a Landlock domain that reads only the interpreter's prefixes and
+site-packages, drops its capabilities and installs a seccomp filter. Then
+it writes one byte to the armed pipe; an ending without that byte is a
+worker whose isolation was never complete, and the function did not run.
+Nothing here trusts the function: every limit is one it cannot lift.
 
 Linux only, x86-64 and AArch64. Private: `sandbox/_zygote.py` is its caller.
 """
@@ -408,13 +409,13 @@ def spawn(
     limits: Limits,
     status_fd: int,
     keep_fds: Sequence[int] = (),
-    output_fd: int | None = None,
+    stderr_fd: int | None = None,
 ) -> int:
     """Fork a warden that runs `target` in a program worker; return its pid.
 
     `deadline` is a `time.monotonic()` instant: the worker is killed when it
     passes. The worker keeps `keep_fds` (at their numbers) and nothing else
-    but stdio: stdin reads `/dev/null`, stdout and stderr go to `output_fd`
+    but stdio: stdin and stdout are `/dev/null`, stderr goes to `stderr_fd`
     or `/dev/null`. The warden writes one `Ending` record to `status_fd`
     (`read_ending`), then exits; the caller reaps it. The caller's copies of
     the descriptors are its own to close.
@@ -431,7 +432,7 @@ def spawn(
     if pid:
         return pid
     try:
-        _warden(target, deadline, limits, status_fd, tuple(keep_fds), output_fd, arch)
+        _warden(target, deadline, limits, status_fd, tuple(keep_fds), stderr_fd, arch)
     finally:
         os._exit(_WARDEN_FAILED)
 
@@ -442,7 +443,7 @@ def _warden(
     limits: Limits,
     status_fd: int,
     keep_fds: tuple[int, ...],
-    output_fd: int | None,
+    stderr_fd: int | None,
     arch: _Arch,
 ) -> None:
     for sig in _WARDEN_IGNORES:
@@ -450,7 +451,7 @@ def _warden(
     # The forking process's own descriptors (a zygote's job socket among
     # them) are not the warden's: holding one would keep it open past its
     # owner's death.
-    out = () if output_fd is None else (output_fd,)
+    out = () if stderr_fd is None else (stderr_fd,)
     _close_all_but((0, 1, 2, status_fd, *keep_fds, *out))
 
     def report(kind: EndKind, value: int, armed: bool) -> NoReturn:
@@ -470,7 +471,7 @@ def _warden(
         try:
             os.close(armed_r)
             os.close(status_fd)
-            _worker(target, limits, keep_fds, output_fd, armed_w, arch)
+            _worker(target, limits, keep_fds, stderr_fd, armed_w, arch)
         finally:
             os._exit(_SETUP_FAILED)
     os.close(armed_w)
@@ -507,7 +508,7 @@ def _worker(
     target: Callable[[], object],
     limits: Limits,
     keep_fds: tuple[int, ...],
-    output_fd: int | None,
+    stderr_fd: int | None,
     armed_w: int,
     arch: _Arch,
 ) -> None:
@@ -516,9 +517,8 @@ def _worker(
     os.setsid()
     null = os.open(os.devnull, os.O_RDWR)
     os.dup2(null, 0)
-    out = null if output_fd is None else output_fd
-    os.dup2(out, 1)
-    os.dup2(out, 2)
+    os.dup2(null, 1)
+    os.dup2(null if stderr_fd is None else stderr_fd, 2)
     _close_all_but((0, 1, 2, armed_w, *keep_fds))
     resource.setrlimit(resource.RLIMIT_AS, (limits.memory, limits.memory))
     resource.setrlimit(resource.RLIMIT_NPROC, (limits.nproc, limits.nproc))
@@ -542,7 +542,7 @@ def run(
     timeout: float,
     limits: Limits,
     keep_fds: Sequence[int] = (),
-    output_fd: int | None = None,
+    stderr_fd: int | None = None,
 ) -> Ending:
     """Run `target` isolated for at most `timeout` seconds; how it ended.
 
@@ -558,7 +558,7 @@ def run(
             limits=limits,
             status_fd=status_w,
             keep_fds=keep_fds,
-            output_fd=output_fd,
+            stderr_fd=stderr_fd,
         )
     finally:
         os.close(status_w)

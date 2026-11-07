@@ -4,7 +4,8 @@ Called by the zygote's dispatch (`sandbox/_zygote.py`) inside an isolated
 program worker, never in the caller's process. The program's text comes
 from a descriptor the caller filled; the worker classifies how it ended, by
 the type of what it raised and never by a message's wording, and writes one
-`Frame` to the result pipe. Private.
+`ProgramFrame` to the result pipe: a body's bytes, which a body worker
+reads back (`sandbox/_body.py`), or the failure. Private.
 """
 
 from __future__ import annotations
@@ -16,8 +17,8 @@ import arris
 import arris.build
 
 from arris_gym.cq import UnsupportedApi
-from arris_gym.sandbox._frame import Frame
-from arris_gym.sandbox.outcome import ArrisRefusal, Measures, Status
+from arris_gym.sandbox._frame import ProgramFrame
+from arris_gym.sandbox.outcome import ArrisRefusal, Status
 
 # The program's text is decoded so that every string a caller can pass
 # round-trips, lone surrogates included; `compile` refuses what it cannot
@@ -25,8 +26,6 @@ from arris_gym.sandbox.outcome import ArrisRefusal, Measures, Status
 TEXT_ERRORS = "surrogatepass"
 # The name a program binds its solid to (ARCHITECTURE.md §Outcomes).
 RESULT_NAME = "result"
-# The level of the checker every delivered body must pass.
-CHECK_LEVEL = "full"
 _SOURCE_NAME = "<program>"
 
 
@@ -87,75 +86,26 @@ def _text(error: BaseException) -> str:
         return f"<{type(error).__name__}.__str__ failed>"
 
 
-def _exception_line(error: BaseException) -> str:
+def exception_line(error: BaseException) -> str:
     """Python's own account of an exception: type and message, verbatim."""
     return "".join(traceback.format_exception_only(error)).rstrip("\n")
 
 
-def _measures(solid: arris.build.Solid) -> Measures:
-    model, body = solid.model, solid.body
-    mass = model.mass_properties(body)
-    bounds = model.bounds(body)
-    if bounds is None:
-        raise ValueError("the kernel reports no bounds for the result")
-    euler = model.check(body, CHECK_LEVEL).euler
-    if euler is None:
-        raise ValueError("the kernel reports no Euler line for the result")
-    kinds: dict[str, int] = {}
-    for face in model.faces(body):
-        kind = model.surface(face).kind
-        kinds[kind] = kinds.get(kind, 0) + 1
-    return Measures(
-        volume=mass.volume,
-        area=mass.area,
-        centroid=mass.centroid,
-        bounds=bounds,
-        faces=euler.faces,
-        shells=euler.shells,
-        genus=euler.genus,
-        face_kinds=tuple(sorted(kinds.items())),
-    )
+def _deliver(solid: arris.build.Solid) -> ProgramFrame:
+    """The frame for a program that ended with `solid`: its body's bytes.
+
+    Nothing is checked or measured here: the program can reach everything in
+    this process, `solid.model` included, so the bytes go to a body worker.
+    """
+    data = solid.model.write_body(solid.body)
+    return ProgramFrame(status=Status.OK, message="", refusal=None, body=data)
 
 
-def _deliver(solid: arris.build.Solid) -> Frame:
-    """The frame for a program that ended with `solid`: ok, or checker_fail."""
-    model, body = solid.model, solid.body
-    report = model.check(body, CHECK_LEVEL)
-    data = model.write_body(body)
-    if not report.ok:
-        violations = tuple(
-            f"{v.code} at {entity_name(v.entity)} ({v.level})" for v in report.violations
-        )
-        return Frame(
-            status=Status.CHECKER_FAIL,
-            message="the body failed the checker",
-            refusal=None,
-            body=data,
-            measures=None,
-            violations=violations,
-        )
-    return Frame(
-        status=Status.OK,
-        message="",
-        refusal=None,
-        body=data,
-        measures=_measures(solid),
-        violations=(),
-    )
+def _failure(status: Status, message: str, refusal: ArrisRefusal | None = None) -> ProgramFrame:
+    return ProgramFrame(status=status, message=message, refusal=refusal, body=None)
 
 
-def _failure(status: Status, message: str, refusal: ArrisRefusal | None = None) -> Frame:
-    return Frame(
-        status=status,
-        message=message,
-        refusal=refusal,
-        body=None,
-        measures=None,
-        violations=(),
-    )
-
-
-def classify(text: str) -> Frame:
+def classify(text: str) -> ProgramFrame:
     """Compile and run `text`; the frame saying how it ended. Never raises.
 
     The decision is by type: `SyntaxError` (or text `compile` cannot encode)
@@ -165,9 +115,9 @@ def classify(text: str) -> Frame:
     try:
         code = compile(text, _SOURCE_NAME, "exec")
     except (SyntaxError, UnicodeEncodeError) as error:
-        return _failure(Status.SYNTAX, _exception_line(error))
+        return _failure(Status.SYNTAX, exception_line(error))
     except BaseException as error:  # noqa: BLE001 - RecursionError, MemoryError: the program's
-        return _failure(Status.RUNTIME, _exception_line(error))
+        return _failure(Status.RUNTIME, exception_line(error))
     namespace: dict[str, object] = {"__name__": "__program__"}
     try:
         exec(code, namespace)  # inside the worker only
@@ -179,7 +129,7 @@ def classify(text: str) -> Frame:
     except arris.ArrisError as error:
         return _failure(Status.ARRIS_REFUSAL, _text(error), _refusal(error))
     except BaseException as error:  # noqa: BLE001 - SystemExit and MemoryError included
-        return _failure(Status.RUNTIME, _exception_line(error))
+        return _failure(Status.RUNTIME, exception_line(error))
     if RESULT_NAME not in namespace:
         return _failure(Status.RUNTIME, f"the program ended without binding `{RESULT_NAME}`")
     return _failure(

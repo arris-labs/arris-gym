@@ -74,10 +74,20 @@ read the text would hold every program's bytes in the process all forks
 start from. The warden closes every descriptor it was not given, so none
 holds the job socket past the zygote's death. Step 2's program job wrote
 `write_body`'s bytes raw; step 4 replaced them with the classified frame
-(`sandbox/_frame.py`, JSON, body in base64). *Settled* (step 4): until step 5's
-body worker exists the program worker itself checks and measures, so `ok` and
-`checker_fail` come from its frame; `Measures` is set exactly on `ok` (a body
-that failed the checker may not be measurable). Step 5 moves both out.
+(`sandbox/_frame.py`, JSON, body in base64). *Settled* (step 4): `Measures` is
+set exactly on `ok` (a body that failed the checker may not be measurable).
+*Settled* (step 5): two frames, `ProgramFrame` (status, message, refusal,
+body) and `BodyFrame` (status, message, measures, violations). A program frame
+may claim only `ok` (meaning "a body to read back"), `syntax`, `runtime`,
+`unsupported_api` or `arris_refusal`; one claiming `checker_fail`, `timeout` or
+`crash` is refused as a `crash`, since the program worker no longer decides
+them and believing one would let a program pick −0.3 over −1.0. Violations are
+the kernel's `str(violation)`, verbatim; a `BodyRejectedError`'s message is its
+`str()`. The worker's stdout goes to `/dev/null` and its stderr to a fourth
+job pipe, of which the caller keeps the last `STDERR_TAIL_BYTES` (4 KiB) for a
+crash's message. `Zygote.execute` takes a `deadline` instant, so the body job
+inherits the program's. Measured: `os.abort` in PID 1 ends by `SIGSEGV` on
+x86-64 (the kernel drops the `SIGABRT`, glibc falls back to `hlt`).
 `SandboxUnavailable` is defined in `sandbox/_zygote.py`; step 3 exports it. One
 deadline covers program and body worker; the caller holds a backstop past it
 (measured by step 2) that replaces a dead zygote and reports `crash`.
@@ -122,7 +132,7 @@ isolation guarantee whose correctness has to be established here.
 - [x] Step 2 **[3]** — `sandbox/_zygote.py`: clean start, job socket, fd passing, reaping, replacement. Tests: one thread, two programs give equal bytes, `set`-order program equal across zygotes, a worker cannot reach the job socket, a zygote killed mid-run costs its in-flight jobs and the next `run` works; `SandboxUnavailable` when a probe fails.
 - [x] Step 3 **[1]** — the types of *Public API* and `cq.UnsupportedApi`, frozen, with docstrings and a runnable example; a `Status` dispatch with `assert_never` in the tests. §Outcomes updated.
 - [x] Step 4 **[2]** — the program path: the `arris` dialect's `compile`, `exec`, `result` and classification, in the worker, by type only; `run`. Fixtures in `tests/fixtures/sandbox/` by construction for `ok` (closed-form box, measures), `syntax`, `runtime` (incl. `SystemExit`, no `result`, `result` not a `Solid`), `unsupported_api`, `arris_refusal` (kind, verbatim message, entities). Loader and default tolerance.
-- [ ] Step 5 **[3]** — untrusted delivery: frame parsing and caps, the body worker, `checker_fail`, `crash`. Fixtures: a `Solid` whose `model` is a forger returning doctored bytes (`BodyRejectedError`; if `Solid` refuses that, a forged frame), `os._exit(0)`, `os.abort`, a segfault, a pipe flood, garbage on the pipe, a result pipe closed by the program. A crash's message names the signal or exit code and carries stderr's bounded tail, where the kernel's abort text lands.
+- [x] Step 5 **[3]** — untrusted delivery: frame parsing and caps, the body worker, `checker_fail`, `crash`. Fixtures: a `Solid` whose `model` is a forger returning doctored bytes (`BodyRejectedError`; if `Solid` refuses that, a forged frame), `os._exit(0)`, `os.abort`, a segfault, a pipe flood, garbage on the pipe, a result pipe closed by the program. A crash's message names the signal or exit code and carries stderr's bounded tail, where the kernel's abort text lands.
 - [ ] Step 6 **[2]** — `run_many` and `Sandbox`: bounded live forks, submission order whatever finishes first, thread-safe `run`, the lazy default instance. `hypothesis`: `run` raises on no text, surrogates and NULs included; caller's mistakes raise.
 - [ ] Step 7 **[2]** — the cache: key, disk layout, what is never cached, `.executions`. Tests: a second run makes 0 executions, rows equal; changed `memory` misses; each uncacheable outcome re-runs; a torn entry is a miss.
 - [ ] Step 8 **[2]** — `digest` and `dump_text`: rows in program order, floats as hex, `seconds` excluded. Tests: equal across `workers` and zygotes, a one-bit change of a measure moves it, a refusal's text diffs in a committed golden built by hand.
@@ -161,6 +171,8 @@ isolation guarantee whose correctness has to be established here.
   `unshare(CLONE_NEWUSER)`, so the sandbox would refuse to start in a default
   container. It belongs with the platform `⚠ OPEN:`, which step 1's ADR
   records and leaves open. Agent, when a consumer needs it.
-- ⚠ OPEN: `checker_fail` is reached only by a forged body: no program is known
-  to make an invalid body through arris. Enough for "one program per status";
-  a real one becomes a fixture and an arris report. Agent, step 5.
+- *Settled* (step 5): `checker_fail` is reached only by a forged body (a
+  `Solid` whose model writes the box with one vertex moved,
+  `checker-fail-forged-vertex`): no program is known to make an invalid body
+  through arris. Enough for "one program per status"; a real one becomes a
+  fixture and an arris report.

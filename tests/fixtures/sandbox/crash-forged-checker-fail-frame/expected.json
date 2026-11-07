@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "crash",
+  "message": "the program worker delivered a result that is not a valid frame"
+}

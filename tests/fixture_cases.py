@@ -72,6 +72,9 @@ def check(result: ExecResult, expected: dict[str, object]) -> list[str]:
                 problems.append(f"refusal {got}, expected {refusal}")
     elif result.refusal is not None:
         problems.append(f"unexpected refusal {result.refusal}")
+    violations = expected.get("violations")
+    if isinstance(violations, list) and list(result.violations) != violations:
+        problems.append(f"violations {list(result.violations)}, expected {violations}")
     measures = expected.get("measures")
     if isinstance(measures, dict):
         if result.measures is None:

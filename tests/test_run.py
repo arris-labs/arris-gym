@@ -6,14 +6,17 @@ expectations by construction (tests/fixture_cases.py).
 
 from __future__ import annotations
 
+import base64
 import doctest
 import hashlib
+import json
 
 import pytest
 
 import arris_gym as ag
 import fixture_cases
-from arris_gym.sandbox import _run
+from arris_gym.sandbox import _isolate, _run, _zygote
+from arris_gym.sandbox._zygote import Outcome
 
 CASES = fixture_cases.load("sandbox")
 
@@ -26,9 +29,10 @@ def test_a_fixture_program_gives_its_expected_result(case: fixture_cases.Case) -
     assert result.versions == _run.current_versions()
 
 
-def test_the_fixtures_cover_the_statuses_the_program_path_reaches() -> None:
+def test_the_fixtures_cover_every_status_but_timeout() -> None:
+    # `timeout` needs a deadline of its own: test_a_program_that_never_ends_times_out.
     reached = {c.expected["status"] for c in CASES}
-    assert reached == {"ok", "syntax", "runtime", "unsupported_api", "arris_refusal"}
+    assert reached == {s.value for s in ag.Status} - {"timeout"}
 
 
 def test_an_ok_result_carries_the_bytes_of_its_digest() -> None:
@@ -59,7 +63,109 @@ def test_a_program_that_never_ends_times_out() -> None:
 def test_a_program_that_exits_the_process_is_a_crash() -> None:
     result = ag.run("import os\nos._exit(3)\n")
     assert result.status is ag.Status.CRASH
-    assert result.message == "the worker exited with code 3"
+    assert result.message == "the program worker exited with code 3"
+
+
+def test_a_crash_keeps_only_the_tail_of_a_flooded_stderr() -> None:
+    last = "the last words\n"
+    program = (
+        "import os, sys\n"
+        "for _ in range(256):\n"
+        "    sys.stderr.write('x' * 4096)\n"
+        f"sys.stderr.write({last!r})\n"
+        "sys.stderr.flush()\n"
+        "os.abort()\n"
+    )
+    result = ag.run(program)
+    assert result.status is ag.Status.CRASH
+    head, tail = result.message.split("; its stderr ends:\n")
+    assert head == "the program worker was killed by SIGSEGV"  # see fixtures/sandbox/crash-abort
+    assert tail == ("x" * (_zygote.STDERR_TAIL_BYTES - len(last))) + last
+
+
+def test_a_program_cannot_reach_stdout_into_a_message() -> None:
+    result = ag.run("print('to stdout')\nimport os\nos._exit(4)\n")
+    assert result.message == "the program worker exited with code 4"
+
+
+# A program that writes a frame of its own to its result pipe, then exits
+# before the worker can write the real one.
+FORGING = """
+import os
+def is_open(fd):
+    try:
+        os.fstat(fd)
+    except OSError:
+        return False
+    return True
+os.write(max(fd for fd in range(3, 1024) if is_open(fd)), {frame!r}.encode())
+os._exit(0)
+"""
+
+
+def box_bytes() -> bytes:
+    import arris
+    import arris.build
+
+    model = arris.Model()
+    box = arris.build.Solid.box((0, 0, 0), (4, 5, 6), model=model)
+    return model.write_body(box.body)
+
+
+def test_a_forged_ok_frame_is_judged_by_its_body_not_its_claim() -> None:
+    body = base64.b64encode(box_bytes()).decode()
+    frame = {"status": "ok", "message": "", "refusal": None, "body": body}
+    result = ag.run(FORGING.format(frame=json.dumps(frame)))
+    ok_box = next(c for c in CASES if c.slug == "ok-box")
+    assert fixture_cases.check(result, ok_box.expected) == []
+    # Measures are the body worker's: a frame carrying its own is refused.
+    forged = dict(frame, measures={"volume": 1.0})
+    assert ag.run(FORGING.format(frame=json.dumps(forged))).status is ag.Status.CRASH
+
+
+def test_a_forged_failure_costs_only_the_program() -> None:
+    frame = {"status": "runtime", "message": "forged", "refusal": None, "body": None}
+    result = ag.run(FORGING.format(frame=json.dumps(frame)))
+    assert (result.status, result.message) == (ag.Status.RUNTIME, "forged")
+
+
+def _outcome(kind: _isolate.EndKind, value: int, stderr: bytes = b"") -> Outcome:
+    return Outcome(_isolate.Ending(kind, value, True), b"", overflow=False, stderr=stderr)
+
+
+@pytest.mark.parametrize(
+    ("outcome", "status", "message"),
+    [
+        (
+            _outcome(_isolate.EndKind.SIGNALLED, 6, b"thread panicked\n"),
+            ag.Status.CRASH,
+            "the body worker was killed by SIGABRT; its stderr ends:\nthread panicked\n",
+        ),
+        (
+            _outcome(_isolate.EndKind.EXITED, 1),
+            ag.Status.CRASH,
+            "the body worker exited with code 1",
+        ),
+        (
+            _outcome(_isolate.EndKind.TIMED_OUT, 0),
+            ag.Status.TIMEOUT,
+            "the body worker ran past the 5.0 s deadline",
+        ),
+        (
+            Outcome(None, b"", overflow=False),
+            ag.Status.CRASH,
+            "the body worker left no record: the zygote died or stopped answering",
+        ),
+    ],
+    ids=["abort", "exit", "timeout", "no-record"],
+)
+def test_a_body_worker_that_delivers_nothing_costs_the_program(
+    outcome: Outcome, status: ag.Status, message: str
+) -> None:
+    # No program is known to crash the kernel's reading of a body, so the
+    # body worker's endings are built here.
+    verdict = _run.body_verdict(outcome, b"body", 5.0)
+    assert (verdict.status, verdict.message, verdict.body) == (status, message, None)
 
 
 @pytest.mark.parametrize(

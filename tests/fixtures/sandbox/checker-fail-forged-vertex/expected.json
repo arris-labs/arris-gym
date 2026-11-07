@@ -1,0 +1,12 @@
+{
+  "dialect": "arris",
+  "status": "checker_fail",
+  "violations": [
+    "V2 v4: e4's curve ends 1e0 away",
+    "V2 v4: e8's curve ends 1e0 away",
+    "V2 v4: e11's curve ends 1e0 away",
+    "V3 v4: f1's surface at the pcurve end is 1e0 away",
+    "V3 v4: f2's surface at the pcurve end is 1e0 away",
+    "V3 v4: f5's surface at the pcurve end is 1e0 away"
+  ]
+}

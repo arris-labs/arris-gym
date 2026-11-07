@@ -86,11 +86,18 @@ never from a message's wording:
 | `syntax` | `SyntaxError` from `compile`, before anything runs |
 | `unsupported_api` | `cq.UnsupportedApi`, raised by the subset, naming the call |
 | `arris_refusal` | an `arris.ArrisError` subclass; `arris.build`'s `SelectionError` and `SketchError` are subclasses too |
-| `runtime` | any other exception, `SystemExit` and `MemoryError` included; or a program that ends without a result |
-| `checker_fail` | the program ended with a body and `check(body, "full")` is not `ok` |
-| `ok` | the program ended with a body the checker accepts |
+| `runtime` | any other exception, `SystemExit` and `MemoryError` included; a program that ends without a result; or body bytes the body worker cannot read for any reason but the checker's |
+| `checker_fail` | the body worker's `read_body` raises `BodyRejectedError`, or its `check(body, "full")` is not `ok` |
+| `ok` | the body worker read the body back and the checker accepts it |
 | `timeout` | the deadline passed; the warden killed the worker |
-| `crash` | the process ended without delivering a result: a signal, or an exit (`os._exit`, a kernel abort) |
+| `crash` | a worker ended without delivering a valid frame: a signal, an exit (`os._exit`, a kernel abort), a frame missing, oversized, unparseable or contradicting its status |
+
+A crash's message names the worker and the signal or exit code, then the
+last `STDERR_TAIL_BYTES` (4 KiB) of the worker's stderr, where a kernel abort
+writes its reason; stdout goes to `/dev/null`. An `abort` in the program
+worker ends by `SIGSEGV` on x86-64: the kernel does not deliver the
+`SIGABRT` to PID 1 of a namespace, and glibc falls back to its abort
+instruction.
 
 **Where a program's result comes from.** In the `cq` dialect, the argument of
 its last `show_object` call, else a module-level `result`: BenchCAD programs
@@ -119,12 +126,12 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   replaced if it dies. Before serving, it probes that it can isolate a
   worker; where it cannot, starting it raises `SandboxUnavailable`.
 - **Transport**: one job is one message on a `SOCK_SEQPACKET` socket pair:
-  its kind, deadline and memory limit, with three descriptors passed by
-  `SCM_RIGHTS`, the write ends of the job's status and result pipes, which
-  the caller creates, and a memfd holding the payload, which the worker
+  its kind, deadline and memory limit, with four descriptors passed by
+  `SCM_RIGHTS`, the write ends of the job's status, result and stderr pipes,
+  which the caller creates, and a memfd holding the payload, which the worker
   reads. The zygote forks the warden, closes its own copies and reaps it; it
-  never reads a status or a result, which run from the warden and the worker
-  straight to the caller. The warden and the worker close every descriptor
+  never reads a status, a result or a worker's stderr, which run from the
+  warden and the worker straight to the caller. The warden and the worker close every descriptor
   they were not given, the job socket among them. The caller reads at most
   `MAX_RESULT_BYTES` (64 MiB) of a result and keeps none of one past it; it
   waits for the status a **backstop** (2 s) past the deadline, then gives the
@@ -132,11 +139,17 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   deadline, so a zygote's death costs only the jobs it held unforked.
 - The **program worker** reads the text, compiles and runs it, decides the
   status by type (the table above) and writes one **frame**, a JSON document
-  of status, message, refusal, body bytes (base64), measures and violations,
-  to the result pipe. The caller parses it, and a frame that is missing,
-  oversized, unparseable or contradicts its status is a `crash`, whole. A
-  worker's frame counts only if the warden saw it complete its isolation and
-  exit with code 0.
+  of status, message, refusal and the result's `write_body` bytes (base64),
+  to the result pipe. It neither checks nor measures: the program reaches
+  everything in its process, the `Solid`'s model included. A frame with a
+  body goes to a **body worker**, a second job under the same limits and the
+  same deadline, which reads the bytes into a fresh model, runs the checker
+  and the measures, and writes a frame of its own (status, message,
+  measures, violations). The caller parses each, and a frame that is
+  missing, oversized, unparseable or contradicts its status is a `crash`,
+  whole; so is a program frame claiming a status only the body worker or
+  the caller decides. A worker's frame counts only if the warden saw it
+  complete its isolation and exit with code 0.
 - The **warden** is one fork per program. It enters new user, network, PID,
   mount and IPC namespaces, makes every mount read-only, forks the program
   worker and reports how it ended on a status pipe the worker never holds,
