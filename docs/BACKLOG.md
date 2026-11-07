@@ -8,6 +8,7 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 [Findings](#findings) below, in the fixed shape.
 
 - The human's: the GitHub repository `arris-labs/arris-gym`, and reserving `arris-gym` on PyPI with a minimal 0.0.x release (free on PyPI as of 2026-11-07, SEED.md §2)
+- `readable_roots` includes `sys.prefix`: for a system interpreter that is all of `/usr`, wider than the interpreter's own files; narrow it when a consumer runs a system Python
 - Port `/release` and `release.yml` from laman when the first real release is planned; until then git.md says an agent never tags or uploads
 - BenchCAD 2.0 (`BenchCAD/benchcad-2.0-public` and `-core`, drawing → STEP, gated, licence "other") is not in the survey: read its terms before C3 and decide if it belongs among the re-scored benchmarks
 - File with arris once M4 measures it (SEED.md §10.6): the batch `classify_points` binding, and whether a public `Model` reset or id-stable `read_body` would help consumers

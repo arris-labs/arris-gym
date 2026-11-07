@@ -26,10 +26,10 @@ uv sync                               # the locked environment, Python 3.12
 
 ## Current state
 
-**C1 open.** Docs system, tooling, package skeleton, `docs/ARCHITECTURE.md`
-and `docs/ROADMAP.md` landed; no library code yet. ADR-0001 settles the
-sandbox's shape from measurements on the wheel.
-**Next:** `/plan M0`, the sandbox and the harness.
+**C1 open.** M0 landed: `run`, `run_many` and `Sandbox` execute `arris`
+programs in a warden-supervised, namespaced, Landlocked worker (ADR-0001,
+ADR-0002), with an exact cache, the digest and text/PNG dumps.
+**Next:** `/plan M1`, the census.
 
 ## Rules that are not derivable from the code
 

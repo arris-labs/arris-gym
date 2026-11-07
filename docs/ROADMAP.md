@@ -42,7 +42,8 @@ make **300** programs, listed in `tests/fixtures/c1/slice.txt`. The families
 are named by that run, not guessed here.
 
 **Status: open.** Docs system, tooling, package skeleton and
-`docs/ARRIS_API.md` landed. Next: M0.
+`docs/ARRIS_API.md` landed. **M0 landed:** `run`, `run_many`, `Sandbox`, the
+cache, `digest`, `dump_text` and `dump_png`, under ADR-0002. Next: M1.
 
 ### M0 — the sandbox and the harness
 Retires: can a hostile program cost one status and nothing else?

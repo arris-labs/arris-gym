@@ -11,8 +11,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   `arris_refusal` (the kernel's class, message and entities verbatim),
   `checker_fail`, `timeout` or `crash`. It raises only for a caller's mistake
   (an unknown dialect, a non-positive timeout or memory limit) or
-  `SandboxUnavailable` where the machine cannot isolate a program. Linux with
-  user namespaces and Landlock only.
+  `SandboxUnavailable` where the machine cannot isolate a program. Linux only,
+  with user namespaces, Landlock, `mount_setattr` and seccomp (on Ubuntu
+  24.04, `kernel.apparmor_restrict_unprivileged_userns` must be 0).
 - `arris_gym.run_many(programs, workers=N)` runs many programs, at most `N`
   alive at once, and returns one result per program in submission order.
   `arris_gym.Sandbox` is the same as an object you can close, safe to call
@@ -26,3 +27,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   digests are.
 - `arris_gym.dump_png(result, path)` draws a result's body as a PNG, four
   fixed views of the part in one greyscale sheet, to look at.
+- A program that forks no longer comes back as a `crash` on some runs and
+  `ok` on others: only the program's own process reports, so a fork bomb is
+  always a `runtime` error (`BlockingIOError`) and a program that forks and
+  then builds a part is always `ok`.
