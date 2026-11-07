@@ -15,7 +15,7 @@ import pytest
 
 import arris_gym as ag
 import fixture_cases
-from arris_gym.sandbox import _isolate, _run, _zygote
+from arris_gym.sandbox import _isolate, _run, _sandbox, _zygote
 from arris_gym.sandbox._zygote import Outcome
 
 CASES = fixture_cases.load("sandbox")
@@ -187,4 +187,4 @@ def test_a_callers_mistake_raises(kwargs: dict[str, object]) -> None:
 
 
 def test_the_docstring_example_runs() -> None:
-    assert doctest.testmod(_run).failed == 0
+    assert doctest.testmod(_sandbox).failed == 0

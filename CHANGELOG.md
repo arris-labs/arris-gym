@@ -13,3 +13,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   (an unknown dialect, a non-positive timeout or memory limit) or
   `SandboxUnavailable` where the machine cannot isolate a program. Linux with
   user namespaces and Landlock only.
+- `arris_gym.run_many(programs, workers=N)` runs many programs, at most `N`
+  alive at once, and returns one result per program in submission order.
+  `arris_gym.Sandbox` is the same as an object you can close, safe to call
+  from several threads.

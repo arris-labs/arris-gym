@@ -11,10 +11,12 @@ from arris_gym.sandbox import (
     Dialect,
     ExecResult,
     Measures,
+    Sandbox,
     SandboxUnavailable,
     Status,
     Versions,
     run,
+    run_many,
 )
 
 __version__ = version("arris-gym")
@@ -25,9 +27,11 @@ __all__ = [
     "Dialect",
     "ExecResult",
     "Measures",
+    "Sandbox",
     "SandboxUnavailable",
     "Status",
     "Versions",
     "__version__",
     "run",
+    "run_many",
 ]

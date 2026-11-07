@@ -2,7 +2,8 @@
 
 The caller's side of the program path: send the text to a program worker
 through the zygote, send the body it delivers to a body worker, and turn the
-wardens' records and the workers' frames into a result. Private; `arris_gym.run` is the public name.
+wardens' records and the workers' frames into a result. Private; `Sandbox` and
+`arris_gym.run` are the public names.
 """
 
 from __future__ import annotations
@@ -12,7 +13,6 @@ import hashlib
 import importlib.metadata
 import math
 import signal
-import threading
 import time
 from dataclasses import dataclass
 
@@ -40,9 +40,6 @@ DEFAULT_MEMORY = 512 * 2**20
 PROGRAM_WORKER = "program worker"
 BODY_WORKER = "body worker"
 
-_default: Zygote | None = None
-_default_lock = threading.Lock()
-
 
 @functools.cache
 def current_versions() -> Versions:
@@ -52,15 +49,6 @@ def current_versions() -> Versions:
         numpy=importlib.metadata.version("numpy"),
         arris_gym=importlib.metadata.version("arris-gym"),
     )
-
-
-def default_zygote() -> Zygote:
-    """The process's shared zygote, started on first use."""
-    global _default
-    with _default_lock:
-        if _default is None:
-            _default = Zygote()
-        return _default
 
 
 def check_arguments(dialect: Dialect | str, timeout: float, memory: int) -> Dialect:
@@ -211,36 +199,3 @@ def run_program(
         versions=current_versions(),
         seconds=seconds,
     )
-
-
-def run(
-    program: str,
-    *,
-    dialect: Dialect | str = Dialect.ARRIS,
-    timeout: float = DEFAULT_TIMEOUT,
-    memory: int = DEFAULT_MEMORY,
-) -> ExecResult:
-    """Run one program alone in a sandbox and say how it ended.
-
-    Whatever the program does (a syntax error, an infinite loop, `os._exit`,
-    a fork bomb) comes back as an `ExecResult` with a `Status`; only a
-    caller's mistake raises: `ValueError` for an unknown dialect, a
-    `timeout` that is not a positive finite number of seconds or a `memory`
-    that is not a positive number of bytes, and `SandboxUnavailable` where
-    this machine cannot isolate a program.
-
-    The program binds a module-level `result` to an `arris.build.Solid`; it
-    runs on a fresh model in a worker of its own, `timeout` seconds of wall
-    clock and `memory` bytes of address space at most.
-
-    >>> import arris_gym as ag
-    >>> ok = ag.run("import arris.build as b\\nresult = b.Solid.box((0, 0, 0), (1, 2, 3))")
-    >>> ok.status is ag.Status.OK
-    True
-    >>> ok.measures is not None and round(ok.measures.volume, 6)
-    6.0
-    >>> ag.run("result = (").status is ag.Status.SYNTAX
-    True
-    """
-    resolved = check_arguments(dialect, timeout, memory)
-    return run_program(default_zygote(), program, resolved, timeout=timeout, memory=memory)
