@@ -1,0 +1,12 @@
+{
+  "dialect": "arris",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpDegenerateError",
+    "message": "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e0, +f2)",
+    "entities": [
+      "+e0",
+      "+f2"
+    ]
+  }
+}

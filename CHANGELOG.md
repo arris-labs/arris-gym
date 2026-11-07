@@ -4,3 +4,12 @@ What a consumer of arris-gym can now do, the statuses they will see, and each
 break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
+
+- `arris_gym.run(program)` runs one `arris`-dialect program alone in an
+  isolated process and returns a frozen `ExecResult` with a `Status`: `ok`
+  (with the body and its measures), `syntax`, `runtime`, `unsupported_api`,
+  `arris_refusal` (the kernel's class, message and entities verbatim),
+  `checker_fail`, `timeout` or `crash`. It raises only for a caller's mistake
+  (an unknown dialect, a non-positive timeout or memory limit) or
+  `SandboxUnavailable` where the machine cannot isolate a program. Linux with
+  user namespaces and Landlock only.

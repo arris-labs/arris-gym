@@ -14,6 +14,7 @@ from arris_gym.sandbox import (
     SandboxUnavailable,
     Status,
     Versions,
+    run,
 )
 
 __version__ = version("arris-gym")
@@ -28,4 +29,5 @@ __all__ = [
     "Status",
     "Versions",
     "__version__",
+    "run",
 ]

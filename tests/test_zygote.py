@@ -23,6 +23,7 @@ import arris.build
 import pytest
 
 from arris_gym.sandbox import _isolate, _zygote
+from arris_gym.sandbox._frame import Frame
 from arris_gym.sandbox._zygote import JobKind, Outcome, Zygote
 
 MEMORY = 512 * 2**20  # the roadmap's default memory limit
@@ -68,11 +69,12 @@ def run(zygote: Zygote, program: str, timeout: float = TIMEOUT) -> Outcome:
 
 
 def body(zygote: Zygote, program: str) -> bytes:
-    """The body bytes of a program that ran to a clean exit."""
+    """The body bytes of a program that ran to a clean exit, from its frame."""
     outcome = run(zygote, program)
     assert outcome.ending == CLEAN_EXIT, outcome
-    assert outcome.data
-    return outcome.data
+    frame = Frame.model_validate_json(outcome.data)
+    assert frame.body is not None, frame
+    return frame.body
 
 
 def threads(pid: int) -> int:
@@ -171,7 +173,9 @@ def test_a_worker_cannot_reach_the_job_socket(zygote: Zygote) -> None:
         """)
     outcome = run(zygote, program)
     assert outcome.ending == CLEAN_EXIT, outcome
-    assert json.loads(outcome.data) == {"sockets": [], "zygote_fds": ["PermissionError"]}
+    # The program's report, then the worker's own frame (no `result` bound).
+    report, _ = json.JSONDecoder().raw_decode(outcome.data.decode())
+    assert report == {"sockets": [], "zygote_fds": ["PermissionError"]}
 
 
 def test_a_warden_holds_no_descriptor_of_the_zygotes(zygote: Zygote) -> None:

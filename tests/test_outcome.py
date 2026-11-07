@@ -43,7 +43,7 @@ def make(status: Status, **over: object) -> ExecResult:
         "message": "m",
         "refusal": REFUSAL if status is Status.ARRIS_REFUSAL else None,
         "body": BodyRef.of(b"body") if status in (Status.OK, Status.CHECKER_FAIL) else None,
-        "measures": BOX if status in (Status.OK, Status.CHECKER_FAIL) else None,
+        "measures": BOX if status is Status.OK else None,
         "violations": (),
         "program_sha256": hashlib.sha256(b"p").hexdigest(),
         "dialect": Dialect.ARRIS,
@@ -89,6 +89,7 @@ def test_there_are_eight_statuses_and_one_dialect() -> None:
     [
         {"status": Status.OK, "body": None, "measures": None},
         {"status": Status.OK, "measures": None},
+        {"status": Status.CHECKER_FAIL, "measures": BOX},
         {"status": Status.SYNTAX, "body": BodyRef.of(b"x")},
         {"status": Status.RUNTIME, "refusal": REFUSAL},
         {"status": Status.ARRIS_REFUSAL, "refusal": None},

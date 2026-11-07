@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "syntax",
+  "message": "  File \"<program>\", line 1\n    result = (\n             ^\nSyntaxError: '(' was never closed"
+}

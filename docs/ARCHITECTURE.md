@@ -55,7 +55,7 @@ class ExecResult(BaseModel):
     message: str                 # what a model sees on a retry; verbatim
     refusal: ArrisRefusal | None
     body: BodyRef | None         # set exactly when status is OK or CHECKER_FAIL
-    measures: Measures | None    # set with body, read by the body worker
+    measures: Measures | None    # set exactly when status is OK
     violations: tuple[str, ...]  # the checker's, for CHECKER_FAIL
     program_sha256: str
     dialect: Dialect
@@ -68,7 +68,7 @@ checks on construction. `Measures` is the volume, area, centroid, bounds,
 face and shell counts, genus and a face-kind histogram (kind and count pairs,
 sorted by kind), so a fixture or a digest needs no worker. `ExecResult`
 refuses a combination its status contradicts: a refusal without
-`ARRIS_REFUSAL`, a body without `OK` or `CHECKER_FAIL`, violations without
+`ARRIS_REFUSAL`, a body without `OK` or `CHECKER_FAIL`, measures without `OK`, violations without
 `CHECKER_FAIL`.
 
 `status` is a plain enum so that `result.status is ag.Status.OK` holds as in
@@ -130,6 +130,13 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   waits for the status a **backstop** (2 s) past the deadline, then gives the
   job up and replaces the zygote. A warden outlives its zygote and keeps its
   deadline, so a zygote's death costs only the jobs it held unforked.
+- The **program worker** reads the text, compiles and runs it, decides the
+  status by type (the table above) and writes one **frame**, a JSON document
+  of status, message, refusal, body bytes (base64), measures and violations,
+  to the result pipe. The caller parses it, and a frame that is missing,
+  oversized, unparseable or contradicts its status is a `crash`, whole. A
+  worker's frame counts only if the warden saw it complete its isolation and
+  exit with code 0.
 - The **warden** is one fork per program. It enters new user, network, PID,
   mount and IPC namespaces, makes every mount read-only, forks the program
   worker and reports how it ended on a status pipe the worker never holds,

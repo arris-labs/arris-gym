@@ -104,8 +104,8 @@ class ExecResult(_Frozen):
     """The outcome of one program. Every program has one, whatever it did.
 
     Guarantees, enforced on construction: `refusal` is set exactly when
-    `status` is `ARRIS_REFUSAL`; `body` and `measures` are set together,
-    exactly when `status` is `OK` or `CHECKER_FAIL`; `violations` is empty
+    `status` is `ARRIS_REFUSAL`; `body` is set exactly when `status` is `OK` or
+    `CHECKER_FAIL`, `measures` exactly when it is `OK`; `violations` is empty
     unless `status` is `CHECKER_FAIL`. `message` is what a model sees on a
     retry, verbatim. `seconds` is wall-clock and sits outside every digest.
 
@@ -140,9 +140,10 @@ class ExecResult(_Frozen):
     def _fields_agree_with_status(self) -> Self:
         if (self.refusal is not None) != (self.status is Status.ARRIS_REFUSAL):
             raise ValueError("refusal is set exactly when status is ARRIS_REFUSAL")
-        has_body = self.status in (Status.OK, Status.CHECKER_FAIL)
-        if (self.body is not None) != has_body or (self.measures is not None) != has_body:
-            raise ValueError("body and measures are set exactly when status is OK or CHECKER_FAIL")
+        if (self.body is not None) != (self.status in (Status.OK, Status.CHECKER_FAIL)):
+            raise ValueError("body is set exactly when status is OK or CHECKER_FAIL")
+        if (self.measures is not None) != (self.status is Status.OK):
+            raise ValueError("measures are set exactly when status is OK")
         if self.violations and self.status is not Status.CHECKER_FAIL:
             raise ValueError("violations belong to CHECKER_FAIL alone")
         return self

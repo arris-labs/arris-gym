@@ -42,6 +42,8 @@ build-backend = "uv_build"
 line-length = 100
 target-version = "py312"
 src = ["src", "tests", "tools"]
+# Fixture programs are the inputs under test: some are broken on purpose.
+extend-exclude = ["tests/fixtures"]
 # Python files only: ruff would otherwise reformat code blocks in Markdown,
 # SEED.md's among them, and SEED.md is frozen.
 include = ["*.py", "*.pyi"]
@@ -57,7 +59,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "PT", "T20", "BLE"]
 strict = true
 python_version = "3.12"
 files = ["src", "tests", "tools"]
-exclude = ["^tools/oracle/"]
+exclude = ["^tools/oracle/", "^tests/fixtures/"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

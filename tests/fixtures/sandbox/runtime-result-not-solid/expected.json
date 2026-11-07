@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "runtime",
+  "message": "`result` is of type int, not arris.build.Solid"
+}

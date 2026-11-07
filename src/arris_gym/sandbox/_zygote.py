@@ -73,6 +73,9 @@ STARTUP_TIMEOUT = 60.0
 PROBE_MEMORY = 512 * 2**20
 PROBE_TIMEOUT = 10.0
 
+# The module the zygote process runs: not this one, which the package imports,
+# so that `-m` does not execute a module already in `sys.modules`.
+_ENTRY = "arris_gym.sandbox._zygote_main"
 _READY = b"ready"
 _READ_CHUNK = 1 << 16
 
@@ -238,7 +241,7 @@ class Zygote:
         ours, theirs = socket.socketpair(socket.AF_UNIX, socket.SOCK_SEQPACKET)
         with theirs:
             process = subprocess.Popen(
-                [sys.executable, "-s", "-P", "-m", __name__, str(theirs.fileno())],
+                [sys.executable, "-s", "-P", "-m", _ENTRY, str(theirs.fileno())],
                 env=ENVIRONMENT,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
@@ -372,7 +375,3 @@ def _collect(status_r: int, result_r: int, backstop: float) -> Outcome | None:
             os.close(result_r)
     # No record whole: the warden was never forked, or died with the zygote.
     return Outcome(_isolate.parse_ending(bytes(status)), bytes(data), overflow)
-
-
-if __name__ == "__main__":
-    sys.exit(main(sys.argv))
