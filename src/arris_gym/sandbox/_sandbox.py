@@ -12,7 +12,7 @@ import threading
 from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor
 
-from arris_gym.sandbox import _run
+from arris_gym.sandbox import _cache, _run
 from arris_gym.sandbox._zygote import Zygote
 from arris_gym.sandbox.outcome import Dialect, ExecResult
 
@@ -34,20 +34,51 @@ class Sandbox:
     """Runs programs, each alone in an isolated process.
 
     The zygote starts on first use and `close` stops it. Every method is
-    safe to call from several threads at once. Like `arris_gym.run`, none
+    safe to call from several threads at once. A result that is a function
+    of the program, the dialect, `memory` and the pinned versions is cached,
+    in memory or, given `cache_dir`, on disk; a `timeout`, a `crash` and a
+    `MemoryError` never are. Like `arris_gym.run`, none
     raises on a program; a caller's mistake raises `ValueError` and a
     machine that cannot isolate a program raises `SandboxUnavailable`.
 
     >>> from arris_gym import Sandbox, Status
     >>> with Sandbox() as sandbox:
     ...     [r.status.value for r in sandbox.run_many(["result = (", "x = 1"])]
+    ...     [r.status.value for r in sandbox.run_many(["result = ("])], sandbox.executions
     ['syntax', 'runtime']
+    (['syntax'], 2)
     """
 
-    def __init__(self) -> None:
+    def __init__(self, cache_dir: str | os.PathLike[str] | None = None) -> None:
+        self._cache = _cache.Cache(cache_dir)
+        self._executions = 0
         self._lock = threading.Lock()
         self._zygote: Zygote | None = None
         self._closed = False
+
+    @property
+    def executions(self) -> int:
+        """How many programs this sandbox has actually executed.
+
+        A run answered from the cache does not count.
+        """
+        with self._lock:
+            return self._executions
+
+    def _one(
+        self, zygote: Zygote, program: str, dialect: Dialect, timeout: float, memory: int
+    ) -> ExecResult:
+        """One program: from the cache, or executed and, if it may be, stored."""
+        key = _cache.cache_key(program, dialect, memory, _run.current_versions())
+        hit = self._cache.get(key)
+        if hit is not None:
+            return hit
+        with self._lock:
+            self._executions += 1
+        executed = _run.run_program(zygote, program, dialect, timeout=timeout, memory=memory)
+        if executed.cacheable:
+            self._cache.put(key, executed.result)
+        return executed.result
 
     def _live_zygote(self) -> Zygote:
         with self._lock:
@@ -69,9 +100,7 @@ class Sandbox:
         resolved = _run.check_arguments(dialect, timeout, memory)
         if not isinstance(program, str):
             raise TypeError(f"program must be text, got {type(program).__name__}")
-        return _run.run_program(
-            self._live_zygote(), program, resolved, timeout=timeout, memory=memory
-        )
+        return self._one(self._live_zygote(), program, resolved, timeout, memory)
 
     def run_many(
         self,
@@ -96,10 +125,7 @@ class Sandbox:
                 raise TypeError(f"program must be text, got {type(text).__name__}")
         zygote = self._live_zygote()
         with ThreadPoolExecutor(max_workers=min(live, max(1, len(texts)))) as pool:
-            futures = [
-                pool.submit(_run.run_program, zygote, t, resolved, timeout=timeout, memory=memory)
-                for t in texts
-            ]
+            futures = [pool.submit(self._one, zygote, t, resolved, timeout, memory) for t in texts]
             return tuple(f.result() for f in futures)
 
     def close(self) -> None:

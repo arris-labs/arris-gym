@@ -39,14 +39,16 @@ def test_results_keep_submission_order_when_the_first_finishes_last() -> None:
 
 def test_workers_bound_the_live_forks() -> None:
     # Four 0.5 s programs through two workers take two rounds, one through four takes one.
-    programs = [SLEEP.format(s=0.5)] * 4
+    # Distinct text, so that the cache does not answer the repeats.
+    programs = [SLEEP.format(s=0.5) + f"# {i}\n" for i in range(4)]
     with ag.Sandbox() as sandbox:
         sandbox.run("result = (")  # start the zygote outside the timings
         start = time.monotonic()
         sandbox.run_many(programs, workers=2)
         two = time.monotonic() - start
+        again = [p + "# again\n" for p in programs]
         start = time.monotonic()
-        sandbox.run_many(programs, workers=4)
+        sandbox.run_many(again, workers=4)
         four = time.monotonic() - start
     assert two >= 1.0
     assert four < two

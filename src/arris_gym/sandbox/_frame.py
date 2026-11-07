@@ -36,7 +36,9 @@ class ProgramFrame(BaseModel):
     decides (`PROGRAM_STATUSES`); `body`, the `write_body` bytes of the
     program's `result`, is set exactly when `status` is `OK`, which then
     means only "a body to read back"; `refusal` is set exactly when
-    `status` is `ARRIS_REFUSAL`. `body` travels as base64.
+    `status` is `ARRIS_REFUSAL`. `body` travels as base64. `out_of_memory`
+    says the program ended on a `MemoryError`, by type: the result depends on
+    the memory limit and the machine, so it is not cached.
     """
 
     model_config = _CONFIG
@@ -45,6 +47,7 @@ class ProgramFrame(BaseModel):
     message: str
     refusal: ArrisRefusal | None
     body: bytes | None
+    out_of_memory: bool = False
 
     @model_validator(mode="after")
     def _fields_agree_with_status(self) -> Self:
@@ -63,7 +66,7 @@ class BodyFrame(BaseModel):
     Guarantees, enforced on parsing: `status` is one a body worker decides
     (`BODY_STATUSES`); `measures` is set exactly when it is `OK`;
     `violations`, the checker's in its own words, are non-empty exactly when
-    it is `CHECKER_FAIL`.
+    it is `CHECKER_FAIL`. `out_of_memory` is as in `ProgramFrame`.
     """
 
     model_config = _CONFIG
@@ -72,6 +75,7 @@ class BodyFrame(BaseModel):
     message: str
     measures: Measures | None
     violations: tuple[str, ...]
+    out_of_memory: bool = False
 
     @model_validator(mode="after")
     def _fields_agree_with_status(self) -> Self:

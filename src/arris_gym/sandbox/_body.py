@@ -88,7 +88,11 @@ def verdict(data: bytes) -> BodyFrame:
         return _verdict(data)
     except BaseException as error:  # noqa: BLE001 - MemoryError and the kernel's other refusals
         return BodyFrame(
-            status=Status.RUNTIME, message=exception_line(error), measures=None, violations=()
+            status=Status.RUNTIME,
+            message=exception_line(error),
+            measures=None,
+            violations=(),
+            out_of_memory=isinstance(error, MemoryError),
         )
 
 

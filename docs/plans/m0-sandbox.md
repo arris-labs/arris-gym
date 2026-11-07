@@ -115,6 +115,10 @@ SandboxUnavailable                       # the caller's: no namespaces, no Landl
   `MemoryError` and go on; arris-gym's version stands for `cq`'s until they
   split. On disk, one JSON and one body file by key, written by rename.
   Nothing a worker can reach. Never cached: `timeout`, `crash`, `MemoryError`.
+  *Settled* (step 7): `MemoryError` is known by type: both frames carry
+  `out_of_memory`, set where the worker caught one; a program forging it only
+  loses its own caching. `cache_dir=None` is an in-memory cache. `timeout` is
+  not in the key, as written: a result that depends on it is never stored.
 
 Constants: `NPROC_LIMIT` = 4 (step 1: warden, worker, two tasks);
 `MAX_RESULT_BYTES` = 64 MiB (step 2: a plate with 100 holes is 96 KiB of body)
@@ -134,7 +138,7 @@ isolation guarantee whose correctness has to be established here.
 - [x] Step 4 **[2]** — the program path: the `arris` dialect's `compile`, `exec`, `result` and classification, in the worker, by type only; `run`. Fixtures in `tests/fixtures/sandbox/` by construction for `ok` (closed-form box, measures), `syntax`, `runtime` (incl. `SystemExit`, no `result`, `result` not a `Solid`), `unsupported_api`, `arris_refusal` (kind, verbatim message, entities). Loader and default tolerance.
 - [x] Step 5 **[3]** — untrusted delivery: frame parsing and caps, the body worker, `checker_fail`, `crash`. Fixtures: a `Solid` whose `model` is a forger returning doctored bytes (`BodyRejectedError`; if `Solid` refuses that, a forged frame), `os._exit(0)`, `os.abort`, a segfault, a pipe flood, garbage on the pipe, a result pipe closed by the program. A crash's message names the signal or exit code and carries stderr's bounded tail, where the kernel's abort text lands.
 - [x] Step 6 **[2]** — `run_many` and `Sandbox`: bounded live forks, submission order whatever finishes first, thread-safe `run`, the lazy default instance. `hypothesis`: `run` raises on no text, surrogates and NULs included; caller's mistakes raise.
-- [ ] Step 7 **[2]** — the cache: key, disk layout, what is never cached, `.executions`. Tests: a second run makes 0 executions, rows equal; changed `memory` misses; each uncacheable outcome re-runs; a torn entry is a miss.
+- [x] Step 7 **[2]** — the cache: key, disk layout, what is never cached, `.executions`. Tests: a second run makes 0 executions, rows equal; changed `memory` misses; each uncacheable outcome re-runs; a torn entry is a miss.
 - [ ] Step 8 **[2]** — `digest` and `dump_text`: rows in program order, floats as hex, `seconds` excluded. Tests: equal across `workers` and zygotes, a one-bit change of a measure moves it, a refusal's text diffs in a committed golden built by hand.
 - [ ] Step 9 **[2]** — `dump_png`: body worker returns the tessellation; `numpy` z-buffer, fixed views, `zlib` PNG, no new dependency. Test: PNG decodes, size fixed, silhouette area of a box from a fixed view matches its closed form within a pixel row. Look at one (`inspect`); update that skill's "until they exist".
 - [ ] Step 10 **[2]** — acceptance: `tests/test_m0_acceptance.py`; `ci.yml` lifts the runners' user-namespace restriction; gate time measured, kept under a minute.

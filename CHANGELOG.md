@@ -17,3 +17,6 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   alive at once, and returns one result per program in submission order.
   `arris_gym.Sandbox` is the same as an object you can close, safe to call
   from several threads.
+- `Sandbox(cache_dir=...)` caches results exactly: the same program under the
+  same limits and versions is not run twice (`Sandbox.executions` counts the
+  runs). A `timeout`, a `crash` or a `MemoryError` is never cached.

@@ -101,8 +101,21 @@ def _deliver(solid: arris.build.Solid) -> ProgramFrame:
     return ProgramFrame(status=Status.OK, message="", refusal=None, body=data)
 
 
-def _failure(status: Status, message: str, refusal: ArrisRefusal | None = None) -> ProgramFrame:
-    return ProgramFrame(status=status, message=message, refusal=refusal, body=None)
+def _failure(
+    status: Status,
+    message: str,
+    refusal: ArrisRefusal | None = None,
+    *,
+    error: BaseException | None = None,
+) -> ProgramFrame:
+    """A failure's frame; `error`, if any, is what it ended on (a `MemoryError` is marked)."""
+    return ProgramFrame(
+        status=status,
+        message=message,
+        refusal=refusal,
+        body=None,
+        out_of_memory=isinstance(error, MemoryError),
+    )
 
 
 def classify(text: str) -> ProgramFrame:
@@ -117,7 +130,7 @@ def classify(text: str) -> ProgramFrame:
     except (SyntaxError, UnicodeEncodeError) as error:
         return _failure(Status.SYNTAX, exception_line(error))
     except BaseException as error:  # noqa: BLE001 - RecursionError, MemoryError: the program's
-        return _failure(Status.RUNTIME, exception_line(error))
+        return _failure(Status.RUNTIME, exception_line(error), error=error)
     namespace: dict[str, object] = {"__name__": "__program__"}
     try:
         exec(code, namespace)  # inside the worker only
@@ -129,7 +142,7 @@ def classify(text: str) -> ProgramFrame:
     except arris.ArrisError as error:
         return _failure(Status.ARRIS_REFUSAL, _text(error), _refusal(error))
     except BaseException as error:  # noqa: BLE001 - SystemExit and MemoryError included
-        return _failure(Status.RUNTIME, exception_line(error))
+        return _failure(Status.RUNTIME, exception_line(error), error=error)
     if RESULT_NAME not in namespace:
         return _failure(Status.RUNTIME, f"the program ended without binding `{RESULT_NAME}`")
     return _failure(

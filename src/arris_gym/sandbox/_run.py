@@ -80,6 +80,9 @@ class Verdict:
     body: bytes | None = None
     measures: Measures | None = None
     violations: tuple[str, ...] = ()
+    # Whether the outcome is a function of the cache key alone: not a
+    # timeout, a crash or a `MemoryError`, which the machine and the limits decide.
+    cacheable: bool = True
 
 
 def _signal_name(number: int) -> str:
@@ -94,7 +97,7 @@ def _crash(what: str, outcome: Outcome) -> Verdict:
     tail = outcome.stderr.decode("utf-8", "replace")
     if tail:
         what += f"; its stderr ends:\n{tail}"
-    return Verdict(Status.CRASH, what)
+    return Verdict(Status.CRASH, what, cacheable=False)
 
 
 def ended(outcome: Outcome, worker: str, timeout: float) -> Verdict | None:
@@ -114,7 +117,9 @@ def ended(outcome: Outcome, worker: str, timeout: float) -> Verdict | None:
         )
     match ending.kind:
         case _isolate.EndKind.TIMED_OUT:
-            return Verdict(Status.TIMEOUT, f"the {worker} ran past the {timeout} s deadline")
+            return Verdict(
+                Status.TIMEOUT, f"the {worker} ran past the {timeout} s deadline", cacheable=False
+            )
         case _isolate.EndKind.UNAVAILABLE:
             return _crash(f"the {worker} could not isolate itself (errno {ending.value})", outcome)
         case _isolate.EndKind.SIGNALLED:
@@ -161,12 +166,21 @@ def body_verdict(outcome: Outcome, body: bytes, timeout: float) -> Verdict:
         body=body if has_body else None,
         measures=frame.measures,
         violations=frame.violations,
+        cacheable=not frame.out_of_memory,
     )
+
+
+@dataclass(frozen=True)
+class Executed:
+    """A result and whether the cache may keep it."""
+
+    result: ExecResult
+    cacheable: bool
 
 
 def run_program(
     zygote: Zygote, program: str, dialect: Dialect, *, timeout: float, memory: int
-) -> ExecResult:
+) -> Executed:
     """Run `program` on `zygote`; its result. Arguments are already checked.
 
     The program worker's frame is believed only where believing it costs the
@@ -182,12 +196,17 @@ def run_program(
     if isinstance(found, Verdict):
         verdict = found
     elif found.body is None:
-        verdict = Verdict(found.status, found.message, refusal=found.refusal)
+        verdict = Verdict(
+            found.status,
+            found.message,
+            refusal=found.refusal,
+            cacheable=not found.out_of_memory,
+        )
     else:
         read = zygote.execute(JobKind.BODY, found.body, deadline=deadline, memory=memory)
         verdict = body_verdict(read, found.body, timeout)
     seconds = time.monotonic() - start
-    return ExecResult(
+    result = ExecResult(
         status=verdict.status,
         message=verdict.message,
         refusal=verdict.refusal,
@@ -199,3 +218,4 @@ def run_program(
         versions=current_versions(),
         seconds=seconds,
     )
+    return Executed(result, verdict.cacheable)

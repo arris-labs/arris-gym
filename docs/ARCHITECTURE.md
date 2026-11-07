@@ -191,11 +191,16 @@ the body worker reports. What stays visible outside the readable directories
 is metadata (that a path exists, its size and times), never content. Syscall
 filtering beyond ADR-0002's list waits until a hostile program shows the need.
 
-**The cache** maps `hash(program, dialect, arris version, cq version)` to the
-result. SEED.md §6 keys it on the first three; `cq`'s version joins them
-because a `cq` change moves results as surely as an arris change does. Only
-outcomes that are functions of that key are cached: never `timeout`, `crash`,
-or a `MemoryError`, which depend on the machine and the limits.
+**The cache** maps `hash(program, dialect, memory, nproc limit, arris, numpy,
+arris-gym versions)` to the result. SEED.md §6 keys it on the program, dialect
+and arris version; the limits join them because a program can catch
+`MemoryError` and go on, and arris-gym's version stands for `cq`'s until they
+split. `timeout` is not in the key, since no outcome that depends on it is
+stored: never `timeout`, `crash`, or a `MemoryError` (known by type: a frame
+says it ended on one). `Sandbox(cache_dir=None)` keeps results in memory; given
+a directory, one JSON (the result without its body) and one body file by key,
+each written by rename, the JSON last; a torn entry is a miss. `executions`
+counts programs actually run. Nothing the cache holds is reachable by a worker.
 
 ## Dialects
 
