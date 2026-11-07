@@ -18,6 +18,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      # The sandbox needs unprivileged user namespaces (ADR-0002), which Ubuntu
+      # 24.04 runners restrict through AppArmor; not provable before the first
+      # push (docs/plans/m0-sandbox.md, open questions).
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --locked
       - run: tools/gate.sh

@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "runtime",
+  "message": "PermissionError: [Errno 13] Permission denied: '/etc/passwd'"
+}

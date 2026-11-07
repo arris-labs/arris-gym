@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "status": "runtime",
+  "message": "OSError: [Errno 101] Network is unreachable"
+}

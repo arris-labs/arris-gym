@@ -143,7 +143,7 @@ isolation guarantee whose correctness has to be established here.
 - [x] Step 7 **[2]** — the cache: key, disk layout, what is never cached, `.executions`. Tests: a second run makes 0 executions, rows equal; changed `memory` misses; each uncacheable outcome re-runs; a torn entry is a miss.
 - [x] Step 8 **[2]** — `digest` and `dump_text`: rows in program order, floats as hex, `seconds` excluded. Tests: equal across `workers` and zygotes, a one-bit change of a measure moves it, a refusal's text diffs in a committed golden built by hand.
 - [x] Step 9 **[2]** — `dump_png`: body worker returns the tessellation; `numpy` z-buffer, fixed views, `zlib` PNG, no new dependency. Test: PNG decodes, size fixed, silhouette area of a box from a fixed view matches its closed form within a pixel row. Look at one (`inspect`); update that skill's "until they exist".
-- [ ] Step 10 **[2]** — acceptance: `tests/test_m0_acceptance.py`; `ci.yml` lifts the runners' user-namespace restriction; gate time measured, kept under a minute.
+- [x] Step 10 **[2]** — acceptance: `tests/test_m0_acceptance.py`; `ci.yml` lifts the runners' user-namespace restriction; gate time measured, kept under a minute.
 
 ## Acceptance
 `uv run pytest tests/test_m0_acceptance.py`, in the gate, offline:
@@ -182,3 +182,11 @@ isolation guarantee whose correctness has to be established here.
   `checker-fail-forged-vertex`): no program is known to make an invalid body
   through arris. Enough for "one program per status"; a real one becomes a
   fixture and an arris report.
+- *Settled* (step 10): the thousand-program acceptance holds only outcomes a
+  cache may keep, since a `crash`, `timeout` or `MemoryError` re-runs by
+  design and "`.executions` unchanged" could not hold with them in it. Its
+  10% hostile programs are the fork bomb, the connect and the read outside;
+  the uncacheable ones are in a test of their own, where they re-run each
+  time. The fork bomb fixture's children sleep: a bomb whose children all
+  raise writes several frames and is a `crash` (measured, 15 of 15). Gate
+  measured at 24.6 s (32 cores), under a minute.
