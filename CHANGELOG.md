@@ -20,3 +20,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `Sandbox(cache_dir=...)` caches results exactly: the same program under the
   same limits and versions is not run twice (`Sandbox.executions` counts the
   runs). A `timeout`, a `crash` or a `MemoryError` is never cached.
+- `arris_gym.dump_text(result)` writes a result as text, a line per field, to
+  read or `diff`; `arris_gym.digest(results)` hashes results in order, floats
+  exact and wall-clock time left out, so two runs are equal when their
+  digests are.

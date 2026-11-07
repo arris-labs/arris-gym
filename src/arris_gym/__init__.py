@@ -15,6 +15,8 @@ from arris_gym.sandbox import (
     SandboxUnavailable,
     Status,
     Versions,
+    digest,
+    dump_text,
     run,
     run_many,
 )
@@ -32,6 +34,8 @@ __all__ = [
     "Status",
     "Versions",
     "__version__",
+    "digest",
+    "dump_text",
     "run",
     "run_many",
 ]

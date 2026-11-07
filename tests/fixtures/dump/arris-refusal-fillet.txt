@@ -1,0 +1,11 @@
+status: arris_refusal
+message: "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e0, +f2)"
+refusal.kind: "OpDegenerateError"
+refusal.message: "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e0, +f2)"
+refusal.entities: ["+e0", "+f2"]
+body: none
+measures: none
+violations: []
+program_sha256: f8e88fcaa1e26b3d5914388fb35688227f430b09071defb93c89bd1abec2cd55
+dialect: arris
+versions: arris="0.10.0" numpy="2.3.4" arris_gym="0.1.0"
