@@ -66,7 +66,15 @@ itself does the same): −0.5 for −1.0, recorded in the ADR. A frame over
 **Transport.** The caller creates each job's result pipe and passes its write
 end to the zygote by `SCM_RIGHTS`; the zygote only forks and reaps and never
 reads a result. Workers close every other descriptor. Program text is sent
-UTF-8 with `surrogatepass`; a text `compile` cannot encode is `syntax`. One
+UTF-8 with `surrogatepass`; a text `compile` cannot encode is `syntax`.
+*Settled* (step 2): the payload travels as a memfd, the third descriptor of
+the job message, read by the worker under its own memory limit: a
+`SOCK_SEQPACKET` message is capped near the socket buffer, and a zygote that
+read the text would hold every program's bytes in the process all forks
+start from. The warden closes every descriptor it was not given, so none
+holds the job socket past the zygote's death. Step 2's program job writes
+`write_body`'s bytes raw; step 4 replaces them with the classified frame.
+`SandboxUnavailable` is defined in `sandbox/_zygote.py`; step 3 exports it. One
 deadline covers program and body worker; the caller holds a backstop past it
 (measured by step 2) that replaces a dead zygote and reports `crash`.
 
@@ -94,9 +102,11 @@ SandboxUnavailable                       # the caller's: no namespaces, no Landl
   split. On disk, one JSON and one body file by key, written by rename.
   Nothing a worker can reach. Never cached: `timeout`, `crash`, `MemoryError`.
 
-Constants: `NPROC_LIMIT` = 4 (step 1: warden, worker, two tasks); `MAX_RESULT_BYTES` and the
-backstop by step 2; the fixtures' default tolerance by step 4. `timeout=5.0`
-is SEED.md §5's and `memory` the roadmap's, revisited with M3's numbers.
+Constants: `NPROC_LIMIT` = 4 (step 1: warden, worker, two tasks);
+`MAX_RESULT_BYTES` = 64 MiB (step 2: a plate with 100 holes is 96 KiB of body)
+and `BACKSTOP` = 2 s (step 2: 64 concurrent workers at a 1 s deadline, 300 MiB
+each, all reported within 0.29 s); the fixtures' default tolerance by step 4.
+`timeout=5.0` is SEED.md §5's and `memory` the roadmap's, revisited with M3's numbers.
 
 ## Steps
 Complexity grades; a step's grade is its tier, the model that executes it
@@ -105,7 +115,7 @@ or semantic case to get right within a given design; **[3]** unproven, an
 isolation guarantee whose correctness has to be established here.
 
 - [x] Step 1 **[3]** — ADR-0002 and `sandbox/_isolate.py`: warden, namespaces, Landlock, rlimits, no core, descriptors closed, stdio detached. Tests run a function under it: no connect, no read or write outside, fork bomb bounded, a `setsid` descendant holding a pipe dies with PID 1, a worker ignoring signals and clearing `PDEATHSIG` still dies at its deadline, 1 GiB refused under 512 MiB.
-- [ ] Step 2 **[3]** — `sandbox/_zygote.py`: clean start, job socket, fd passing, reaping, replacement. Tests: one thread, two programs give equal bytes, `set`-order program equal across zygotes, a worker cannot reach the job socket, a zygote killed mid-run costs its in-flight jobs and the next `run` works; `SandboxUnavailable` when a probe fails.
+- [x] Step 2 **[3]** — `sandbox/_zygote.py`: clean start, job socket, fd passing, reaping, replacement. Tests: one thread, two programs give equal bytes, `set`-order program equal across zygotes, a worker cannot reach the job socket, a zygote killed mid-run costs its in-flight jobs and the next `run` works; `SandboxUnavailable` when a probe fails.
 - [ ] Step 3 **[1]** — the types of *Public API* and `cq.UnsupportedApi`, frozen, with docstrings and a runnable example; a `Status` dispatch with `assert_never` in the tests. §Outcomes updated.
 - [ ] Step 4 **[2]** — the program path: the `arris` dialect's `compile`, `exec`, `result` and classification, in the worker, by type only; `run`. Fixtures in `tests/fixtures/sandbox/` by construction for `ok` (closed-form box, measures), `syntax`, `runtime` (incl. `SystemExit`, no `result`, `result` not a `Solid`), `unsupported_api`, `arris_refusal` (kind, verbatim message, entities). Loader and default tolerance.
 - [ ] Step 5 **[3]** — untrusted delivery: frame parsing and caps, the body worker, `checker_fail`, `crash`. Fixtures: a `Solid` whose `model` is a forger returning doctored bytes (`BodyRejectedError`; if `Solid` refuses that, a forged frame), `os._exit(0)`, `os.abort`, a segfault, a pipe flood, garbage on the pipe, a result pipe closed by the program. A crash's message names the signal or exit code and carries stderr's bounded tail, where the kernel's abort text lands.

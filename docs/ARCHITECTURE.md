@@ -95,7 +95,7 @@ and what a Workplane holding several solids scores as. Settled by the census.
 **as PID 1 of its own namespaces, under a warden** (ADR-0002).
 
 ```
-caller ── pipe ──▶ zygote ──fork──▶ warden ──fork──▶ program worker (PID 1)
+caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ program worker (PID 1)
                    arris, numpy,    namespaces,      setsid → stdio → fds closed
                    cq imported;     mounts read-only; → rlimits → Landlock
                    builds nothing   deadline, status   → seccomp → compile → exec
@@ -107,7 +107,20 @@ caller ── pipe ──▶ zygote ──fork──▶ warden ──fork──�
   is `OPENBLAS_NUM_THREADS=1` and `PYTHONHASHSEED=0`, nothing else from the
   caller's. It imports everything once and never builds, so every fork starts
   with `arris.build`'s default model unmade. It serves many forks and is
-  replaced if it dies.
+  replaced if it dies. Before serving, it probes that it can isolate a
+  worker; where it cannot, starting it raises `SandboxUnavailable`.
+- **Transport**: one job is one message on a `SOCK_SEQPACKET` socket pair:
+  its kind, deadline and memory limit, with three descriptors passed by
+  `SCM_RIGHTS`, the write ends of the job's status and result pipes, which
+  the caller creates, and a memfd holding the payload, which the worker
+  reads. The zygote forks the warden, closes its own copies and reaps it; it
+  never reads a status or a result, which run from the warden and the worker
+  straight to the caller. The warden and the worker close every descriptor
+  they were not given, the job socket among them. The caller reads at most
+  `MAX_RESULT_BYTES` (64 MiB) of a result and keeps none of one past it; it
+  waits for the status a **backstop** (2 s) past the deadline, then gives the
+  job up and replaces the zygote. A warden outlives its zygote and keeps its
+  deadline, so a zygote's death costs only the jobs it held unforked.
 - The **warden** is one fork per program. It enters new user, network, PID,
   mount and IPC namespaces, makes every mount read-only, forks the program
   worker and reports how it ended on a status pipe the worker never holds,

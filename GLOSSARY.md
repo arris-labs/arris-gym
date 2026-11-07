@@ -55,6 +55,17 @@ The clean interpreter that imports everything, builds nothing and forks a
 program worker per program (ADR-0001).
 _Avoid_: master
 
+**Job**:
+One worker's run, as the caller hands it to the zygote: its kind (a
+program, a body to read back), its deadline and memory limit, its payload,
+and the pipes its status and result come back on.
+_Avoid_: request (a kernel task is a thread or process)
+
+**Backstop**:
+The time past a job's deadline after which the caller gives up on its status
+and replaces the zygote: a bound on a zygote that stops answering, never on
+a program, which its warden ends at the deadline.
+
 **Warden**:
 The process between the zygote and one worker: it enters the worker's
 namespaces, owns its deadline and reports how it ended (ADR-0002).

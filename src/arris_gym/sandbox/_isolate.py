@@ -1,11 +1,12 @@
 """Run one function in a program worker under its warden (ADR-0002).
 
 The chain is forking process -> **warden** -> **program worker**. The warden
-enters fresh user, network, PID, mount and IPC namespaces, makes every mount
-read-only, and forks the program worker, which is PID 1 of the new PID
-namespace: when it ends, the kernel kills every process it left behind,
-`setsid` or not. The warden owns the deadline (a pidfd, then `SIGKILL`) and
-writes how the worker ended to a status pipe the worker never holds.
+closes every descriptor it was not given, enters fresh user, network, PID,
+mount and IPC namespaces, makes every mount read-only, and forks the
+program worker, which is PID 1 of the new PID namespace: when it ends, the
+kernel kills every process it left behind, `setsid` or not. The warden owns
+the deadline (a pidfd, then `SIGKILL`) and writes how the worker ended to a
+status pipe the worker never holds.
 
 The program worker, before the function runs: leaves the session, detaches
 stdio, closes every descriptor it was not given, sets its rlimits, forbids
@@ -121,6 +122,17 @@ _RAISED = 1
 _WARDEN_FAILED = 121
 
 
+def parse_ending(record: bytes) -> Ending | None:
+    """The `Ending` a warden's status record holds, or None if it is not one whole."""
+    if len(record) != _STATUS.size:
+        return None
+    kind, value, armed = _STATUS.unpack(record)
+    try:
+        return Ending(EndKind(kind), value, bool(armed))
+    except ValueError:  # not a kind a warden writes
+        return None
+
+
 def read_ending(fd: int) -> Ending | None:
     """The record a warden wrote to `fd`, or None if it wrote none whole."""
     data = b""
@@ -129,8 +141,7 @@ def read_ending(fd: int) -> Ending | None:
         if not chunk:
             return None
         data += chunk
-    kind, value, armed = _STATUS.unpack(data)
-    return Ending(EndKind(kind), value, bool(armed))
+    return parse_ending(data)
 
 
 # --- The kernel interfaces ----------------------------------------------------
@@ -436,6 +447,11 @@ def _warden(
 ) -> None:
     for sig in _WARDEN_IGNORES:
         signal.signal(sig, signal.SIG_IGN)
+    # The forking process's own descriptors (a zygote's job socket among
+    # them) are not the warden's: holding one would keep it open past its
+    # owner's death.
+    out = () if output_fd is None else (output_fd,)
+    _close_all_but((0, 1, 2, status_fd, *keep_fds, *out))
 
     def report(kind: EndKind, value: int, armed: bool) -> NoReturn:
         # A caller gone is no reason for the warden to linger.
@@ -458,7 +474,7 @@ def _warden(
         finally:
             os._exit(_SETUP_FAILED)
     os.close(armed_w)
-    for fd in sorted({*keep_fds, *(() if output_fd is None else (output_fd,))}):
+    for fd in sorted({*keep_fds, *out}):
         os.close(fd)
     pidfd = os.pidfd_open(pid)
     poller = select.poll()
@@ -480,6 +496,13 @@ def _warden(
     report(EndKind.EXITED, os.waitstatus_to_exitcode(status), armed)
 
 
+def _close_all_but(keep: Iterable[int]) -> None:
+    kept = sorted(set(keep))
+    ceiling = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
+    for low, high in zip(kept, [*kept[1:], ceiling], strict=True):
+        os.closerange(low + 1, high)
+
+
 def _worker(
     target: Callable[[], object],
     limits: Limits,
@@ -496,10 +519,7 @@ def _worker(
     out = null if output_fd is None else output_fd
     os.dup2(out, 1)
     os.dup2(out, 2)
-    keep = sorted({0, 1, 2, armed_w, *keep_fds})
-    ceiling = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
-    for low, high in zip(keep, [*keep[1:], ceiling], strict=True):
-        os.closerange(low + 1, high)
+    _close_all_but((0, 1, 2, armed_w, *keep_fds))
     resource.setrlimit(resource.RLIMIT_AS, (limits.memory, limits.memory))
     resource.setrlimit(resource.RLIMIT_NPROC, (limits.nproc, limits.nproc))
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
