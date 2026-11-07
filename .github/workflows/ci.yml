@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  # The gate (tools/gate.sh): the same script the pre-commit hook runs. Linux
+  # only while the sandbox is (docs/ARCHITECTURE.md §The sandbox); two
+  # architectures, so a digest can be compared across them from M0 on.
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: tools/gate.sh
