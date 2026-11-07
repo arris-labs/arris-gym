@@ -46,8 +46,8 @@ _Avoid_: gold
 ## The sandbox
 
 **Sandbox**:
-The whole of what runs a program in isolation: the zygote and its program
-workers.
+The whole of what runs a program in isolation: the zygote, and the wardens,
+program workers and body workers it forks (ADR-0002).
 _Avoid_: jail
 
 **Zygote**:
@@ -55,9 +55,20 @@ The clean interpreter that imports everything, builds nothing and forks a
 program worker per program (ADR-0001).
 _Avoid_: master
 
+**Warden**:
+The process between the zygote and one worker: it enters the worker's
+namespaces, owns its deadline and reports how it ended (ADR-0002).
+_Avoid_: supervisor, monitor
+
 **Program worker**:
-The process forked for one program, ended with it (ADR-0001).
+The process forked for one program, ended with it (ADR-0001); PID 1 of its
+own namespaces (ADR-0002).
 _Avoid_: runner, executor
+
+**Body worker**:
+The worker that reads a program worker's body bytes back, checks and measures
+them, under the same limits: nothing a program delivers is trusted (ADR-0002).
+_Avoid_: verifier
 
 ## Scoring
 

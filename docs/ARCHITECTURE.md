@@ -80,7 +80,7 @@ never from a message's wording:
 | `runtime` | any other exception, `SystemExit` and `MemoryError` included; or a program that ends without a result |
 | `checker_fail` | the program ended with a body and `check(body, "full")` is not `ok` |
 | `ok` | the program ended with a body the checker accepts |
-| `timeout` | the parent's deadline passed; it killed the process group |
+| `timeout` | the deadline passed; the warden killed the worker |
 | `crash` | the process ended without delivering a result: a signal, or an exit (`os._exit`, a kernel abort) |
 
 **Where a program's result comes from.** In the `cq` dialect, the argument of
@@ -91,48 +91,63 @@ and what a Workplane holding several solids scores as. Settled by the census.
 
 ## The sandbox
 
-**A program runs alone, on a fresh model, in a forked process** (ADR-0001).
+**A program runs alone, on a fresh model, in a forked process** (ADR-0001),
+**as PID 1 of its own namespaces, under a warden** (ADR-0002).
 
 ```
-caller ── pipe ──▶ zygote ──fork──▶ program worker (one per program, then gone)
-                   arris, numpy,    setsid → rlimits → unshare → compile → exec
-                   cq imported;     → check → write_body → result on a pipe
-                   builds nothing
+caller ── pipe ──▶ zygote ──fork──▶ warden ──fork──▶ program worker (PID 1)
+                   arris, numpy,    namespaces,      setsid → stdio → fds closed
+                   cq imported;     mounts read-only; → rlimits → Landlock
+                   builds nothing   deadline, status   → seccomp → compile → exec
+                                                       → write_body → result pipe
 ```
 
 - The **zygote** is a clean interpreter started by `subprocess`: forking the
-  caller would be unsafe, since a training loop has threads. It imports
-  everything once and never builds, so every fork starts with `arris.build`'s
-  default model unmade. It serves many forks and is replaced if it dies.
-- The **program worker** is one fork per program. Nothing survives it, so
+  caller would be unsafe, since a training loop has threads. Its environment
+  is `OPENBLAS_NUM_THREADS=1` and `PYTHONHASHSEED=0`, nothing else from the
+  caller's. It imports everything once and never builds, so every fork starts
+  with `arris.build`'s default model unmade. It serves many forks and is
+  replaced if it dies.
+- The **warden** is one fork per program. It enters new user, network, PID,
+  mount and IPC namespaces, makes every mount read-only, forks the program
+  worker and reports how it ended on a status pipe the worker never holds,
+  with whether the worker completed its isolation before the program ran.
+- The **program worker** is PID 1 of that PID namespace. Nothing survives it:
+  when it ends the kernel kills every process it left, `setsid` or not, so
   there is no state to reset and no worker to recycle after a crash.
-- **Timeout**: the parent owns the deadline, and kills the worker's process
-  group with `SIGKILL`. A worker that ignores everything still ends.
+- **Timeout**: the warden owns the deadline, polls the worker's pidfd until it
+  and then sends `SIGKILL`. A worker that ignores every signal still ends.
 - **Memory**: `RLIMIT_AS` before the program starts. An allocation past it
   raises `MemoryError` (`runtime`); a failure inside the kernel that aborts
-  is `crash`. `RLIMIT_CORE` is 0.
-- **Network**: `os.unshare(CLONE_NEWUSER | CLONE_NEWNET)` before the program
-  starts: an empty network namespace, in which a connect fails with
-  `ENETUNREACH`. Where unprivileged user namespaces are forbidden the sandbox
-  refuses to start rather than run unisolated.
-- **Processes**: `RLIMIT_NPROC` bounds a fork bomb. ⚠ OPEN: a descendant that
-  calls `setsid` leaves the process group the deadline kills; a PID namespace
-  closes that, to be measured in M0.
+  is `crash`. `RLIMIT_CORE` is 0. `memfd_create` and `shmget`, whose memory
+  the limit does not count, are refused.
+- **Network**: an empty network namespace, in which a connect fails with
+  `ENETUNREACH`; a socket of any family but `AF_INET` and `AF_INET6` is
+  refused, Unix sockets included (seccomp).
+- **Filesystem**: Landlock allows reading only beneath the interpreter's
+  prefixes, the site-packages directories and `arris_gym`'s own directory;
+  nothing is written anywhere, since every mount is read-only.
+- **Processes**: `RLIMIT_NPROC` is 4, counted per user namespace: the warden,
+  the worker and two more tasks. A fork bomb stops there.
 - **Concurrency**: the caller's `workers=N` bounds the live forks. Results
   come back in submission order whatever order workers finish in.
 
-The sandbox is Linux-only for now: it needs `fork`, `os.unshare` and
-`resource`. ⚠ OPEN: macOS and Windows, or a statement that scoring is
-Linux-only and other platforms use a container.
+Where user namespaces, Landlock, `mount_setattr` or seccomp are missing, the
+sandbox refuses to start rather than run unisolated. It is Linux-only, on
+x86-64 and AArch64. ⚠ OPEN: macOS and Windows, or a statement that scoring is
+Linux-only and other platforms use a container; Docker's default seccomp
+profile refuses the user namespace the sandbox needs.
 
 **Threat model.** A program is hostile. The boundary is the process and the
-namespaces; nothing relies on restricting Python's builtins inside it. A
-program can reach its own result pipe, so nothing it delivers is trusted: the
-parent reads the body back with `read_body` and runs the checker itself.
-⚠ OPEN: the filesystem. A worker can still read files, and in a training loop
-a program that opens the target's file games the reward. A mount namespace or
-Landlock closes it; to be chosen with M0's hostile corpus. Syscall filtering
-is not planned until a hostile program shows the need.
+namespaces; nothing relies on restricting Python's builtins inside it. Every
+limit is one the program cannot lift: rlimits are hard, its capabilities are
+dropped, and the read-only mounts are locked against a nested namespace. A
+program can reach its own result pipe, so nothing it delivers is trusted:
+a **body worker**, forked under a warden with the same limits, reads the body
+back with `read_body` and runs the checker, and the caller only reads what
+the body worker reports. What stays visible outside the readable directories
+is metadata (that a path exists, its size and times), never content. Syscall
+filtering beyond ADR-0002's list waits until a hostile program shows the need.
 
 **The cache** maps `hash(program, dialect, arris version, cq version)` to the
 result. SEED.md §6 keys it on the first three; `cq`'s version joins them

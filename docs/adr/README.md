@@ -18,3 +18,4 @@ training cycle starts from.
 | # | Title | Status |
 |---|---|---|
 | [0001](0001-a-program-runs-on-a-fresh-model-in-a-forked-process.md) | A program runs on a fresh model in a forked process | accepted |
+| [0002](0002-the-program-worker-is-pid-1-of-its-own-namespaces-under-a-warden.md) | The program worker is PID 1 of its own namespaces, under a warden | accepted |
