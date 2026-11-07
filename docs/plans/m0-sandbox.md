@@ -99,7 +99,9 @@ run(program, *, dialect="arris", timeout=5.0, memory=512 * 2**20) -> ExecResult
 run_many(programs, *, dialect=..., timeout=..., memory=..., workers=None)
     -> tuple[ExecResult, ...]            # submission order
 Sandbox(cache_dir=None)                  # .run, .run_many, .executions, .close
-digest(results) -> str;  dump_text(result) -> str;  dump_png(result, path)
+digest(results) -> str;  dump_text(result) -> str
+dump_png(result, path, *, timeout=..., memory=...)   # step 9: a mesh worker (job kind 3)
+    # tessellates at 1/200 of the diagonal; raises ValueError without a body, RuntimeError
 SandboxUnavailable                       # the caller's: no namespaces, no Landlock
 ```
 - `BodyRef` is defined here: `data: bytes` (the worker's `write_body`) and
@@ -140,7 +142,7 @@ isolation guarantee whose correctness has to be established here.
 - [x] Step 6 **[2]** — `run_many` and `Sandbox`: bounded live forks, submission order whatever finishes first, thread-safe `run`, the lazy default instance. `hypothesis`: `run` raises on no text, surrogates and NULs included; caller's mistakes raise.
 - [x] Step 7 **[2]** — the cache: key, disk layout, what is never cached, `.executions`. Tests: a second run makes 0 executions, rows equal; changed `memory` misses; each uncacheable outcome re-runs; a torn entry is a miss.
 - [x] Step 8 **[2]** — `digest` and `dump_text`: rows in program order, floats as hex, `seconds` excluded. Tests: equal across `workers` and zygotes, a one-bit change of a measure moves it, a refusal's text diffs in a committed golden built by hand.
-- [ ] Step 9 **[2]** — `dump_png`: body worker returns the tessellation; `numpy` z-buffer, fixed views, `zlib` PNG, no new dependency. Test: PNG decodes, size fixed, silhouette area of a box from a fixed view matches its closed form within a pixel row. Look at one (`inspect`); update that skill's "until they exist".
+- [x] Step 9 **[2]** — `dump_png`: body worker returns the tessellation; `numpy` z-buffer, fixed views, `zlib` PNG, no new dependency. Test: PNG decodes, size fixed, silhouette area of a box from a fixed view matches its closed form within a pixel row. Look at one (`inspect`); update that skill's "until they exist".
 - [ ] Step 10 **[2]** — acceptance: `tests/test_m0_acceptance.py`; `ci.yml` lifts the runners' user-namespace restriction; gate time measured, kept under a minute.
 
 ## Acceptance

@@ -36,7 +36,7 @@ import arris.build
 import numpy
 
 import arris_gym.cq
-from arris_gym.sandbox import _body, _isolate, _program
+from arris_gym.sandbox import _body, _isolate, _mesh, _program
 
 # Imported for the forks, not used here: every worker starts with them loaded.
 _PRELOADED = (arris, arris.build, numpy, arris_gym.cq)
@@ -92,6 +92,7 @@ class JobKind(enum.IntEnum):
 
     PROGRAM = 1  # run the payload as a program (`sandbox/_program.py`)
     BODY = 2  # read the payload back as body bytes (`sandbox/_body.py`)
+    MESH = 3  # tessellate the payload, a body's bytes, for a picture (`sandbox/_mesh.py`)
 
 
 # The job message: kind, deadline (a `time.monotonic()` instant: the clock is
@@ -103,6 +104,7 @@ _JOB_FDS = 4
 _HANDLERS: dict[int, Callable[[int, int], None]] = {
     JobKind.PROGRAM: _program.execute,
     JobKind.BODY: _body.execute,
+    JobKind.MESH: _mesh.execute,
 }
 
 

@@ -18,9 +18,9 @@ agent's eyes during work; a picture is never a test (`docs/README.md`).
   written under `.scratch/inspect/<slug>/`, then read with the Read tool,
   which shows the image. For a disagreement, the arris and Open CASCADE
   results side by side from the same views.
-- Both come from the harness (`docs/ROADMAP.md` M0). Until they exist, print
-  the measures with a short script through the sandbox; never claim to have
-  looked at a picture that was not made.
+- Both come from the harness: `arris_gym.dump_text(result)` and
+  `arris_gym.dump_png(result, path)` (a 512 x 512 sheet: front, right, top,
+  iso). Never claim to have looked at a picture that was not made.
 
 Look for: a hole that came out faceted, a workplane on the wrong face, a
 mirrored part with a matching volume, a selector that took the other of two

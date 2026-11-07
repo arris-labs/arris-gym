@@ -1,7 +1,7 @@
 """Zygote, program worker, ExecResult and Status, result cache (ADR-0001)."""
 
 from arris_gym.sandbox._digest import digest, dump_text
-from arris_gym.sandbox._sandbox import Sandbox, run, run_many
+from arris_gym.sandbox._sandbox import Sandbox, dump_png, run, run_many
 from arris_gym.sandbox._zygote import SandboxUnavailable
 from arris_gym.sandbox.outcome import (
     ArrisRefusal,
@@ -24,6 +24,7 @@ __all__ = [
     "Status",
     "Versions",
     "digest",
+    "dump_png",
     "dump_text",
     "run",
     "run_many",

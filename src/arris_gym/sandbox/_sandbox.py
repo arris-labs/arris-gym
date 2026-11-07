@@ -12,7 +12,7 @@ import threading
 from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor
 
-from arris_gym.sandbox import _cache, _run
+from arris_gym.sandbox import _cache, _picture, _run
 from arris_gym.sandbox._zygote import Zygote
 from arris_gym.sandbox.outcome import Dialect, ExecResult
 
@@ -128,6 +128,18 @@ class Sandbox:
             futures = [pool.submit(self._one, zygote, t, resolved, timeout, memory) for t in texts]
             return tuple(f.result() for f in futures)
 
+    def dump_png(
+        self,
+        result: ExecResult,
+        path: str | os.PathLike[str],
+        *,
+        timeout: float = _run.DEFAULT_TIMEOUT,
+        memory: int = _run.DEFAULT_MEMORY,
+    ) -> None:
+        """Write a picture of the result's body to `path`; see `arris_gym.dump_png`."""
+        _run.check_arguments(Dialect.ARRIS, timeout, memory)
+        _picture.draw(self._live_zygote(), result, path, timeout, memory)
+
     def close(self) -> None:
         """Stop the zygote. Programs already forked keep their deadlines."""
         with self._lock:
@@ -207,3 +219,30 @@ def run_many(
     return default_sandbox().run_many(
         programs, dialect=dialect, timeout=timeout, memory=memory, workers=workers
     )
+
+
+def dump_png(
+    result: ExecResult,
+    path: str | os.PathLike[str],
+    *,
+    timeout: float = _run.DEFAULT_TIMEOUT,
+    memory: int = _run.DEFAULT_MEMORY,
+) -> None:
+    """Write a picture of a result's body to the PNG file `path`.
+
+    The body is tessellated by arris in a worker of its own, under the same
+    limits as a program, and drawn by a `numpy` z-buffer as one 512 x 512
+    greyscale sheet of four fixed orthographic views: front, right, top and
+    an oblique one, each fitted to the part. It is for looking at, never for
+    testing. Raises `ValueError` for a result with no body (its status is
+    not `ok` or `checker_fail`) and `RuntimeError` when the body cannot be
+    tessellated in time, with the worker's own words.
+
+    >>> import arris_gym as ag, tempfile, pathlib
+    >>> ok = ag.run("import arris.build as b\\nresult = b.Solid.box((0, 0, 0), (1, 2, 3))")
+    >>> with tempfile.TemporaryDirectory() as folder:
+    ...     ag.dump_png(ok, pathlib.Path(folder) / "box.png")
+    ...     (pathlib.Path(folder) / "box.png").read_bytes()[:4]
+    b'\\x89PNG'
+    """
+    default_sandbox().dump_png(result, path, timeout=timeout, memory=memory)

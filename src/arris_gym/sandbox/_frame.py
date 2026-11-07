@@ -86,3 +86,31 @@ class BodyFrame(BaseModel):
         if bool(self.violations) != (self.status is Status.CHECKER_FAIL):
             raise ValueError("violations are set exactly when status is CHECKER_FAIL")
         return self
+
+
+class MeshFrame(BaseModel):
+    """A mesh worker's account of the body bytes it was given: a tessellation.
+
+    Guarantees, enforced on parsing: `status` is `OK` or `RUNTIME`;
+    `positions` (little-endian float64 triples) and `triangles` (little-endian
+    uint32 triples) are non-empty exactly when it is `OK`. They travel as
+    base64. That the triangles index the positions is checked by the reader
+    (`sandbox/_picture.py`), which trusts nothing.
+    """
+
+    model_config = _CONFIG
+
+    status: Status
+    message: str
+    positions: bytes
+    triangles: bytes
+
+    @model_validator(mode="after")
+    def _fields_agree_with_status(self) -> Self:
+        if self.status not in (Status.OK, Status.RUNTIME):
+            raise ValueError(f"a mesh worker does not decide {self.status.value}")
+        if bool(self.positions) != (self.status is Status.OK) or bool(self.triangles) != (
+            self.status is Status.OK
+        ):
+            raise ValueError("a mesh is delivered exactly when status is OK")
+        return self

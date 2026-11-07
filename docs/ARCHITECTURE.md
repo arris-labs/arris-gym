@@ -306,5 +306,6 @@ arris rows leave as a consumer report (arris ADR-0020).
 ## Inspection
 
 Everything is checkable without a GUI: a result dumps to text that diffs in a
-test and to a PNG through arris's tessellation. Pictures are for the agent's
+test and to a PNG through arris's tessellation (`dump_png`: a mesh worker tessellates
+the body, a `numpy` z-buffer draws four fixed views). Pictures are for the agent's
 eyes; acceptance is numbers (`inspect` skill).

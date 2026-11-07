@@ -24,3 +24,5 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   read or `diff`; `arris_gym.digest(results)` hashes results in order, floats
   exact and wall-clock time left out, so two runs are equal when their
   digests are.
+- `arris_gym.dump_png(result, path)` draws a result's body as a PNG, four
+  fixed views of the part in one greyscale sheet, to look at.

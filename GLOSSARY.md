@@ -90,6 +90,11 @@ The worker that reads a program worker's body bytes back, checks and measures
 them, under the same limits: nothing a program delivers is trusted (ADR-0002).
 _Avoid_: verifier
 
+**Mesh worker**:
+The worker that tessellates a body's bytes for a picture (`dump_png`), under the
+same limits as the others: the caller parses what it writes and trusts none of it.
+_Avoid_: renderer
+
 ## Scoring
 
 **Reward**:
