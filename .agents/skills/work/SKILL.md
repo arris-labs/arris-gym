@@ -23,7 +23,8 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    **[CI]** step is worked on `plan/<slug>`, and the push its test needs is
    asked for before writing it, not after.
 2. Implement the step with its test or fixture, the docs it changes and a
-   docstring on every new public item. A new status brings a program that
+   docstring on every new public item. An `arris` name comes from
+   `docs/ARRIS_API.md`, never from memory. A new status brings a program that
    reaches it; a new `cq` call brings its fidelity row; a new metric brings
    its closed-form test; a new path program text reaches brings its
    `hypothesis` property. An ADR or design doc the step writes is run through
@@ -33,7 +34,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
 3. Run the step's own tests (`uv run pytest tests/<file>`) and `uv run ruff
    format`. The hook runs the gate at the commit. A run expected past a
    minute goes with `run_in_background`, and the step goes on with what does
-   not depend on it (`.agents/rules/git.md`, no foreground waits). For a
+   not depend on it (`.agents/rules/git.md`, no foreground waits). A
+   subagent has no one to notify: it runs in the foreground under `timeout`
+   of at most 110 s and splits a probe that needs longer. For a
    change to what a program builds or scores, look at the result (`inspect`
    skill) before trusting a green test.
 4. Read your own `git diff --cached` against `.agents/review.md` and
@@ -48,7 +51,10 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    step's work names that step, never the step in hand.
 6. A step that shows the plan is wrong edits the plan in that commit and
    says so; a rescope inside the plan is the agent's to decide, written as
-   *Settled* with its reason, and the work goes on. A failure that resists
+   *Settled* with its reason, and the work goes on. A *Settled* note never
+   narrows what the acceptance proves and never reshapes a fixture to avoid
+   an outcome: a result that varies between runs breaks the determinism
+   rule, becomes an xfail `regression/` fixture, and is an open question. A failure that resists
    a first fix gets the `inspect` skill's diagnosis loop (a red loop, then
    ranked hypotheses) before any theory. A failure outside the step's
    scope becomes an xfail `regression/` fixture in the same step; its fix
@@ -96,7 +102,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    the human.
 3. On each hand-back, check what landed: one commit per step of the
    batch, each naming `(plans/<slug> step N)`, every step ticked, `git
-   status` is clean. Then read its surprises: a hand-back that widens a
+   status` is clean. Read `git diff <batch base> -- docs/plans/<slug>.md`
+   too: each new *Settled* note is judged against the list below whether or
+   not the hand-back mentions it. Then read its surprises: a hand-back that widens a
    tolerance, weakens an assertion, drops a row from an aggregate, or lands
    an acceptance item other than as the plan words it (a unit test for its
    fixture) has **not landed**, however it is phrased ("may deserve a
