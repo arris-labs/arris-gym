@@ -7,7 +7,7 @@ the class of model that executes it.
 |---|---|---|
 | 1 | **[1]** routine | the design says exactly what to write; the tests are mechanical |
 | 2 | **[2]** careful | a numeric, geometric or semantic case to get right within a given design |
-| 3 | **[3]** unproven | an algorithm, an isolation guarantee or a CadQuery semantic whose correctness is established here |
+| 3 | **[3]** unproven | an algorithm, an isolation guarantee or a CadQuery semantic whose correctness is established here; any step whose test is a hostile program or that changes what a worker sends back |
 
 A step runs on its grade's tier. A step that needs another tier than its
 grade names it after the grade, `**[1, tier 3]**`: a small step that needs
