@@ -15,7 +15,8 @@ later session.
 1. **Read the sessions.** Nothing given: this session, from your own
    context. A plan slug or session id: the transcripts under
    `~/.claude*/projects/<this checkout's path, slashes as dashes>/*.jsonl`
-   that mention it (a digest script is a backlog line). Read the plan's
+   that mention it (`tools/session-digest.py <jsonl>...` lists the human's
+   messages, tool counts, failed calls and repeated reads). Read the plan's
    commits too (`git log --grep='plans/<slug>'`), and count the steps
    that needed a later commit naming them: a tier often reworked is a
    grade candidate.
