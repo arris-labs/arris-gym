@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections import Counter
+import re
 from pathlib import Path
 
 from arris_gym.census import CensusReport
@@ -11,6 +11,13 @@ C1 = Path(__file__).parent / "fixtures" / "c1"
 FAMILIES = 3
 PER_FAMILY = 100
 MIN_PROGRAMS = 100
+STEM = re.compile(r"(.+)_\d+_[^_]+")
+
+
+def family_of(stem: str) -> str:
+    match = STEM.fullmatch(stem)
+    assert match, stem
+    return match.group(1)
 
 
 def test_slice_matches_census() -> None:
@@ -23,11 +30,10 @@ def test_slice_matches_census() -> None:
 
     eligible = [f.family for f in report.families if f.programs >= MIN_PROGRAMS][:FAMILIES]
     assert f"# families: {', '.join(eligible)}" in header
-    # Stems are `<family>_<number>_<suffix>`; families are found by prefix, longest first.
-    owners: Counter[str] = Counter()
+    by_name = {f.family: f for f in report.families}
     for index, family in enumerate(eligible):
         block = stems[index * PER_FAMILY : (index + 1) * PER_FAMILY]
         assert block == sorted(block)
-        assert all(stem.startswith(family + "_") for stem in block)
-        owners[family] = len(block)
-    assert owners == Counter({family: PER_FAMILY for family in eligible})
+        # A stem is `<family>_<number>_<suffix>`; the family is all before the number.
+        assert {family_of(stem) for stem in block} == {family}
+        assert by_name[family].programs >= len(block) == PER_FAMILY
