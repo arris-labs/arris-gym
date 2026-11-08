@@ -83,7 +83,9 @@ families are ranked by how few API forms they need, and
    and licence (`CC-BY-4.0`) as constants; `huggingface_hub.snapshot_download`
    of `code_gen/data/*.parquet` at that revision into the HF cache, and
    `pyarrow` reading only `stem`, `family`, `code`. A row count other than
-   17,900 raises (not the pinned corpus: no program's fault). Both are an optional
+   17,900 raises `ValueError` (the module's `read_parquet(paths, expected=17_900)`;
+   `read()` = `download()` + it; repo `BenchCAD/BenchCAD`; `pyarrow` has no stubs,
+   so mypy ignores its missing imports) (not the pinned corpus: no program's fault). Both are an optional
    extra `[corpus]`, pinned exactly, and in the `dev` group so `mypy` sees
    them; imported lazily, so `import arris_gym` needs neither.
 6. **CLI**: `[project.scripts] arris-gym = "arris_gym._cli:main"`;
@@ -122,7 +124,7 @@ guarantee or a CadQuery semantic whose correctness has to be established here.
 - [x] Step 3 **[2]** — `CensusReport` JSON and digest (delta 4): a
   round-trip is equal; `hypothesis`: a shuffled corpus gives the same
   digest; a changed count changes it.
-- [ ] Step 4 **[2]** — the `[corpus]` extra and `benchcad` reader (delta 5);
+- [x] Step 4 **[2]** — the `[corpus]` extra and `benchcad` reader (delta 5);
   `uv.lock` changes here. Tested offline on a parquet the test writes with
   `pyarrow` (columns, order, the row-count refusal); the download itself is
   not in the gate.

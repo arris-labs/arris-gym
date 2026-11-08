@@ -23,13 +23,22 @@ dependencies = [
     "pydantic>=2.12,<3",
 ]
 
+[project.optional-dependencies]
+# Reading a corpus (arris-gym census): not needed to run or score a program.
+corpus = [
+    "huggingface-hub==2.4.0",
+    "pyarrow==26.0.1",
+]
+
 [project.urls]
 Repository = "https://github.com/arris-labs/arris-gym"
 
 [dependency-groups]
 dev = [
+    "huggingface-hub==2.4.0",
     "hypothesis>=6.140",
     "mypy>=1.18",
+    "pyarrow==26.0.1",
     "pytest>=8.4",
     "ruff>=0.14",
 ]
@@ -60,6 +69,11 @@ strict = true
 python_version = "3.12"
 files = ["src", "tests", "tools"]
 exclude = ["^tools/oracle/", "^tests/fixtures/"]
+
+# pyarrow ships neither stubs nor py.typed; it is used in the corpus reader only.
+[[tool.mypy.overrides]]
+module = ["pyarrow", "pyarrow.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
