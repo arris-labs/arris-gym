@@ -1,0 +1,7 @@
+{
+  "calls": {"Workplane.text": 1, "cq.Workplane": 1},
+  "forms": {"Workplane.text(str, num, num)": 1, "cq.Workplane(str)": 1},
+  "selectors": {},
+  "unknown": {},
+  "end_form": "result = …"
+}

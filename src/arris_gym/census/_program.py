@@ -1,0 +1,399 @@
+"""What one program writes: its calls, argument forms, selector strings and end (ADR-0003).
+
+A program is parsed with `ast.parse` and never compiled or run: parsing runs
+nothing of it, so it may happen in the caller's process. Every traversal here
+is iterative, so whether a program is counted depends on the program and the
+Python grammar only, never on how deep the caller's stack is.
+"""
+
+from __future__ import annotations
+
+import ast
+import builtins
+import warnings
+from collections import Counter
+from collections.abc import Iterable
+from dataclasses import dataclass
+from typing import Final, Self
+
+from pydantic import BaseModel, ConfigDict, model_validator
+
+Counts = tuple[tuple[str, int], ...]
+"""A count per key, sorted by key, each key once, each count at least 1."""
+
+CQ: Final = "cq"
+"""The receiver of a call on the `cadquery` module, whatever alias binds it."""
+BUILTIN: Final = "builtin"
+"""The receiver of `show_object` and of Python's builtins, when the program leaves them unbound."""
+UNKNOWN: Final = "?"
+"""The receiver of a call the census cannot place; its callee is listed as written."""
+NON_LITERAL: Final = "<non-literal>"
+"""The selector string of a selector call whose selector is not a string literal."""
+
+# The methods whose first positional argument (or `selector=`) is a selector string.
+SELECTOR_METHODS: Final = ("faces", "edges", "vertices", "wires", "solids", "shells", "compounds")
+_CADQUERY: Final = "cadquery"
+_SHOW_OBJECT: Final = "show_object"
+# Python's own builtins, as the interpreter defines them: what `site` or a
+# notebook adds to the module (`exit`, `help`, `display`) depends on the
+# caller's process, so it is left out. Membership only: no order from this
+# set reaches a result.
+_PYTHON_BUILTINS: Final = frozenset(
+    name
+    for name, value in vars(builtins).items()
+    if getattr(value, "__module__", None) == builtins.__name__
+)
+
+
+class _Frozen(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+def _check_counts(name: str, counts: Counts) -> None:
+    keys = [key for key, _ in counts]
+    if keys != sorted(set(keys)):
+        raise ValueError(f"{name} is not sorted by key with each key once")
+    if any(count < 1 for _, count in counts):
+        raise ValueError(f"{name} has a count below 1")
+
+
+class CorpusProgram(_Frozen):
+    """One program of a corpus: its `stem` (unique in the corpus), its family and its text.
+
+    Guarantees nothing about `text`: it is a model-written program, parsed by
+    the census and never run by it.
+    """
+
+    stem: str
+    family: str
+    text: str
+
+
+class ProgramCensus(_Frozen):
+    """What a parsed program writes, counted (ADR-0003).
+
+    `calls` counts each call as `receiver.name` (`Workplane.extrude`); `forms`
+    counts each call with its argument form (`Workplane.extrude(num;
+    both=bool)`); `selectors` counts each selector string as written;
+    `unknown` counts the callee text of each call whose receiver is `?`;
+    `end_form` is the program's last statement, normalised. Guarantees every
+    `Counts` sorted by key; refuses one that is not.
+    """
+
+    stem: str
+    calls: Counts
+    forms: Counts
+    selectors: Counts
+    unknown: Counts
+    end_form: str
+
+    @model_validator(mode="after")
+    def _counts_sorted(self) -> Self:
+        for name in ("calls", "forms", "selectors", "unknown"):
+            _check_counts(name, getattr(self, name))
+        return self
+
+
+class Unparsable(_Frozen):
+    """A program the census could not parse or walk: a census outcome, not a `Status`.
+
+    Guarantees `kind` is the exception's class name and `message` its `str()`,
+    both unchanged.
+    """
+
+    stem: str
+    kind: str
+    message: str
+
+
+def census_program(program: CorpusProgram) -> ProgramCensus | Unparsable:
+    """Count what `program` writes, or say why it cannot be parsed. Never raises on a program.
+
+    Parses and never runs: the warning filters in force do not change the
+    answer (a `SyntaxWarning` is never raised as an error here).
+
+    >>> text = "import cadquery as cq\\nr = cq.Workplane('XY').box(1, 2, 3).faces('>Z')\\n"
+    >>> c = census_program(CorpusProgram(stem="p", family="f", text=text))
+    >>> c.calls
+    (('Workplane.box', 1), ('Workplane.faces', 1), ('cq.Workplane', 1))
+    >>> c.forms[0], c.selectors, c.end_form
+    (('Workplane.box(num, num, num)', 1), (('>Z', 1),), 'r = …')
+    >>> census_program(CorpusProgram(stem="q", family="f", text="x = (")).kind
+    'SyntaxError'
+    """
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            tree = ast.parse(program.text)
+        return _count(program.stem, program.text, tree)
+    # Any exception out of parse or walk makes the program unparsable, kept
+    # verbatim: the census never raises on a program (ADR-0003).
+    except Exception as error:  # noqa: BLE001
+        return Unparsable(stem=program.stem, kind=type(error).__name__, message=str(error))
+
+
+@dataclass(frozen=True)
+class _Path:
+    """A name bound by an import to a dotted path: `cadquery`, `cadquery.Workplane`, `math`."""
+
+    path: str
+
+
+_Binding = ast.expr | _Path | None
+"""One binding of a name: an assigned value, an import, or None for anything else."""
+
+
+class _Pending:
+    """A chain rooted in a name whose root is not yet known (the fixpoint's bottom)."""
+
+
+_PENDING: Final = _Pending()
+
+
+class _Program:
+    def __init__(self, tree: ast.Module) -> None:
+        self.bindings: dict[str, list[_Binding]] = {}
+        self._collect(tree)
+        self.roots = self._resolve_roots()
+
+    def _bind(self, name: str, binding: _Binding) -> None:
+        self.bindings.setdefault(name, []).append(binding)
+
+    def _collect(self, tree: ast.Module) -> None:
+        direct: dict[ast.Name, ast.expr] = {}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        direct[target] = node.value
+            elif (
+                isinstance(node, ast.AnnAssign | ast.NamedExpr)
+                and isinstance(node.target, ast.Name)
+                and node.value is not None
+            ):
+                direct[node.target] = node.value
+        for node in ast.walk(tree):
+            match node:
+                case ast.Name(id=name, ctx=ast.Store() | ast.Del()):
+                    self._bind(name, direct.get(node))
+                case ast.Import(names=aliases):
+                    for alias in aliases:
+                        if alias.asname is None:
+                            top = alias.name.split(".")[0]
+                            self._bind(top, _Path(top))
+                        else:
+                            self._bind(alias.asname, _Path(alias.name))
+                case ast.ImportFrom(module=module, names=aliases, level=level):
+                    for alias in aliases:
+                        if alias.name == "*":
+                            continue
+                        local = alias.asname or alias.name
+                        absolute = level == 0 and module is not None
+                        self._bind(local, _Path(f"{module}.{alias.name}") if absolute else None)
+                case (
+                    ast.FunctionDef(name=name)
+                    | ast.AsyncFunctionDef(name=name)
+                    | ast.ClassDef(name=name)
+                    | ast.arg(arg=name)
+                    | ast.ExceptHandler(name=str() as name)
+                    | ast.MatchAs(name=str() as name)
+                    | ast.MatchStar(name=str() as name)
+                    | ast.MatchMapping(rest=str() as name)
+                ):
+                    self._bind(name, None)
+
+    def path_of(self, name: str) -> str | None:
+        """The dotted path `name` is bound to, if every binding of it is the same import."""
+        bindings = self.bindings.get(name, [])
+        paths = {b.path for b in bindings if isinstance(b, _Path)}
+        if len(paths) == 1 and all(isinstance(b, _Path) for b in bindings):
+            return paths.pop()
+        return None
+
+    def dotted(self, node: ast.expr) -> str | None:
+        """The import path of `a.b.c` whose `a` an import binds; None for anything else."""
+        attrs: list[str] = []
+        while isinstance(node, ast.Attribute):
+            attrs.append(node.attr)
+            node = node.value
+        if not isinstance(node, ast.Name):
+            return None
+        path = self.path_of(node.id)
+        if path is None:
+            return None
+        return ".".join([path, *reversed(attrs)])
+
+    def chain_root(self, node: ast.expr, roots: dict[str, str | None]) -> str | _Pending | None:
+        """The root constructor of the chain `node` is: `Workplane` for `cq.Workplane(…).box(…)`."""
+        while True:
+            if isinstance(node, ast.Call):
+                path = self.dotted(node.func)
+                if path is not None:
+                    is_constructor = _is_cadquery(path) and "." in path
+                    return path.rsplit(".", 1)[-1] if is_constructor else None
+                if isinstance(node.func, ast.Attribute):
+                    node = node.func.value
+                    continue
+                return None
+            if isinstance(node, ast.Name):
+                if node.id not in roots:
+                    return None
+                root = roots[node.id]
+                return _PENDING if root == "" else root
+            return None
+
+    def _resolve_roots(self) -> dict[str, str | None]:
+        # The least fixpoint over bottom ("") < one root < None (no single root).
+        # Each name only moves up, so this ends within two passes per name.
+        roots: dict[str, str | None] = dict.fromkeys(self.bindings, "")
+        changed = True
+        while changed:
+            changed = False
+            for name, bindings in self.bindings.items():
+                found = self._root_from(bindings, roots)
+                if found != roots[name]:
+                    roots[name] = found
+                    changed = True
+        return {name: (root or None) for name, root in roots.items()}
+
+    def _root_from(self, bindings: Iterable[_Binding], roots: dict[str, str | None]) -> str | None:
+        found: set[str] = set()
+        for binding in bindings:
+            if not isinstance(binding, ast.expr):
+                return None
+            root = self.chain_root(binding, roots)
+            if root is None:
+                return None
+            if isinstance(root, str):
+                found.add(root)
+        if len(found) > 1:
+            return None
+        return found.pop() if found else ""
+
+
+def _is_cadquery(path: str) -> bool:
+    return path == _CADQUERY or path.startswith(_CADQUERY + ".")
+
+
+def _callee(program: _Program, call: ast.Call) -> tuple[str, bool]:
+    """A call as `receiver.name`, and whether its receiver is `?`."""
+    func = call.func
+    path = program.dotted(func)
+    if path is not None and "." in path:
+        if _is_cadquery(path):
+            return CQ + path[len(_CADQUERY) :], False
+        return path, False
+    if isinstance(func, ast.Name):
+        unbound = func.id not in program.bindings
+        if unbound and (func.id == _SHOW_OBJECT or func.id in _PYTHON_BUILTINS):
+            return f"{BUILTIN}.{func.id}", False
+        return f"{UNKNOWN}.{func.id}", True
+    if isinstance(func, ast.Attribute):
+        root = program.chain_root(func.value, program.roots)
+        if isinstance(root, str):
+            return f"{root}.{func.attr}", False
+        return f"{UNKNOWN}.{func.attr}", True
+    return f"{UNKNOWN}.<expr>", True
+
+
+def _kind(node: ast.expr) -> str:
+    """An argument's literal kind: str, num, bool, none, tuple, list, call, name or expr."""
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub | ast.UAdd):
+        operand = node.operand
+        if isinstance(operand, ast.Constant) and _is_number(operand.value):
+            return "num"
+        return "expr"
+    match node:
+        case ast.Constant(value=bool()):
+            return "bool"
+        case ast.Constant(value=str()):
+            return "str"
+        case ast.Constant(value=None):
+            return "none"
+        case ast.Constant(value=value) if _is_number(value):
+            return "num"
+        case ast.Tuple():
+            return "tuple"
+        case ast.List():
+            return "list"
+        case ast.Call():
+            return "call"
+        case ast.Name():
+            return "name"
+        case ast.Starred(value=value):
+            return "*" + _kind(value)
+    return "expr"
+
+
+def _is_number(value: object) -> bool:
+    return isinstance(value, int | float | complex) and not isinstance(value, bool)
+
+
+def _form(name: str, call: ast.Call) -> str:
+    """`name(kind, …; keyword=kind, …)`, keywords sorted, `**kind` for a `**` argument."""
+    positional = ", ".join(_kind(arg) for arg in call.args)
+    keywords = sorted((keyword.arg or "**", _kind(keyword.value)) for keyword in call.keywords)
+    named = ", ".join(f"{k}={kind}" if k != "**" else f"**{kind}" for k, kind in keywords)
+    inside = f"{positional}; {named}" if positional and named else positional or named
+    return f"{name}({inside})"
+
+
+def _selector(call: ast.Call) -> str | None:
+    """The selector string of a selector call, as written; None for any other call."""
+    if not (isinstance(call.func, ast.Attribute) and call.func.attr in SELECTOR_METHODS):
+        return None
+    if call.args:
+        argument: ast.expr | None = call.args[0]
+    else:
+        argument = next((k.value for k in call.keywords if k.arg == "selector"), None)
+    if argument is None:
+        return None
+    if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
+        return argument.value
+    return NON_LITERAL
+
+
+def _end_form(tree: ast.Module) -> str:
+    """`show_object(name)`, `show_object(…)`, `name = …`, `empty` or `other`."""
+    if not tree.body:
+        return "empty"
+    match tree.body[-1]:
+        case ast.Expr(value=ast.Call(func=ast.Name(id=name), args=args)) if name == _SHOW_OBJECT:
+            if args and isinstance(args[0], ast.Name):
+                return f"{_SHOW_OBJECT}({args[0].id})"
+            return f"{_SHOW_OBJECT}(…)"
+        case ast.Assign(targets=[ast.Name(id=name)]) | ast.AnnAssign(target=ast.Name(id=name)):
+            return f"{name} = …"
+    return "other"
+
+
+def _sorted(counter: Counter[str]) -> Counts:
+    return tuple(sorted(counter.items()))
+
+
+def _count(stem: str, text: str, tree: ast.Module) -> ProgramCensus:
+    program = _Program(tree)
+    calls: Counter[str] = Counter()
+    forms: Counter[str] = Counter()
+    selectors: Counter[str] = Counter()
+    unknown: Counter[str] = Counter()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        name, is_unknown = _callee(program, node)
+        calls[name] += 1
+        forms[_form(name, node)] += 1
+        if is_unknown:
+            segment = ast.get_source_segment(text, node.func)
+            unknown[segment if segment is not None else name] += 1
+        selector = _selector(node)
+        if selector is not None:
+            selectors[selector] += 1
+    return ProgramCensus(
+        stem=stem,
+        calls=_sorted(calls),
+        forms=_sorted(forms),
+        selectors=_sorted(selectors),
+        unknown=_sorted(unknown),
+        end_form=_end_form(tree),
+    )

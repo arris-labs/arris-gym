@@ -1,0 +1,7 @@
+{
+  "calls": {"Vector.toTuple": 1, "Workplane.center": 1, "Workplane.cut": 1, "Workplane.extrude": 2, "Workplane.polygon": 1, "Workplane.rect": 1, "builtin.show_object": 1, "cq.Vector": 1, "cq.Workplane": 2, "math.sqrt": 1},
+  "forms": {"Vector.toTuple()": 1, "Workplane.center(*expr)": 1, "Workplane.cut(name)": 1, "Workplane.extrude(num)": 2, "Workplane.polygon(num, name)": 1, "Workplane.rect(num, num)": 1, "builtin.show_object(name)": 1, "cq.Vector(num, num, num)": 1, "cq.Workplane(str)": 2, "math.sqrt(num)": 1},
+  "selectors": {},
+  "unknown": {},
+  "end_form": "show_object(result)"
+}

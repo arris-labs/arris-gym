@@ -126,6 +126,31 @@ The count of every API call, selector string and argument form in a corpus.
 It decides what `cq` implements and in what order.
 _Avoid_: audit
 
+**Unparsable**:
+A program the census could not parse, kept with its exception's class and
+message verbatim. A census outcome, not a status: nothing ran (ADR-0003).
+_Avoid_: invalid program
+
+**Receiver**:
+What the census says a call is made on: `cq`, a root constructor
+(`Workplane`), `builtin`, an imported module, or `?` when it cannot place
+it. Written as the program reads, not CadQuery's runtime type (ADR-0003).
+
+**API form**:
+A call with its argument form, the kinds of its arguments:
+`Workplane.extrude(num; both=bool)` (ADR-0003).
+_Avoid_: signature, overload
+
+**Selector string**:
+The string a program passes to `faces`, `edges` and the other selector
+methods, as written: `'>Z or <Z'` (ADR-0003).
+
+**Slice**:
+The 300 BenchCAD programs C1 runs end to end: the first 100 by stem of each
+of the 3 families the census ranks first among those with at least 100
+programs, listed in `tests/fixtures/c1/slice.txt` (ADR-0003).
+_Avoid_: sample
+
 **Oracle**:
 CadQuery on Open CASCADE, run out of process under `tools/oracle/`, never
 imported.

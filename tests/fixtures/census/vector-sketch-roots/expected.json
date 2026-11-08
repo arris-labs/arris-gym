@@ -1,0 +1,7 @@
+{
+  "calls": {"Sketch.fillet": 1, "Sketch.rect": 1, "Sketch.vertices": 1, "Vector.normalized": 1, "Workplane.extrude": 1, "Workplane.placeSketch": 1, "builtin.show_object": 1, "cq.Sketch": 1, "cq.Vector": 1, "cq.Workplane": 1},
+  "forms": {"Sketch.fillet(num)": 1, "Sketch.rect(num, num)": 1, "Sketch.vertices()": 1, "Vector.normalized()": 1, "Workplane.extrude(expr)": 1, "Workplane.placeSketch(name)": 1, "builtin.show_object(name)": 1, "cq.Sketch()": 1, "cq.Vector(num, num, num)": 1, "cq.Workplane(str)": 1},
+  "selectors": {},
+  "unknown": {},
+  "end_form": "show_object(result)"
+}

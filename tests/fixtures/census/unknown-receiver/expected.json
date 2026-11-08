@@ -1,0 +1,7 @@
+{
+  "calls": {"?.peg": 2, "?.union": 2, "Workplane.circle": 1, "Workplane.extrude": 1, "builtin.len": 1, "builtin.show_object": 1, "cq.Workplane": 1},
+  "forms": {"?.peg(num)": 2, "?.union(expr)": 1, "?.union(name)": 1, "Workplane.circle(num)": 1, "Workplane.extrude(name)": 1, "builtin.len(name)": 1, "builtin.show_object(name)": 1, "cq.Workplane(str)": 1},
+  "selectors": {},
+  "unknown": {"parts[0].union": 1, "peg": 2, "result.union": 1},
+  "end_form": "show_object(result)"
+}

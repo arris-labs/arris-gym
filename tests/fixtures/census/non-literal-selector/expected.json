@@ -1,0 +1,7 @@
+{
+  "calls": {"Workplane.box": 1, "Workplane.edges": 2, "Workplane.faces": 2, "Workplane.fillet": 1, "Workplane.vertices": 1, "cq.Workplane": 1, "cq.selectors.NearestToPointSelector": 1},
+  "forms": {"Workplane.box(num, num, num)": 1, "Workplane.edges(call)": 1, "Workplane.edges(selector=str)": 1, "Workplane.faces(name)": 1, "Workplane.faces(str)": 1, "Workplane.fillet(num)": 1, "Workplane.vertices(expr)": 1, "cq.Workplane(str)": 1, "cq.selectors.NearestToPointSelector(tuple)": 1},
+  "selectors": {"<non-literal>": 3, ">Z or <Z": 1, "|Z": 1},
+  "unknown": {},
+  "end_form": "result = …"
+}

@@ -1,0 +1,7 @@
+{
+  "calls": {"Workplane.box": 1, "Workplane.circle": 1, "Workplane.extrude": 1, "Workplane.faces": 1, "Workplane.hole": 1, "Workplane.union": 1, "Workplane.workplane": 1, "cq.Workplane": 2},
+  "forms": {"Workplane.box(num, num, num)": 1, "Workplane.circle(num)": 1, "Workplane.extrude(num)": 1, "Workplane.faces(str)": 1, "Workplane.hole(num)": 1, "Workplane.union(call)": 1, "Workplane.workplane(offset=num)": 1, "cq.Workplane(str)": 2},
+  "selectors": {"<Z": 1},
+  "unknown": {},
+  "end_form": "result = …"
+}

@@ -1,0 +1,7 @@
+{
+  "calls": {"Workplane.chamfer": 1, "Workplane.circle": 2, "Workplane.edges": 1, "Workplane.extrude": 1, "Workplane.faces": 1, "builtin.show_object": 1, "cq.Workplane": 1},
+  "forms": {"Workplane.chamfer(num)": 1, "Workplane.circle(name)": 1, "Workplane.circle(num)": 1, "Workplane.edges()": 1, "Workplane.extrude(num)": 1, "Workplane.faces(str)": 1, "builtin.show_object(name)": 1, "cq.Workplane(str)": 1},
+  "selectors": {">Z": 1},
+  "unknown": {},
+  "end_form": "show_object(result)"
+}

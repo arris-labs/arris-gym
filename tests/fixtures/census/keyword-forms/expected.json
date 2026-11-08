@@ -1,0 +1,7 @@
+{
+  "calls": {"Workplane.extrude": 1, "Workplane.rect": 1, "Workplane.rotate": 1, "Workplane.translate": 1, "builtin.show_object": 1, "cq.Workplane": 1},
+  "forms": {"Workplane.extrude(num; both=bool, taper=none)": 1, "Workplane.rect(num, num; centered=tuple)": 1, "Workplane.rotate(angleDegrees=num, axisEndPoint=tuple, axisStartPoint=tuple)": 1, "Workplane.translate(list)": 1, "builtin.show_object(name; **name)": 1, "cq.Workplane(inPlane=str)": 1},
+  "selectors": {},
+  "unknown": {},
+  "end_form": "show_object(result)"
+}
