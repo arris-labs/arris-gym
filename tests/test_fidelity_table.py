@@ -12,15 +12,24 @@ from __future__ import annotations
 import json
 import pathlib
 import random
+import re
 from typing import Any
 
 import pytest
+from hypothesis import example, given
+from hypothesis import strategies as st
 
 import arris_gym
+from arris_gym import Status
 from arris_gym.fidelity import (
+    ArrisBug,
+    ArrisReason,
+    ArrisRefusalKind,
     ArrisReport,
     FidelityTable,
     OracleReport,
+    OracleStatus,
+    OracleVersions,
     TableEntry,
     Verdict,
     arris_rows,
@@ -139,3 +148,107 @@ def test_the_report_states_every_rows_licence_and_versions_sorted(
         ArrisReport.model_validate(fields)
     with pytest.raises(ValueError, match="source"):
         TableEntry(name="x", source="", licence=LICENCE, row=other)
+
+
+# --- The Markdown holds any words a kernel or a program can write. -----------
+
+
+def code_spans(line: str) -> tuple[str, list[str]]:
+    """The line with each CommonMark code span replaced by `@`, and the spans'
+    contents (one space stripped from each end, as CommonMark strips it)."""
+    skeleton, spans, i = "", [], 0
+    while i < len(line):
+        if line[i] != "`":
+            skeleton += line[i]
+            i += 1
+            continue
+        n = len(line[i:]) - len(line[i:].lstrip("`"))
+        fence = "`" * n
+        j = i + n
+        while True:
+            k = line.find(fence, j)
+            assert k >= 0, f"an unclosed code span in {line!r}"
+            if line[k + n : k + n + 1] != "`":
+                break
+            j = k + n + len(line[k + n :]) - len(line[k + n :].lstrip("`"))
+        content = line[i + n : k]
+        if content.startswith(" ") and content.endswith(" ") and content.strip(" "):
+            content = content[1:-1]
+        spans.append(content)
+        skeleton += "@"
+        i = k + n
+    return skeleton, spans
+
+
+SKELETON = re.compile(
+    r"|# arris report|Over \d+ programs: \d+ arris refusals, \d+ arris bugs\."
+    r"|Licences: (@(, @)*|none)\."
+    r"|arris (@(, @)*|none); numpy (@(, @)*|none); oracle "
+    r"(cadquery @, OCP @, Python @(, cadquery @, OCP @, Python @)*|none)\."
+    r"|## Refusals|## Bugs|None\.|### @ \(\d+\)|- \d+x @"
+    r"|- @ \([0-9a-f]{64}\): arris \w+, oracle \w+, fixture (@|none)"
+)
+# Any code point, lone surrogates included (a message decoded with surrogatepass).
+words = st.text(st.characters(exclude_categories=()))
+distinct = st.lists(words, unique=True, max_size=3).map(lambda w: tuple(sorted(w)))
+
+
+@example(
+    licences=("a\n## Bugs",),
+    versions=("`",),
+    kinds=[("Op`Error", ("```\n- 9x `x`\r\n", " ` ", ""))],
+    names=["`` \n", "\\`", "\udc80"],
+)
+@given(
+    licences=distinct,
+    versions=distinct,
+    kinds=st.lists(st.tuples(words, distinct.filter(bool)), max_size=3),
+    names=st.lists(words, max_size=3),
+)
+def test_the_markdown_keeps_every_word_intact_in_its_own_span(
+    licences: tuple[str, ...],
+    versions: tuple[str, ...],
+    kinds: list[tuple[str, tuple[str, ...]]],
+    names: list[str],
+) -> None:
+    oracle = tuple(
+        sorted(
+            {(v, v, v) for v in versions},
+        )
+    )
+    report = ArrisReport(
+        programs=len(names),
+        licences=licences,
+        arris_versions=versions,
+        numpy_versions=versions,
+        oracle_versions=tuple(OracleVersions(cadquery=a, ocp=b, python=c) for a, b, c in oracle),
+        refusals=tuple(
+            ArrisRefusalKind(
+                kind=kind,
+                count=len(reasons),
+                reasons=tuple(ArrisReason(reason=r, count=1) for r in reasons),
+            )
+            for kind, reasons in kinds
+        ),
+        bugs=tuple(
+            ArrisBug(
+                name=name,
+                program_sha256="0" * 64,
+                status=Status.CRASH,
+                oracle_status=OracleStatus.OK,
+                fixture=None,
+            )
+            for name in names
+        ),
+    )
+    found: list[str] = []
+    markdown = report.to_markdown()
+    markdown.encode("utf-8")
+    for line in markdown.split("\n"):
+        skeleton, spans = code_spans(line)
+        assert SKELETON.fullmatch(skeleton), line
+        found += [json.loads(span) for span in spans]
+    want = [*licences, *versions, *versions, *(x for v in oracle for x in v)]
+    for kind, reasons in kinds:
+        want += [kind, *reasons]
+    assert found == [*want, *names]

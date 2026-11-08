@@ -389,7 +389,10 @@ input order does not move. `fidelity.arris_rows(table)` cuts the **arris
 report** from it (`to_json`, `to_markdown`): a histogram of refusals by
 kind, then by the kernel's message, and the arris bugs with their program
 SHA-256 and regression fixture, under the licences and the arris, numpy and
-oracle versions of all the table's rows.
+oracle versions of all the table's rows. Its Markdown writes each kernel's,
+program's or caller's string as a code span of its JSON literal, so no
+backtick or line ending in a message breaks the document, and the JSON keeps
+the string as it is.
 
 ## Inspection
 

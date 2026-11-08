@@ -75,7 +75,9 @@ same digest.
     (review): `TableEntry` carries `source` and `licence` (non-empty, the
     caller's); `ArrisReport` carries `licences`, `arris_versions`,
     `numpy_versions` and `oracle_versions` over every row of the table, each
-    distinct and sorted (validated), and states them in its Markdown.
+    distinct and sorted (validated), and states them in its Markdown. The
+    Markdown writes every such string as a code span of its JSON literal
+    (fence longer than any backtick run), which `json.loads` gives back.
 - **ADR-0005, the agreement tolerance** (step 4; as built: `fidelity/_agreement.py`'s `MeasureDeltas`, `measure_deltas`, `within_tolerance` and the four constants; the face count is carried, not judged; `worker.py` measures bounds with `AddOptimal`): relative volume and area,
   centroid over the bbox diagonal, and a rule for face counts, whose
   conventions differ between the kernels. The values are measured by step 4

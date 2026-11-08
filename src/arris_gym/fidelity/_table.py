@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections import Counter
 from collections.abc import Iterable
 from typing import Any, Self
@@ -179,6 +180,33 @@ class ArrisBug(BaseModel):
     fixture: str | None
 
 
+_BACKTICKS = re.compile(r"`+")
+# A lone surrogate (a message Python decoded with `surrogatepass`) cannot be
+# written as UTF-8; in the span it stays a JSON escape.
+_SURROGATE = re.compile("[\ud800-\udfff]")
+
+
+def _code(text: str) -> str:
+    """`text` as one CommonMark code span holding its JSON string literal.
+
+    The literal has no line ending (JSON escapes every control character), so
+    the span cannot break the document's blocks; its fence is one backtick
+    longer than any run inside, so nothing inside closes it; the padding
+    space on each side is the one CommonMark strips. `json.loads` of the
+    span's content gives `text` back, character for character, and the
+    span encodes as UTF-8 whatever `text` holds.
+    """
+    literal = json.dumps(text, ensure_ascii=False)
+    literal = _SURROGATE.sub(lambda m: f"\\u{ord(m.group()):04x}", literal)
+    longest = max((len(run) for run in _BACKTICKS.findall(literal)), default=0)
+    fence = "`" * (longest + 1)
+    return f"{fence} {literal} {fence}"
+
+
+def _codes(texts: Iterable[str]) -> str:
+    return ", ".join(_code(text) for text in texts) or "none"
+
+
 def _oracle_key(v: OracleVersions) -> tuple[str, str, str]:
     return (v.cadquery, v.ocp, v.python)
 
@@ -222,19 +250,25 @@ class ArrisReport(BaseModel):
         return _canonical(self.model_dump(mode="json"))
 
     def to_markdown(self) -> str:
-        """The report as Markdown: the refusal histogram, then the bug list."""
+        """The report as Markdown: the refusal histogram, then the bug list.
+
+        Every string a kernel, a program or a caller wrote (a kind, a
+        message, a name, a licence, a version) is one code span holding its
+        JSON string literal, so a backtick or a line ending in it cannot
+        break the document, and `json.loads` of the span gives it back
+        verbatim. `to_json` holds the same strings unchanged.
+        """
         lines = [
             "# arris report",
             "",
             f"Over {self.programs} programs: "
             f"{sum(k.count for k in self.refusals)} arris refusals, {len(self.bugs)} arris bugs.",
             "",
-            f"Licences: {', '.join(self.licences) or 'none'}.",
-            f"arris {', '.join(self.arris_versions) or 'none'}; "
-            f"numpy {', '.join(self.numpy_versions) or 'none'}; oracle "
+            f"Licences: {_codes(self.licences)}.",
+            f"arris {_codes(self.arris_versions)}; numpy {_codes(self.numpy_versions)}; oracle "
             + (
                 ", ".join(
-                    f"cadquery {v.cadquery}, OCP {v.ocp}, Python {v.python}"
+                    f"cadquery {_code(v.cadquery)}, OCP {_code(v.ocp)}, Python {_code(v.python)}"
                     for v in self.oracle_versions
                 )
                 or "none"
@@ -247,16 +281,17 @@ class ArrisReport(BaseModel):
         if not self.refusals:
             lines += ["None.", ""]
         for kind in self.refusals:
-            lines += [f"### {kind.kind} ({kind.count})", ""]
-            lines += [f"- {reason.count}x `{reason.reason}`" for reason in kind.reasons]
+            lines += [f"### {_code(kind.kind)} ({kind.count})", ""]
+            lines += [f"- {reason.count}x {_code(reason.reason)}" for reason in kind.reasons]
             lines.append("")
         lines += ["## Bugs", ""]
         if not self.bugs:
             lines += ["None.", ""]
         for bug in self.bugs:
             lines.append(
-                f"- `{bug.name}` ({bug.program_sha256}): arris {bug.status.value}, "
-                f"oracle {bug.oracle_status.value}, fixture {bug.fixture or 'none'}"
+                f"- {_code(bug.name)} ({bug.program_sha256}): arris {bug.status.value}, "
+                f"oracle {bug.oracle_status.value}, fixture "
+                + (_code(bug.fixture) if bug.fixture is not None else "none")
             )
         return "\n".join(lines).rstrip("\n") + "\n"
 
