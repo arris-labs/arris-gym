@@ -20,3 +20,4 @@ training cycle starts from.
 | [0001](0001-a-program-runs-on-a-fresh-model-in-a-forked-process.md) | A program runs on a fresh model in a forked process | accepted |
 | [0002](0002-the-program-worker-is-pid-1-of-its-own-namespaces-under-a-warden.md) | The program worker is PID 1 of its own namespaces, under a warden | accepted |
 | [0003](0003-the-census-parses-a-program-and-counts-what-it-writes.md) | The census parses a program and counts what it writes | accepted |
+| [0004](0004-the-oracle-worker-execs-the-oracle-interpreter-inside-a-program-worker.md) | The oracle worker execs the oracle's interpreter inside a program worker | accepted |

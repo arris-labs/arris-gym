@@ -209,7 +209,9 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   refused, Unix sockets included (seccomp).
 - **Filesystem**: Landlock allows reading only beneath the interpreter's
   prefixes, the site-packages directories and `arris_gym`'s own directory;
-  nothing is written anywhere, since every mount is read-only.
+  nothing is written anywhere, since every mount is read-only, and nothing is
+  executed. An exec job (ADR-0004) reads its spec's paths instead, and may
+  execute its interpreter and that interpreter's ELF loader alone.
 - **Processes**: `RLIMIT_NPROC` is 4, counted per user namespace: the warden,
   the worker and two more tasks. A fork bomb stops there.
 - **Concurrency**: the caller's `workers=N` bounds the live forks. Results
@@ -338,6 +340,16 @@ volume, area, centroid, face and solid counts. Library code never imports it
 own `cadquery==2.3.0` and `cadquery-ocp==7.9.3.0`, so the comparison is with
 the kernel the benchmark's numbers came from. Those need `numpy<2`, one more
 reason it cannot share an environment with the library.
+
+A program runs on the oracle in an **oracle worker** (ADR-0004): a program
+worker forked and isolated as any other, which then execs the oracle's
+interpreter on `tools/oracle/worker.py` and keeps every limit across the exec.
+Its reach is the oracle environment's prefixes, its memory limit 1.5 GiB (the
+import of cadquery and OCP maps 875 MiB), and Open CASCADE's thread pool is
+held to one thread so a boolean runs within `RLIMIT_NPROC`. Each program pays
+about 1.5 s of start-up. `tools/oracle_run.py` builds the exec spec and sends
+the job; the frame comes back on the result pipe and is trusted no more than
+any worker's.
 
 **Fidelity** classifies each disagreement as `cq` bug, arris refusal (kind),
 arris bug, Open CASCADE wrong (closed form or second oracle, arris ADR-0015),

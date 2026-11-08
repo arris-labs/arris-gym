@@ -33,7 +33,9 @@ same digest.
   are measured by step 2. The program text is passed on a memfd, and the
   report is one frame on the result pipe. The caller parses the frame and
   trusts none of it, as it does for any worker. There is no public `sandbox`
-  API change.
+  API change. As built: the private `JobKind.EXEC` and `sandbox/_exec.py`
+  (`ExecSpec`, its payload, `interpreter_spec`), `Limits.executable`; the
+  spec and `run_one` start `tools/oracle_run.py`.
 - **`tools/oracle/`**: `pyproject.toml` and `uv.lock` (Python 3.12, the two
   pins and their `numpy<2`) and `worker.py`. `worker.py` runs the program,
   takes the result the way ARCHITECTURE §Outcomes says (last `show_object`,
@@ -88,7 +90,7 @@ right within the design; **[3]** unproven, correctness established here.
   `worker.py` plus `selftest.py`, still unisolated, take a trusted box,
   cylinder and box-minus-hole to their closed forms, and one program to
   each of `syntax`, `runtime`, `no_result`.
-- [ ] Step 2 **[3]** — ADR-0004 and the oracle worker under the warden. The
+- [x] Step 2 **[3]** — ADR-0004 and the oracle worker under the warden. The
   memory limit and `nproc` are measured from the import of `cadquery` and a
   boolean. Test (`-m oracle`): M0's hostile corpus on the oracle gives its
   statuses (fork bomb, 1 GiB under the limit, connect, read outside,
@@ -153,9 +155,12 @@ right within the design; **[3]** unproven, correctness established here.
   unchanged and no override. Its wheel declares no dependencies (listed in
   `tools/oracle/pyproject.toml`), and `Shape.hashCode` needed a one-line
   worker patch for OCP 7.9 (see `tools/oracle/README.md`).
-- ⚠ OPEN: the oracle tests need the synced env, so they are not in the gate.
-  Agent, step 2: a `pytest -m oracle` marker, excluded from the gate, with
-  its own command in `tools/oracle/README.md`.
+- Settled (step 2): `-m oracle` tests, deselected by `addopts`, command in
+  `tools/oracle/README.md`; the exec job itself is in the gate
+  (`tests/test_exec.py`). ADR-0004: 1.5 GiB, `nproc` 4, Open CASCADE's pool
+  held to one thread (it hangs under `RLIMIT_NPROC`); STEP to memory, and
+  `SystemExit` is `runtime`. Start-up is ~1.5 s, so the 1 s loop dies in the
+  import (a 5 s test sees the loop reached) and step 7's timeout covers it.
 - ⚠ OPEN: whether a slice program on which OCCT fails becomes a regression
   fixture now or waits for its M3 row. Agent, step 7: it waits, and the row
   is named in `c1/README.md`.

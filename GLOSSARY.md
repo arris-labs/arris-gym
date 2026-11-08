@@ -61,7 +61,7 @@ _Avoid_: master
 
 **Job**:
 One worker's run, as the caller hands it to the zygote: its kind (a
-program, a body to read back), its deadline and memory limit, its payload,
+program, a body to read back, an exec on another interpreter), its deadline and memory limit, its payload,
 and the pipes its status and result come back on.
 _Avoid_: request (a kernel task is a thread or process)
 
@@ -94,6 +94,17 @@ _Avoid_: verifier
 The worker that tessellates a body's bytes for a picture (`dump_png`), under the
 same limits as the others: the caller parses what it writes and trusts none of it.
 _Avoid_: renderer
+
+**Exec spec**:
+What an exec job's worker runs once isolated: an interpreter, its arguments
+and environment, and the paths it may read and execute, in place of the
+zygote's (ADR-0004).
+
+**Oracle worker**:
+A program worker that, once isolated, execs the oracle environment's
+interpreter on `tools/oracle/worker.py` to run one program on the oracle; it
+keeps every limit of the worker it replaced (ADR-0004).
+_Avoid_: oracle process, oracle sandbox
 
 ## Scoring
 

@@ -81,7 +81,11 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q --strict-markers --strict-config"
+# `oracle` tests need the oracle environment (`uv sync --project tools/oracle`),
+# so the gate leaves them out; `uv run pytest -m oracle` runs them.
+addopts = "-q --strict-markers --strict-config -m 'not oracle'"
+markers = ["oracle: needs the synced oracle environment; not in the gate"]
+pythonpath = ["tools"]
 # A regression fixture is xfail with the desired assertion. Strict, so the
 # commit that fixes it has to lift the mark (.agents/rules/gym.md).
 xfail_strict = true

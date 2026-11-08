@@ -12,7 +12,8 @@ The program worker, before the function runs: leaves the session, detaches
 stdin and stdout (stderr goes where the caller says), closes every
 descriptor it was not given, sets its rlimits, forbids new privileges,
 enters a Landlock domain that reads only the interpreter's prefixes and
-site-packages, drops its capabilities and installs a seccomp filter. Then
+site-packages (an exec job's: those of the interpreter it execs, which alone
+it may execute), drops its capabilities and installs a seccomp filter. Then
 it writes one byte to the armed pipe; an ending without that byte is a
 worker whose isolation was never complete, and the function did not run.
 Nothing here trusts the function: every limit is one it cannot lift.
@@ -55,14 +56,17 @@ class Limits:
     """What one program worker may use.
 
     `memory` is the worker's `RLIMIT_AS` in bytes; `nproc` its
-    `RLIMIT_NPROC`; `readable` the directories its Landlock domain may read
-    beneath, nothing else being readable or writable. Each limit is hard:
-    the worker cannot raise it.
+    `RLIMIT_NPROC`; `readable` the directories (or single files) its Landlock
+    domain may read beneath; `executable` the files it may also execute,
+    which is none but an exec job's interpreter and its ELF loader
+    (ADR-0004). Nothing else is readable, executable or writable. Each limit
+    is hard: the worker cannot raise it.
     """
 
     memory: int
     readable: tuple[str, ...]
     nproc: int = NPROC_LIMIT
+    executable: tuple[str, ...] = ()
 
 
 def readable_roots() -> tuple[str, ...]:
@@ -213,7 +217,9 @@ class _PathBeneathAttr(ctypes.Structure):
 
 _LANDLOCK_CREATE_RULESET_VERSION = 1
 _LANDLOCK_RULE_PATH_BENEATH = 1
-_FS_READ = (1 << 2) | (1 << 3)  # READ_FILE | READ_DIR
+_FS_EXECUTE = 1 << 0
+_FS_READ_FILE = 1 << 2
+_FS_READ = _FS_READ_FILE | (1 << 3)  # READ_FILE | READ_DIR
 # The filesystem rights each ABI version knows: 13 in ABI 1, REFER in 2,
 # TRUNCATE in 3, IOCTL_DEV in 5. Every one is handled, so all but reading
 # beneath `readable` is refused.
@@ -231,7 +237,7 @@ def landlock_abi() -> int:
     return max(int(version), 0)
 
 
-def _landlock(readable: Iterable[str]) -> None:
+def _landlock(readable: Iterable[str], executable: Iterable[str] = ()) -> None:
     abi = landlock_abi()
     if abi < 1:
         raise OSError(errno.ENOSYS, "Landlock is unavailable")
@@ -246,9 +252,12 @@ def _landlock(readable: Iterable[str]) -> None:
         ),
         "landlock_create_ruleset",
     )
-    for path in readable:
+    # A rule on a file may grant only a file's rights, READ_DIR not among them.
+    rules = [(p, _FS_READ if os.path.isdir(p) else _FS_READ_FILE) for p in readable]
+    rules += [(p, _FS_EXECUTE | _FS_READ_FILE) for p in executable]
+    for path, allowed in rules:
         fd = os.open(path, os.O_PATH | os.O_CLOEXEC)
-        rule = _PathBeneathAttr(_FS_READ, fd)
+        rule = _PathBeneathAttr(allowed, fd)
         _check(
             _syscall(
                 ctypes.c_long(_SYS_LANDLOCK_ADD_RULE),
@@ -524,7 +533,7 @@ def _worker(
     resource.setrlimit(resource.RLIMIT_NPROC, (limits.nproc, limits.nproc))
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     _check(_prctl(ctypes.c_int(_PR_SET_NO_NEW_PRIVS), ctypes.c_ulong(1), 0, 0, 0), "no_new_privs")
-    _landlock(limits.readable)
+    _landlock(limits.readable, limits.executable)
     _drop_capabilities(arch)
     _seccomp(arch)
     os.write(armed_w, b"\x01")

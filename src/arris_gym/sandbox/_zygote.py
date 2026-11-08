@@ -12,6 +12,10 @@ reaps the warden when it ends. It never reads a result, a status or a
 worker's stderr: those pipes run from the warden and the worker straight to
 the caller.
 
+An exec job's payload opens with a spec (`sandbox/_exec.py`): its worker
+reaches the spec's paths in place of this interpreter's and, once isolated,
+execs the interpreter the spec names (ADR-0004).
+
 `Zygote` is the caller's handle. It replaces a zygote that died, and holds a
 backstop past each job's deadline after which the job has no `Ending`.
 Private: the sandbox's public API is built on it.
@@ -30,13 +34,14 @@ import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
+from functools import partial
 
 import arris
 import arris.build
 import numpy
 
 import arris_gym.cq
-from arris_gym.sandbox import _body, _isolate, _mesh, _program
+from arris_gym.sandbox import _body, _exec, _isolate, _mesh, _program
 
 # Imported for the forks, not used here: every worker starts with them loaded.
 _PRELOADED = (arris, arris.build, numpy, arris_gym.cq)
@@ -93,6 +98,7 @@ class JobKind(enum.IntEnum):
     PROGRAM = 1  # run the payload as a program (`sandbox/_program.py`)
     BODY = 2  # read the payload back as body bytes (`sandbox/_body.py`)
     MESH = 3  # tessellate the payload, a body's bytes, for a picture (`sandbox/_mesh.py`)
+    EXEC = 4  # exec the interpreter the payload's spec names on its text (`sandbox/_exec.py`)
 
 
 # The job message: kind, deadline (a `time.monotonic()` instant: the clock is
@@ -142,6 +148,23 @@ def _close(fds: list[int]) -> None:
         os.close(fd)
 
 
+def _job(
+    kind: int, payload: int, result_w: int, memory: int, roots: tuple[str, ...]
+) -> tuple[Callable[[], None], _isolate.Limits] | None:
+    """A job's function and its worker's limits; None for an unknown kind or spec."""
+    if kind == JobKind.EXEC:
+        # Its reach is the spec's, in place of this interpreter's (ADR-0004).
+        spec = _exec.read_spec(payload)
+        if spec is None:
+            return None
+        limits = _isolate.Limits(memory=memory, readable=spec.readable, executable=spec.executable)
+        return partial(_exec.execute, spec, payload, result_w), limits
+    handler = _HANDLERS.get(kind)
+    if handler is None:
+        return None
+    return partial(handler, payload, result_w), _isolate.Limits(memory=memory, readable=roots)
+
+
 def _start_job(
     message: bytes, fds: list[int], flags: int, roots: tuple[str, ...]
 ) -> tuple[int, int] | None:
@@ -154,14 +177,14 @@ def _start_job(
         if len(message) != _JOB.size or len(fds) != _JOB_FDS or flags & socket.MSG_CTRUNC:
             return None
         kind, deadline, memory = _JOB.unpack(message)
-        handler = _HANDLERS.get(kind)
-        if handler is None:
-            return None
         status_w, result_w, stderr_w, payload = fds
-        limits = _isolate.Limits(memory=memory, readable=roots)
+        job = _job(kind, payload, result_w, memory, roots)
+        if job is None:
+            return None
+        target, limits = job
         try:
             pid = _isolate.spawn(
-                lambda: handler(payload, result_w),
+                target,
                 deadline=deadline,
                 limits=limits,
                 status_fd=status_w,
