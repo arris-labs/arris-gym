@@ -131,7 +131,7 @@ guarantee or a CadQuery semantic whose correctness has to be established here.
 - [x] Step 5 **[1]** — `arris-gym census` (delta 6): run on the step-4
   parquet through an injected reader, it writes the two files and the
   digest; without the extra, exit 2 and the line.
-- [ ] Step 6 **[2]** — the run: `arris-gym census --corpus benchcad` twice,
+- [x] Step 6 **[2]** — the run: `arris-gym census --corpus benchcad` twice,
   digests equal; commit delta 7's files. Each `?` receiver and unparsable
   program is read: explained in the README, or shrunk to a step-1 fixture
   and the counting fixed. A gate test checks `slice.txt` against
@@ -166,6 +166,6 @@ guarantee or a CadQuery semantic whose correctness has to be established here.
 - *Settled* (step 1, ADR-0003): the ranking triple is calls, then selector
   strings, then API forms: a call is what `cq` has to implement; a selector
   string is grammar, cheaper per item.
-- ⚠ OPEN: `census.json`'s size. If the run passes ~200 KB the committed
-  copy keeps totals and the per-family rows, and the full report stays a
-  command's output. Agent, at step 6.
+- *Settled* (step 6): `census.json` is 109 KB, under ~200 KB: the full report is committed.
+- *Run* (step 6): 17,900 programs, 17,900 parsed, 0 unparsable, 106 families, no `?` receiver;
+  digest `043db6d9…3ee` twice; slice families `phone_stand`, `venturi_tube`, `lobed_knob`.
