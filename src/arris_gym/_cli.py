@@ -13,7 +13,14 @@ from importlib.util import find_spec
 from pathlib import Path
 from typing import Final
 
-from arris_gym.census import CensusReport, CorpusProgram, benchcad, census, select_slice
+from arris_gym.census import (
+    CensusReport,
+    CorpusProgram,
+    benchcad,
+    census,
+    select_slice,
+    slice_families,
+)
 
 Reader = Callable[[], list[CorpusProgram]]
 """Reads a corpus's programs; the CLI's seam, so a test needs no download."""
@@ -22,6 +29,10 @@ EXIT_USAGE: Final = 2
 """The exit status of a missing `[corpus]` extra, as argparse's own usage errors."""
 TOP_ROWS: Final = 10
 """How many ranked families the summary prints."""
+SLICE_FAMILIES: Final = 3
+"""How many ranked families the slice takes."""
+PER_FAMILY: Final = 100
+"""How many programs of each (and the fewest a family may have to be eligible)."""
 MISSING_EXTRA: Final = "arris-gym census needs the corpus extra: pip install 'arris-gym[corpus]'"
 
 
@@ -29,12 +40,10 @@ def _extra_present() -> bool:
     return all(find_spec(name) is not None for name in ("huggingface_hub", "pyarrow"))
 
 
-def slice_text(report: CensusReport, stems: Sequence[str], per_family: int) -> str:
+def slice_text(report: CensusReport, stems: Sequence[str]) -> str:
     """The `slice.txt` content: a `#` header naming the corpus and the families, then the stems."""
     corpus = report.corpus
-    chosen = [f.family for f in report.families if f.programs >= per_family][
-        : len(stems) // per_family
-    ]
+    chosen = slice_families(report, SLICE_FAMILIES, PER_FAMILY)
     header = [
         f"# source: {corpus.source} ({corpus.config})",
         f"# revision: {corpus.revision}",
@@ -49,10 +58,10 @@ def run_census(reader: Reader, out: Path) -> CensusReport:
     """Census the programs `reader` returns, write `census.json` and `slice.txt` into `out`."""
     programs = reader()
     report = census(programs, benchcad.INFO)
-    stems = select_slice(report, programs)
+    stems = select_slice(report, programs, SLICE_FAMILIES, PER_FAMILY, PER_FAMILY)
     out.mkdir(parents=True, exist_ok=True)
     (out / "census.json").write_text(report.to_json() + "\n", encoding="utf-8")
-    (out / "slice.txt").write_text(slice_text(report, stems, 100), encoding="utf-8")
+    (out / "slice.txt").write_text(slice_text(report, stems), encoding="utf-8")
     return report
 
 

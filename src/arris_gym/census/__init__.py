@@ -18,6 +18,7 @@ from arris_gym.census._report import (
     FamilyCensus,
     census,
     select_slice,
+    slice_families,
 )
 
 __all__ = [
@@ -36,4 +37,5 @@ __all__ = [
     "census",
     "census_program",
     "select_slice",
+    "slice_families",
 ]

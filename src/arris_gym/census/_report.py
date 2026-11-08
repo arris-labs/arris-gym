@@ -233,6 +233,25 @@ def census(programs: Iterable[CorpusProgram], corpus: CorpusInfo) -> CensusRepor
     return CensusReport(digest=_digest(draft.model_dump(mode="json")), **fields)
 
 
+def slice_families(
+    report: CensusReport, families: int = 3, min_programs: int = 100
+) -> tuple[str, ...]:
+    """The names of the slice's families: the first `families` ranked ones with at
+    least `min_programs` programs. The one place the slice rule is written.
+
+    Raises `ValueError` when fewer than `families` families are eligible.
+
+    >>> info = CorpusInfo(source="s", config="c", revision="r", licence="l")
+    >>> corpus = [CorpusProgram(stem=f"p{i}", family="f", text="x = 1") for i in range(4)]
+    >>> slice_families(census(corpus, info), families=1, min_programs=3)
+    ('f',)
+    """
+    chosen = [f.family for f in report.families if f.programs >= min_programs][:families]
+    if len(chosen) < families:
+        raise ValueError(f"{len(chosen)} families have {min_programs} programs, {families} wanted")
+    return tuple(chosen)
+
+
 def select_slice(
     report: CensusReport,
     programs: Iterable[CorpusProgram],
@@ -256,13 +275,11 @@ def select_slice(
     by_family: dict[str, list[str]] = {}
     for program in programs:
         by_family.setdefault(program.family, []).append(program.stem)
-    chosen = [f for f in report.families if f.programs >= min_programs][:families]
-    if len(chosen) < families:
-        raise ValueError(f"{len(chosen)} families have {min_programs} programs, {families} wanted")
+    counts = {f.family: f.programs for f in report.families}
     stems: list[str] = []
-    for family in chosen:
-        family_stems = sorted(by_family.get(family.family, []))
-        if len(family_stems) != family.programs:
-            raise ValueError(f"programs disagree with the report for family {family.family!r}")
+    for family in slice_families(report, families, min_programs):
+        family_stems = sorted(by_family.get(family, []))
+        if len(family_stems) != counts[family]:
+            raise ValueError(f"programs disagree with the report for family {family!r}")
         stems.extend(family_stems[:per_family])
     return tuple(stems)

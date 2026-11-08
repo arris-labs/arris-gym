@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from arris_gym import _cli
-from arris_gym.census import CensusReport, CorpusProgram
+from arris_gym.census import CensusReport, CorpusProgram, slice_families
 
 CODE = "import cadquery as cq\nr = cq.Workplane('XY').box(1, 1, 1)\n"
 
@@ -43,3 +43,10 @@ def test_the_missing_extra_exits_2_with_one_line(
     assert err.count("\n") == 1
     assert "arris-gym[corpus]" in err
     assert not list(tmp_path.iterdir())
+
+
+def test_the_header_names_the_families_the_slice_rule_chooses(tmp_path: Path) -> None:
+    programs = corpus()
+    report = _cli.run_census(lambda: programs, tmp_path)
+    chosen = slice_families(report, _cli.SLICE_FAMILIES, _cli.PER_FAMILY)
+    assert f"# families: {', '.join(chosen)}" in (tmp_path / "slice.txt").read_text("utf-8")

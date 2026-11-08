@@ -75,7 +75,9 @@ families are ranked by how few API forms they need, and
    (corpus info, totals, families in rank order, `unparsable_programs`, `digest`);
    `census(programs, corpus) -> CensusReport`; `select_slice(report,
    programs, families=3, per_family=100, min_programs=100) -> tuple[str,
-   ...]`. Every count is a `tuple` of `(key, count)` sorted by key: no
+   ...]`; step 5 review adds `slice_families(report, families=3,
+   min_programs=100) -> tuple[str, ...]`, the one place the slice rule is
+   written, which `select_slice` and the CLI's header both call. Every count is a `tuple` of `(key, count)` sorted by key: no
    dict or set order reaches the report.
 4. **The digest**: SHA-256 of the report's canonical JSON (sorted keys, no
    whitespace) without the digest field. Input order does not move it:
