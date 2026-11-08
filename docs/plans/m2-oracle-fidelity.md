@@ -82,7 +82,7 @@ Grades are tiers (`.agents/tiers.md`): **[1]** routine, the design says
 exactly what to write; **[2]** careful, a numeric or semantic case to get
 right within the design; **[3]** unproven, correctness established here.
 
-- [ ] Step 1 **[2]** — The oracle env. `uv sync --project tools/oracle` resolves
+- [x] Step 1 **[2]** — The oracle env. `uv sync --project tools/oracle` resolves
   the two pins on Python 3.12, using `override-dependencies` if cadquery
   2.3.0's own OCP bound refuses 7.9.3.0, with the reason recorded.
   `worker.py` plus `selftest.py`, still unisolated, take a trusted box,
@@ -149,9 +149,10 @@ right within the design; **[3]** unproven, correctness established here.
 - `CHANGELOG.md` Unreleased: `fidelity`'s public types and `compare`.
 
 ## Open questions
-- ⚠ OPEN: cadquery 2.3.0 might not import on OCP 7.9.3.0 at all. The pins
-  are the roadmap's, so a change to them is the human's call. Step 1 stops
-  and asks.
+- Settled (step 1): cadquery 2.3.0 imports on OCP 7.9.3.0 with the pins
+  unchanged and no override. Its wheel declares no dependencies (listed in
+  `tools/oracle/pyproject.toml`), and `Shape.hashCode` needed a one-line
+  worker patch for OCP 7.9 (see `tools/oracle/README.md`).
 - ⚠ OPEN: the oracle tests need the synced env, so they are not in the gate.
   Agent, step 2: a `pytest -m oracle` marker, excluded from the gate, with
   its own command in `tools/oracle/README.md`.

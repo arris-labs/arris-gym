@@ -1,0 +1,9 @@
+[project]
+name = "arris-gym-oracle"
+version = "0"
+description = "CadQuery on Open CASCADE, the oracle's own environment (never imported by arris_gym)."
+requires-python = "==3.12.*"
+dependencies = ["cadquery==2.3.0", "cadquery-ocp==7.9.3.0", "numpy<2", "typing_extensions", "multimethod", "typish", "nptyping", "ezdxf", "casadi", "nlopt"]
+
+[tool.uv]
+package = false
