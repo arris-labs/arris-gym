@@ -119,7 +119,7 @@ guarantee or a CadQuery semantic whose correctness has to be established here.
   built in the test, four families with known form sets and one below 100
   programs, gives the expected rank order, ties broken by name, and the
   expected stems; every program in exactly one of parsed or unparsable.
-- [ ] Step 3 **[2]** — `CensusReport` JSON and digest (delta 4): a
+- [x] Step 3 **[2]** — `CensusReport` JSON and digest (delta 4): a
   round-trip is equal; `hypothesis`: a shuffled corpus gives the same
   digest; a changed count changes it.
 - [ ] Step 4 **[2]** — the `[corpus]` extra and `benchcad` reader (delta 5);

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections import Counter
 from collections.abc import Iterable
-from typing import Final
+from typing import Any, Final, Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
@@ -72,6 +74,9 @@ class CensusReport(_Frozen):
     Guarantees `programs` = `parsed` + `unparsable` = the corpus's size, each
     program in exactly one of the two, `families` in rank order (ascending by
     the ranking triple, then name) and `unparsable_programs` sorted by stem.
+    `digest` is the SHA-256 of the report's canonical JSON without the digest
+    field (sorted keys, no whitespace, ASCII); a report whose digest is not
+    that of its content is refused, so a digest equal is a report equal.
     """
 
     corpus: CorpusInfo
@@ -80,6 +85,7 @@ class CensusReport(_Frozen):
     unparsable: int
     families: tuple[FamilyCensus, ...]
     unparsable_programs: tuple[Unparsable, ...]
+    digest: str
 
     @model_validator(mode="after")
     def _totals_add_up(self) -> CensusReport:
@@ -87,7 +93,34 @@ class CensusReport(_Frozen):
             raise ValueError("programs is not parsed + unparsable")
         if self.unparsable != len(self.unparsable_programs):
             raise ValueError("unparsable does not match the unparsable list")
+        if self.digest != _digest(self.model_dump(mode="json")):
+            raise ValueError("digest is not that of the report's content")
         return self
+
+    def to_json(self) -> str:
+        """The report as canonical JSON, digest included: `from_json` returns an equal report.
+
+        >>> info = CorpusInfo(source="s", config="c", revision="r", licence="l")
+        >>> report = census([], info)
+        >>> CensusReport.from_json(report.to_json()) == report
+        True
+        """
+        return _canonical(self.model_dump(mode="json"))
+
+    @classmethod
+    def from_json(cls, text: str) -> Self:
+        """Read a report written by `to_json`; refuses one whose digest does not match."""
+        return cls.model_validate_json(text)
+
+
+def _canonical(data: dict[str, Any]) -> str:
+    return json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+
+def _digest(data: dict[str, Any]) -> str:
+    """SHA-256 of the canonical JSON of a report's dump, its digest field left out."""
+    body = {key: value for key, value in data.items() if key != "digest"}
+    return hashlib.sha256(_canonical(body).encode("ascii")).hexdigest()
 
 
 def _sorted(counter: Counter[str]) -> Counts:
@@ -173,14 +206,16 @@ def census(programs: Iterable[CorpusProgram], corpus: CorpusInfo) -> CensusRepor
         if isinstance(result, Unparsable):
             unparsable.append(result)
     families = tuple(sorted((t.done() for t in tallies.values()), key=_rank))
-    return CensusReport(
-        corpus=corpus,
-        programs=len(ordered),
-        parsed=len(ordered) - len(unparsable),
-        unparsable=len(unparsable),
-        families=families,
-        unparsable_programs=tuple(unparsable),
-    )
+    fields: dict[str, Any] = {
+        "corpus": corpus,
+        "programs": len(ordered),
+        "parsed": len(ordered) - len(unparsable),
+        "unparsable": len(unparsable),
+        "families": families,
+        "unparsable_programs": tuple(unparsable),
+    }
+    draft = CensusReport.model_construct(digest="", **fields)
+    return CensusReport(digest=_digest(draft.model_dump(mode="json")), **fields)
 
 
 def select_slice(
