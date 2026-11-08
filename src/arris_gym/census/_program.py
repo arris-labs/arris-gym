@@ -76,6 +76,8 @@ class ProgramCensus(_Frozen):
     counts each call with its argument form (`Workplane.extrude(num;
     both=bool)`); `selectors` counts each selector string as written;
     `unknown` counts the callee text of each call whose receiver is `?`;
+    `foreign` counts the calls (keyed as in `calls`) on `builtin` and on another
+    module, which the ranking leaves out;
     `end_form` is the program's last statement, normalised. Guarantees every
     `Counts` sorted by key; refuses one that is not.
     """
@@ -85,11 +87,12 @@ class ProgramCensus(_Frozen):
     forms: Counts
     selectors: Counts
     unknown: Counts
+    foreign: Counts
     end_form: str
 
     @model_validator(mode="after")
     def _counts_sorted(self) -> Self:
-        for name in ("calls", "forms", "selectors", "unknown"):
+        for name in ("calls", "forms", "selectors", "unknown", "foreign"):
             _check_counts(name, getattr(self, name))
         return self
 
@@ -275,25 +278,28 @@ def _is_cadquery(path: str) -> bool:
     return path == _CADQUERY or path.startswith(_CADQUERY + ".")
 
 
-def _callee(program: _Program, call: ast.Call) -> tuple[str, bool]:
-    """A call as `receiver.name`, and whether its receiver is `?`."""
+def _callee(program: _Program, call: ast.Call) -> tuple[str, bool, bool]:
+    """A call as `receiver.name`, whether its receiver is `?`, whether it is foreign.
+
+    Foreign is a call on `builtin` or on another module: not `cq`'s to provide.
+    """
     func = call.func
     path = program.dotted(func)
     if path is not None and "." in path:
         if _is_cadquery(path):
-            return CQ + path[len(_CADQUERY) :], False
-        return path, False
+            return CQ + path[len(_CADQUERY) :], False, False
+        return path, False, True
     if isinstance(func, ast.Name):
         unbound = func.id not in program.bindings
         if unbound and (func.id == _SHOW_OBJECT or func.id in _PYTHON_BUILTINS):
-            return f"{BUILTIN}.{func.id}", False
-        return f"{UNKNOWN}.{func.id}", True
+            return f"{BUILTIN}.{func.id}", False, True
+        return f"{UNKNOWN}.{func.id}", True, False
     if isinstance(func, ast.Attribute):
         root = program.chain_root(func.value, program.roots)
         if isinstance(root, str):
-            return f"{root}.{func.attr}", False
-        return f"{UNKNOWN}.{func.attr}", True
-    return f"{UNKNOWN}.<expr>", True
+            return f"{root}.{func.attr}", False, False
+        return f"{UNKNOWN}.{func.attr}", True, False
+    return f"{UNKNOWN}.<expr>", True, False
 
 
 def _kind(node: ast.expr) -> str:
@@ -377,11 +383,14 @@ def _count(stem: str, text: str, tree: ast.Module) -> ProgramCensus:
     forms: Counter[str] = Counter()
     selectors: Counter[str] = Counter()
     unknown: Counter[str] = Counter()
+    foreign: Counter[str] = Counter()
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
-        name, is_unknown = _callee(program, node)
+        name, is_unknown, is_foreign = _callee(program, node)
         calls[name] += 1
+        if is_foreign:
+            foreign[name] += 1
         forms[_form(name, node)] += 1
         if is_unknown:
             segment = ast.get_source_segment(text, node.func)
@@ -395,5 +404,6 @@ def _count(stem: str, text: str, tree: ast.Module) -> ProgramCensus:
         forms=_sorted(forms),
         selectors=_sorted(selectors),
         unknown=_sorted(unknown),
+        foreign=_sorted(foreign),
         end_form=_end_form(tree),
     )

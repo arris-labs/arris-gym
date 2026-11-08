@@ -12,6 +12,13 @@ from arris_gym.census._program import (
     Unparsable,
     census_program,
 )
+from arris_gym.census._report import (
+    CensusReport,
+    CorpusInfo,
+    FamilyCensus,
+    census,
+    select_slice,
+)
 
 __all__ = [
     "BUILTIN",
@@ -19,9 +26,14 @@ __all__ = [
     "NON_LITERAL",
     "SELECTOR_METHODS",
     "UNKNOWN",
+    "CensusReport",
+    "CorpusInfo",
     "CorpusProgram",
     "Counts",
+    "FamilyCensus",
     "ProgramCensus",
     "Unparsable",
+    "census",
     "census_program",
+    "select_slice",
 ]

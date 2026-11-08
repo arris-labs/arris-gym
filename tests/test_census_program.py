@@ -74,10 +74,13 @@ def test_a_count_out_of_key_order_is_refused() -> None:
             forms=(),
             selectors=(),
             unknown=(),
+            foreign=(),
             end_form="other",
         )
     with pytest.raises(ValidationError, match="below 1"):
-        ProgramCensus(stem="p", calls=(("a", 0),), forms=(), selectors=(), unknown=(), end_form="")
+        ProgramCensus(
+            stem="p", calls=(("a", 0),), forms=(), selectors=(), unknown=(), foreign=(), end_form=""
+        )
 
 
 def test_the_doctests_of_the_census_run() -> None:
@@ -237,3 +240,10 @@ def test_a_chain_built_from_drawn_calls_counts_exactly_those_calls(
     assert dict(got.selectors) == selectors
     assert got.unknown == ()
     assert got.end_form == "result = …"
+
+
+def test_foreign_calls_are_those_on_builtin_and_other_modules() -> None:
+    case = next(c for c in CASES if c.slug == "aliased-import")
+    got = census(case.program, stem=case.slug)
+    assert isinstance(got, ProgramCensus)
+    assert dict(got.foreign) == {"builtin.show_object": 1, "math.sqrt": 1}

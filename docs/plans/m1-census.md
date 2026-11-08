@@ -63,12 +63,15 @@ families are ranked by how few API forms they need, and
 3. **New public API** in `arris_gym.census`, frozen pydantic models:
    `CorpusProgram(stem, family, text)`; `CorpusInfo(source, config,
    revision, licence)`; `ProgramCensus(stem, calls, forms, selectors,
-   unknown, end_form)` or `Unparsable(stem, kind, message)`, from
+   unknown, foreign, end_form)` or `Unparsable(stem, kind, message)`, from
    `census_program(program: CorpusProgram)` (step 1: it takes the program,
-   not bare text, so an `Unparsable` carries its stem); `Counts`, and the
+   not bare text, so an `Unparsable` carries its stem; step 2 adds `foreign`,
+   the calls on `builtin` and other modules, so the ranking leaves them out
+   exactly rather than guessing from a name; `select_slice` raises `ValueError`
+   when too few families are eligible); `Counts`, and the
    receiver constants `CQ`, `BUILTIN`, `UNKNOWN`, `NON_LITERAL`,
    `SELECTOR_METHODS`; `FamilyCensus`; `CensusReport`
-   (corpus info, totals, families in rank order, unparsable list, `digest`);
+   (corpus info, totals, families in rank order, `unparsable_programs`, `digest`);
    `census(programs, corpus) -> CensusReport`; `select_slice(report,
    programs, families=3, per_family=100, min_programs=100) -> tuple[str,
    ...]`. Every count is a `tuple` of `(key, count)` sorted by key: no
@@ -112,7 +115,7 @@ guarantee or a CadQuery semantic whose correctness has to be established here.
   `RecursionError`, a NUL byte. `hypothesis`: never raises on arbitrary
   text; a chain built from drawn calls counts exactly those calls. Also
   `deep-unary-memory` (`MemoryError`) and `syntax-warning-parsed`.
-- [ ] Step 2 **[2]** — `census` and `select_slice` (deltas 2, 3): a corpus
+- [x] Step 2 **[2]** — `census` and `select_slice` (deltas 2, 3): a corpus
   built in the test, four families with known form sets and one below 100
   programs, gives the expected rank order, ties broken by name, and the
   expected stems; every program in exactly one of parsed or unparsable.
