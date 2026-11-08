@@ -6,6 +6,7 @@ program; the properties build programs whose counts are known by construction.
 
 from __future__ import annotations
 
+import ast
 import doctest
 import keyword
 import warnings
@@ -247,3 +248,22 @@ def test_foreign_calls_are_those_on_builtin_and_other_modules() -> None:
     got = census(case.program, stem=case.slug)
     assert isinstance(got, ProgramCensus)
     assert dict(got.foreign) == {"builtin.show_object": 1, "math.sqrt": 1}
+
+
+def test_counting_a_chain_is_linear_in_its_length(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The work is counted, not timed: each call node of a chain is placed once.
+    n = 2000
+    text = "import cadquery as cq\nx = cq.Workplane()" + ".b()" * n + "\n"
+    steps = 0
+    dotted = _program._Program.dotted
+
+    def counted(self: _program._Program, node: ast.expr) -> str | None:
+        nonlocal steps
+        steps += 1
+        return dotted(self, node)
+
+    monkeypatch.setattr(_program._Program, "dotted", counted)
+    got = census(text)
+    assert isinstance(got, ProgramCensus), got
+    assert dict(got.calls) == {"cq.Workplane": 1, "Workplane.b": n}
+    assert steps <= 4 * (n + 1)

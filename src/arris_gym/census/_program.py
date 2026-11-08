@@ -158,6 +158,8 @@ class _Program:
         self.bindings: dict[str, list[_Binding]] = {}
         self._collect(tree)
         self.roots = self._resolve_roots()
+        # The root of each chain link under the final `roots`, filled as calls are placed.
+        self.placed: dict[ast.expr, str | _Pending | None] = {}
 
     def _bind(self, name: str, binding: _Binding) -> None:
         self.bindings.setdefault(name, []).append(binding)
@@ -226,24 +228,42 @@ class _Program:
             return None
         return ".".join([path, *reversed(attrs)])
 
-    def chain_root(self, node: ast.expr, roots: dict[str, str | None]) -> str | _Pending | None:
-        """The root constructor of the chain `node` is: `Workplane` for `cq.Workplane(…).box(…)`."""
+    def chain_root(
+        self,
+        node: ast.expr,
+        roots: dict[str, str | None],
+        memo: dict[ast.expr, str | _Pending | None] | None = None,
+    ) -> str | _Pending | None:
+        """The root constructor of the chain `node` is: `Workplane` for `cq.Workplane(…).box(…)`.
+
+        Every link walked has the same root, so with `memo` each is walked once
+        over all the calls of a program, not once per call above it.
+        """
+        walked: list[ast.expr] = []
+        root: str | _Pending | None = None
         while True:
+            if memo is not None and node in memo:
+                root = memo[node]
+                break
+            walked.append(node)
             if isinstance(node, ast.Call):
                 path = self.dotted(node.func)
                 if path is not None:
                     is_constructor = _is_cadquery(path) and "." in path
-                    return path.rsplit(".", 1)[-1] if is_constructor else None
+                    root = path.rsplit(".", 1)[-1] if is_constructor else None
+                    break
                 if isinstance(node.func, ast.Attribute):
                     node = node.func.value
                     continue
-                return None
-            if isinstance(node, ast.Name):
-                if node.id not in roots:
-                    return None
-                root = roots[node.id]
-                return _PENDING if root == "" else root
-            return None
+                break
+            if isinstance(node, ast.Name) and node.id in roots:
+                found = roots[node.id]
+                root = _PENDING if found == "" else found
+            break
+        if memo is not None:
+            for link in walked:
+                memo[link] = root
+        return root
 
     def _resolve_roots(self) -> dict[str, str | None]:
         # The least fixpoint over bottom ("") < one root < None (no single root).
@@ -295,7 +315,7 @@ def _callee(program: _Program, call: ast.Call) -> tuple[str, bool, bool]:
             return f"{BUILTIN}.{func.id}", False, True
         return f"{UNKNOWN}.{func.id}", True, False
     if isinstance(func, ast.Attribute):
-        root = program.chain_root(func.value, program.roots)
+        root = program.chain_root(func.value, program.roots, program.placed)
         if isinstance(root, str):
             return f"{root}.{func.attr}", False, False
         return f"{UNKNOWN}.{func.attr}", True, False
