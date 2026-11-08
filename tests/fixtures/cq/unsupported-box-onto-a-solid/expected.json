@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "unsupported_api",
+  "message": "Workplane.box combined with a solid in its chain"
+}

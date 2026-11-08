@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 import doctest
 import hashlib
+import math
 
 import arris.build
 import pytest
@@ -18,9 +19,11 @@ from hypothesis import strategies as st
 import arris_gym as ag
 import arris_gym.cq as cq
 import fixture_cases
-from arris_gym.cq import _result, _workplane
+from arris_gym.cq import _result, _vector, _workplane
+from arris_gym.fidelity import OracleReport, OracleStatus, program_sha256
 
 CASES = fixture_cases.load("cq")
+RECORDED = [c for c in CASES if (fixture_cases.ROOT / "cq" / c.slug / "oracle.json").is_file()]
 
 
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c.slug)
@@ -31,19 +34,33 @@ def test_a_fixture_program_gives_its_expected_result(case: fixture_cases.Case) -
 
 
 def test_a_shown_workplane_holding_one_solid_is_its_body() -> None:
-    # No call of the subset puts a solid on the stack yet, so the program
-    # reaches past it: this is the sandbox's path from a stack to a body.
-    program = (
-        "import arris.build as b\n"
-        "import cadquery as cq\n"
-        "box = b.Solid.box((0, 0, 0), (1, 2, 3))\n"
-        "show_object(cq.Workplane('XY')._derive(box))\n"
-    )
+    program = "import cadquery as cq\nshow_object(cq.Workplane('XY').box(1, 2, 3))\n"
     result = ag.run(program, dialect="cq")
     assert result.status is ag.Status.OK, result.message
     assert result.dialect is ag.Dialect.CQ
     assert result.measures is not None
     assert fixture_cases.close(result.measures.volume, 6.0)
+
+
+@pytest.mark.parametrize("case", RECORDED, ids=lambda c: c.slug)
+def test_the_oracle_holds_a_recorded_fixtures_closed_form(case: fixture_cases.Case) -> None:
+    # The closed form is CadQuery's semantics, not only arris-gym's reading
+    # of it: Open CASCADE builds the same part (tests/fixtures/cq/README.md).
+    path = fixture_cases.ROOT / "cq" / case.slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text(encoding="utf-8"))
+    assert report.status is OracleStatus.OK
+    assert report.program_sha256 == program_sha256(case.program)
+    assert report.measures is not None
+    assert report.measures.solids == 1
+    want = case.expected["measures"]
+    assert isinstance(want, dict)
+    got = report.measures
+    pairs = [(got.volume, want["volume"]), (got.area, want["area"])]
+    pairs += list(zip(got.centroid, want["centroid"], strict=True))
+    pairs += list(
+        zip([*got.bounds[0], *got.bounds[1]], [*want["bounds"][0], *want["bounds"][1]], strict=True)
+    )
+    assert all(fixture_cases.close(g, float(w)) for g, w in pairs), pairs
 
 
 def test_the_same_text_is_cached_apart_per_dialect() -> None:
@@ -138,12 +155,111 @@ def test_a_named_plane_but_xy_is_unsupported(plane: str) -> None:
 
 def test_the_module_shows_programs_cadquery_names_alone() -> None:
     public = sorted(n for n in vars(cq) if not _workplane.is_python_name(n))
-    assert public == ["UnsupportedApi", "Workplane"]
+    assert public == ["UnsupportedApi", "Vector", "Workplane"]
 
 
 def test_the_docstring_examples_run() -> None:
     assert doctest.testmod(cq).failed == 0
     assert doctest.testmod(_workplane).failed == 0
+    assert doctest.testmod(_vector).failed == 0
+
+
+def test_a_vector_is_a_frozen_value() -> None:
+    v = cq.Vector(1, 2.5, -3)
+    assert (v.x, v.y, v.z) == (1.0, 2.5, -3.0)
+    assert all(type(c) is float for c in (v.x, v.y, v.z))
+    with pytest.raises(cq.UnsupportedApi, match=r"^setting Vector\._xyz$"):
+        v._xyz = (5.0, 0.0, 0.0)
+    with pytest.raises(cq.UnsupportedApi, match=r"^deleting Vector\._xyz$"):
+        del v._xyz
+    assert (v.x, v.y, v.z) == (1.0, 2.5, -3.0)
+    assert copy.copy(v) is v
+    assert copy.deepcopy(v) is v
+
+
+@pytest.mark.parametrize("name", ["Length", "toTuple", "normalized", "add"])
+def test_a_vector_name_outside_the_subset_is_unsupported(name: str) -> None:
+    with pytest.raises(cq.UnsupportedApi, match=rf"^Vector\.{name}$"):
+        getattr(cq.Vector(0, 0, 1), name)
+
+
+def test_transformed_and_box_change_no_workplane() -> None:
+    first = cq.Workplane("XY")
+    turned = first.transformed(offset=cq.Vector(1, 2, 3), rotate=cq.Vector(10, 20, 30))
+    boxed = turned.box(1, 2, 3)
+    assert (first._plane, first._stack, first._parent) == (arris.build.Workplane.XY(), (), None)
+    assert (turned._stack, turned._parent) == ((), first)
+    assert turned._plane.origin == (1.0, 2.0, 3.0)
+    assert boxed._plane is turned._plane
+    assert boxed._parent is turned
+    assert len(boxed._stack) == 1
+    assert isinstance(boxed._stack[0], arris.build.Solid)
+
+
+def test_a_box_onto_a_solid_in_the_chain_is_unsupported() -> None:
+    # CadQuery fuses it with that solid; the subset does not yet (plan step 3).
+    boxed = cq.Workplane("XY").box(1, 1, 1)
+    for wp in (boxed, boxed.transformed(offset=cq.Vector(0, 0, 1))):
+        with pytest.raises(
+            cq.UnsupportedApi, match=r"^Workplane\.box combined with a solid in its chain$"
+        ):
+            wp.box(1, 1, 1)
+
+
+def matrix(axis: int, degrees: float) -> list[list[float]]:
+    """The right-handed rotation by `degrees` about world axis `axis`."""
+    c, s = math.cos(math.radians(degrees)), math.sin(math.radians(degrees))
+    i, j = [(1, 2), (2, 0), (0, 1)][axis]
+    m = [[float(r == k) for k in range(3)] for r in range(3)]
+    m[i][i], m[i][j], m[j][i], m[j][j] = c, -s, s, c
+    return m
+
+
+def product(a: list[list[float]], b: list[list[float]]) -> list[list[float]]:
+    return [[math.fsum(a[r][k] * b[k][c] for k in range(3)) for c in range(3)] for r in range(3)]
+
+
+angles = st.floats(-360, 360, allow_nan=False)
+lengths = st.floats(-50, 50, allow_nan=False)
+VECTORS = st.builds(cq.Vector, angles, angles, angles)
+OFFSETS = st.builds(cq.Vector, lengths, lengths, lengths)
+# Absolute, on unit axes and points of size ~100: a few hundred ulps of the
+# trigonometry and products, far below any wrong order or sign of a turn.
+AXIS_SLACK = 1e-12
+
+
+@settings(max_examples=60, deadline=None)
+@given(VECTORS, OFFSETS, VECTORS, OFFSETS)
+def test_transformed_turns_by_rx_ry_rz_about_its_own_axes(
+    first: cq.Vector, first_at: cq.Vector, rotate: cq.Vector, offset: cq.Vector
+) -> None:
+    # Two calls, so the second turns about axes that are not the world's
+    # and moves by an offset in a plane that is not XY.
+    parent = cq.Workplane("XY").transformed(rotate=first, offset=first_at)
+    child = parent.transformed(rotate=rotate, offset=offset)
+    p = parent._plane
+    basis = [[p.x[r], p.y[r], p.z[r]] for r in range(3)]
+    local = product(product(matrix(0, rotate.x), matrix(1, rotate.y)), matrix(2, rotate.z))
+    want = product(basis, local)
+    for column, axis in enumerate((child._plane.x, child._plane.y, child._plane.z)):
+        assert all(abs(axis[r] - want[r][column]) <= AXIS_SLACK for r in range(3))
+    origin = [
+        p.origin[r] + math.fsum(basis[r][k] * (offset.x, offset.y, offset.z)[k] for k in range(3))
+        for r in range(3)
+    ]
+    assert all(abs(child._plane.origin[r] - origin[r]) <= AXIS_SLACK * 100 for r in range(3))
+
+
+@settings(max_examples=30, deadline=None)
+@given(VECTORS, OFFSETS)
+def test_a_zero_rotation_keeps_the_axes_exactly(first: cq.Vector, offset: cq.Vector) -> None:
+    parent = cq.Workplane("XY").transformed(rotate=first)
+    child = parent.transformed(rotate=cq.Vector(0, 0, 0), offset=offset)
+    assert (child._plane.x, child._plane.y, child._plane.z) == (
+        parent._plane.x,
+        parent._plane.y,
+        parent._plane.z,
+    )
 
 
 # Arbitrary text, surrogates and NULs included: `run` under `cq` returns.
@@ -167,6 +283,12 @@ LINES = [
     "show_object(cq.Workplane('XY'))",
     "show_object(None, name='part')",
     "cq.Workplane('XY').box(1, 1, 1)",
+    "result = cq.Workplane('XY').box(1, 2, 3)",
+    "result = cq.Workplane('XY').box(0, 2, 3)",
+    "result = cq.Workplane('XY').transformed(rotate=cq.Vector(10, 20, 30))",
+    "result = result.transformed(offset=cq.Vector(0, 0, 1))",
+    "result = result.box(1, 1, 1)",
+    "result = result.transformed(rotate=cq.Vector(0, 90, 0))",
     "cq.Workplane('XZ')",
     "del result",
     "raise SystemExit(0)",
@@ -177,4 +299,9 @@ LINES = [
 @given(st.lists(st.sampled_from(LINES), max_size=6))
 def test_run_never_raises_on_programs_of_the_subsets_lines(lines: list[str]) -> None:
     result = ag.run("\n".join(lines), dialect="cq", timeout=2.0)
-    assert result.status in (ag.Status.UNSUPPORTED_API, ag.Status.RUNTIME), result.message
+    assert result.status in (
+        ag.Status.OK,
+        ag.Status.ARRIS_REFUSAL,
+        ag.Status.UNSUPPORTED_API,
+        ag.Status.RUNTIME,
+    ), result.message

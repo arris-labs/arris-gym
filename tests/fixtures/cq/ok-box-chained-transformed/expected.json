@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48.0,
+    "area": 88.0,
+    "centroid": [
+      1.0,
+      2.5,
+      4.330127018922193
+    ],
+    "bounds": [
+      [
+        -1.0,
+        0.13397459621556163,
+        1.2320508075688767
+      ],
+      [
+        3.0,
+        4.866025403784438,
+        7.428203230275509
+      ]
+    ],
+    "faces": 6,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "box 2 x 4 x 6, half sizes (1, 2, 3): V = 48, A = 2 (8 + 12 + 24) = 88; R1 = Rx(-30) maps y to (0, sqrt3/2, -1/2) and z to (0, 1/2, sqrt3/2); the second offset is in the first plane: origin (1, 0, 0) + 5 R1 z = (1, 5/2, 5 sqrt3 / 2); its 90 deg about the first plane's z puts length along R1 y and width along -x: half extents x 2, y sqrt3/2 + 3/2, z 1/2 + 3 sqrt3 / 2"
+}

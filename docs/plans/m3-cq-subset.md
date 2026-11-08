@@ -63,6 +63,9 @@ and the fidelity table has **0 unclassified** rows. Agreement is reported.
   `tests/fixtures/c1/fidelity.json` (the table) and `arris-report.{json,md}`.
   Decides the backlog line on `OracleReport.digest()`: used for the row's
   oracle side or dropped.
+- **`arris_gym.cq.Vector(x, y, z)`** (step 2): a frozen value read as
+  `x`, `y`, `z`; `Workplane.transformed(rotate=Vector, offset=Vector)` and
+  `Workplane.box(length, width, height)`, the census's forms.
 - **Glossary**: **Subset** (the calls and API forms `cq` implements, grown in
   census order) and **Stack** (a `cq` Workplane's objects, newest last).
 
@@ -83,11 +86,15 @@ correctness has to be established here.
   `unsupported_api`) lands here, since the unknown-call and empty-stack
   fixtures need a Workplane; step 2 keeps the rest. `import
   cadquery.<name>` is `unsupported_api` too (a finder in the worker).
-- [ ] Step 2 **[3]** — `Vector`, `Workplane("XY")`, `transformed`, `box`.
+- [x] Step 2 **[3]** — `Vector`, `Workplane("XY")`, `transformed`, `box`.
   Fixtures by closed form: a box offset; a box rotated about x by −30°
   (bounds by trigonometry); two chained `transformed`; one rotation about
   x, y and z together, its bounds by the matrix product, oracle-recorded.
-- [ ] Step 3 **[2]** — `union`, `cut` of Workplanes onto the stack's solid.
+  *Settled:* a `box` on a workplane whose chain already holds a solid is
+  `unsupported_api` (`Workplane.box combined with a solid in its chain`)
+  until step 3, since CadQuery fuses the two and a fuse is step 3's.
+- [ ] Step 3 **[2]** — `union`, `cut` of Workplanes onto the stack's solid;
+  `box` fused with a solid in its chain (step 2's *Settled*).
   Fixtures: overlapping boxes (V by inclusion–exclusion), a box less a
   through box, a disjoint union ending `unsupported_api` (ADR-0007; what
   arris's `fuse` returns for it is recorded here first).
@@ -149,5 +156,10 @@ correctness has to be established here.
 - *Settled* (step 1, ADR-0007): several solids are `unsupported_api`, not
   `runtime`: a compound is a CadQuery value the subset lacks, not a program
   error; both give the same reward (−1.0).
+- ⚠ OPEN (agent, step 6): `box` with a negative dimension builds on arris
+  (the extents are its magnitudes), while CadQuery 2.3.0 ends `runtime`
+  (`Standard_DomainError`); a zero one is an arris refusal on arris. The
+  slice has none (all 300 oracle `ok`); step 6's forms decide whether the
+  subset refuses it.
 - ⚠ OPEN (agent, step 7): the slice run's timeout and memory — the sandbox's
   defaults unless a program needs more, measured by step 7.

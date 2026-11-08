@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48.0,
+    "area": 88.0,
+    "centroid": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "bounds": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        2.0,
+        4.0,
+        6.0
+      ]
+    ],
+    "faces": 6,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "box 2 x 4 x 6, half sizes (1, 2, 3): V = 48, A = 2 (8 + 12 + 24) = 88; centred on the offset (1, 2, 3), axes unturned"
+}

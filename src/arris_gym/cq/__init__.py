@@ -17,10 +17,11 @@ cq.Sketch
 from typing import NoReturn as _NoReturn
 
 from arris_gym.cq._unsupported import UnsupportedApi
+from arris_gym.cq._unsupported import is_python_name as _is_python_name
+from arris_gym.cq._vector import Vector
 from arris_gym.cq._workplane import Workplane
-from arris_gym.cq._workplane import is_python_name as _is_python_name
 
-__all__ = ["UnsupportedApi", "Workplane"]
+__all__ = ["UnsupportedApi", "Vector", "Workplane"]
 
 
 def __getattr__(name: str) -> _NoReturn:
