@@ -113,10 +113,20 @@ correctness has to be established here.
   centres it on each object, is `unsupported_api` (`Workplane.circle on a
   non-empty stack`), and `extrude` needs exactly one sketch on the stack
   (`ValueError`, `runtime`). Step 6 still checks the call forms.
-- [ ] Step 5 **[3]** — `moveTo`, `lineTo`, `polyline`, `close`, `revolve`.
+- [x] Step 5 **[3]** — `moveTo`, `lineTo`, `polyline`, `close`, `revolve`.
   Fixtures by Pappus: a revolved rectangle (tube), a revolved trapezoid
   (frustum shell), one profile drawn by `polyline` and by `moveTo`/`lineTo`
   giving the same body digest.
+  *Settled:* as step 4's circle, the pending path is the stack's one
+  object, not CadQuery's context shared along the chain: `moveTo` or
+  `polyline` on a stack holding a pending wire (a path, a closed sketch, a
+  circle) is `unsupported_api` (`Workplane.moveTo on a pending wire`), and
+  `lineTo` after a solid or a closed sketch is CadQuery's `RuntimeError`
+  (`runtime`). `revolve` takes the census's three arguments; its default
+  axes wait for step 6. A 90° fixture (oracle-recorded) pins the turn as
+  right-handed. ⚠ OPEN (step 6): `transformed`, `box`, `union` and `cut`
+  on a stack holding a pending wire drop it, where CadQuery keeps it in
+  its context; the slice writes none.
 - [ ] Step 6 **[2]** — API forms outside the census: every implemented call
   checks its form. `hypothesis`: chains drawn from implemented calls with
   census forms run `ok` or end in a kernel refusal; chains with one call or

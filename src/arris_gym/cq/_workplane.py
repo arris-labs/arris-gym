@@ -7,6 +7,8 @@ Private: `arris_gym.cq` exports `Workplane`.
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import NoReturn
 
 import arris.build
@@ -22,7 +24,36 @@ _XY = "XY"
 # CadQuery's degrees-to-radians factor, applied as it applies it (one
 # multiplication by pi / 180): not a tolerance.
 _RADIANS_PER_DEGREE = math.pi / 180.0
+# The factor CadQuery's `Solid.revolve` turns degrees into radians by,
+# `2 * pi / 360.0` (`occ_impl/shapes.py`), kept apart from `transformed`'s
+# so each call rounds as CadQuery's does: not a tolerance.
+_REVOLVE_RADIANS_PER_DEGREE = 2 * math.pi / 360.0
+# CadQuery's `close` adds a segment back to the path's first point only when
+# the gap is wider than this, its numerical-error threshold (`cq.py`); a
+# narrower gap is no segment. In plane units.
+_CLOSE_GAP = 1e-6
 _ZERO = Vector(0, 0, 0)
+
+
+@dataclass(frozen=True)
+class _Path:
+    """A pending path in plane coordinates: its points in order, the first its start.
+
+    One point is a `moveTo` with nothing drawn yet; each further point ends a
+    straight segment. `close` turns it into an `arris.build.Sketch`.
+    """
+
+    points: tuple[tuple[float, float], ...]
+
+    def to(self, x: float, y: float) -> _Path:
+        """This path with a segment on to `(x, y)`."""
+        return _Path((*self.points, (float(x), float(y))))
+
+
+def _uv(point: Sequence[float]) -> tuple[float, float]:
+    """A point of a polyline's list as plane coordinates."""
+    x, y = point
+    return (float(x), float(y))
 
 
 def _shell_count(solid: arris.build.Solid) -> int:
@@ -112,6 +143,40 @@ class Workplane:
             return self._derive(base, new)
         return self._derive(fused)
 
+    def _pending_sketch(self) -> arris.build.Sketch:
+        """The one sketch the stack holds, which `extrude` and `revolve` consume.
+
+        Raises `ValueError` (CadQuery's words, `runtime`) for any other stack.
+        """
+        sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
+        if len(sketches) != 1 or len(self._stack) != 1:
+            raise ValueError("No pending wires present")
+        return sketches[0]
+
+    def _pen(self) -> _Path:
+        """The path a `lineTo` goes on from: the last object, or the plane's origin.
+
+        CadQuery reads the last object only: a drawn path goes on from its
+        end, a `moveTo` point starts one, an empty stack starts at the
+        origin. Anything else is CadQuery's `RuntimeError` (`runtime`).
+        """
+        if not self._stack:
+            return _Path(((0.0, 0.0),))
+        last = self._stack[-1]
+        if isinstance(last, _Path):
+            return last
+        raise RuntimeError(f"Cannot convert object type '{type(last).__name__}' to vector")
+
+    def _refuse_pending(self, form: str) -> None:
+        """Raise `UnsupportedApi` naming `form` when the stack holds a pending wire.
+
+        CadQuery keeps every pending wire in a context the whole chain
+        shares and builds them together; the subset holds one on the stack,
+        so a call that would start a second beside it is outside it.
+        """
+        if any(isinstance(o, (_Path, arris.build.Sketch)) for o in self._stack):
+            raise UnsupportedApi(f"{form} on a pending wire")
+
     def _operand(self, other: object, form: str) -> tuple[arris.build.Solid, ...]:
         """The solids of the workplane given to `union` or `cut`; `form` names the call."""
         if not isinstance(other, Workplane):
@@ -190,10 +255,112 @@ class Workplane:
         >>> round(wp._solids()[0].measure().centroid[2], 9)
         1.0
         """
-        sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
-        if len(sketches) != 1 or len(self._stack) != 1:
-            raise ValueError("No pending wires present")
-        return self._combined(sketches[0].extrude(distance))
+        return self._combined(self._pending_sketch().extrude(distance))
+
+    def moveTo(self, x: float = 0, y: float = 0) -> Workplane:
+        """A pending path starting at `(x, y)` in the workplane's coordinates.
+
+        Nothing is drawn: the next `lineTo` starts there. A solid in the
+        chain stays there for `revolve` or `extrude` to fuse with. Refuses,
+        as `UnsupportedApi`, a stack that holds a pending wire already.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").moveTo(1, 0).lineTo(2, 0).lineTo(2, 1).close()
+        >>> round(wp.extrude(1)._solids()[0].measure().volume, 9)
+        0.5
+        """
+        self._refuse_pending("Workplane.moveTo")
+        return self._derive(_Path(((float(x), float(y)),)))
+
+    def lineTo(self, x: float, y: float) -> Workplane:
+        """The pending path with a straight segment on to `(x, y)`.
+
+        The segment starts where the last object leaves off: the end of the
+        path drawn so far, a `moveTo` point, or the plane's origin on an
+        empty stack. Raises `RuntimeError` (CadQuery's, `runtime`) when the
+        last object is a solid or a closed sketch.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").lineTo(3, 0).lineTo(0, 4).close()
+        >>> round(wp.extrude(1)._solids()[0].measure().volume, 9)
+        6.0
+        """
+        return self._derive(self._pen().to(x, y))
+
+    def polyline(self, listOfXYTuple: Sequence[Sequence[float]]) -> Workplane:
+        """A pending path through the points of `listOfXYTuple`, in order.
+
+        It starts at the first point, not at the current one, as CadQuery's
+        `includeCurrent=False` does. Refuses, as `UnsupportedApi`, a stack
+        that holds a pending wire already.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").polyline([(0, 0), (3, 0), (0, 4)]).close()
+        >>> round(wp.extrude(1)._solids()[0].measure().volume, 9)
+        6.0
+        """
+        self._refuse_pending("Workplane.polyline")
+        return self._derive(_Path(tuple(_uv(p) for p in listOfXYTuple)))
+
+    def close(self) -> Workplane:
+        """The pending path closed back to its start: a sketch on the stack.
+
+        A straight segment back to the first point is added unless the path
+        ends within CadQuery's `_CLOSE_GAP` of it, in which case its last
+        point is taken as the first. Raises `ValueError` (CadQuery's words,
+        `runtime`) when nothing has been drawn; a path the kernel cannot
+        close (a single segment) ends in the kernel's own words.
+
+        >>> import arris_gym.cq as cq
+        >>> closed = cq.Workplane("XY").polyline([(0, 0), (1, 0), (1, 1)]).close()
+        >>> closed._solids()
+        ()
+        """
+        last = self._stack[-1] if self._stack else None
+        if not isinstance(last, _Path) or len(last.points) < 2:
+            raise ValueError("No start point specified - cannot close")
+        points = last.points
+        (u0, v0), (u1, v1) = points[0], points[-1]
+        if math.hypot(u1 - u0, v1 - v0) <= _CLOSE_GAP:
+            points = (*points[:-1], points[0])
+        path = self._plane.start(points[0])
+        for point in points[1:]:
+            path = path.line_to(point)
+        return self._derive(path.close())
+
+    def revolve(
+        self,
+        angleDegrees: float,
+        axisStart: Sequence[float],
+        axisEnd: Sequence[float],
+    ) -> Workplane:
+        """The pending sketch turned `angleDegrees` about the axis from `axisStart` to `axisEnd`.
+
+        The axis points are in the workplane's coordinates (two or three of
+        them, the third along its normal); the turn is right-handed about
+        the direction from start to end. The angle is taken modulo 360 and a
+        multiple of 360 is a full turn, as in CadQuery. The solid is fused
+        with the chain's solid if there is one (`combine=True`). Raises
+        `ValueError` (`runtime`) when the stack holds no pending sketch.
+
+        >>> import math
+        >>> import arris_gym.cq as cq
+        >>> ring = cq.Workplane("XY").polyline([(1, 0), (2, 0), (2, 1), (1, 1)]).close()
+        >>> (solid,) = ring.revolve(360, (0, 0, 0), (0, 1, 0))._solids()
+        >>> round(solid.measure().volume / math.pi, 9)
+        3.0
+        """
+        sketch = self._pending_sketch()
+        degrees = angleDegrees % 360.0
+        if degrees == 0:
+            degrees = 360.0
+        start = self._plane.point(*axisStart)
+        end = self._plane.point(*axisEnd)
+        direction = (end[0] - start[0], end[1] - start[1], end[2] - start[2])
+        made = arris.build.default_model().revolve(
+            sketch.profile(), start, direction, degrees * _REVOLVE_RADIANS_PER_DEGREE
+        )
+        return self._combined(arris.build.Solid.of(made))
 
     def union(self, toUnion: Workplane) -> Workplane:
         """The chain's solid fused with the solid of `toUnion`, on this plane.

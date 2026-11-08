@@ -39,3 +39,16 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   where the stack is empty; `extrude` grows the pending wire from the plane
   along its normal by `distance` (not about it) and fuses the result with
   the solid in the chain (`combine=True`).
+- `Workplane.moveTo`, `lineTo`, `polyline`, `close`, `_findFromPoint` and
+  `_addPendingEdge` (`cadquery/cq.py`): `moveTo` puts a point in plane
+  coordinates on the stack; `lineTo` goes on from the last object only (an
+  edge's end, a point, or the plane's origin on an empty stack, any other
+  object an error); `polyline` starts at its first point, not the current
+  one; `close` adds a segment back to the first point only when the gap is
+  over 1e-6, and with nothing drawn is an error.
+- `Workplane.revolve` and `Solid.revolve` (`cadquery/cq.py`,
+  `cadquery/occ_impl/shapes.py`): the angle in degrees taken modulo 360, 0
+  meaning a full turn, turned into radians by `2 * pi / 360`; the axis
+  points in plane coordinates (a third coordinate along the normal); a
+  right-handed turn about the direction from start to end; the result fused
+  with the solid in the chain (`combine=True`).

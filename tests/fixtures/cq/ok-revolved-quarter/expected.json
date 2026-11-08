@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 2.356194490192345,
+    "area": 11.42477796076938,
+    "centroid": [
+      0.9902974236829043,
+      0.5,
+      -0.9902974236829043
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        -2
+      ],
+      [
+        2,
+        1,
+        0
+      ]
+    ],
+    "faces": 6,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        4
+      ]
+    ]
+  },
+  "note": "the square x 1..2, y 0..1 turned 90 degrees right-handed about +y, so +x turns towards -z. V = (pi/2) xbar A = 3 pi / 4; A = two unit end faces + (pi/2) sum of rbar L = 2 + (pi/2)(1.5 + 2 + 1.5 + 1) = 2 + 3 pi; int r^2 dA = 7/3, so xbar = (7/3) sin(90) / V = 28 / (9 pi) and zbar = -(7/3)(1 - cos 90) / V = -28 / (9 pi)"
+}

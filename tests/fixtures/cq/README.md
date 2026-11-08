@@ -13,4 +13,8 @@ beside one, it is the oracle's recorded report of the same `program.py`
 the row's `report` less `seconds`), and `tests/test_cq.py` holds it to the
 same closed form: the semantics are CadQuery's, not only arris-gym's reading
 of them. `ok-box-rotated-xyz` is one: a turn about x, y and z at once, whose
-bounds tell CadQuery's order (Rx·Ry·Rz) from the reverse one.
+bounds tell CadQuery's order (Rx·Ry·Rz) from the reverse one. `ok-revolved-quarter`
+is another: a 90° revolve, whose bounds tell a right-handed turn from a
+left-handed one. `ok-revolved-rectangle` and `ok-revolved-rectangle-lines`
+draw one profile by `polyline` and by `moveTo`/`lineTo`; `tests/test_cq.py`
+holds their body digests equal.

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 56.548667764616276,
+    "area": 156.91417103263075,
+    "centroid": [
+      0,
+      1.5833333333333333,
+      0
+    ],
+    "bounds": [
+      [
+        -4,
+        0,
+        -4
+      ],
+      [
+        4,
+        3,
+        4
+      ]
+    ],
+    "faces": 4,
+    "shells": 1,
+    "genus": 1,
+    "face_kinds": [
+      [
+        "cone",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "the trapezoid (2,0) (3,0) (4,3) (3,3) turned a full turn about y: a frustum shell. Pappus: area 3, its x moment 9, V = 2 pi 9 = 18 pi; A = sum of 2 pi rbar L = 2 pi (2.5 + 3.5 sqrt 10 + 3.5 + 2.5 sqrt 10) = 12 pi (1 + sqrt 10); ybar = (int x y dA) / (int x dA) = (57/4) / 9 = 19/12"
+}

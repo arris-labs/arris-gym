@@ -308,6 +308,172 @@ def test_an_extrusion_is_fused_with_the_solid_in_its_chain() -> None:
     assert fixture_cases.close(solid_volume(both), 8 + math.pi * 0.25 * 2)
 
 
+def body_digest(slug: str) -> str:
+    (case,) = [c for c in CASES if c.slug == slug]
+    result = fixture_cases.run(case)
+    assert result.body is not None, result.message
+    return result.body.sha256
+
+
+def test_one_profile_by_polyline_and_by_lines_is_one_body() -> None:
+    # The same points drawn two ways are the same path, so the same bytes.
+    assert body_digest("ok-revolved-rectangle") == body_digest("ok-revolved-rectangle-lines")
+
+
+TRIANGLE = [(0.0, 0.0), (3.0, 0.0), (0.0, 4.0)]
+
+
+def same_outline(a: object, b: object) -> bool:
+    """Whether two stack objects are sketches of one outline on one plane.
+
+    `arris.build.Sketch` compares by identity; its loop and plane by value.
+    """
+    assert isinstance(a, arris.build.Sketch)
+    assert isinstance(b, arris.build.Sketch)
+    return a.plane == b.plane and a.outer == b.outer and a.holes == b.holes
+
+
+def test_a_path_is_pending_until_it_is_closed() -> None:
+    drawn = cq.Workplane("XY").moveTo(*TRIANGLE[0]).lineTo(*TRIANGLE[1]).lineTo(*TRIANGLE[2])
+    assert drawn._solids() == ()
+    assert len(drawn._stack) == 1
+    closed = drawn.close()
+    assert closed._parent is drawn
+    (sketch,) = closed._stack
+    assert isinstance(sketch, arris.build.Sketch)
+    assert fixture_cases.close(solid_volume(closed.extrude(1)), 6.0)
+
+
+def test_line_to_starts_at_the_origin_on_an_empty_stack() -> None:
+    from_origin = cq.Workplane("XY").lineTo(3, 0).lineTo(0, 4).close()
+    moved = cq.Workplane("XY").moveTo(0, 0).lineTo(3, 0).lineTo(0, 4).close()
+    listed = cq.Workplane("XY").polyline(TRIANGLE).close()
+    sketches = [wp._stack[0] for wp in (from_origin, moved, listed)]
+    assert all(isinstance(s, arris.build.Sketch) for s in sketches)
+    assert all(same_outline(s, sketches[0]) for s in sketches)
+
+
+def test_a_path_drawn_on_a_turned_plane_is_in_its_coordinates() -> None:
+    plane = cq.Workplane("XY").transformed(offset=cq.Vector(1, 2, 3), rotate=cq.Vector(90, 0, 0))
+    prism = plane.polyline([(0, 0), (2, 0), (2, 1), (0, 1)]).close().extrude(1)
+    (solid,) = prism._solids()
+    # The plane's x is world x, its y world z and its normal world -y.
+    bounds = solid.model.bounds(solid.body)
+    assert bounds is not None
+    lo, hi = bounds
+    want = ((1, 1, 3), (3, 2, 4))
+    assert all(
+        fixture_cases.close(g, w) for g, w in zip([*lo, *hi], [*want[0], *want[1]], strict=True)
+    )
+
+
+def test_close_adds_no_segment_within_cadquerys_gap() -> None:
+    # A path that ends within 1e-6 of its start ends there: three edges,
+    # not a fourth sliver; one wider is a fourth segment back.
+    near = cq.Workplane("XY").polyline([(0, 0), (3, 0), (0, 4), (0, 5e-7)]).close()
+    far = cq.Workplane("XY").polyline([(0, 0), (3, 0), (0, 4), (0, 1e-3)]).close()
+    exact = cq.Workplane("XY").polyline(TRIANGLE).close()
+    assert same_outline(near._stack[0], exact._stack[0])
+    assert not same_outline(far._stack[0], exact._stack[0])
+    four = arris.build.Workplane.XY().start((0, 0)).line_to((3, 0)).line_to((0, 4))
+    assert same_outline(far._stack[0], four.line_to((0, 1e-3)).close())
+
+
+def test_close_needs_a_drawn_segment() -> None:
+    boxed = cq.Workplane("XY").box(1, 1, 1)
+    for wp in (cq.Workplane("XY"), cq.Workplane("XY").moveTo(1, 1), boxed):
+        with pytest.raises(ValueError, match=r"^No start point specified - cannot close$"):
+            wp.close()
+    with pytest.raises(ValueError, match=r"^No start point specified - cannot close$"):
+        cq.Workplane("XY").polyline([(1, 1)]).close()
+
+
+def test_line_to_goes_on_from_a_point_or_a_path_only() -> None:
+    closed = cq.Workplane("XY").polyline(TRIANGLE).close()
+    for wp, kind in ((cq.Workplane("XY").box(1, 1, 1), "Solid"), (closed, "Sketch")):
+        with pytest.raises(RuntimeError, match=rf"^Cannot convert object type '{kind}' to vector$"):
+            wp.lineTo(1, 1)
+
+
+@pytest.mark.parametrize(
+    ("form", "call"),
+    [
+        ("moveTo", lambda wp: wp.moveTo(0, 0)),
+        ("polyline", lambda wp: wp.polyline(TRIANGLE)),
+    ],
+)
+def test_a_second_pending_wire_is_unsupported(
+    form: str, call: Callable[[cq.Workplane], cq.Workplane]
+) -> None:
+    pending = [
+        cq.Workplane("XY").moveTo(1, 1),
+        cq.Workplane("XY").lineTo(1, 1),
+        cq.Workplane("XY").polyline(TRIANGLE).close(),
+        cq.Workplane("XY").circle(1),
+    ]
+    for wp in pending:
+        with pytest.raises(cq.UnsupportedApi, match=rf"^Workplane\.{form} on a pending wire$"):
+            call(wp)
+
+
+def test_move_to_and_polyline_leave_a_solid_in_the_chain() -> None:
+    boxed = cq.Workplane("XY").box(1, 1, 1)
+    for wp in (boxed.moveTo(2, 0), boxed.polyline(TRIANGLE)):
+        assert wp._solids() == ()
+        assert wp._parent is boxed
+
+
+def ring(angle: float) -> cq.Workplane:
+    square = cq.Workplane("XY").polyline([(1, 0), (2, 0), (2, 1), (1, 1)]).close()
+    return square.revolve(angle, (0, 0, 0), (0, 1, 0))
+
+
+@pytest.mark.parametrize(
+    ("angle", "turns"), [(360, 1.0), (0, 1.0), (720, 1.0), (-270, 0.25), (450, 0.25)]
+)
+def test_revolve_takes_its_angle_modulo_a_full_turn(angle: float, turns: float) -> None:
+    # The square's x moment is 1.5: Pappus, V = 2 pi turns 1.5.
+    assert fixture_cases.close(solid_volume(ring(angle)), 2 * math.pi * turns * 1.5)
+
+
+def test_revolve_turns_right_handed_from_axis_start_to_end() -> None:
+    square = cq.Workplane("XY").polyline([(1, 0), (2, 0), (2, 1), (1, 1)]).close()
+    for end, z_sign in (((0, 1, 0), -1), ((0, -1, 0), 1)):
+        (solid,) = square.revolve(90, (0, 0, 0), end)._solids()
+        assert solid.measure().centroid[2] * z_sign > 0
+
+
+def test_revolve_axis_points_are_in_the_planes_coordinates() -> None:
+    # The plane is moved 5 along x: the axis through its (0, 0) is world
+    # x = 5, and the square 1..2 from it has the same volume as at 0.
+    moved = cq.Workplane("XY").transformed(offset=cq.Vector(5, 0, 0))
+    square = moved.polyline([(1, 0), (2, 0), (2, 1), (1, 1)]).close()
+    (solid,) = square.revolve(360, (0, 0, 0), (0, 1, 0))._solids()
+    assert fixture_cases.close(solid.measure().volume, 3 * math.pi)
+    assert fixture_cases.close(solid.measure().centroid[0], 5.0)
+
+
+def test_revolve_needs_one_pending_sketch() -> None:
+    for wp in (
+        cq.Workplane("XY"),
+        cq.Workplane("XY").box(1, 1, 1),
+        cq.Workplane("XY").lineTo(1, 0),
+    ):
+        with pytest.raises(ValueError, match=r"^No pending wires present$"):
+            wp.revolve(360, (0, 0, 0), (0, 1, 0))
+
+
+def test_a_revolution_is_fused_with_the_solid_in_its_chain() -> None:
+    # A unit box at x 2..3, y 1..2, z -0.5..0.5 lies inside the ring of the
+    # square x 1..4, y 0..3 about y (its radii run 2..sqrt(9.25) < 4), so
+    # the union is the ring alone: 2 pi 2.5 9 = 45 pi, one solid.
+    block = cq.Workplane("XY").transformed(offset=cq.Vector(2.5, 1.5, 0)).box(1, 1, 1)
+    back = block.transformed(offset=cq.Vector(-2.5, -1.5, 0))
+    square = back.moveTo(1, 0).lineTo(4, 0).lineTo(4, 3).lineTo(1, 3).close()
+    both = square.revolve(360, (0, 0, 0), (0, 1, 0))
+    assert fixture_cases.close(solid_volume(both), 45 * math.pi)
+
+
 def matrix(axis: int, degrees: float) -> list[list[float]]:
     """The right-handed rotation by `degrees` about world axis `axis`."""
     c, s = math.cos(math.radians(degrees)), math.sin(math.radians(degrees))
@@ -392,6 +558,14 @@ LINES = [
     "result = result.box(1, 1, 1)",
     "result = result.transformed(rotate=cq.Vector(0, 90, 0))",
     "cq.Workplane('XZ')",
+    "result = cq.Workplane('XY').moveTo(2, 0).lineTo(3, 0).lineTo(3, 1)",
+    "result = cq.Workplane('XY').polyline([(2, 0), (3, 0), (3, 1)])",
+    "result = cq.Workplane('XY').polyline([(0, 0), (1, 0)])",
+    "result = result.lineTo(2, 1)",
+    "result = result.close()",
+    "result = result.revolve(360, (0, 0, 0), (0, 1, 0))",
+    "result = result.revolve(90, (0, 0, 0), (1, 0, 0))",
+    "result = result.extrude(1)",
     "del result",
     "raise SystemExit(0)",
 ]

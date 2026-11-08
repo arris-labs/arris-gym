@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 62.83185307179586,
+    "area": 157.07963267948966,
+    "centroid": [
+      0,
+      2,
+      0
+    ],
+    "bounds": [
+      [
+        -3,
+        0,
+        -3
+      ],
+      [
+        3,
+        4,
+        3
+      ]
+    ],
+    "faces": 4,
+    "shells": 1,
+    "genus": 1,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "the rectangle x 2..3, y 0..4 turned a full turn about y. Pappus: V = 2 pi xbar A = 2 pi 2.5 4 = 20 pi; A = sum of 2 pi rbar L over the edges = 2 pi (2.5 + 3 4 + 2.5 + 2 4) = 50 pi; centroid on the axis at mid-height; a tube: genus 1; drawn by polyline"
+}
