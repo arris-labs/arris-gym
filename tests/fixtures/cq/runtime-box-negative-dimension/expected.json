@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.box(-1, 2, 3): a negative dimension (CadQuery's Standard_DomainError)"
+}

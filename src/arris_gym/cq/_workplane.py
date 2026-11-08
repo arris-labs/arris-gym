@@ -13,6 +13,7 @@ from typing import NoReturn
 
 import arris.build
 
+from arris_gym.cq._forms import census_form, numbers_of, shape_of
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
 from arris_gym.cq._vector import Vector
 
@@ -50,10 +51,26 @@ class _Path:
         return _Path((*self.points, (float(x), float(y))))
 
 
-def _uv(point: Sequence[float]) -> tuple[float, float]:
-    """A point of a polyline's list as plane coordinates."""
-    x, y = point
-    return (float(x), float(y))
+def _uv(point: object) -> tuple[float, float]:
+    """A point of a polyline's list as plane coordinates: two numbers, else outside the subset.
+
+    CadQuery also takes three (the third along the normal) and a `Vector`;
+    a path that leaves its plane is not one the subset draws.
+    """
+    pair = numbers_of(point, (2,))
+    if pair is None:
+        raise UnsupportedApi(f"Workplane.polyline(list with a point of {shape_of(point)})")
+    return (pair[0], pair[1])
+
+
+def _axis_point(point: object) -> tuple[float, ...]:
+    """A `revolve` axis point as numbers: two or three, else outside the subset."""
+    numbers = numbers_of(point, (2, 3))
+    if numbers is None:
+        shape = shape_of(point)
+        of = f"tuple of {shape}" if shape.endswith(" numbers") else shape
+        raise UnsupportedApi(f"Workplane.revolve(num, {of})")
+    return numbers
 
 
 def _shell_count(solid: arris.build.Solid) -> int:
@@ -87,6 +104,7 @@ class Workplane:
     _stack: tuple[object, ...]
     _parent: Workplane | None
 
+    @census_form("cq.Workplane", [("str",)])
     def __init__(self, inPlane: str = _XY) -> None:
         if type(inPlane) is not str or inPlane != _XY:
             raise UnsupportedApi(f"cq.Workplane({inPlane!r})")
@@ -186,6 +204,7 @@ class Workplane:
             raise ValueError(f"{form} was given a Workplane holding no solid")
         return solids
 
+    @census_form("Workplane.transformed", keywords={"rotate": ("call",), "offset": ("call",)})
     def transformed(self, rotate: Vector = _ZERO, offset: Vector = _ZERO) -> Workplane:
         """A workplane moved to `offset` and turned by `rotate`, its stack empty.
 
@@ -202,6 +221,7 @@ class Workplane:
         >>> [round(c, 9) for c in wp.box(2, 2, 2)._solids()[0].measure().centroid]
         [1.0, 2.0, 3.0]
         """
+        self._refuse_pending("Workplane.transformed")
         plane = self._plane
         turned = plane
         # Each `rotated` turns about a fixed world direction through the
@@ -212,6 +232,7 @@ class Workplane:
         origin = plane.point(offset.x, offset.y, offset.z)
         return self._derive_on(arris.build.Workplane(origin, turned.x, turned.y, turned.z))
 
+    @census_form("Workplane.box", [("num",)] * 3)
     def box(self, length: float, width: float, height: float) -> Workplane:
         """A `length` by `width` by `height` box centred on the workplane's origin.
 
@@ -224,9 +245,16 @@ class Workplane:
         >>> round(cq.Workplane("XY").box(2, 3, 4)._solids()[0].measure().volume, 9)
         24.0
         """
+        self._refuse_pending("Workplane.box")
+        if min(length, width, height) < 0:
+            raise ValueError(
+                f"Workplane.box({length}, {width}, {height}): a negative dimension "
+                "(CadQuery's Standard_DomainError)"
+            )
         sketch = self._plane.offset(-height / 2).rect(length, width)
         return self._combined(sketch.extrude(height))
 
+    @census_form("Workplane.circle", [("num",)])
     def circle(self, radius: float) -> Workplane:
         """A pending circle of `radius` centred on the workplane's origin.
 
@@ -243,6 +271,7 @@ class Workplane:
             raise UnsupportedApi("Workplane.circle on a non-empty stack")
         return self._derive(self._plane.circle(radius))
 
+    @census_form("Workplane.extrude", [("num",)])
     def extrude(self, distance: float) -> Workplane:
         """The pending sketch extruded `distance` along the plane's normal.
 
@@ -257,6 +286,7 @@ class Workplane:
         """
         return self._combined(self._pending_sketch().extrude(distance))
 
+    @census_form("Workplane.moveTo", [("num",)] * 2)
     def moveTo(self, x: float = 0, y: float = 0) -> Workplane:
         """A pending path starting at `(x, y)` in the workplane's coordinates.
 
@@ -272,6 +302,7 @@ class Workplane:
         self._refuse_pending("Workplane.moveTo")
         return self._derive(_Path(((float(x), float(y)),)))
 
+    @census_form("Workplane.lineTo", [("num",)] * 2)
     def lineTo(self, x: float, y: float) -> Workplane:
         """The pending path with a straight segment on to `(x, y)`.
 
@@ -287,7 +318,8 @@ class Workplane:
         """
         return self._derive(self._pen().to(x, y))
 
-    def polyline(self, listOfXYTuple: Sequence[Sequence[float]]) -> Workplane:
+    @census_form("Workplane.polyline", [("list",)])
+    def polyline(self, listOfXYTuple: Sequence[object]) -> Workplane:
         """A pending path through the points of `listOfXYTuple`, in order.
 
         It starts at the first point, not at the current one, as CadQuery's
@@ -302,6 +334,7 @@ class Workplane:
         self._refuse_pending("Workplane.polyline")
         return self._derive(_Path(tuple(_uv(p) for p in listOfXYTuple)))
 
+    @census_form("Workplane.close")
     def close(self) -> Workplane:
         """The pending path closed back to its start: a sketch on the stack.
 
@@ -328,11 +361,12 @@ class Workplane:
             path = path.line_to(point)
         return self._derive(path.close())
 
+    @census_form("Workplane.revolve", [("num",), ("tuple",), ("tuple",)])
     def revolve(
         self,
         angleDegrees: float,
-        axisStart: Sequence[float],
-        axisEnd: Sequence[float],
+        axisStart: object,
+        axisEnd: object,
     ) -> Workplane:
         """The pending sketch turned `angleDegrees` about the axis from `axisStart` to `axisEnd`.
 
@@ -351,17 +385,19 @@ class Workplane:
         3.0
         """
         sketch = self._pending_sketch()
+        start_at, end_at = _axis_point(axisStart), _axis_point(axisEnd)
         degrees = angleDegrees % 360.0
         if degrees == 0:
             degrees = 360.0
-        start = self._plane.point(*axisStart)
-        end = self._plane.point(*axisEnd)
+        start = self._plane.point(*start_at)
+        end = self._plane.point(*end_at)
         direction = (end[0] - start[0], end[1] - start[1], end[2] - start[2])
         made = arris.build.default_model().revolve(
             sketch.profile(), start, direction, degrees * _REVOLVE_RADIANS_PER_DEGREE
         )
         return self._combined(arris.build.Solid.of(made))
 
+    @census_form("Workplane.union", [None])
     def union(self, toUnion: Workplane) -> Workplane:
         """The chain's solid fused with the solid of `toUnion`, on this plane.
 
@@ -376,6 +412,7 @@ class Workplane:
         >>> round(a.union(b)._solids()[0].measure().volume, 9)
         15.0
         """
+        self._refuse_pending("Workplane.union")
         others = self._operand(toUnion, "Workplane.union(Workplane)")
         base = self._base_solid()
         if base is None:
@@ -385,6 +422,7 @@ class Workplane:
             result = result._combined(other)
         return result
 
+    @census_form("Workplane.cut", [None])
     def cut(self, toCut: Workplane) -> Workplane:
         """The chain's solid less the solid of `toCut`, on this plane.
 
@@ -397,6 +435,7 @@ class Workplane:
         >>> round(a.cut(b)._solids()[0].measure().volume, 9)
         60.0
         """
+        self._refuse_pending("Workplane.cut")
         tools = self._operand(toCut, "Workplane.cut(Workplane)")
         base = self._base_solid()
         if base is None:

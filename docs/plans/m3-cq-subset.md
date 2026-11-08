@@ -126,11 +126,19 @@ correctness has to be established here.
   axes wait for step 6. A 90° fixture (oracle-recorded) pins the turn as
   right-handed. ⚠ OPEN (step 6): `transformed`, `box`, `union` and `cut`
   on a stack holding a pending wire drop it, where CadQuery keeps it in
-  its context; the slice writes none.
-- [ ] Step 6 **[2]** — API forms outside the census: every implemented call
+  its context; the slice writes none. *Settled in step 6:* see Open questions.
+- [x] Step 6 **[2]** — API forms outside the census: every implemented call
   checks its form. `hypothesis`: chains drawn from implemented calls with
   census forms run `ok` or end in a kernel refusal; chains with one call or
   keyword outside them end `unsupported_api` naming it, never `runtime`.
+  *Settled:* the check is a decorator (`cq/_forms.py`) on every implemented
+  call, run before the method; a form is its positional kinds and its
+  keywords, spelled as the census spells it. `union`/`cut` accept any one
+  argument (their operand check keeps its own message); `transformed`
+  accepts any subset of its two census keywords, `Vector` and `Workplane`
+  values being `call`. The census-chains property is built in-process
+  from recipes (box, cylinder, prism, ring, each maybe on a turned plane)
+  joined by `union`/`cut`; a compound is the one `unsupported_api` it allows.
 - [ ] Step 7 **[2]** — `tools/cq_slice.py` and its first run: 300 rows,
   the table and arris report committed with their digests (two runs equal);
   `tests/test_c1_slice.py` checks the committed table offline (300 rows,
@@ -178,10 +186,21 @@ correctness has to be established here.
 - *Settled* (step 1, ADR-0007): several solids are `unsupported_api`, not
   `runtime`: a compound is a CadQuery value the subset lacks, not a program
   error; both give the same reward (−1.0).
-- ⚠ OPEN (agent, step 6): `box` with a negative dimension builds on arris
-  (the extents are its magnitudes), while CadQuery 2.3.0 ends `runtime`
-  (`Standard_DomainError`); a zero one is an arris refusal on arris. The
-  slice has none (all 300 oracle `ok`); step 6's forms decide whether the
-  subset refuses it.
+- *Settled* (agent, step 6): `box` with a negative dimension is `runtime`
+  (`ValueError`, naming CadQuery's `Standard_DomainError`), as CadQuery 2.3.0
+  ends, though arris would build it from the magnitudes: the subset follows
+  the oracle, so the table never counts it a disagreement. A zero dimension
+  stays the kernel's refusal (`arris_refusal`). The slice has none.
+- *Settled* (agent, step 6): `transformed`, `box`, `union` and `cut` on a stack
+  holding a pending wire are `unsupported_api` (`Workplane.box on a pending
+  wire`), as `moveTo` and `polyline` already are: dropping the wire silently
+  would build a part CadQuery does not, where refusing names the gap.
+- *Settled* (agent, step 6): `revolve` has the census's three arguments only;
+  CadQuery's default axes and every other form are `unsupported_api` naming
+  the form (`Workplane.revolve(num)`), since the census writes none.
+- *Settled* (agent, step 6): a `polyline` point must be two numbers (a tuple or
+  list); three coordinates, a `Vector` or anything else is `unsupported_api`
+  (`Workplane.polyline(list with a point of 3 numbers)`): a path leaving its
+  plane is not one the subset draws. `revolve`'s axis points keep two or three.
 - ⚠ OPEN (agent, step 7): the slice run's timeout and memory — the sandbox's
   defaults unless a program needs more, measured by step 7.

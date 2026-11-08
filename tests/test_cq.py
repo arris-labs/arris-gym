@@ -20,7 +20,7 @@ from hypothesis import strategies as st
 import arris_gym as ag
 import arris_gym.cq as cq
 import fixture_cases
-from arris_gym.cq import _result, _vector, _workplane
+from arris_gym.cq import _forms, _result, _vector, _workplane
 from arris_gym.fidelity import OracleReport, OracleStatus, program_sha256
 
 CASES = fixture_cases.load("cq")
@@ -581,3 +581,214 @@ def test_run_never_raises_on_programs_of_the_subsets_lines(lines: list[str]) -> 
         ag.Status.UNSUPPORTED_API,
         ag.Status.RUNTIME,
     ), result.message
+
+
+# Forms outside the census (step 6): every implemented call checks its form.
+BOXED = cq.Workplane("XY").box(1, 1, 1)
+PATH = cq.Workplane("XY").moveTo(1, 0)
+RING = cq.Workplane("XY").polyline([(1, 0), (2, 0), (2, 1), (1, 1)]).close()
+OUTSIDE_FORMS: list[tuple[str, Callable[[], object]]] = [
+    ("cq.Workplane()", lambda: cq.Workplane()),
+    ("cq.Workplane(num)", lambda: cq.Workplane(5)),  # type: ignore[arg-type]
+    ("cq.Vector(num, num)", lambda: cq.Vector(1, 2)),  # type: ignore[call-arg]
+    ("cq.Vector(num, num, str)", lambda: cq.Vector(1, 2, "3")),  # type: ignore[arg-type]
+    ("cq.Vector(num, num, num; w=num)", lambda: cq.Vector(1, 2, 3, w=4)),  # type: ignore[call-arg]
+    ("Workplane.box(num, num)", lambda: BOXED.box(1, 2)),  # type: ignore[call-arg]
+    (
+        "Workplane.box(num, num, num; centered=bool)",
+        lambda: BOXED.box(1, 2, 3, centered=False),  # type: ignore[call-arg]
+    ),
+    ("Workplane.box(num, str, num)", lambda: BOXED.box(1, "2", 3)),  # type: ignore[arg-type]
+    ("Workplane.box(bool, num, num)", lambda: BOXED.box(True, 2, 3)),
+    ("Workplane.transformed(tuple)", lambda: BOXED.transformed((0, 0, 1))),  # type: ignore[arg-type]
+    ("Workplane.transformed(offset=tuple)", lambda: BOXED.transformed(offset=(0, 0, 1))),  # type: ignore[arg-type]
+    ("Workplane.transformed(origin=call)", lambda: BOXED.transformed(origin=cq.Vector(0, 0, 0))),  # type: ignore[call-arg]
+    ("Workplane.circle(num; clean=bool)", lambda: BOXED.circle(1, clean=True)),  # type: ignore[call-arg]
+    ("Workplane.circle(radius=num)", lambda: BOXED.circle(radius=1)),
+    ("Workplane.extrude(num; both=bool)", lambda: PATH.extrude(1, both=True)),  # type: ignore[call-arg]
+    ("Workplane.extrude(num, bool)", lambda: PATH.extrude(1, True)),  # type: ignore[call-arg]
+    ("Workplane.moveTo(num)", lambda: BOXED.moveTo(1)),
+    ("Workplane.moveTo()", lambda: BOXED.moveTo()),
+    ("Workplane.lineTo(tuple)", lambda: PATH.lineTo((1, 1))),  # type: ignore[call-arg, arg-type]
+    ("Workplane.polyline(tuple)", lambda: BOXED.polyline(((0, 0), (1, 0)))),
+    (
+        "Workplane.polyline(list; includeCurrent=bool)",
+        lambda: BOXED.polyline(TRIANGLE, includeCurrent=True),  # type: ignore[call-arg]
+    ),
+    (
+        "Workplane.polyline(list with a point of 3 numbers)",
+        lambda: BOXED.polyline([(0, 0, 0), (1, 0, 0)]),
+    ),
+    ("Workplane.polyline(list with a point of 1 numbers)", lambda: BOXED.polyline([(0,), (1, 0)])),
+    ("Workplane.polyline(list with a point of str)", lambda: BOXED.polyline(["ab", "cd"])),
+    ("Workplane.polyline(list with a point of call)", lambda: BOXED.polyline([cq.Vector(0, 0, 0)])),
+    ("Workplane.close(bool)", lambda: PATH.close(True)),  # type: ignore[call-arg]
+    ("Workplane.revolve()", lambda: RING.revolve()),  # type: ignore[call-arg]
+    ("Workplane.revolve(num)", lambda: RING.revolve(360)),  # type: ignore[call-arg]
+    ("Workplane.revolve(num, tuple)", lambda: RING.revolve(360, (0, 0, 0))),  # type: ignore[call-arg]
+    (
+        "Workplane.revolve(num, tuple, tuple; combine=bool)",
+        lambda: RING.revolve(360, (0, 0, 0), (0, 1, 0), combine=False),  # type: ignore[call-arg]
+    ),
+    ("Workplane.revolve(num, list, tuple)", lambda: RING.revolve(360, [0, 0, 0], (0, 1, 0))),
+    (
+        "Workplane.revolve(num, tuple of 4 numbers)",
+        lambda: RING.revolve(360, (0, 0, 0, 0), (0, 1, 0)),
+    ),
+    (
+        "Workplane.revolve(num, tuple of non-numbers)",
+        lambda: RING.revolve(360, (0, 0, 0), ("a", "b")),
+    ),
+    ("Workplane.union()", lambda: BOXED.union()),  # type: ignore[call-arg]
+    ("Workplane.union(call; clean=bool)", lambda: BOXED.union(BOXED, clean=False)),  # type: ignore[call-arg]
+    ("Workplane.cut(call, call)", lambda: BOXED.cut(BOXED, BOXED)),  # type: ignore[call-arg]
+]
+
+
+@pytest.mark.parametrize(("form", "call"), OUTSIDE_FORMS, ids=[form for form, _ in OUTSIDE_FORMS])
+def test_a_form_outside_the_census_is_unsupported_naming_it(
+    form: str, call: Callable[[], object]
+) -> None:
+    with pytest.raises(cq.UnsupportedApi) as raised:
+        call()
+    assert str(raised.value) == form
+
+
+def test_a_census_form_given_a_call_with_a_census_keyword_in_either_order() -> None:
+    wp = cq.Workplane("XY")
+    a = wp.transformed(offset=cq.Vector(1, 0, 0), rotate=cq.Vector(0, 0, 90))
+    b = wp.transformed(rotate=cq.Vector(0, 0, 90), offset=cq.Vector(1, 0, 0))
+    assert a._plane.origin == b._plane.origin
+    assert a._plane.x == b._plane.x
+
+
+def test_box_with_a_negative_dimension_is_cadquerys_runtime_error() -> None:
+    # CadQuery 2.3.0 ends `runtime` (Standard_DomainError); arris would build.
+    for dims in [(-1, 2, 3), (1, -2, 3), (1, 2, -3)]:
+        with pytest.raises(ValueError, match=r"negative dimension"):
+            cq.Workplane("XY").box(*dims)
+
+
+def test_box_with_a_zero_dimension_is_the_kernels_refusal() -> None:
+    with pytest.raises(arris.ArrisError):
+        cq.Workplane("XY").box(0, 2, 3)
+
+
+@pytest.mark.parametrize(
+    ("form", "call"),
+    [
+        ("transformed", lambda wp: wp.transformed(offset=cq.Vector(0, 0, 1))),
+        ("box", lambda wp: wp.box(1, 1, 1)),
+        ("union", lambda wp: wp.union(BOXED)),
+        ("cut", lambda wp: wp.cut(BOXED)),
+    ],
+)
+def test_a_call_that_would_drop_a_pending_wire_is_unsupported(
+    form: str, call: Callable[[cq.Workplane], cq.Workplane]
+) -> None:
+    pending = [
+        cq.Workplane("XY").box(1, 1, 1).moveTo(1, 1),
+        cq.Workplane("XY").lineTo(1, 1),
+        cq.Workplane("XY").polyline(TRIANGLE).close(),
+        cq.Workplane("XY").circle(1),
+    ]
+    for wp in pending:
+        with pytest.raises(cq.UnsupportedApi, match=rf"^Workplane\.{form} on a pending wire$"):
+            call(wp)
+
+
+def test_the_form_check_runs_before_the_stack_is_looked_at() -> None:
+    # An empty stack would be a ValueError for `extrude`; a wrong form is
+    # unsupported first, so the model reads which one.
+    with pytest.raises(cq.UnsupportedApi):
+        cq.Workplane("XY").extrude(1, both=True)  # type: ignore[call-arg]
+
+
+def test_the_docstring_examples_of_the_form_checks_run() -> None:
+    assert doctest.testmod(_forms).failed == 0
+
+
+POSITIVE = st.floats(min_value=0.5, max_value=10, allow_nan=False)
+PLACE = st.floats(min_value=-5, max_value=5, allow_nan=False)
+TURN = st.floats(min_value=-180, max_value=180, allow_nan=False)
+
+
+@st.composite
+def parts(draw: st.DrawFn) -> cq.Workplane:
+    """A solid on a (maybe turned) plane, built by one of the subset's recipes."""
+    wp = cq.Workplane("XY")
+    if draw(st.booleans()):
+        wp = wp.transformed(
+            offset=cq.Vector(draw(PLACE), draw(PLACE), draw(PLACE)),
+            rotate=cq.Vector(draw(TURN), draw(TURN), draw(TURN)),
+        )
+    match draw(st.sampled_from(["box", "cylinder", "prism", "ring"])):
+        case "box":
+            return wp.box(draw(POSITIVE), draw(POSITIVE), draw(POSITIVE))
+        case "cylinder":
+            return wp.circle(draw(POSITIVE)).extrude(draw(POSITIVE))
+        case "prism":
+            a, b = draw(POSITIVE), draw(POSITIVE)
+            return wp.polyline([(0, 0), (a, 0), (a, b)]).close().extrude(draw(POSITIVE))
+        case _:
+            r, w, h = draw(POSITIVE), draw(POSITIVE), draw(POSITIVE)
+            sketch = wp.polyline([(r, 0), (r + w, 0), (r + w, h), (r, h)]).close()
+            return sketch.revolve(draw(st.sampled_from([90, 180, 360])), (0, 0, 0), (0, 1, 0))
+
+
+@settings(max_examples=60, deadline=None)
+@given(parts(), st.lists(st.tuples(st.sampled_from(["union", "cut"]), parts()), max_size=3))
+def test_chains_of_census_forms_run_or_end_in_a_kernel_refusal(
+    base: cq.Workplane, steps: list[tuple[str, cq.Workplane]]
+) -> None:
+    try:
+        wp = base
+        for name, other in steps:
+            wp = wp.union(other) if name == "union" else wp.cut(other)
+        _result.solid_of(wp, "the part")
+    except arris.ArrisError:
+        pass
+    except cq.UnsupportedApi as error:
+        # A compound is the only subset gap a census form reaches.
+        compound = str(error).startswith("a Workplane holding ")
+        if not compound:
+            raise AssertionError(str(error)) from error
+
+
+# One call or keyword outside the census, on any receiver.
+BAD_CALLS: list[Callable[[cq.Workplane], object]] = [
+    lambda wp: wp.sphere(1),
+    lambda wp: wp.faces(">Z"),
+    lambda wp: wp.hole(1),
+    lambda wp: wp.box(1, 2, 3, centered=False),  # type: ignore[call-arg]
+    lambda wp: wp.box(1, 2),  # type: ignore[call-arg]
+    lambda wp: wp.circle(1, 2),  # type: ignore[call-arg]
+    lambda wp: wp.extrude(1, taper=5),  # type: ignore[call-arg]
+    lambda wp: wp.extrude("1"),  # type: ignore[arg-type]
+    lambda wp: wp.transformed((0, 0, 1)),  # type: ignore[arg-type]
+    lambda wp: wp.transformed(offset=(0, 0, 1)),  # type: ignore[arg-type]
+    lambda wp: wp.moveTo(1),
+    lambda wp: wp.lineTo(1, 2, 3),  # type: ignore[call-arg]
+    lambda wp: wp.polyline([(0, 0, 0)]),
+    lambda wp: wp.close(1),  # type: ignore[call-arg]
+    lambda wp: wp.revolve(90),  # type: ignore[call-arg]
+    lambda wp: wp.revolve(90, (0, 0), (0, 1), combine=False),  # type: ignore[call-arg]
+    lambda wp: wp.union(wp, wp),  # type: ignore[call-arg]
+    lambda wp: wp.cut(),  # type: ignore[call-arg]
+]
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    st.one_of(
+        st.just(cq.Workplane("XY")),
+        parts(),
+        st.sampled_from([cq.Workplane("XY").circle(1), PATH, RING]),
+    ),
+    st.sampled_from(BAD_CALLS),
+)
+def test_a_call_or_keyword_outside_the_census_is_unsupported_never_runtime(
+    receiver: cq.Workplane, bad: Callable[[cq.Workplane], object]
+) -> None:
+    with pytest.raises(cq.UnsupportedApi):
+        bad(receiver)

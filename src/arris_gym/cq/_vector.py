@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from typing import NoReturn
 
+from arris_gym.cq._forms import census_form
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
 
 
@@ -32,6 +33,7 @@ class Vector:
 
     _xyz: tuple[float, float, float]
 
+    @census_form("cq.Vector", [("num",)] * 3)
     def __init__(self, x: float, y: float, z: float) -> None:
         object.__setattr__(self, "_xyz", (float(x), float(y), float(z)))
 

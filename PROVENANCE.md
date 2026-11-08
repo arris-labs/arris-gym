@@ -52,3 +52,7 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   points in plane coordinates (a third coordinate along the normal); a
   right-handed turn about the direction from start to end; the result fused
   with the solid in the chain (`combine=True`).
+- `Workplane.box` with a negative dimension: CadQuery 2.3.0 ends in Open
+  CASCADE's `Standard_DomainError` (observed by running it, not read in its
+  source); the subset raises `ValueError`, so the program ends `runtime` as
+  the oracle's does.
