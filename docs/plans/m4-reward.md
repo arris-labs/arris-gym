@@ -99,7 +99,7 @@ to be established here.
   `arris` dialect: IoU 1/3, disjoint 0, touching 0, self 1, cube and double 1/8.
   The sampled route, forced with a budget of 1, lands within 4σ of each closed
   form. A cone pair the kernel refuses comes back `sampled`.
-- [ ] Step 2 **[3]** — **ADR-0008**, from `tools/reward_calibrate.py` over the
+- [x] Step 2 **[3]** — **ADR-0008**, from `tools/reward_calibrate.py` over the
   slice: `iou_budget`, chord, N and the strata, with each candidate's bias and
   RMSE against the exact route written in the ADR.
 - [ ] Step 3 **[3]** — `surface`: seeded area-weighted points, nearest-point
@@ -164,6 +164,18 @@ faceted hole's `topology` below 1 and below the plate against itself), plus:
   diagonal, so a pair built alike meshes alike; no point inside either body
   gives 0. Step 2 replaces the uniform draw if a stratified one wins, and
   sizes N so that empty case does not arise on the slice.
+- *Settled* (agent, step 2): ADR-0008 measured the defaults step 5 writes
+  into `RewardConfig`: `iou_budget` 10⁷ (every slice pair the kernel answers,
+  1,645 of 1,800; no pair reached the cap), chord 1/200, N = 10,648 (22³).
+  The sampled route's draw is now jittered (one point per cell, k the integer
+  cube root of N), which beat the uniform draw at every N and the weighted
+  strata on `venturi_tube`; the near-surface points feed only `surface`.
+  `CHUNK_ELEMENTS` dropped from 2¹⁸ to 2¹⁴: under sixteen concurrent
+  processes the large chunk ran 12× slower out of cache. It moves no result.
+- *Settled* (agent, step 2): an exact answer near the cap took 17 s under 30
+  concurrent processes, so step 6's score deadline (30 s in the deltas) has
+  1.8× headroom on this machine; step 6 keeps the deadline above it and a
+  scoring `timeout` stays counted.
 - *Settled* (agent): `benchcad_score.py` runs the 10 pairs on CadQuery outside
   the sandbox, because their scorer reads STEP files and every sandbox mount is
   read-only. The pairs are our own programs; nothing from a corpus reaches it.

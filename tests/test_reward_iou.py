@@ -22,7 +22,16 @@ from hypothesis import strategies as st
 
 import arris_gym as ag
 import fixture_cases
-from arris_gym.reward._iou import CHUNK_ELEMENTS, IouRoute, exact_iou, inside, iou, sampled_iou
+from arris_gym.reward._iou import (
+    CHUNK_ELEMENTS,
+    IouRoute,
+    exact_iou,
+    grid_side,
+    inside,
+    iou,
+    jittered_points,
+    sampled_iou,
+)
 
 # A budget the exact route needs no more than on these box and cone pairs:
 # the hardest slice pair measured while planning finished in 1e7 steps.
@@ -34,7 +43,8 @@ FORCED_BUDGET = 1
 # exactly at any chord, so the sampled route's closed forms carry sampling
 # error only.
 CHORD_FRACTION = 1 / 200
-# Points per sampled estimate: a standard error near 0.005 at IoU 1/3.
+# Points per sampled estimate (21³ = 9261 are drawn): a standard error near
+# 0.005 at IoU 1/3.
 POINTS = 10_000
 SEED = 20261109
 # The sampled route lands within this many standard errors of a closed form.
@@ -125,8 +135,9 @@ def test_the_forced_sampled_route_lands_within_4_sigma_of_the_closed_form(pair: 
     assert got.route is IouRoute.SAMPLED
     want = float(str(pair.expected["iou"]))
     # The binomial error over the points inside either part, whose count the
-    # construction gives as a share of all points.
-    either = POINTS * float(str(pair.expected["sample_union_fraction"]))
+    # construction gives as a share of all points drawn: a bound on the
+    # jittered draw's error, which the cells only lower.
+    either = grid_side(POINTS) ** 3 * float(str(pair.expected["sample_union_fraction"]))
     sigma = math.sqrt(want * (1.0 - want) / either)
     assert abs(got.value - want) <= SIGMAS * sigma, (got.value, want, sigma)
 
@@ -204,3 +215,29 @@ def test_the_winding_number_holds_across_chunks() -> None:
     points = rng.random((3 * CHUNK_ELEMENTS // len(a) + 7, 3)) * 2.0 - 0.5
     want = np.all((points > 0.0) & (points < 1.0), axis=1)
     assert np.array_equal(inside(points, (a, b, c)), want)
+
+
+@given(points=st.integers(min_value=1, max_value=10**7))
+def test_grid_side_is_the_integer_cube_root(points: int) -> None:
+    k = grid_side(points)
+    assert k >= 1
+    assert k**3 <= points < (k + 1) ** 3
+
+
+def test_grid_side_refuses_no_points() -> None:
+    with pytest.raises(ValueError, match="positive"):
+        grid_side(0)
+
+
+@settings(max_examples=25)
+@given(points=st.integers(min_value=1, max_value=4000), seed=st.integers(0, 2**63 - 1))
+def test_the_jittered_draw_puts_one_point_in_each_cell(points: int, seed: int) -> None:
+    k = grid_side(points)
+    drawn = jittered_points(points, seed)
+    assert drawn.shape == (k**3, 3)
+    # A cell's last jitter can round up to its far side, so 1.0 is reachable.
+    assert bool(np.all((drawn >= 0.0) & (drawn <= 1.0)))
+    cells = np.minimum(np.floor(drawn * k), k - 1).astype(np.int64)
+    flat = (cells[:, 0] * k + cells[:, 1]) * k + cells[:, 2]
+    assert np.array_equal(np.sort(flat), np.arange(k**3))
+    assert jittered_points(points, seed).tobytes() == drawn.tobytes()

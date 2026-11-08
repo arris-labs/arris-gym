@@ -301,22 +301,18 @@ that can move a reward bumps it.
 (`benchcad_core/scoring/iou.py` for BenchCAD, read at M4), so numbers compare
 with published ones. Theirs and ours never share a name.
 
-⚠ OPEN: **the IoU method** until `classify_points` lands. SEED.md §7.1 assumes
-a mesh winding number; measured on arris 0.10.0, three routes exist today:
-
-| Route | Measured | For | Against |
-|---|---|---|---|
-| Boolean: `vol(A∩B) / (vA + vB − vol(A∩B))` | two overlapping boxes: 1/3 to rounding | exact, no sampling, no seed | a boolean can refuse; disjoint bodies raise `OpDegenerateError`, so `interference` must decide that first |
-| `ray_fire` parity per point | 6144 points, a 10-face body: 4.6 s, inside count equal to the closed form's | exact per point, always answers | Python loop, ~0.75 ms a point, twice per score: too slow for RL |
-| Mesh winding number | chord 0.05 on a Ø4 hole: mesh volume 877.98 against 874.34 | vectorised, never refuses | error bounded by the chord; 0.4% here |
-
-Recommended for the ADR: the boolean, falling back to sampling when it
-refuses, the row saying which method answered.
-
-⚠ OPEN: **the sampled estimator.** The seed's N/2 points near the target
-surface are not volume-uniform, so counting them with the uniform N biases
-IoU upward near the boundary. Either weight the strata or let the near-surface
-stratum feed only `surface`. Closed with the reward weights and τ.
+**The IoU has two routes** (ADR-0008, `reward/_iou.py`). The **exact route**
+asks the kernel's `interference` under a step budget, 10⁷ by default: `apart`
+or `touching` is 0, containment either way is the smaller volume over the
+larger, otherwise `v∩ / (vA + vB − v∩)`. Any `ArrisError`, the spent budget's
+`Interrupted` included, sends the pair to the **sampled route**: one PCG64
+point in each of k³ equal cells of the box holding both bodies (k³ ≤ N,
+10,648 by default), classed by a winding number on each body's mesh at 1/200
+of its own diagonal. A step count decides the route, so it is the same on
+every machine; the score names the route. On the C1 slice the exact route
+answers 1,645 of 1,800 pairs by construction, the 155 others a cone face
+against a cone face, and the sampled route's RMSE against it is 0.009. The
+seed's near-surface points feed only `surface`, never the IoU.
 
 ## Determinism
 

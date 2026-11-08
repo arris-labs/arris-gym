@@ -24,3 +24,4 @@ training cycle starts from.
 | [0005](0005-the-agreement-tolerance-is-set-from-a-calibration-set.md) | The agreement tolerance is set from a calibration set held to closed forms | accepted |
 | [0006](0006-a-fidelity-row-is-classed-by-its-statuses-or-by-a-verdict.md) | A fidelity row is classed by its two statuses, or by a verdict | accepted |
 | [0007](0007-a-cq-workplane-is-a-frozen-stack-over-arris-build.md) | A `cq` Workplane is a frozen stack over `arris.build`, its result one solid | accepted |
+| [0008](0008-the-iou-is-exact-where-the-kernel-answers-and-sampled-on-a-jittered-grid-elsewhere.md) | The IoU is exact where the kernel answers, and sampled on a jittered grid elsewhere | accepted |

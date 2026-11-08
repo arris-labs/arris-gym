@@ -123,6 +123,18 @@ _Avoid_: fitness
 What `score` returns: the reward, its terms and the field's metrics.
 _Avoid_: evaluation
 
+**Exact route**:
+The IoU from the kernel's `interference` under a step budget: exact up to the
+kernel's rounding, where the kernel answers (ARCHITECTURE.md §The reward,
+ADR-0008).
+_Avoid_: boolean IoU, analytic IoU
+
+**Sampled route**:
+The IoU estimated from seeded points classed by a winding number on each
+body's mesh: what answers when the exact route refuses or spends its budget
+(ADR-0008).
+_Avoid_: mesh IoU, Monte Carlo IoU
+
 **Field metric**:
 A metric computed the way a published benchmark defines it, so its numbers
 compare with theirs. Kept apart from ours.
