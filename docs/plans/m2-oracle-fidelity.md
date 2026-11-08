@@ -58,7 +58,10 @@ same digest.
     (measures), a second oracle's record, a doc or ADR anchor (`by_design`),
     or a regression fixture path.
   - `FidelityRow`: outcome `agree` | `disagree(class)` | `unclassified`, the
-    deltas, and both statuses.
+    deltas, and both statuses. As built (review): also `versions`
+    (`sandbox.Versions`, the result's) and `oracle_versions`
+    (`OracleVersions | None`, the report's; `None` exactly for an oracle
+    `timeout` or `crash`), so every row records its versions (gym.md).
   - `compare(result, report, verdict=None) -> FidelityRow`.
   - `FidelityTable`: rows in program order, counts over all programs, and
     `digest`.

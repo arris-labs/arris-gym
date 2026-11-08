@@ -193,6 +193,24 @@ def test_the_rule_classes_each_status_pair_as_adr_0006_says(
     assert row.program_sha256 == SHA
 
 
+@pytest.mark.parametrize("oracle", list(OracleStatus), ids=lambda s: s.value)
+def test_a_row_carries_both_sides_versions(oracle: OracleStatus) -> None:
+    # gym.md: the arris and numpy versions, and the oracle's, in every row.
+    arris_side = result(Status.OK).model_copy(
+        update={"versions": Versions(arris="0.10.0", numpy="2.3.4", arris_gym="0.1.0.dev0")}
+    )
+    row = compare(arris_side, report(oracle))
+    assert row.versions == arris_side.versions
+    assert row.oracle_versions == report(oracle).versions
+    assert (row.oracle_versions is None) is (oracle in (OracleStatus.TIMEOUT, OracleStatus.CRASH))
+    fields = row.model_dump()
+    with pytest.raises(pydantic.ValidationError):
+        FidelityRow.model_validate(
+            fields
+            | {"oracle_versions": None if row.oracle_versions else ORACLE_VERSIONS.model_dump()}
+        )
+
+
 def test_a_measure_gap_and_a_second_solid_are_unclassified_and_the_faces_not_judged() -> None:
     wide = BOX.model_copy(update={"volume": 24.0 * (1 + 1e-6)})
     assert compare(result(Status.OK, wide), report(OracleStatus.OK)).outcome.value == U

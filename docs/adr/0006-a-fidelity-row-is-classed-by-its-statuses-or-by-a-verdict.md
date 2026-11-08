@@ -85,8 +85,11 @@ closed form shows it. The row keeps the verdict beside the class.
 **A row** (`FidelityRow`) carries the outcome (`agree`, `disagree` or
 `unclassified`), the class, the refusal for `arris_refusal`, the verdict, the
 deltas whenever both sides measured a shape (face counts carried, never
-judged), both statuses and the program's SHA-256. A row with a timeout on
-either side says so (`timed_out`), so a table counts timeouts by name.
+judged), both statuses, the program's SHA-256, and the versions each side
+ran under (the result's arris, numpy and arris-gym; the oracle report's
+cadquery, OCP and Python, absent where its worker never answered). A row
+with a timeout on either side says so (`timed_out`), so a table counts
+timeouts by name.
 
 ## Consequences
 

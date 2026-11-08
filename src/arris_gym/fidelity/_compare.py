@@ -21,12 +21,14 @@ from arris_gym.fidelity._agreement import (
     measure_deltas,
     within_tolerance,
 )
-from arris_gym.fidelity._oracle import OracleReport, OracleStatus
-from arris_gym.sandbox import ArrisRefusal, ExecResult, Status
+from arris_gym.fidelity._oracle import OracleReport, OracleStatus, OracleVersions
+from arris_gym.sandbox import ArrisRefusal, ExecResult, Status, Versions
 
 _CONFIG = ConfigDict(frozen=True, extra="forbid")
 # The oracle statuses that carry measures (`OracleReport` enforces it).
 _MEASURED = (OracleStatus.OK, OracleStatus.INVALID)
+# The oracle statuses the caller decides: no worker answered, so no versions.
+_UNANSWERED = (OracleStatus.TIMEOUT, OracleStatus.CRASH)
 # A doc anchor: a Markdown file under the repository, then its heading's slug.
 _ANCHOR = re.compile(r"(?:[\w.-]+/)*[\w.-]+\.md#[a-z0-9-]+")
 
@@ -139,8 +141,11 @@ class FidelityRow(BaseModel):
     `outcome` is `DISAGREE`; `refusal` exactly when the class is
     `ARRIS_REFUSAL`; `verdict`, when set, names the row's class; `deltas`
     exactly when both sides measured a shape (arris `ok`, the oracle `ok` or
-    `invalid`; face counts carried, never judged).
-    `refusal` is the kernel's, verbatim.
+    `invalid`; face counts carried, never judged); `oracle_versions`
+    exactly when the oracle's worker answered (not `timeout` or `crash`).
+    `refusal` is the kernel's, verbatim. `versions` are the arris result's
+    (arris, numpy, arris-gym) and `oracle_versions` the oracle report's, so
+    every row says what it was produced under (gym.md).
     """
 
     model_config = _CONFIG
@@ -153,6 +158,8 @@ class FidelityRow(BaseModel):
     status: Status
     oracle_status: OracleStatus
     program_sha256: str
+    versions: Versions
+    oracle_versions: OracleVersions | None
 
     @model_validator(mode="after")
     def _fields_agree_with_outcome(self) -> Self:
@@ -165,6 +172,8 @@ class FidelityRow(BaseModel):
         measured = self.status is Status.OK and self.oracle_status in _MEASURED
         if (self.deltas is not None) != measured:
             raise ValueError("deltas are set exactly when both sides measured a shape")
+        if (self.oracle_versions is None) != (self.oracle_status in _UNANSWERED):
+            raise ValueError("oracle_versions is set exactly when the oracle's worker answered")
         return self
 
     @property
@@ -328,4 +337,6 @@ def compare(
         status=result.status,
         oracle_status=report.status,
         program_sha256=result.program_sha256,
+        versions=result.versions,
+        oracle_versions=report.versions,
     )
