@@ -126,7 +126,7 @@ right within the design; **[3]** unproven, correctness established here.
   consumer report (JSON plus Markdown). Test: the step 4 and 5 fixtures as a
   table give the expected counts over all rows, a digest that input order
   does not move, and an arris report whose content is expected exactly.
-- [ ] Step 7 **[2]** — The slice on the oracle. `tools/oracle_run.py --slice
+- [x] Step 7 **[2]** — The slice on the oracle. `tools/oracle_run.py --slice
   tests/fixtures/c1/slice.txt` fetches the 300 programs through
   `census.benchcad` (the `[corpus]` extra, outside the gate) and writes
   `tests/fixtures/c1/oracle.jsonl`, sorted by stem. Each row carries stem,
@@ -179,6 +179,8 @@ right within the design; **[3]** unproven, correctness established here.
   `arris_refusal` verdict without a refusal, and a closed form that the
   measures contradict or that neither side measured. Deltas are carried
   whenever both sides measured (oracle `ok` or `invalid`).
-- ⚠ OPEN: whether a slice program on which OCCT fails becomes a regression
-  fixture now or waits for its M3 row. Agent, step 7: it waits, and the row
-  is named in `c1/README.md`.
+- Settled (step 7): whether a slice program on which OCCT fails becomes a
+  regression fixture now or waits for its M3 row: it waits, and the row is
+  named in `c1/README.md`. None failed: all 300 are `ok`, one solid each.
+  `oracle.jsonl` leaves out `seconds` so the file's bytes are the digest;
+  `oracle_run.py --slice` takes `--start`/`--stop` to split a run.

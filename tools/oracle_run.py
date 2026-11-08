@@ -11,6 +11,7 @@ the main environment; needs `uv sync --project tools/oracle` first.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import pathlib
 import sys
@@ -90,22 +91,91 @@ def run_many(
         return list(pool.map(lambda p: run_report(zygote, oracle, p, timeout=timeout), programs))
 
 
+def read_slice(path: pathlib.Path) -> list[str]:
+    """The stems of a slice file: one per line, `#` lines are its header."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return [line for line in lines if line and not line.startswith("#")]
+
+
+def slice_rows(
+    stems: Sequence[str], *, timeout: float = DEFAULT_TIMEOUT, workers: int = DEFAULT_WORKERS
+) -> list[dict[str, object]]:
+    """The oracle rows of BenchCAD programs by stem, sorted by stem.
+
+    Reads the pinned corpus through `census.benchcad` (the `[corpus]` extra
+    and the network, outside the gate). Each row is the stem, family, licence
+    and revision beside the report without its wall-clock `seconds`, so the
+    rows are the same bytes on every run. Raises `ValueError` for a stem the
+    corpus lacks or lists twice.
+    """
+    from arris_gym.census import benchcad
+
+    by_stem = {p.stem: p for p in benchcad.read()}
+    ordered = sorted(stems)
+    if len(set(ordered)) != len(ordered):
+        raise ValueError("a stem is listed twice")
+    missing = [stem for stem in ordered if stem not in by_stem]
+    if missing:
+        raise ValueError(f"stems not in the pinned corpus: {missing[:5]}")
+    programs = [by_stem[stem] for stem in ordered]
+    reports = run_many([p.text for p in programs], timeout=timeout, workers=workers)
+    return [
+        {
+            "stem": p.stem,
+            "family": p.family,
+            "licence": benchcad.LICENCE,
+            "revision": benchcad.REVISION,
+            "report": json.loads(r.model_dump_json(exclude={"seconds"})),
+        }
+        for p, r in zip(programs, reports, strict=True)
+    ]
+
+
+def rows_text(rows: Sequence[dict[str, object]]) -> str:
+    """The rows as `oracle.jsonl` text: one canonical JSON object per line."""
+    return "".join(json.dumps(row, sort_keys=True) + "\n" for row in rows)
+
+
+def rows_digest(text: str) -> str:
+    """The digest of an `oracle.jsonl`: the SHA-256 of its text."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the given program files and write `oracle.jsonl`: one row per program
-    in the order given, `{"path": ..., "report": ...}`, `seconds` included."""
+    in the order given, `{"path": ..., "report": ...}`, `seconds` included.
+    With `--slice FILE`, run the BenchCAD programs of those stems instead
+    (`slice_rows`), sorted by stem, and print the status counts and digest."""
     parser = argparse.ArgumentParser(description="Run programs on the oracle.")
-    parser.add_argument("programs", nargs="+", type=pathlib.Path)
+    parser.add_argument("programs", nargs="*", type=pathlib.Path)
+    parser.add_argument("--slice", type=pathlib.Path, help="a slice file of BenchCAD stems")
+    parser.add_argument("--start", type=int, default=0, help="with --slice: first stem to run")
+    parser.add_argument("--stop", type=int, help="with --slice: stop before this stem")
     parser.add_argument("--out", type=pathlib.Path, default=pathlib.Path("oracle.jsonl"))
     parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT)
     parser.add_argument("--workers", type=int, default=DEFAULT_WORKERS)
     args = parser.parse_args(argv)
+    if (args.slice is None) == (not args.programs):
+        parser.error("give program files, or --slice FILE, not both and not neither")
+    if args.slice is not None:
+        stems = sorted(read_slice(args.slice))[args.start : args.stop]
+        rows = slice_rows(stems, timeout=args.timeout, workers=args.workers)
+        text = rows_text(rows)
+        args.out.write_text(text, encoding="utf-8")
+        counts: dict[str, int] = {}
+        for row in rows:
+            status = str(row["report"]["status"])  # type: ignore[index]
+            counts[status] = counts.get(status, 0) + 1
+        print(f"{len(rows)} programs: {dict(sorted(counts.items()))}", file=sys.stderr)
+        print(f"digest {rows_digest(text)}", file=sys.stderr)
+        return 0
     texts = [p.read_text(encoding="utf-8", errors="surrogateescape") for p in args.programs]
     reports = run_many(texts, timeout=args.timeout, workers=args.workers)
     with args.out.open("w", encoding="utf-8") as out:
         for path, report in zip(args.programs, reports, strict=True):
             row = {"path": str(path), "report": json.loads(report.model_dump_json())}
             out.write(json.dumps(row, sort_keys=True) + "\n")
-    counts: dict[str, int] = {}
+    counts = {}
     for report in reports:
         counts[report.status.value] = counts.get(report.status.value, 0) + 1
     print(f"{len(reports)} programs: {dict(sorted(counts.items()))}", file=sys.stderr)

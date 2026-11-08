@@ -49,3 +49,10 @@ Neither is in the gate, which runs without this environment:
   unisolated, against their closed forms;
 - `uv run pytest -m oracle`: M0's hostile programs on the oracle worker give
   their outcomes under ADR-0004's limits (`tests/test_oracle_worker.py`).
+
+## The slice
+
+`uv run --extra corpus tools/oracle_run.py --slice tests/fixtures/c1/slice.txt
+--workers 16 --out tests/fixtures/c1/oracle.jsonl` runs the 300 slice programs
+(network; not in the gate) and prints the status counts and the file's
+digest. Two runs give the same bytes (`tests/fixtures/c1/README.md`).
