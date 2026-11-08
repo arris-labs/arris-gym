@@ -9,6 +9,8 @@ from __future__ import annotations
 import ast
 import doctest
 import keyword
+import subprocess
+import sys
 import warnings
 from collections import Counter
 from collections.abc import Callable
@@ -288,3 +290,16 @@ def test_whether_a_deep_program_parses_does_not_depend_on_the_callers_stack() ->
     assert deep == here
     kinds = {type(got).__name__ for got in here}
     assert kinds == {"ProgramCensus", "Unparsable"}, "the chains no longer straddle the limit"
+
+
+def test_the_builtins_are_those_of_the_interpreter_without_site() -> None:
+    # `-S` leaves out what `site` adds (`exit`, `help`, `copyright`), `-I` the
+    # caller's environment; a module's own attributes are not callables.
+    names = subprocess.run(
+        [sys.executable, "-I", "-S", "-c", "import builtins; print(*sorted(vars(builtins)))"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.split()
+    module_attributes = {"__doc__", "__loader__", "__name__", "__package__", "__spec__"}
+    assert frozenset(names) - module_attributes == _program._PYTHON_BUILTINS

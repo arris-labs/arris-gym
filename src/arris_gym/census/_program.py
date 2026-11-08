@@ -11,7 +11,6 @@ only, never on how deep the caller's stack is. Every traversal is iterative.
 from __future__ import annotations
 
 import ast
-import builtins
 import threading
 import warnings
 from collections import Counter
@@ -45,14 +44,34 @@ _SHOW_OBJECT: Final = "show_object"
 _PARSE_STACK_BYTES: Final = 16 * 1024 * 1024
 # `threading.stack_size` is process-wide: held while one parse thread starts.
 _STACK_SIZE_LOCK: Final = threading.Lock()
-# Python's own builtins, as the interpreter defines them: what `site` or a
-# notebook adds to the module (`exit`, `help`, `display`) depends on the
-# caller's process, so it is left out. Membership only: no order from this
-# set reaches a result.
+# Python's own builtins: `vars(builtins)` of CPython 3.12 run with `-I -S`,
+# less the module's own attributes (`__name__`, `__loader__`, ...). Written
+# out, since what `site` or a notebook adds (`exit`, `help`, `display`)
+# depends on the caller's process; a test holds it to the interpreter.
+# Membership only: no order from this set reaches a result. One string keeps
+# the 146 names on 19 lines rather than one per line.
 _PYTHON_BUILTINS: Final = frozenset(
-    name
-    for name, value in vars(builtins).items()
-    if getattr(value, "__module__", None) == builtins.__name__
+    """
+ArithmeticError AssertionError AttributeError BaseException BaseExceptionGroup
+BlockingIOError BrokenPipeError BufferError BytesWarning ChildProcessError
+ConnectionAbortedError ConnectionError ConnectionRefusedError ConnectionResetError
+DeprecationWarning EOFError Ellipsis EncodingWarning EnvironmentError Exception
+ExceptionGroup False FileExistsError FileNotFoundError FloatingPointError FutureWarning
+GeneratorExit IOError ImportError ImportWarning IndentationError IndexError
+InterruptedError IsADirectoryError KeyError KeyboardInterrupt LookupError MemoryError
+ModuleNotFoundError NameError None NotADirectoryError NotImplemented NotImplementedError
+OSError OverflowError PendingDeprecationWarning PermissionError ProcessLookupError
+RecursionError ReferenceError ResourceWarning RuntimeError RuntimeWarning
+StopAsyncIteration StopIteration SyntaxError SyntaxWarning SystemError SystemExit
+TabError TimeoutError True TypeError UnboundLocalError UnicodeDecodeError
+UnicodeEncodeError UnicodeError UnicodeTranslateError UnicodeWarning UserWarning
+ValueError Warning ZeroDivisionError __build_class__ __debug__ __import__ abs aiter all
+anext any ascii bin bool breakpoint bytearray bytes callable chr classmethod compile
+complex delattr dict dir divmod enumerate eval exec filter float format frozenset
+getattr globals hasattr hash hex id input int isinstance issubclass iter len list locals
+map max memoryview min next object oct open ord pow print property range repr reversed
+round set setattr slice sorted staticmethod str sum super tuple type vars zip
+""".split()  # noqa: SIM905
 )
 
 

@@ -54,9 +54,10 @@ program and the Python grammar only, never on the caller's stack depth.
   scope and order; any other binding of the name (a parameter, a loop target,
   an import, a value with another root) leaves it unplaced;
 - `builtin` for `show_object` and for Python's builtins, when the program
-  binds neither name itself. The builtins are those the interpreter defines,
-  not what `site` or a notebook adds (`exit`, `help`, `display`), which
-  depends on the caller's process;
+  binds neither name itself. The builtins are those the interpreter defines
+  (`open` among them; the names `python -I -S` finds in `builtins`, written
+  out), not what `site` or a notebook adds (`exit`, `help`, `display`),
+  which depends on the caller's process;
 - the imported module's name for a dotted path on another import: `math` in
   `math.sqrt`;
 - `?` for anything else: a method on a name the census cannot place, on a

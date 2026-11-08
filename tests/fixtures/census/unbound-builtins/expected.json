@@ -1,0 +1,7 @@
+{
+  "calls": {"?.exit": 1, "?.help": 1, "?.read": 1, "Workplane.box": 1, "builtin.float": 1, "builtin.open": 1, "builtin.print": 1, "cq.Workplane": 1},
+  "forms": {"?.exit()": 1, "?.help(name)": 1, "?.read()": 1, "Workplane.box(num, num, name)": 1, "builtin.float(call)": 1, "builtin.open(str)": 1, "builtin.print(name)": 1, "cq.Workplane(str)": 1},
+  "selectors": {},
+  "unknown": {"exit": 1, "f.read": 1, "help": 1},
+  "end_form": "other"
+}
