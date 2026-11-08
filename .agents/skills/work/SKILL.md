@@ -22,7 +22,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    given range. Re-read its *Design deltas* and any `⚠ OPEN:` naming it. A
    **[CI]** step is worked on `plan/<slug>`, and the push its test needs is
    asked for before writing it, not after.
-2. Implement the step with its test or fixture, the docs it changes and a
+2. Implement the step with its test or fixture (each guarantee a docstring
+   or ADR states, such as a round-trip, an order or "independent of X", gets
+   a test that tries to break it, a `hypothesis` property for a round-trip), the docs it changes and a
    docstring on every new public item. An `arris` name comes from
    `docs/ARRIS_API.md`, never from memory. A new status brings a program that
    reaches it; a new `cq` call brings its fidelity row; a new metric brings
