@@ -5,6 +5,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `arris-gym census --corpus benchcad` parses BenchCAD's `code_gen` programs
+  without running any and writes `census.json`: every CadQuery call, selector
+  string and argument form by family, each program counted or listed as
+  unparsable with its exception verbatim, under a digest that a re-run
+  reproduces. It needs the `arris-gym[corpus]` extra (without it the command
+  prints one line and exits 2). `arris_gym.census` offers `census_program`,
+  `census`, `select_slice`, `slice_families` and `CensusReport` for the same from Python.
 - `arris_gym.run(program)` runs one `arris`-dialect program alone in an
   isolated process and returns a frozen `ExecResult` with a `Status`: `ok`
   (with the body and its measures), `syntax`, `runtime`, `unsupported_api`,

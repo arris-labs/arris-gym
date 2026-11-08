@@ -38,12 +38,14 @@ families, CC-BY-4.0), at revision
 `5919f578ab09ec283603a082fab07c7639ab56eb`. M1's census ranks the families
 by how few distinct API forms they need; the first **3** families with at
 least 100 programs each, and the first **100** programs of each by `stem`,
-make **300** programs, listed in `tests/fixtures/c1/slice.txt`. The families
-are named by that run, not guessed here.
+make **300** programs, listed in `tests/fixtures/c1/slice.txt`. The census
+ranked `phone_stand`, `venturi_tube` and `lobed_knob` first.
 
 **Status: open.** Docs system, tooling, package skeleton and
 `docs/ARRIS_API.md` landed. **M0 landed:** `run`, `run_many`, `Sandbox`, the
-cache, `digest`, `dump_text` and `dump_png`, under ADR-0002. Next: M1.
+cache, `digest`, `dump_text` and `dump_png`, under ADR-0002. **M1 landed:**
+`arris-gym census` parsed all 17,900 programs (none unparsable) and fixed the
+slice. Next: M2.
 
 ### M0 — the sandbox and the harness
 Retires: can a hostile program cost one status and nothing else?
@@ -58,7 +60,7 @@ Retires: can a hostile program cost one status and nothing else?
   of them hostile, give 1000 rows in submission order; a second run makes 0
   executions and identical rows; `run` raises on no text `hypothesis` draws.
 
-### M1 — the census
+### M1 — the census (landed)
 Retires: what does the corpus actually call?
 - **In:** `census`: every API call, selector string and argument form over
   `code_gen`, by family; `arris-gym census`; `slice.txt`.

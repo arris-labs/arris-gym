@@ -29,7 +29,9 @@ uv sync                               # the locked environment, Python 3.12
 **C1 open.** M0 landed: `run`, `run_many` and `Sandbox` execute `arris`
 programs in a warden-supervised, namespaced, Landlocked worker (ADR-0001,
 ADR-0002), with an exact cache, the digest and text/PNG dumps.
-**Next:** `/plan M1`, the census.
+M1 landed: `arris-gym census` parses BenchCAD's 17,900 programs (ADR-0003)
+and `tests/fixtures/c1/slice.txt` lists the 300 slice stems.
+**Next:** `/plan M2`, the oracle and fidelity classes.
 
 ## Rules that are not derivable from the code
 

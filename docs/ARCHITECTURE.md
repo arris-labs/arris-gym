@@ -16,7 +16,7 @@ src/arris_gym/
   sandbox/   zygote, program worker, ExecResult and Status, result cache
   cq/        the CadQuery-compatible subset over arris.build
   reward/    iou, surface, measures, topology, field metrics, the reward
-  census/    CadQuery corpus parsing and API counts
+  census/    parses a corpus and counts the API forms it writes (`arris-gym census`)
   fidelity/  oracle comparison and the disagreement classes
   rescore/   per-benchmark adapters and the report
 tools/oracle/  its own uv env: CadQuery/OCP, run and never imported
@@ -102,8 +102,46 @@ instruction.
 **Where a program's result comes from.** In the `cq` dialect, the argument of
 its last `show_object` call, else a module-level `result`: BenchCAD programs
 assign `result` and end in `show_object(result)`. In the `arris` dialect, the
-module-level `result`, a `Solid`. ⚠ OPEN: what CAD-Recode's programs end in,
-and what a Workplane holding several solids scores as. Settled by the census.
+module-level `result`, a `Solid`. The census counted BenchCAD's end forms:
+all 17,900 programs end in `show_object(result)`. ⚠ OPEN: what CAD-Recode's
+programs end in (C2), and what a Workplane holding several solids scores as
+(M3).
+
+## The census
+
+`arris_gym.census` parses a corpus and counts what its programs write; it runs
+none of them (ADR-0003).
+
+- **Parse, never run.** `census_program` reads one `CorpusProgram` with
+  `ast.parse` in the caller's process. Any exception out of parsing or
+  counting (`SyntaxError` including a NUL byte, `RecursionError`,
+  `MemoryError`) makes the program an `Unparsable` with the class and message
+  verbatim; the census never raises on a program. Parsing and counting run
+  on a fresh thread with a fixed stack, because `ast.parse`'s depth limit
+  follows the C stack depth of its caller; every traversal is iterative.
+- **What is counted.** Per program: calls as `receiver.name`
+  (`Workplane.extrude`), each with its **API form** (the argument kinds and
+  sorted keyword names), the **selector string** of a `faces`-style call,
+  calls on a receiver the census cannot place (`?`, listed with their text),
+  calls on `builtin` and other modules (`foreign`, counted, not ranked), and
+  the program's end form.
+- **The ranking.** Per family: distinct calls, then distinct selector
+  strings, then distinct API forms, ascending, ties by name. `select_slice`
+  takes the first 3 families with at least 100 programs and the first 100
+  stems of each.
+- **The report.** `CensusReport` is a frozen model of sorted `(key, count)`
+  tuples; its `digest` is the SHA-256 of its canonical JSON, and input order
+  does not move it. A report whose digest disagrees with its content is
+  refused.
+- **The corpus.** `census.benchcad` downloads `code_gen` at the pinned
+  revision with `huggingface_hub` and reads `stem`, `family` and `code` with
+  `pyarrow`; both are the `[corpus]` extra, imported lazily. A row count other
+  than 17,900 raises.
+- **The command.** `arris-gym census --corpus benchcad [--out DIR]` writes
+  `census.json` and `slice.txt` and prints totals and the digest; without the
+  extra it exits 2. The committed run is `tests/fixtures/c1/`: 17,900 parsed,
+  none unparsable, 106 families, slice `phone_stand`, `venturi_tube`,
+  `lobed_knob`.
 
 ## The sandbox
 
