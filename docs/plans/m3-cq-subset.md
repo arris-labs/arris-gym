@@ -163,9 +163,13 @@ correctness has to be established here.
   `expected.json` names a reason, and may leave out face counts (carried,
   ADR-0005); every other fixture must state them. Table: agree 200,
   `arris_bug` 100, unclassified 0.
-- [ ] Step 9 **[1]** — the calibration set's `oracle.py` programs that use
+- [x] Step 9 **[1]** — the calibration set's `oracle.py` programs that use
   only the subset run under `cq` and match their `expected.json` closed
   forms; the others end `unsupported_api` naming their first call outside it.
+  *Settled:* none of the 19 uses only the subset as written (see Open
+  questions), so `tests/test_cq_calibration.py` holds all 19 to the second
+  clause, each named by its first call in evaluation order; the first clause
+  is coded and runs for any program that comes to use only the subset.
 
 ## Acceptance
 - `tools/cq_slice.py` over the 300 slice programs: one status each, counted
@@ -195,6 +199,19 @@ correctness has to be established here.
 - `docs/BACKLOG.md` — the `OracleReport.digest()` line removed (step 7).
 
 ## Open questions
+- ⚠ OPEN (step 9, for the human): the calibration set's programs are all
+  outside the subset as written. Every one starts `cq.Workplane()` with no
+  plane, which step 6 refuses (the census writes `cq.Workplane(str)` only;
+  `cq.Workplane('XZ')` in the four revolves is refused as the plane is).
+  With `cq.Workplane("XY")` put in their place, `agree-cylinder` and
+  `agree-hexagon-prism` run and match their closed forms; the rest meet a
+  second gap: 11 use `box(...; centered=False)` (the census never writes that
+  keyword), `agree-cylinder-offset` uses `center`, `agree-tube` a circle on a
+  non-empty stack. Question: admit the bare `cq.Workplane()` (CadQuery's
+  default plane) and/or `box`'s `centered=` keyword to the subset, growing it
+  outside census order, or keep both refused and let the calibration set stay
+  outside `cq`. Until answered, `tests/test_cq_calibration.py` holds the
+  refusals.
 - *Settled* (human, before step 1): selectors, `hole`, `chamfer` and STEP
   export are all left to C2's census order, as *Non-goals* says; no STEP
   step. The census shows the slice calls none of them, and STEP export
