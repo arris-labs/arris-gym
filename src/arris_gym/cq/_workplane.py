@@ -35,6 +35,10 @@ _REVOLVE_RADIANS_PER_DEGREE = 2 * math.pi / 360.0
 _CLOSE_GAP = 1e-6
 _ZERO = Vector(0, 0, 0)
 
+# Chord tolerance for tessellating a shell only to read the sign of its volume:
+# a plane or a closed form needs none, so any positive value gives the sign.
+_SHELL_CHORD = 0.1
+
 
 @dataclass(frozen=True)
 class _Path:
@@ -76,6 +80,40 @@ def _axis_point(point: object) -> tuple[float, ...]:
 def _shell_count(solid: arris.build.Solid) -> int:
     """The shells of `solid`'s body, cavities included."""
     return len(solid.model.shells(solid.body))
+
+
+def _outer_shell_count(solid: arris.build.Solid) -> int:
+    """The separate pieces of `solid`'s body: its shells that enclose volume.
+
+    A cavity's shell is a closed surface facing inward, so its tessellation
+    has a negative signed volume; each piece's outer shell has a positive
+    one. Shells are the face groups joined by shared edges.
+    """
+    model, body = solid.model, solid.body
+    faces = model.faces(body)
+    parent = {face.index: face.index for face in faces}
+
+    def find(index: int) -> int:
+        while parent[index] != index:
+            index = parent[index]
+        return index
+
+    by_edge: dict[int, list[int]] = {}
+    for face in faces:
+        for edge in model.edges_of(face):
+            by_edge.setdefault(edge.index, []).append(face.index)
+    for joined in by_edge.values():
+        for other in joined[1:]:
+            parent[find(other)] = find(joined[0])
+    groups: dict[int, list[arris.Face]] = {}
+    for face in faces:
+        groups.setdefault(find(face.index), []).append(face)
+    count = 0
+    for group in groups.values():
+        volume = model.tessellate_faces(body, group, _SHELL_CHORD).signed_volume()
+        if volume is not None and volume > 0:
+            count += 1
+    return count
 
 
 class Workplane:
@@ -440,7 +478,13 @@ class Workplane:
         base = self._base_solid()
         if base is None:
             raise ValueError("Cannot find a solid on the stack or in the parent chain")
-        return self._derive(base.cut(*tools))
+        cut = base.cut(*tools)
+        pieces = _outer_shell_count(cut)
+        if pieces > 1:
+            # A cut that splits its base is CadQuery's compound (ADR-0007):
+            # one stack entry per piece, so resolving it is `unsupported_api`.
+            return self._derive(*([cut] * pieces))
+        return self._derive(cut)
 
     def __copy__(self) -> Workplane:
         return self

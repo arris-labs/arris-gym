@@ -238,6 +238,17 @@ def test_a_cut_that_leaves_a_cavity_is_one_solid() -> None:
     assert fixture_cases.close(solid_volume(hollow), 26.0)
 
 
+def test_a_cut_that_splits_its_base_keeps_the_pieces_and_cannot_be_shown() -> None:
+    # 4 x 1 x 1 bar less a 1 x 2 x 2 slab across its middle: two 1.5 x 1 x 1
+    # pieces, V = 4 - 1 = 3. CadQuery returns a compound (ADR-0007).
+    bar = cq.Workplane("XY").box(4, 1, 1)
+    slab = cq.Workplane("XY").box(1, 2, 2)
+    pieces = bar.cut(slab)
+    assert len(pieces._stack) == 2
+    with pytest.raises(cq.UnsupportedApi, match=r"^a Workplane holding 2 solids$"):
+        pieces.cut(slab)
+
+
 def test_union_and_cut_return_new_workplanes_and_change_none() -> None:
     a = cq.Workplane("XY").box(2, 2, 2)
     b = cq.Workplane("XY").transformed(offset=cq.Vector(1, 0, 0)).box(2, 2, 2)
