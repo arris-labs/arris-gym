@@ -19,13 +19,13 @@ Deletion is the "done" signal; anything worth keeping moves first.
    The retirement commit waits for them green; anything red: stop and report.
    A plan whose diff reaches no code (`src/`, `tests/`, `pyproject.toml`,
    `uv.lock`, `tools/`, `.githooks/`) runs no gate and says so.
-2. **Review the commits against the plan**, in a subagent on tier 3
+2. **Review the commits against the plan**, in one subagent on tier 3 (started once; both axes are its)
    (`.agents/tiers.md`) so it reads with fresh eyes. Give it the plan
    file, `.agents/review.md` (its brief, standards and how to read) and
    the plan's commits: `git log --format='%h %s' --grep='plans/<slug>'`.
    A harness that does not load `.agents/rules/` by itself also gives it
    `gym.md`. Report its findings by axis. Fix a hard finding in its own
-   commit (`fix(scope): … (plans/<slug> review)`), with a test seen
+   commit (`fix(scope): … (plans/<slug> step N)`, the repaired step's suffix; `review` only when no single step owns it), with a test seen
    failing on the unfixed code; a fix given to a subagent runs on the tier
    of the step it repairs. A judgement finding the
    agent decides on the charter's terms (`SEED.md`), stating the decision

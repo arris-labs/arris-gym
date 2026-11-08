@@ -41,8 +41,9 @@ Name any public type or signature it changes.
 - The `(plans/<slug> step N)` suffix marks every plan-step commit;
   retirement is `docs: retire plan <slug>`.
 - **Attribution**: a commit that repairs an earlier step's work carries
-  that step's suffix, never a later one's; a fix found by the retirement
-  review carries `(plans/<slug> review)`.
+  that step's suffix, never a later one's, a fix found by the retirement
+  review included; `(plans/<slug> review)` is only for a fix that belongs
+  to no single step.
 - Docs change in the **same commit** as the behaviour; a docs-only catch-up
   is `docs(sync): …`.
 - No `Co-Authored-By` or tool trailers.
