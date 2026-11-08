@@ -5,6 +5,28 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `arris_gym.fidelity` compares an `ExecResult` with an oracle report of the
+  same program run on CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
+  `compare(result, report, verdict=None)` returns a frozen `FidelityRow`:
+  `agree` (volume, area, centroid and bounds within a named tolerance), a
+  `disagree` with its `DisagreementClass` (`cq_bug`, `arris_refusal`,
+  `arris_bug`, `occt_wrong`, `by_design`), or `unclassified` until a `Verdict`
+  with its evidence (a closed form, a second oracle's record, a doc anchor or a
+  regression fixture) classes it. Each row carries both sides' statuses,
+  measure deltas and versions; a timeout on either side is `unclassified` and
+  named. `compare` raises `ValueError` for a verdict it cannot accept (one on an
+  agreement, or one that would clear an arris crash).
+- `fidelity.parse_outcome` turns an oracle worker's outcome into an
+  `OracleReport` (`OracleStatus`: `ok`, `syntax`, `runtime`, `no_result`,
+  `invalid`, `timeout`, `crash`) and never raises: a report that contradicts
+  itself is a `crash`.
+- `fidelity.fidelity_table(entries)` gathers rows, each with its program's
+  source and licence, into a `FidelityTable`: sorted by name, counts over every
+  row, and a digest that input order does not move. `fidelity.arris_rows(table)`
+  gives an `ArrisReport` for the arris kernel (`to_json`, `to_markdown`):
+  refusals by kind then the kernel's message, arris bugs with their program's
+  SHA-256 and fixture, and the licences and versions behind them.
+
 - `arris-gym census --corpus benchcad` parses BenchCAD's `code_gen` programs
   without running any and writes `census.json`: every CadQuery call, selector
   string and argument form by family, each program counted or listed as

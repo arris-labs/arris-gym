@@ -31,7 +31,10 @@ programs in a warden-supervised, namespaced, Landlocked worker (ADR-0001,
 ADR-0002), with an exact cache, the digest and text/PNG dumps.
 M1 landed: `arris-gym census` parses BenchCAD's 17,900 programs (ADR-0003)
 and `tests/fixtures/c1/slice.txt` lists the 300 slice stems.
-**Next:** `/plan M2`, the oracle and fidelity classes.
+M2 landed: CadQuery runs in an oracle worker (ADR-0004); `fidelity` compares
+and classes each pair (ADR-0005, ADR-0006); `tests/fixtures/c1/oracle.jsonl`
+holds the 300 slice reports.
+**Next:** `/plan M3`, the `cq` subset on the first slice.
 
 ## Rules that are not derivable from the code
 

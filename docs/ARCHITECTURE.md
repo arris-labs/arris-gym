@@ -336,8 +336,9 @@ nothing wall-clock. It is the acceptance: equal on two machines.
 ## The oracle
 
 `tools/oracle/` is its own `uv` environment holding CadQuery and OCP. It takes
-a program, runs it on Open CASCADE out of process, and reports JSON: status,
-volume, area, centroid, face and solid counts. Library code never imports it
+a program, runs it on Open CASCADE out of process, and reports JSON: status, the
+message verbatim, volume, area, centroid, bounds, face and solid counts, the
+STEP hash and its versions. Library code never imports it
 (`tools/check_layers.py`); `fidelity/` reads its reports. It pins BenchCAD's
 own `cadquery==2.3.0` and `cadquery-ocp==7.9.3.0`, so the comparison is with
 the kernel the benchmark's numbers came from. Those need `numpy<2`, one more

@@ -13,6 +13,10 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - BenchCAD 2.0 (`BenchCAD/benchcad-2.0-public` and `-core`, drawing → STEP, gated, licence "other") is not in the survey: read its terms before C3 and decide if it belongs among the re-scored benchmarks
 - Census: a chain on a receiver it cannot place (`x = a.b().b()…`) keys each `?` call by its whole source prefix, so a hostile program can make `unknown` quadratic in size (4,000 calls: 32 M characters); decide a truncation of the key
 - File with arris once M4 measures it (SEED.md §10.6): the batch `classify_points` binding, and whether a public `Model` reset or id-stable `read_body` would help consumers
+- `fidelity/_oracle.py` imports the private `sandbox._run.ended` and `sandbox._zygote.Outcome`, so the public `parse_outcome` takes a private type: give `sandbox` a public outcome type or move the parse
+- An oracle zygote (import cadquery once, fork per program): each oracle program pays ~1.5 s of start-up, so the slice takes minutes
+- A crash on both sides is `agree` under ADR-0006, so it never reaches the arris report; decide whether `arris_rows` lists every arris `crash` regardless of outcome (gym.md: an arris crash goes to arris as a fixture candidate)
+- `OracleReport.digest()` is called by nothing but its tests (`oracle.jsonl`'s digest is the file's SHA-256): use it in M3's rows or drop it
 - `tools/check_layers.py` sees `import`, `from` and literal `importlib.import_module`; a computed name evades it, as it would evade any static check
 
 ## Findings

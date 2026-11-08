@@ -45,7 +45,10 @@ ranked `phone_stand`, `venturi_tube` and `lobed_knob` first.
 `docs/ARRIS_API.md` landed. **M0 landed:** `run`, `run_many`, `Sandbox`, the
 cache, `digest`, `dump_text` and `dump_png`, under ADR-0002. **M1 landed:**
 `arris-gym census` parsed all 17,900 programs (none unparsable) and fixed the
-slice. Next: M2.
+slice. **M2 landed:** the oracle worker (ADR-0004), `fidelity`'s `compare`,
+table and arris report under the agreement tolerance (ADR-0005) and the
+classification rule (ADR-0006); all 300 slice programs are `ok` on the oracle,
+the same digest on three runs. Next: M3.
 
 ### M0 — the sandbox and the harness
 Retires: can a hostile program cost one status and nothing else?
@@ -68,7 +71,7 @@ Retires: what does the corpus actually call?
 - **Accept:** 17,900 programs parsed, each counted or listed as unparsable;
   the same counts on a re-run; `slice.txt` committed with its 300 stems.
 
-### M2 — the oracle and fidelity classes
+### M2 — the oracle and fidelity classes (landed)
 Retires: can a disagreement be classified, before there is much to classify?
 - **In:** `tools/oracle/` on `cadquery==2.3.0`, `cadquery-ocp==7.9.3.0`;
   `fidelity`: the comparer, the five classes, the arris rows' export.
