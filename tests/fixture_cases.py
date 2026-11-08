@@ -36,15 +36,22 @@ class Case:
 
 
 def load(area: str) -> list[Case]:
-    """Every fixture under `tests/fixtures/<area>/`, sorted by slug."""
+    """Every fixture under `tests/fixtures/<area>/`, sorted by slug.
+
+    Raises `ValueError` for a fixture outside `regression/` whose measures
+    leave out `faces` or `face_kinds`: only a desired, unbuilt body may.
+    """
     cases = []
     for directory in sorted((ROOT / area).iterdir()):
         if (directory / "program.py").is_file():
+            expected = json.loads((directory / "expected.json").read_text(encoding="utf-8"))
+            measures = expected.get("measures")
+            counted = isinstance(measures, dict) and {"faces", "face_kinds"} <= measures.keys()
+            if area != "regression" and isinstance(measures, dict) and not counted:
+                raise ValueError(f"{area}/{directory.name}: measures without face counts")
             cases.append(
                 Case(
-                    directory.name,
-                    (directory / "program.py").read_text(encoding="utf-8"),
-                    json.loads((directory / "expected.json").read_text(encoding="utf-8")),
+                    directory.name, (directory / "program.py").read_text(encoding="utf-8"), expected
                 )
             )
     return cases
@@ -117,10 +124,15 @@ def _measures_differ(
             close(g, w, tolerance) for g, w in zip(got, want, strict=True)
         ):
             problems.append(f"{name} {got}, expected {want}")
-    for name in ("faces", "shells", "genus"):
+    for name in ("shells", "genus"):
         if getattr(result.measures, name) != expected[name]:
             problems.append(f"{name} {getattr(result.measures, name)}, expected {expected[name]}")
+    # Only a regression fixture may leave the face counts out: its desired body
+    # is not built yet, and how the kernel splits faces is carried, never
+    # judged (ADR-0005), so no construction gives them.
+    if "faces" in expected and result.measures.faces != expected["faces"]:
+        problems.append(f"faces {result.measures.faces}, expected {expected['faces']}")
     kinds = [list(pair) for pair in result.measures.face_kinds]
-    if kinds != expected["face_kinds"]:
+    if "face_kinds" in expected and kinds != expected["face_kinds"]:
         problems.append(f"face_kinds {kinds}, expected {expected['face_kinds']}")
     return problems

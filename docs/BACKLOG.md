@@ -32,6 +32,14 @@ A defect a run measured, one block each:
 - State: raw | measured | regression/<slug> | fixed
 ```
 
+### union-coplanar-third-operand
+- What: arris refuses a chained `fuse` whose third operand shares an end plane with the first two's union (`OpDegenerateError`, "the faces touch along a curve interior to both result faces"); the n-ary `fuse` builds it
+- Where: arris 0.10.0 `Solid.fuse`, reached by `cq`'s `Workplane.union`
+- Seen: `tools/cq_slice.py`, plans/m3-cq-subset step 8, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, all 100 `lobed_knob` slice programs, 2026-11-08
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k cq-union-three-coplanar-cylinders`
+- Measured: 100 of 100 refused (98 at the second union, 2 at the fourth); rebuilt by n-ary fuse, all 100 within 8e-15 of the oracle's volume
+- State: regression/cq-union-three-coplanar-cylinders; reported in `../arris/docs/ideas/union-coplanar-third-operand.md`; lift the xfail and drop the 100 verdicts when an arris bump builds it
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)

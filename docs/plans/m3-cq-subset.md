@@ -148,10 +148,21 @@ correctness has to be established here.
   test pairs each row with its report; the backlog line is gone. The first
   run: agree 200, `arris_refusal` 100 (all `lobed_knob`, `OpDegenerateError`
   in a union), unclassified 0; step 8 judges those 100.
-- [ ] Step 8 **[3]** — every disagreement of step 7 classed: each shrunk
+- [x] Step 8 **[3]** — every disagreement of step 7 classed: each shrunk
   under the `inspect` skill to `tests/fixtures/regression/<slug>/` (strict
   `xfail`) or given a verdict in `verdicts.json`; a `cq` bug fixed in the
   commit carrying its step's suffix; the table rewritten, **0 unclassified**.
+  *Settled:* the 100 `lobed_knob` rows are an arris bug, not a `cq` one: the
+  same cylinders through `arris.build` alone are refused chained in every
+  order and built by one n-ary `fuse` (all 100 within 8e-15 of the oracle's
+  volume). They share one fixture, `regression/cq-union-three-coplanar-cylinders`
+  (three unit cylinders on one plane, closed form), and one `arris_bug`
+  verdict each; reported in `../arris/docs/ideas/`. `cq` keeps CadQuery's
+  chain of two-operand fuses: an n-ary fuse in its place would hide the bug.
+  A regression fixture runs in its own dialect, is strict `xfail` where its
+  `expected.json` names a reason, and may leave out face counts (carried,
+  ADR-0005); every other fixture must state them. Table: agree 200,
+  `arris_bug` 100, unclassified 0.
 - [ ] Step 9 **[1]** — the calibration set's `oracle.py` programs that use
   only the subset run under `cq` and match their `expected.json` closed
   forms; the others end `unsupported_api` naming their first call outside it.

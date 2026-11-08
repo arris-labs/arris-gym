@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the second union, OpDegenerateError (TangentContact: \"the faces touch along a curve interior to both result faces\"), though no faces touch tangentially and its own n-ary fuse of the three builds the part",
+  "measures": {
+    "volume": 6.444439787953566,
+    "area": 22.313657536676512,
+    "centroid": [
+      0.5,
+      0.28867513459481287,
+      0.5
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        0
+      ],
+      [
+        2,
+        1.8660254037844386,
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "three unit cylinders of height 1 on the vertices of a unit equilateral triangle: each pair's lens is 2 acos(1/2) - sqrt(3)/2 = 2 pi/3 - sqrt(3)/2 and the three disks' common part is the Reuleaux triangle of width 1, (pi - sqrt(3))/2, so the ends are 3 pi - 3 lens + (pi - sqrt(3))/2 = 3 pi/2 + sqrt(3) each, V = 3 pi/2 + sqrt(3); each side keeps the half of its circle outside the other two (each covers a 120 deg arc, the two 60 deg apart), A = 2 (3 pi/2 + sqrt(3)) + 3 pi = 6 pi + 2 sqrt(3); centroid the triangle's, at mid-height; faces carried (the kernel splits what it cuts, ADR-0005)"
+}
