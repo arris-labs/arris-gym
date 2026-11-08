@@ -79,3 +79,26 @@ def test_a_changed_count_changes_the_digest(programs: list[CorpusProgram], line:
 def test_a_different_corpus_info_changes_the_digest() -> None:
     other = INFO.model_copy(update={"revision": "r1"})
     assert census([], INFO).digest != census([], other).digest
+
+
+def test_a_lone_surrogate_selector_round_trips() -> None:
+    # The escape is written in the source: the selector string is a lone surrogate.
+    text = 'import cadquery as cq\nr = cq.Workplane().faces("\\ud800")\n'
+    report = census([CorpusProgram(stem="a", family="f", text=text)], INFO)
+    assert any("\ud800" in key for key, _ in report.families[0].selectors)
+    again = CensusReport.from_json(report.to_json())
+    assert again == report
+    assert again.to_json() == report.to_json()
+
+
+@given(
+    st.text(
+        alphabet=st.characters(codec="utf-8", exclude_categories=())
+        | st.sampled_from(["\ud800", "\udfff"]),
+        max_size=8,
+    )
+)
+def test_any_selector_string_round_trips(selector: str) -> None:
+    text = f"import cadquery as cq\nr = cq.Workplane().faces({selector!r})\n"
+    report = census([CorpusProgram(stem="a", family="f", text=text)], INFO)
+    assert CensusReport.from_json(report.to_json()) == report

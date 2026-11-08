@@ -109,8 +109,12 @@ class CensusReport(_Frozen):
 
     @classmethod
     def from_json(cls, text: str) -> Self:
-        """Read a report written by `to_json`; refuses one whose digest does not match."""
-        return cls.model_validate_json(text)
+        """Read a report written by `to_json`; refuses one whose digest does not match.
+
+        Reads with `json`, not pydantic's own parser, which refuses the escape of a
+        lone surrogate that a program's selector string can write.
+        """
+        return cls.model_validate(json.loads(text))
 
 
 def _canonical(data: dict[str, Any]) -> str:
