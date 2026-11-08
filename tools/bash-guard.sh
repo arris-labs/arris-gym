@@ -7,6 +7,7 @@
 #     command itself in the foreground with a `timeout` when its result is
 #     needed now, or with `run_in_background` and wait for the notification.
 #     A background command may loop: its end is the notification.
+#   - A blind stage (`git add -A`, `.`, `--all`, `git commit -a`).
 #   - `git stash`, any form but `list` and `show`: a subagent's `git stash; git stash pop` on a
 #     clean tree popped an old stash of another plan and left a file
 #     unmerged. Steps commit; a patch file sets work
@@ -50,5 +51,9 @@ fi
 if grep -E "${w}git[[:space:]]+([^|;&]*[[:space:]])?stash([[:space:]]|\$)" <<<"$bare" |
   grep -qvE "stash[[:space:]]+(list|show)([[:space:]]|\$)"; then
   refuse "git stash (.agents/rules/git.md): a pop or apply can bring back another session's work and leave the tree unmerged. Commit the work, or set it aside with \`git diff > <scratchpad>/x.patch\` and \`git checkout -- <paths>\`."
+fi
+# A blind stage sweeps in another session's (or the conductor's) uncommitted work.
+if grep -qE "${w}git[[:space:]]+([^|;&]*[[:space:]])?(add[[:space:]]+([^|;&]*[[:space:]])?(-A|--all|\.)([[:space:]]|\$)|commit[[:space:]]+([^|;&]*[[:space:]])?-[a-zA-Z]*a[a-zA-Z]*([[:space:]]|\$))" <<<"$bare"; then
+  refuse "a blind stage (git add -A/--all/., git commit -a; .agents/rules/git.md): name the paths you changed, after reading git status."
 fi
 exit 0

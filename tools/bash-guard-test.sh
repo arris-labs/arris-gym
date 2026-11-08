@@ -37,6 +37,11 @@ run 0 false 'git stash show -p stash@{0} | head'
 run 2 false 'git stash list; git stash drop'
 run 2 false 'git stash'
 run 0 false 'git log --grep=stash'
+run 2 false 'git add -A && git commit -m x'
+run 2 false 'git add .'
+run 2 false 'git commit -am wip'
+run 0 false 'git add src/a.py docs/x.md'
+run 0 false 'git commit -m "add . and -a"'
 run 0 false 'git status --short'
 # heredoc bodies and quoted text are data
 run 0 false "$(printf 'git commit -F - <<%s\nrefuse git stash; while x; do sleep 1; done\n%s\ngit log -1' "'EOF'" EOF)"
