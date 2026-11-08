@@ -1,0 +1,7 @@
+{
+  "outcome": "disagree",
+  "disagreement": "arris_refusal",
+  "refusal_kind": "OpDegenerateError",
+  "status": "arris_refusal",
+  "oracle_status": "ok"
+}

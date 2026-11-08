@@ -366,8 +366,18 @@ carried in the deltas and never judged.
 
 **Fidelity** classifies each disagreement as `cq` bug, arris refusal (kind),
 arris bug, Open CASCADE wrong (closed form or second oracle, arris ADR-0015),
-or semantic difference by design (documented). Nothing stays unclassified. The
-arris rows leave as a consumer report (arris ADR-0020).
+or semantic difference by design (documented). `fidelity.compare(result,
+report, verdict=None)` gives a **fidelity row** (`FidelityRow`): `agree`,
+`disagree` with its **disagreement class**, or `unclassified`. The rule
+(ADR-0006) classes what the two statuses settle. An arris refusal, crash or
+checker failure, or a `runtime` where the oracle builds the part, has a
+class. Two ordinary failures agree. Two `ok` sides agree inside the agreement
+tolerance. A measure gap, the oracle failing alone and a timeout on either
+side are `unclassified` until a **verdict** (a class and its evidence: a
+closed form, which `compare` checks, a second oracle's record, a doc anchor
+for `by_design`, or a regression fixture) classes them. A verdict may also
+replace the rule's class. An unclassified row makes a cycle red. The arris
+rows leave as a consumer report (arris ADR-0020).
 
 ## Inspection
 

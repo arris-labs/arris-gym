@@ -1,0 +1,12 @@
+{
+  "status": "no_result",
+  "message": "the program set no result and called no show_object",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "69735e5b40c38aea6f27b3e93c3f3fd71ee9df746e4837d1a19304c151521e8c",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

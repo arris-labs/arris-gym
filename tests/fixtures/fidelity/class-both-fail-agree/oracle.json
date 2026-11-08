@@ -1,0 +1,12 @@
+{
+  "status": "syntax",
+  "message": "'(' was never closed (<program>, line 3)",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "9b860b2610b58e05a9fafe2296c473f21f55c05971ba93f0eccd648baf55009b",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

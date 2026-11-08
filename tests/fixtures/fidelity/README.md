@@ -32,3 +32,20 @@ in the commit.
 | `agree-revolve-torus` | torus R 3, r 1: V = 2 pi^2 R r^2; A = 4 pi^2 R r |
 | `agree-revolve-washer` | Pappus: V = pi (9-1) 2; A = 2 pi (1*2 + 3*2) + 2 pi (9-1) |
 | `agree-tube` | V = pi (9-1) 4; A = 2 pi 3 4 + 2 pi 1 4 + 2 pi (9-1) |
+
+`class-*/` are the planted fixtures of ADR-0006: an `arris` program
+(`program.py`), a planted `oracle.json` written by hand (what the oracle would
+report, its `program_sha256` that of `program.py`; never recorded), a
+`verdict.json` where the rule needs one, and `expected.json`, the row ADR-0006's
+table gives. `tests/test_fidelity_compare.py` runs the program and compares.
+
+| Fixture | arris | Oracle (planted) | Row |
+|---|---|---|---|
+| `class-cq-bug` | `runtime` (`AttributeError`) | `ok` | `cq_bug` |
+| `class-arris-refusal` | `arris_refusal` (`OpDegenerateError`, a fillet of 10 on a 3-high box) | `ok` | `arris_refusal` |
+| `class-arris-bug` | `crash` (`os._exit(3)`) | `ok` | `arris_bug` |
+| `class-occt-wrong` | `ok`, the 2 x 3 x 4 box | `ok`, volume 25 | `occt_wrong` by its closed form, 24 |
+| `class-by-design` | `ok` | `no_result` | `by_design` by its anchor |
+| `class-both-fail-agree` | `syntax` | `syntax` | agree |
+| `class-unclassified-gap` | `ok`, the box | `ok`, volume 24.5, no verdict | unclassified |
+| `class-timeout` | `ok` | `timeout` | unclassified, timed out |

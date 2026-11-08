@@ -187,6 +187,25 @@ _Avoid_: compatibility
 
 **Disagreement**:
 One program on which `cq` on arris and the oracle differ, and which gets a
-class: `cq` bug, arris refusal, arris bug, Open CASCADE wrong, or semantic
-difference by design.
+disagreement class.
 _Avoid_: mismatch
+
+**Disagreement class**:
+Why a disagreement exists, one of five (`DisagreementClass`): `cq_bug`,
+`arris_refusal` (with the refusal's kind), `arris_bug`, `occt_wrong` (Open
+CASCADE wrong) or `by_design` (a semantic difference by design). The rule
+classes what the two statuses settle; a verdict classes the rest (ADR-0006).
+_Avoid_: category, bucket
+
+**Verdict**:
+A disagreement class and its one piece of evidence: a closed form, a second
+oracle's record, a doc or ADR anchor (for `by_design` alone), or a
+regression fixture. `compare` checks a closed form against the measures
+(ADR-0006).
+_Avoid_: ruling, judgement
+
+**Fidelity row**:
+One program's comparison of arris with the oracle (`FidelityRow`): `agree`,
+`disagree` with its disagreement class, or `unclassified`, with both statuses,
+the measure deltas and any verdict. An unclassified row makes a cycle red.
+_Avoid_: fidelity result

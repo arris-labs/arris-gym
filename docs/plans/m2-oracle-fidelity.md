@@ -66,7 +66,10 @@ same digest.
   centroid over the bbox diagonal, and a rule for face counts, whose
   conventions differ between the kernels. The values are measured by step 4
   as named constants in `fidelity`.
-- **ADR-0006, the classification rule** (step 5): which status pairs class
+- **ADR-0006, the classification rule** (step 5; as built:
+  `fidelity/_compare.py`, with `FidelityOutcome`, the evidence types
+  `ClosedForm`, `SecondOracle`, `DocAnchor`, `RegressionFixture` and their
+  union `Evidence` besides the types above): which status pairs class
   themselves, and which need a `Verdict`. Proposed: arris `arris_refusal`
   → `arris_refusal(kind)`; `crash`/`checker_fail` → `arris_bug`;
   `runtime`/`unsupported_api` → `cq_bug`; both failing → `agree`. A measure
@@ -106,7 +109,7 @@ right within the design; **[3]** unproven, correctness established here.
   `expected.json` (closed form): boxes, cylinders, holes, revolves, fillets
   and chamfers. arris against OCCT and both against the closed form set the
   tolerance constants. Test: every pair agrees.
-- [ ] Step 5 **[3]** — ADR-0006, `DisagreementClass`, `Verdict`,
+- [x] Step 5 **[3]** — ADR-0006, `DisagreementClass`, `Verdict`,
   `FidelityRow`, `compare`. `match` is exhaustive on `Status` and
   `OracleStatus`. Planted fixtures `tests/fixtures/fidelity/class-*/` (an
   arris program, a planted `oracle.json`, and a `verdict.json` where the
@@ -161,6 +164,16 @@ right within the design; **[3]** unproven, correctness established here.
   held to one thread (it hangs under `RLIMIT_NPROC`); STEP to memory, and
   `SystemExit` is `runtime`. Start-up is ~1.5 s, so the 1 s loop dies in the
   import (a 5 s test sees the loop reached) and step 7's timeout covers it.
+- Settled (step 5): ADR-0006 sharpens the proposed rule. An arris `crash`
+  or `checker_fail` agrees only with the oracle failing the same way (`crash`,
+  `invalid`), and is `arris_bug` otherwise, the oracle failing included: a
+  crash is never an answer. The oracle's `crash` or `invalid` alone and arris
+  `syntax` against oracle `ok` are `unclassified`. A verdict may replace the
+  rule's class (a refusal of a part OCCT builds wrong is `occt_wrong`), never
+  an `agree`. `compare` raises `ValueError` for a verdict on an agreement, an
+  `arris_refusal` verdict without a refusal, and a closed form that the
+  measures contradict or that neither side measured. Deltas are carried
+  whenever both sides measured (oracle `ok` or `invalid`).
 - ⚠ OPEN: whether a slice program on which OCCT fails becomes a regression
   fixture now or waits for its M3 row. Agent, step 7: it waits, and the row
   is named in `c1/README.md`.

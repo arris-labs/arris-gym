@@ -9,6 +9,7 @@ both kernels were held to a closed form, and are justified in ADR-0005.
 from __future__ import annotations
 
 import math
+from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict
 
@@ -64,6 +65,42 @@ def _dist(a: tuple[float, ...], b: tuple[float, ...]) -> float:
     return math.sqrt(total)
 
 
+class Figures(Protocol):
+    """The judged measures of a shape, whoever measured it: arris, the
+    oracle, or a closed form."""
+
+    @property
+    def volume(self) -> float: ...
+    @property
+    def area(self) -> float: ...
+    @property
+    def centroid(self) -> tuple[float, float, float]: ...
+    @property
+    def bounds(self) -> tuple[tuple[float, float, float], tuple[float, float, float]]: ...
+
+
+def figures_agree(a: Figures, b: Figures) -> bool:
+    """Whether two shapes' judged measures lie inside the agreement tolerance,
+    `b`'s bounding box giving the diagonal. Face counts are not part of it."""
+    volume, area, centroid, bounds = _judged(a, b)
+    return within_tolerance(
+        MeasureDeltas(volume=volume, area=area, centroid=centroid, bounds=bounds, faces=0)
+    )
+
+
+def _judged(a: Figures, b: Figures) -> tuple[float, float, float, float]:
+    lo, hi = b.bounds
+    diagonal = _dist(lo, hi)
+    centroid = _dist(a.centroid, b.centroid)
+    corners = (*a.bounds[0], *a.bounds[1]), (*lo, *hi)
+    return (
+        _relative(a.volume, b.volume),
+        _relative(a.area, b.area),
+        centroid if diagonal == 0.0 else centroid / diagonal,
+        max(abs(x - y) for x, y in zip(*corners, strict=True)),
+    )
+
+
 def measure_deltas(arris: Measures, oracle: OracleMeasures) -> MeasureDeltas:
     """The deltas between a result's measures and the oracle's.
 
@@ -76,16 +113,9 @@ def measure_deltas(arris: Measures, oracle: OracleMeasures) -> MeasureDeltas:
     >>> measure_deltas(a, o).volume
     0.0
     """
-    lo, hi = oracle.bounds
-    diagonal = _dist(lo, hi)
-    centroid = _dist(arris.centroid, oracle.centroid)
-    corners = (*arris.bounds[0], *arris.bounds[1]), (*lo, *hi)
+    volume, area, centroid, bounds = _judged(arris, oracle)
     return MeasureDeltas(
-        volume=_relative(arris.volume, oracle.volume),
-        area=_relative(arris.area, oracle.area),
-        centroid=centroid if diagonal == 0.0 else centroid / diagonal,
-        bounds=max(abs(x - y) for x, y in zip(*corners, strict=True)),
-        faces=arris.faces - oracle.faces,
+        volume=volume, area=area, centroid=centroid, bounds=bounds, faces=arris.faces - oracle.faces
     )
 
 
