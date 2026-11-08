@@ -1,0 +1,7 @@
+{
+  "dialect": "arris",
+  "route": "exact",
+  "iou": 0.3333333333333333,
+  "note": "[0,2]x[0,1]^2 against [1,3]x[0,1]^2: the common part [1,2]x[0,1]^2 has volume 1, the union 2 + 2 - 1 = 3, so IoU = 1/3; sample_union_fraction: the union fills the box [0,3]x[0,1]^2 that holds both",
+  "sample_union_fraction": 1.0
+}

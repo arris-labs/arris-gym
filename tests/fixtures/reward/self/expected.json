@@ -1,0 +1,7 @@
+{
+  "dialect": "arris",
+  "route": "exact",
+  "iou": 1.0,
+  "note": "a 10 x 10 x 2 plate with a round hole of radius 2, built twice by the same program: the same solid, IoU = 1; sample_union_fraction: the plate, 200 - 8 pi, of its own box, 200",
+  "sample_union_fraction": 0.8743362938564083
+}

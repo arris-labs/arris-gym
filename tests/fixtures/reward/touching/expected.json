@@ -1,0 +1,7 @@
+{
+  "dialect": "arris",
+  "route": "exact",
+  "iou": 0.0,
+  "note": "unit cubes sharing the face x = 1: the common part is a face of zero volume, IoU = 0; sample_union_fraction: the union fills the box [0,2]x[0,1]^2 that holds both",
+  "sample_union_fraction": 1.0
+}

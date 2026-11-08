@@ -1,0 +1,7 @@
+{
+  "dialect": "arris",
+  "route": "exact",
+  "iou": 0.0,
+  "note": "unit cubes one unit apart along x: no common point, IoU = 0; sample_union_fraction: the union, 2, of the box [0,3]x[0,1]^2 that holds both, 3",
+  "sample_union_fraction": 0.6666666666666666
+}

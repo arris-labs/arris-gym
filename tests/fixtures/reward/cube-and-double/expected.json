@@ -1,0 +1,7 @@
+{
+  "dialect": "arris",
+  "route": "exact",
+  "iou": 0.125,
+  "note": "the unit cube against the cube of side 2 at the same corner: the smaller lies inside the larger, so IoU = 1 / 8; sample_union_fraction: the union is the larger cube, the box that holds both",
+  "sample_union_fraction": 1.0
+}

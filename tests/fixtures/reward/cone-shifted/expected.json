@@ -1,0 +1,5 @@
+{
+  "dialect": "arris",
+  "route": "sampled",
+  "note": "a cone frustum against itself moved 0.3 along x: arris 0.10.0 has no closed form for a cone surface against a parallel cone surface (OpUnsupportedError), so the sampled route answers; the bodies overlap without containing each other, so 0 < IoU < 1"
+}
