@@ -24,10 +24,12 @@ from arris_gym.fidelity import (
     BOUNDS_ABS,
     CENTROID_DIAG,
     VOLUME_REL,
+    FidelityOutcome,
     MeasureDeltas,
     OracleMeasures,
     OracleReport,
     OracleStatus,
+    compare,
     measure_deltas,
     program_sha256,
     within_tolerance,
@@ -97,11 +99,15 @@ def test_arris_holds_the_closed_form(d: pathlib.Path) -> None:
 @pytest.mark.parametrize("d", DIRECTORIES, ids=lambda d: d.name)
 def test_every_pair_agrees(d: pathlib.Path) -> None:
     result = run(d)
-    oracle = recorded(d).measures
+    report = recorded(d)
+    row = compare(result, report)
+    assert row.outcome is FidelityOutcome.AGREE, row
+    assert row.disagreement is None
+    assert row.deltas is not None
+    assert within_tolerance(row.deltas), row.deltas
     assert result.measures is not None
-    assert oracle is not None
-    deltas = measure_deltas(result.measures, oracle)
-    assert within_tolerance(deltas), deltas
+    assert report.measures is not None
+    assert row.deltas == measure_deltas(result.measures, report.measures)
 
 
 def test_the_face_counts_differ_where_conventions_do_and_are_not_judged() -> None:
