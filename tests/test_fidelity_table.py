@@ -18,6 +18,7 @@ import pytest
 
 import arris_gym
 from arris_gym.fidelity import (
+    ArrisReport,
     FidelityTable,
     OracleReport,
     TableEntry,
@@ -28,6 +29,9 @@ from arris_gym.fidelity import (
 )
 
 ROOT = pathlib.Path(__file__).resolve().parent / "fixtures" / "fidelity"
+# The fixtures are this repository's own (the fixtures' README).
+SOURCE = "arris-gym tests/fixtures/fidelity"
+LICENCE = "MIT OR Apache-2.0"
 
 
 def entries() -> list[TableEntry]:
@@ -41,7 +45,8 @@ def entries() -> list[TableEntry]:
             else None
         )
         result = arris_gym.run((d / "program.py").read_text())
-        rows.append(TableEntry(name=d.name, row=compare(result, report, verdict)))
+        row = compare(result, report, verdict)
+        rows.append(TableEntry(name=d.name, source=SOURCE, licence=LICENCE, row=row))
     return rows
 
 
@@ -79,7 +84,7 @@ def test_the_digest_does_not_move_with_input_order(rows: list[TableEntry]) -> No
     assert other.digest == table.digest
     assert [e.name for e in table.entries] == sorted(e.name for e in rows)
     # ...and moves with a row's content.
-    changed = [*rows[:-1], TableEntry(name=rows[-1].name, row=rows[0].row)]
+    changed = [*rows[:-1], rows[-1].model_copy(update={"row": rows[0].row})]
     assert fidelity_table(changed).digest != table.digest
 
 
@@ -114,3 +119,23 @@ def test_the_arris_report_is_exactly_the_expected_one(rows: list[TableEntry]) ->
 def test_an_empty_report_says_none() -> None:
     markdown = arris_rows(fidelity_table([])).to_markdown()
     assert markdown.count("None.") == 2
+
+
+def test_the_report_states_every_rows_licence_and_versions_sorted(
+    rows: list[TableEntry],
+) -> None:
+    # A second licence and a second arris version, on rows given out of order.
+    other = rows[0].row.model_copy(
+        update={"versions": rows[0].row.versions.model_copy(update={"arris": "0.0.1"})}
+    )
+    extra = TableEntry(name="a-first", source="elsewhere", licence="CC-BY-4.0", row=other)
+    report = arris_rows(fidelity_table([*rows, extra]))
+    assert report.licences == ("CC-BY-4.0", LICENCE)
+    assert report.arris_versions[0] == "0.0.1"
+    assert len(report.arris_versions) == 2
+    fields = json.loads(report.to_json())
+    fields["licences"].reverse()
+    with pytest.raises(ValueError, match="licences"):
+        ArrisReport.model_validate(fields)
+    with pytest.raises(ValueError, match="source"):
+        TableEntry(name="x", source="", licence=LICENCE, row=other)

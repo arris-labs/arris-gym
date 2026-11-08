@@ -55,4 +55,10 @@ are the `FidelityTable` counts and the arris report that all of the above make
 (the 19 `agree-*` pairs plus the 8 `class-*`), worked out by counting the two
 tables here: 27 programs, 20 agree, 5 disagree (one per class), 2 unclassified.
 `tests/test_fidelity_table.py` holds the table and `arris_rows` to them. The
-refusal's words are the kernel's, as `class-arris-refusal` draws them.
+refusal's words are the kernel's, as `class-arris-refusal` draws them. Every
+entry's source is `arris-gym tests/fixtures/fidelity` and its licence this
+repository's, `MIT OR Apache-2.0`. The report's versions are the pins: arris
+0.10.0 and numpy 2.3.4 (`uv.lock`), and the oracle's cadquery 2.3.0, OCP
+7.9.3.0 on Python 3.12.3, as every `oracle.json` here records them
+(`class-timeout`'s oracle never answered and records none). An arris or
+numpy bump changes `arris-report-expected.*` in its own plan.

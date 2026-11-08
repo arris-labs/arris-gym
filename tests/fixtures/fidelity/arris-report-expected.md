@@ -2,6 +2,9 @@
 
 Over 27 programs: 1 arris refusals, 1 arris bugs.
 
+Licences: MIT OR Apache-2.0.
+arris 0.10.0; numpy 2.3.4; oracle cadquery 2.3.0, OCP 7.9.3.0, Python 3.12.3.
+
 ## Refusals
 
 ### OpDegenerateError (1)

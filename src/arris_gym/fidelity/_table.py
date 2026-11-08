@@ -5,7 +5,9 @@ program names: sorted by name, so the digest does not depend on the order the
 rows arrived in, and counted over every row, the failures and timeouts
 included. `arris_rows` takes from a table what arris's maintainers act on: a
 histogram of the refusals by kind and then reason, and the arris bugs with
-their program SHA-256 and regression fixture (ADR-0006).
+their program SHA-256 and regression fixture (ADR-0006). Each entry carries its
+program's source and licence, and the report the licences and versions of all
+the rows.
 """
 
 from __future__ import annotations
@@ -25,7 +27,7 @@ from arris_gym.fidelity._compare import (
     FidelityRow,
     RegressionFixture,
 )
-from arris_gym.fidelity._oracle import OracleStatus
+from arris_gym.fidelity._oracle import OracleStatus, OracleVersions
 from arris_gym.sandbox import Status
 
 _CONFIG = ConfigDict(frozen=True, extra="forbid")
@@ -35,11 +37,15 @@ Counts = dict[str, int]
 
 
 class TableEntry(BaseModel):
-    """One program's fidelity row under the program's name (a stem, a fixture)."""
+    """One program's fidelity row under the program's name (a stem, a fixture),
+    with where the program came from (`source`) and its `licence`, as every row
+    carries them (gym.md, Data). Both are the caller's, never empty."""
 
     model_config = _CONFIG
 
     name: str = pydantic.Field(min_length=1)
+    source: str = pydantic.Field(min_length=1)
+    licence: str = pydantic.Field(min_length=1)
     row: FidelityRow
 
 
@@ -173,19 +179,43 @@ class ArrisBug(BaseModel):
     fixture: str | None
 
 
+def _oracle_key(v: OracleVersions) -> tuple[str, str, str]:
+    return (v.cadquery, v.ocp, v.python)
+
+
 class ArrisReport(BaseModel):
     """What the fidelity table tells arris: the refusals by kind then reason, and the bugs.
 
     `programs` is the table's whole denominator, not the rows listed. The
     refusals are those rows classed `arris_refusal`, with the kernel's own
-    words; kinds are sorted by kind, bugs by name.
+    words; kinds are sorted by kind, bugs by name. `licences`,
+    `arris_versions`, `numpy_versions` and `oracle_versions` are those of
+    every row of the table, each distinct and sorted (validated; the oracle's
+    by cadquery, OCP, Python), so the report states its licence and what it
+    was produced under; a row whose oracle never answered adds no oracle
+    version.
     """
 
     model_config = _CONFIG
 
     programs: int
+    licences: tuple[str, ...]
+    arris_versions: tuple[str, ...]
+    numpy_versions: tuple[str, ...]
+    oracle_versions: tuple[OracleVersions, ...]
     refusals: tuple[ArrisRefusalKind, ...]
     bugs: tuple[ArrisBug, ...]
+
+    @model_validator(mode="after")
+    def _sorted(self) -> Self:
+        for key in ("licences", "arris_versions", "numpy_versions"):
+            values: tuple[str, ...] = getattr(self, key)
+            if list(values) != sorted(set(values)):
+                raise ValueError(f"{key} are not distinct and sorted")
+        keys = [_oracle_key(v) for v in self.oracle_versions]
+        if keys != sorted(set(keys)):
+            raise ValueError("oracle_versions are not distinct and sorted")
+        return self
 
     def to_json(self) -> str:
         """The report as canonical JSON."""
@@ -198,6 +228,18 @@ class ArrisReport(BaseModel):
             "",
             f"Over {self.programs} programs: "
             f"{sum(k.count for k in self.refusals)} arris refusals, {len(self.bugs)} arris bugs.",
+            "",
+            f"Licences: {', '.join(self.licences) or 'none'}.",
+            f"arris {', '.join(self.arris_versions) or 'none'}; "
+            f"numpy {', '.join(self.numpy_versions) or 'none'}; oracle "
+            + (
+                ", ".join(
+                    f"cadquery {v.cadquery}, OCP {v.ocp}, Python {v.python}"
+                    for v in self.oracle_versions
+                )
+                or "none"
+            )
+            + ".",
             "",
             "## Refusals",
             "",
@@ -254,4 +296,14 @@ def arris_rows(table: FidelityTable) -> ArrisReport:
         )
         for kind, counter in sorted(reasons.items())
     )
-    return ArrisReport(programs=table.programs, refusals=kinds, bugs=tuple(bugs))
+    rows = [entry.row for entry in table.entries]
+    oracle = {_oracle_key(r.oracle_versions): r.oracle_versions for r in rows if r.oracle_versions}
+    return ArrisReport(
+        programs=table.programs,
+        licences=tuple(sorted({entry.licence for entry in table.entries})),
+        arris_versions=tuple(sorted({r.versions.arris for r in rows})),
+        numpy_versions=tuple(sorted({r.versions.numpy for r in rows})),
+        oracle_versions=tuple(oracle[key] for key in sorted(oracle)),
+        refusals=kinds,
+        bugs=tuple(bugs),
+    )

@@ -381,13 +381,15 @@ for `by_design`, or a regression fixture) classes them. A verdict may also
 replace the rule's class, except the `arris_bug` of an arris crash or checker
 failure. An unclassified row makes a cycle red. The arris
 rows leave as a consumer report (arris ADR-0020).
-`fidelity.fidelity_table(entries)` gathers rows under their program names
-into a **fidelity table**: sorted by name, counts over all programs (each
+`fidelity.fidelity_table(entries)` gathers rows under their program names,
+each entry with its program's source and licence and each row with the
+versions both sides ran under, into a **fidelity table**: sorted by name, counts over all programs (each
 status, class and outcome with its zeros, timeouts named) and a digest that
 input order does not move. `fidelity.arris_rows(table)` cuts the **arris
 report** from it (`to_json`, `to_markdown`): a histogram of refusals by
 kind, then by the kernel's message, and the arris bugs with their program
-SHA-256 and regression fixture.
+SHA-256 and regression fixture, under the licences and the arris, numpy and
+oracle versions of all the table's rows.
 
 ## Inspection
 
