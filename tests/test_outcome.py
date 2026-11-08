@@ -76,12 +76,12 @@ def test_every_status_builds_and_is_dispatched(status: Status) -> None:
     assert describe(status)
 
 
-def test_there_are_eight_statuses_and_one_dialect() -> None:
+def test_there_are_eight_statuses_and_two_dialects() -> None:
     assert [s.value for s in Status] == [
         "ok", "syntax", "runtime", "unsupported_api",
         "arris_refusal", "checker_fail", "timeout", "crash",
     ]  # fmt: skip
-    assert [d.value for d in Dialect] == ["arris"]
+    assert [d.value for d in Dialect] == ["arris", "cq"]
 
 
 @pytest.mark.parametrize(

@@ -184,9 +184,13 @@ def run(
     that is not a positive number of bytes, and `SandboxUnavailable` where
     this machine cannot isolate a program.
 
-    The program binds a module-level `result` to an `arris.build.Solid`; it
-    runs on a fresh model in a worker of its own, `timeout` seconds of wall
-    clock and `memory` bytes of address space at most.
+    Under `dialect="arris"` the program binds a module-level `result` to an
+    `arris.build.Solid`. Under `dialect="cq"` it imports `cadquery`, which is
+    the subset `arris_gym.cq`, and its result is the last `show_object`
+    argument, else `result`: a `Workplane` holding one solid. A call outside
+    the subset ends `unsupported_api` naming it. The program runs on a fresh
+    model in a worker of its own, `timeout` seconds of wall clock and
+    `memory` bytes of address space at most.
 
     >>> import arris_gym as ag
     >>> ok = ag.run("import arris.build as b\\nresult = b.Solid.box((0, 0, 0), (1, 2, 3))")
@@ -196,6 +200,10 @@ def run(
     6.0
     >>> ag.run("result = (").status is ag.Status.SYNTAX
     True
+    >>> cq = "import cadquery as cq\\nshow_object(cq.Workplane('XY').sphere(1))"
+    >>> sphere = ag.run(cq, dialect="cq")
+    >>> sphere.status.value, sphere.message
+    ('unsupported_api', 'Workplane.sphere')
     """
     return default_sandbox().run(program, dialect=dialect, timeout=timeout, memory=memory)
 

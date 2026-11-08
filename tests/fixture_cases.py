@@ -51,10 +51,12 @@ def load(area: str) -> list[Case]:
 
 
 def run(case: Case) -> ExecResult:
-    """Run a fixture's program alone, a `timeout` fixture to `TIMEOUT_DEADLINE`."""
+    """Run a fixture's program alone in its expected dialect, a `timeout`
+    fixture to `TIMEOUT_DEADLINE`."""
+    dialect = str(case.expected["dialect"])
     if case.expected["status"] == Status.TIMEOUT.value:
-        return arris_gym.run(case.program, timeout=TIMEOUT_DEADLINE)
-    return arris_gym.run(case.program)
+        return arris_gym.run(case.program, dialect=dialect, timeout=TIMEOUT_DEADLINE)
+    return arris_gym.run(case.program, dialect=dialect)
 
 
 def close(actual: float, expected: float, tolerance: float = DEFAULT_TOLERANCE) -> bool:

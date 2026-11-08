@@ -99,7 +99,7 @@ def test_a_sandbox_never_used_starts_nothing() -> None:
 
 @pytest.mark.parametrize(
     "kwargs",
-    [{"workers": 0}, {"workers": -1}, {"workers": True}, {"timeout": 0.0}, {"dialect": "cq"}],
+    [{"workers": 0}, {"workers": -1}, {"workers": True}, {"timeout": 0.0}, {"dialect": "nope"}],
 )
 def test_run_many_checks_its_arguments_before_running_anything(
     kwargs: dict[str, object],

@@ -18,9 +18,8 @@ from dataclasses import dataclass
 
 import pydantic
 
-from arris_gym.sandbox import _isolate
+from arris_gym.sandbox import _isolate, _program
 from arris_gym.sandbox._frame import BodyFrame, ProgramFrame
-from arris_gym.sandbox._program import TEXT_ERRORS
 from arris_gym.sandbox._zygote import MAX_RESULT_BYTES, JobKind, Outcome, Zygote
 from arris_gym.sandbox.outcome import (
     ArrisRefusal,
@@ -188,9 +187,10 @@ def run_program(
     checked and measured by a body worker under the same limits and the same
     deadline (ADR-0002).
     """
-    payload = program.encode("utf-8", TEXT_ERRORS)
+    text = program.encode("utf-8", _program.TEXT_ERRORS)
     start = time.monotonic()
     deadline = start + timeout
+    payload = _program.payload(dialect, text)
     outcome = zygote.execute(JobKind.PROGRAM, payload, deadline=deadline, memory=memory)
     found = program_verdict(outcome, timeout)
     if isinstance(found, Verdict):
@@ -213,7 +213,7 @@ def run_program(
         body=None if verdict.body is None else BodyRef.of(verdict.body),
         measures=verdict.measures,
         violations=verdict.violations,
-        program_sha256=hashlib.sha256(payload).hexdigest(),
+        program_sha256=hashlib.sha256(text).hexdigest(),
         dialect=dialect,
         versions=current_versions(),
         seconds=seconds,

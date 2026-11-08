@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "the last `show_object` argument is of type int, not cadquery.Workplane"
+}

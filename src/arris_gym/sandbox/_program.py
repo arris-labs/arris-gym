@@ -1,8 +1,10 @@
 """The program job: run one program's text inside a program worker.
 
 Called by the zygote's dispatch (`sandbox/_zygote.py`) inside an isolated
-program worker, never in the caller's process. The program's text comes
-from a descriptor the caller filled; the worker classifies how it ended, by
+program worker, never in the caller's process. The program's dialect and
+text come from a descriptor the caller filled (`payload`): under `cq` the
+worker installs `arris_gym.cq` as `cadquery` and gives the program
+`show_object` (ADR-0007). The worker classifies how it ended, by
 the type of what it raised and never by a message's wording, and writes one
 `ProgramFrame` to the result pipe: a body's bytes, which a body worker
 reads back (`sandbox/_body.py`), or the failure. Private.
@@ -10,16 +12,24 @@ reads back (`sandbox/_body.py`), or the failure. Private.
 
 from __future__ import annotations
 
+import importlib.abc
+import importlib.machinery
 import os
+import sys
 import traceback
+from collections.abc import Callable, Sequence
+from types import ModuleType
+from typing import assert_never
 
 import arris
 import arris.build
 from pydantic import BaseModel
 
+import arris_gym.cq
 from arris_gym.cq import UnsupportedApi
+from arris_gym.cq._result import NotASolid, solid_of
 from arris_gym.sandbox._frame import ProgramFrame
-from arris_gym.sandbox.outcome import ArrisRefusal, Status
+from arris_gym.sandbox.outcome import ArrisRefusal, Dialect, Status
 
 # The program's text is decoded so that every string a caller can pass
 # round-trips, lone surrogates included; `compile` refuses what it cannot
@@ -27,7 +37,28 @@ from arris_gym.sandbox.outcome import ArrisRefusal, Status
 TEXT_ERRORS = "surrogatepass"
 # The name a program binds its solid to (ARCHITECTURE.md §Outcomes).
 RESULT_NAME = "result"
+# What a `cq` program shows its result with, and the module it imports (ADR-0007).
+SHOW_NAME = "show_object"
+CADQUERY = "cadquery"
 _SOURCE_NAME = "<program>"
+# A program job's payload opens with one byte naming its dialect; the
+# program's text follows. Only the caller writes a payload.
+_DIALECT_BYTES = {Dialect.ARRIS: b"a", Dialect.CQ: b"c"}
+_DIALECTS = {code: dialect for dialect, code in _DIALECT_BYTES.items()}
+
+
+def payload(dialect: Dialect, text: bytes) -> bytes:
+    """A program job's payload: the dialect's byte, then the program's encoded text."""
+    return _DIALECT_BYTES[dialect] + text
+
+
+def read_payload(data: bytes) -> tuple[Dialect, str]:
+    """The dialect and text of a program job's payload `data`.
+
+    Raises `KeyError` for a first byte that names no dialect: the caller's
+    bug, so the worker ends with no frame and the job is a `crash`.
+    """
+    return _DIALECTS[data[:1]], data[1:].decode("utf-8", TEXT_ERRORS)
 
 
 def read_all(fd: int) -> bytes:
@@ -133,31 +164,54 @@ def _failure(
     )
 
 
-def classify(text: str) -> ProgramFrame:
-    """Compile and run `text`; the frame saying how it ended. Never raises.
+class _NoCadquerySubmodule(importlib.abc.MetaPathFinder):
+    """Refuses `import cadquery.<name>`: the subset has no submodules (ADR-0007)."""
 
-    The decision is by type: `SyntaxError` (or text `compile` cannot encode)
-    from `compile`, `UnsupportedApi`, an `arris.ArrisError`, any other
-    exception, a program that binds no `result` or one that is not a `Solid`.
+    def find_spec(
+        self,
+        fullname: str,
+        path: Sequence[str] | None,
+        target: ModuleType | None = None,
+    ) -> importlib.machinery.ModuleSpec | None:
+        if fullname.startswith(CADQUERY + "."):
+            raise UnsupportedApi("cq." + fullname.removeprefix(CADQUERY + ".").split(".")[0])
+        return None
+
+
+def _install_cadquery() -> None:
+    """Make `import cadquery` give `arris_gym.cq`, in this worker only."""
+    sys.modules[CADQUERY] = arris_gym.cq
+    sys.meta_path.insert(0, _NoCadquerySubmodule())
+
+
+def _show_object(shown: list[object]) -> Callable[..., None]:
+    """The `show_object` a `cq` program calls: it records what it is shown."""
+
+    def show_object(obj: object, name: object = None, options: object = None) -> None:
+        shown.append(obj)
+
+    return show_object
+
+
+def _cq_result(namespace: dict[str, object], shown: list[object]) -> arris.build.Solid:
+    """A `cq` program's solid: the last `show_object` argument's, else `result`'s.
+
+    Raises `NotASolid` (`runtime`) or `UnsupportedApi` as `solid_of` does.
     """
-    try:
-        code = compile(text, _SOURCE_NAME, "exec")
-    except (SyntaxError, UnicodeEncodeError) as error:
-        return _failure(Status.SYNTAX, exception_line(error))
-    except BaseException as error:  # noqa: BLE001 - RecursionError, MemoryError: the program's
-        return _failure(Status.RUNTIME, exception_line(error), error=error)
-    namespace: dict[str, object] = {"__name__": "__program__"}
-    try:
-        exec(code, namespace)  # inside the worker only
-        result = namespace.get(RESULT_NAME)
-        if isinstance(result, arris.build.Solid):
-            return _deliver(result)
-    except UnsupportedApi as error:
-        return _failure(Status.UNSUPPORTED_API, _text(error))
-    except arris.ArrisError as error:
-        return _failure(Status.ARRIS_REFUSAL, _text(error), _refusal(error))
-    except BaseException as error:  # noqa: BLE001 - SystemExit and MemoryError included
-        return _failure(Status.RUNTIME, exception_line(error), error=error)
+    if shown:
+        return solid_of(shown[-1], f"the last `{SHOW_NAME}` argument")
+    if RESULT_NAME not in namespace:
+        raise NotASolid(
+            f"the program ended without calling `{SHOW_NAME}` or binding `{RESULT_NAME}`"
+        )
+    return solid_of(namespace[RESULT_NAME], f"`{RESULT_NAME}`")
+
+
+def _arris_result(namespace: dict[str, object]) -> arris.build.Solid | ProgramFrame:
+    """An `arris` program's solid, its module-level `result`, or the failure it is."""
+    result = namespace.get(RESULT_NAME)
+    if isinstance(result, arris.build.Solid):
+        return result
     if RESULT_NAME not in namespace:
         return _failure(Status.RUNTIME, f"the program ended without binding `{RESULT_NAME}`")
     return _failure(
@@ -166,11 +220,53 @@ def classify(text: str) -> ProgramFrame:
     )
 
 
+def classify(text: str, dialect: Dialect) -> ProgramFrame:
+    """Compile and run `text` in `dialect`; the frame saying how it ended. Never raises.
+
+    The decision is by type: `SyntaxError` (or text `compile` cannot encode)
+    from `compile`, `UnsupportedApi`, an `arris.ArrisError`, any other
+    exception, or a result that is not a solid: under `arris` a `result`
+    missing or not a `Solid`, under `cq` one that does not resolve to a
+    single solid (ADR-0007).
+    """
+    try:
+        code = compile(text, _SOURCE_NAME, "exec")
+    except (SyntaxError, UnicodeEncodeError) as error:
+        return _failure(Status.SYNTAX, exception_line(error))
+    except BaseException as error:  # noqa: BLE001 - RecursionError, MemoryError: the program's
+        return _failure(Status.RUNTIME, exception_line(error), error=error)
+    namespace: dict[str, object] = {"__name__": "__program__"}
+    shown: list[object] = []
+    if dialect is Dialect.CQ:
+        _install_cadquery()
+        namespace[SHOW_NAME] = _show_object(shown)
+    try:
+        exec(code, namespace)  # inside the worker only
+        match dialect:
+            case Dialect.ARRIS:
+                found = _arris_result(namespace)
+            case Dialect.CQ:
+                found = _cq_result(namespace, shown)
+            case unreachable:
+                assert_never(unreachable)
+        if isinstance(found, ProgramFrame):
+            return found
+        return _deliver(found)
+    except UnsupportedApi as error:
+        return _failure(Status.UNSUPPORTED_API, _text(error))
+    except NotASolid as error:
+        return _failure(Status.RUNTIME, _text(error))
+    except arris.ArrisError as error:
+        return _failure(Status.ARRIS_REFUSAL, _text(error), _refusal(error))
+    except BaseException as error:  # noqa: BLE001 - SystemExit and MemoryError included
+        return _failure(Status.RUNTIME, exception_line(error), error=error)
+
+
 def execute(payload_fd: int, result_fd: int) -> None:
     """Run the program on `payload_fd`; write one frame to `result_fd`.
 
     Only this worker writes it, not a child the program forked (`write_frame`).
     """
     worker = os.getpid()
-    text = read_all(payload_fd).decode("utf-8", TEXT_ERRORS)
-    write_frame(result_fd, classify(text), worker)
+    dialect, text = read_payload(read_all(payload_fd))
+    write_frame(result_fd, classify(text, dialect), worker)

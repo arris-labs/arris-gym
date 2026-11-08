@@ -103,9 +103,11 @@ instruction.
 its last `show_object` call, else a module-level `result`: BenchCAD programs
 assign `result` and end in `show_object(result)`. In the `arris` dialect, the
 module-level `result`, a `Solid`. The census counted BenchCAD's end forms:
-all 17,900 programs end in `show_object(result)`. ⚠ OPEN: what CAD-Recode's
-programs end in (C2), and what a Workplane holding several solids scores as
-(M3).
+all 17,900 programs end in `show_object(result)`. A `cq` result resolves to
+the single solid on its `Workplane`'s stack (ADR-0007): no result, a value
+that is not a `Workplane` or a stack with no solid is `runtime`; several
+solids are a compound the subset lacks, `unsupported_api` naming the count.
+⚠ OPEN: what CAD-Recode's programs end in (C2).
 
 ## The census
 
@@ -167,7 +169,8 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   its kind, deadline and memory limit, with four descriptors passed by
   `SCM_RIGHTS`, the write ends of the job's status, result and stderr pipes,
   which the caller creates, and a memfd holding the payload, which the worker
-  reads. The zygote forks the warden, closes its own copies and reaps it; it
+  reads. A program job's payload opens with one byte naming its dialect
+  (ADR-0007), then the program's text. The zygote forks the warden, closes its own copies and reaps it; it
   never reads a status, a result or a worker's stderr, which run from the
   warden and the worker straight to the caller. The warden and the worker close every descriptor
   they were not given, the job socket among them. The caller reads at most
@@ -256,9 +259,13 @@ Both yield the same `ExecResult`.
 `Workplane` and its stack, the sketch calls, `extrude`, booleans, selectors,
 STEP export, grown in census order. Inside the worker it is installed as
 `sys.modules["cadquery"]`, so `import cadquery as cq` runs unchanged, and
-`show_object` is a builtin of the program's namespace. A call outside the
-subset raises `UnsupportedApi` naming it, via `__getattr__`, never
-`AttributeError`.
+`show_object` is a builtin of the program's namespace; under `arris` neither
+exists. A call outside the subset raises `UnsupportedApi` naming it as the
+census writes it (`cq.Sketch`, `Workplane.sphere`, `cq.occ_impl` for
+`import cadquery.occ_impl`), via `__getattr__`, never `AttributeError`; a
+name with a leading underscore is Python's and stays `AttributeError`
+(ADR-0007). A `Workplane` is a frozen value: its plane, its **stack** of
+objects and its parent; every call returns a new one.
 
 ⚠ OPEN: how CadQuery's string selectors map onto arris's selection when they
 are ambiguous on curved faces.

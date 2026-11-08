@@ -170,8 +170,8 @@ def test_a_body_worker_that_delivers_nothing_costs_the_program(
 @pytest.mark.parametrize(
     "kwargs",
     [
-        {"dialect": "cq"},
         {"dialect": "nope"},
+        {"dialect": "cadquery"},
         {"timeout": 0.0},
         {"timeout": -1.0},
         {"timeout": float("nan")},

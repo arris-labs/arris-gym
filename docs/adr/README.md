@@ -23,3 +23,4 @@ training cycle starts from.
 | [0004](0004-the-oracle-worker-execs-the-oracle-interpreter-inside-a-program-worker.md) | The oracle worker execs the oracle's interpreter inside a program worker | accepted |
 | [0005](0005-the-agreement-tolerance-is-set-from-a-calibration-set.md) | The agreement tolerance is set from a calibration set held to closed forms | accepted |
 | [0006](0006-a-fidelity-row-is-classed-by-its-statuses-or-by-a-verdict.md) | A fidelity row is classed by its two statuses, or by a verdict | accepted |
+| [0007](0007-a-cq-workplane-is-a-frozen-stack-over-arris-build.md) | A `cq` Workplane is a frozen stack over `arris.build`, its result one solid | accepted |

@@ -29,9 +29,11 @@ class Status(enum.Enum):
 
 
 class Dialect(enum.Enum):
-    """The API a program is written against. Only `arris` until the `cq` subset lands."""
+    """The API a program is written against: `arris.build`, or the CadQuery
+    subset `arris_gym.cq`, which the program imports as `cadquery`."""
 
     ARRIS = "arris"
+    CQ = "cq"
 
 
 class _Frozen(BaseModel):

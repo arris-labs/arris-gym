@@ -159,6 +159,15 @@ A call with its argument form, the kinds of its arguments:
 `Workplane.extrude(num; both=bool)` (ADR-0003).
 _Avoid_: signature, overload
 
+**Subset**:
+The calls and API forms `cq` implements, grown in census order; a call
+outside it ends `unsupported_api` naming it (ADR-0007).
+_Avoid_: coverage
+
+**Stack**:
+A `cq` `Workplane`'s objects, the ones its call made, newest last; its
+result is the single solid on it (ADR-0007).
+
 **Selector string**:
 The string a program passes to `faces`, `edges` and the other selector
 methods, as written: `'>Z or <Z'` (ADR-0003).

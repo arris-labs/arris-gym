@@ -22,9 +22,10 @@ import arris
 import arris.build
 import pytest
 
-from arris_gym.sandbox import _isolate, _zygote
+from arris_gym.sandbox import _isolate, _program, _zygote
 from arris_gym.sandbox._frame import ProgramFrame
 from arris_gym.sandbox._zygote import JobKind, Outcome, Zygote
+from arris_gym.sandbox.outcome import Dialect
 
 MEMORY = 512 * 2**20  # the roadmap's default memory limit
 TIMEOUT = 10.0  # far past every program below: a hang fails, never a slow machine
@@ -66,7 +67,8 @@ result = parts[0].fuse(*parts[1:])
 
 def run(zygote: Zygote, program: str, timeout: float = TIMEOUT) -> Outcome:
     deadline = time.monotonic() + timeout
-    return zygote.execute(JobKind.PROGRAM, program.encode(), deadline=deadline, memory=MEMORY)
+    payload = _program.payload(Dialect.ARRIS, program.encode())
+    return zygote.execute(JobKind.PROGRAM, payload, deadline=deadline, memory=MEMORY)
 
 
 def body(zygote: Zygote, program: str) -> bytes:
