@@ -209,9 +209,11 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   refused, Unix sockets included (seccomp).
 - **Filesystem**: Landlock allows reading only beneath the interpreter's
   prefixes, the site-packages directories and `arris_gym`'s own directory;
-  nothing is written anywhere, since every mount is read-only, and nothing is
-  executed. An exec job (ADR-0004) reads its spec's paths instead, and may
-  execute its interpreter and that interpreter's ELF loader alone.
+  nothing is written anywhere, since every mount is read-only, and no file is
+  `execve`d. An exec job (ADR-0004) reads its spec's paths instead, and its
+  `execve` reaches its interpreter and that interpreter's ELF loader alone.
+  The loader runs any file the job can read (Landlock cannot refuse
+  `mmap` with `PROT_EXEC`), under every other limit here.
 - **Processes**: `RLIMIT_NPROC` is 4, counted per user namespace: the warden,
   the worker and two more tasks. A fork bomb stops there.
 - **Concurrency**: the caller's `workers=N` bounds the live forks. Results

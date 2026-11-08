@@ -57,10 +57,12 @@ class Limits:
 
     `memory` is the worker's `RLIMIT_AS` in bytes; `nproc` its
     `RLIMIT_NPROC`; `readable` the directories (or single files) its Landlock
-    domain may read beneath; `executable` the files it may also execute,
-    which is none but an exec job's interpreter and its ELF loader
-    (ADR-0004). Nothing else is readable, executable or writable. Each limit
-    is hard: the worker cannot raise it.
+    domain may read beneath; `executable` the files `execve` may also reach,
+    none but an exec job's interpreter and its ELF loader. Execution is not
+    a boundary: the loader maps and runs any file the domain reads, which
+    Landlock cannot refuse, and what it runs keeps every other limit
+    (ADR-0004). Nothing else is readable or writable. Each limit is hard:
+    the worker cannot raise it.
     """
 
     memory: int

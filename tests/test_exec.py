@@ -114,3 +114,35 @@ def test_a_payload_that_is_no_spec_runs_nothing(zygote: Zygote) -> None:
     )
     assert outcome.ending is None
     assert outcome.data == b""
+
+
+LOADER_PROBE = pathlib.Path(__file__).resolve().parent / "exec_loader.py"
+
+
+def test_the_loader_runs_any_readable_program_inside_the_same_boundary(zygote: Zygote) -> None:
+    # ADR-0004: Landlock cannot refuse the loader mapping a file it reads, so a
+    # program can run anything readable through it. What it runs is still
+    # nobody, in the empty network namespace, on read-only mounts.
+    loader = _exec.elf_loader(os.path.realpath(sys.executable))
+    assert loader is not None
+    spec = _exec.interpreter_spec(
+        sys.executable, str(LOADER_PROBE), ENVIRONMENT | {"LOADER": loader}
+    )
+    assert "/usr/bin/bash" not in spec.executable
+    assert "/usr/bin/id" not in spec.executable
+    outcome = zygote.execute(
+        JobKind.EXEC,
+        _exec.payload(spec, b""),
+        deadline=time.monotonic() + TIMEOUT,
+        memory=MEMORY,
+    )
+    assert outcome.ending is not None
+    assert (outcome.ending.kind, outcome.ending.value) == (EndKind.EXITED, 0), outcome.stderr
+    report = json.loads(outcome.data)
+    assert report["direct"] == ["PermissionError", 13]
+    assert report["id"] == {"code": 0, "stdout": "65534\n", "stderr": ""}
+    bash = report["bash"]
+    assert bash["code"] == 0, bash
+    assert bash["stdout"].splitlines() == ["uid=65534", "connect=1", "write=1"], bash
+    assert "Network is unreachable" in bash["stderr"], bash
+    assert "Read-only file system" in bash["stderr"] or "Permission denied" in bash["stderr"]

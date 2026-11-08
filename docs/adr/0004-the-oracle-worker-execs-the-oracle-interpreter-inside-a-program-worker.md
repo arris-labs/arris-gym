@@ -72,8 +72,25 @@ settings: an oracle worker can write no file.
 
 - The oracle has the same boundary as arris: everything in ADR-0002's
   Consequences holds for it, with its own environment's directories as the
-  readable ones. A program on the oracle can execute nothing but the
-  oracle's own interpreter.
+  readable ones.
+- Execution is not a boundary. `execve` reaches only the interpreter and
+  its loader, but the loader maps any file it can read, and Landlock cannot
+  refuse a `mmap` with `PROT_EXEC`. So a program can run any readable
+  program through the loader (`ld-linux-x86-64.so.2 /usr/bin/id` runs,
+  since the oracle's base prefix is `/usr`). Whatever it runs keeps the same
+  boundary: uid nobody in the same namespaces, the same rlimits, seccomp
+  filter and Landlock domain, read-only mounts and no network
+  (`tests/test_exec.py` pins it). That is no more than the program already
+  had: it runs arbitrary code in its own process. Narrowing the reach below
+  `/usr` would not close it, since the libraries the interpreter maps sit
+  there among other programs.
+- A program can forge its own oracle report. It can find the result
+  descriptor and write a consistent `ok` frame with measures of its choice,
+  then end with `os._exit(0)`. The caller's parser checks a frame for
+  consistency (its status, its fields, the program's SHA-256), never for
+  authenticity, as with any worker's frame. A forged report costs only that
+  program's row, and a fidelity row built on it is as wrong as the program
+  made it.
 - An oracle program costs about 1.5 s of start-up before its first line
   runs, against ADR-0001's 10 ms. A deadline under that times every program
   out during the import, so the oracle's timeout covers the start-up. The 300

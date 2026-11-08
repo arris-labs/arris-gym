@@ -5,8 +5,12 @@ cannot be imported into a zygote (ADR-0004). So its program worker is forked
 and isolated exactly as any other (`sandbox/_isolate.py`, ADR-0002), and only
 then `execve`s the interpreter an `ExecSpec` names. The exec keeps every limit:
 the namespaces, the rlimits, `no_new_privs`, the Landlock domain and the
-seccomp filter all survive it, and the Landlock domain grants execution of
-the interpreter and its ELF loader alone.
+seccomp filter all survive it. The Landlock domain lets `execve` reach the
+interpreter and its ELF loader alone, but that is not a boundary: the loader
+maps any file the domain reads, and Landlock cannot refuse `mmap` with
+`PROT_EXEC`, so the program can run any readable program through the loader.
+Whatever it runs keeps the same namespaces (uid nobody, no network), rlimits,
+seccomp filter, Landlock domain and read-only mounts (ADR-0004).
 
 The job's payload is the spec and the program's text in one descriptor:
 a length, the spec as JSON, then the text (`payload`). The zygote reads the
@@ -58,8 +62,9 @@ class ExecSpec:
     its arguments; the payload and result descriptors' numbers are appended.
     `env` is the whole environment: nothing of the zygote's is passed.
     `readable` are the directories or files the worker may read beneath;
-    `executable` the files it may execute, the interpreter's real path and
-    its ELF loader. All paths are absolute.
+    `executable` the files `execve` may reach, the interpreter's real path
+    and its ELF loader; the loader then runs anything readable (ADR-0004).
+    All paths are absolute.
     """
 
     argv: tuple[str, ...]
@@ -96,7 +101,7 @@ def interpreter_spec(python: str, script: str, env: Mapping[str, str]) -> ExecSp
 
     `python` is asked for its prefixes and site-packages (a trusted run, no
     program in it); those and `script` are the worker's whole reach, and
-    the interpreter's real path and its loader its only executables. The
+    the interpreter's real path and its loader all `execve` may reach. The
     interpreter runs with `-s -P -B`: no user site, no script directory on
     `sys.path`, no bytecode written. Raises `subprocess.CalledProcessError`
     or `OSError` if `python` cannot be run.

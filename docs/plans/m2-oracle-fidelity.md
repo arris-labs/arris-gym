@@ -32,7 +32,9 @@ same digest.
   roots (read and execute). Its memory limit and `nproc` (OCCT/TBB threads)
   are measured by step 2. The program text is passed on a memfd, and the
   report is one frame on the result pipe. The caller parses the frame and
-  trusts none of it, as it does for any worker. There is no public `sandbox`
+  checks it for consistency, not authenticity (a program can forge it), as it
+  does for any worker. As built: the loader runs any readable program inside
+  the same boundary (ADR-0004 Consequences). There is no public `sandbox`
   API change. As built: the private `JobKind.EXEC` and `sandbox/_exec.py`
   (`ExecSpec`, its payload, `interpreter_spec`), `Limits.executable`; the
   spec and `run_one` start `tools/oracle_run.py`.
