@@ -17,6 +17,15 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - An oracle zygote (import cadquery once, fork per program): each oracle program pays ~1.5 s of start-up, so the slice takes minutes
 - A crash on both sides is `agree` under ADR-0006, so it never reaches the arris report; decide whether `arris_rows` lists every arris `crash` regardless of outcome (gym.md: an arris crash goes to arris as a fixture candidate)
 - `tools/check_layers.py` sees `import`, `from` and literal `importlib.import_module`; a computed name evades it, as it would evade any static check
+- Decide whether the `cq` subset admits the bare `cq.Workplane()` (CadQuery's default plane) and `box(...; centered=False)`: all 19 calibration programs in `tests/fixtures/fidelity/` use one, so none runs under `cq` and `tests/test_cq_calibration.py` holds them to `unsupported_api` (a product question, in census order for C2)
+- `transformed` turns through `arris.build.Workplane.rotated`, whose `sin`/`cos` run on the platform's libm and reach body bytes: the digest is established on one machine only; ask arris or measure on a second machine before a cross-machine claim
+- `cq` keeps no CadQuery context along a chain: a `circle` or `moveTo` on a non-empty stack, and `transformed`, `box`, `union`, `cut` on a pending wire, end `unsupported_api`; lift them in census order when a program writes them
+- `union` reads a fuse as disjoint when its shells are at least its operands' together, so a union enclosing a void is misread as a compound (`unsupported_api`); `cut` already tells pieces from a cavity by each shell's tessellated signed volume (`Shell.reversed` is False for both), so move `union` to it and measure whether a tessellation on a status's path is deterministic across machines, or ask arris for a disjointness test
+- `show_object(x, color=...)` ends `runtime` (a `TypeError` from the builtin's signature) where the goal says an out-of-subset form is `unsupported_api`: route the builtin's form through `cq/_forms.py`
+- `cq/_forms.py` `kind_of` decides the "call" kind by class name, so a program's own `class Vector` passes the form check, and `transformed(rotate=cq.Workplane("XY"))` ends `unsupported_api` as `Workplane.z`: decide by type
+- `test_regression.py`'s strict `xfail(raises=AssertionError)` also covers the `sandbox.executions == REPEATS` assert, so a cache-hit bug would pass as the expected failure; and `fixture_cases.load`'s faces guard has no test
+- Face counts in `tests/fixtures/cq/ok-*` are what arris produces (carried, ADR-0005), while gym.md says expected values never come from arris-gym's output: settle with the rule's author whether `faces` may be recorded for a fixture whose other measures are closed-form
+- `sandbox/_program.py` imports the private `arris_gym.cq._result`; `tests/test_cq_calibration.py` carries literal tolerances (`rel=1e-12`, `abs=1e-9`) and plan history in its docstring; the 2 `lobed_knob` rows refused at the fourth union have only the n-ary rebuild as evidence, not a shrunk fixture
 
 ## Findings
 

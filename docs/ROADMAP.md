@@ -48,7 +48,10 @@ cache, `digest`, `dump_text` and `dump_png`, under ADR-0002. **M1 landed:**
 slice. **M2 landed:** the oracle worker (ADR-0004), `fidelity`'s `compare`,
 table and arris report under the agreement tolerance (ADR-0005) and the
 classification rule (ADR-0006); all 300 slice programs are `ok` on the oracle,
-the same digest on three runs. Next: M3.
+the same digest on three runs. **M3 landed:** `dialect="cq"` runs the census's
+13 API forms; the 300 slice programs run under `cq`: 200 agree with the
+oracle, 100 (`lobed_knob`) are an arris bug (chained `fuse` of operands on one
+end plane), **0 unclassified**, 0 timeouts. Next: M4.
 
 ### M0 — the sandbox and the harness
 Retires: can a hostile program cost one status and nothing else?
@@ -80,11 +83,11 @@ Retires: can a disagreement be classified, before there is much to classify?
   fixture of each disagreement class, planted by construction, comes back in
   that class; the comparison tolerance is measured and decided by ADR.
 
-### M3 — the `cq` subset, first slice
+### M3 — the `cq` subset, first slice (landed)
 Retires: do CadQuery's stack semantics fit over `arris.build`?
-- **In:** `Workplane` and its stack, the sketch calls, `extrude`, booleans, the
-  selectors and calls the slice's census needs (its first row needs `hole` and
-  `chamfer`), STEP export, `UnsupportedApi`.
+- **In:** `Workplane` and its stack, the sketch calls, `extrude`, booleans,
+  `UnsupportedApi`: the 13 API forms the slice's census found (it writes no
+  selector, `hole`, `chamfer` or export; those wait for C2's census).
 - **Out:** anything the slice does not call.
 - **Accept:** the 300 programs run in the sandbox with a status each, every
   disagreement with the oracle classified: **0 unclassified**. Agreement is

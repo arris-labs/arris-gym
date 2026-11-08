@@ -34,7 +34,9 @@ and `tests/fixtures/c1/slice.txt` lists the 300 slice stems.
 M2 landed: CadQuery runs in an oracle worker (ADR-0004); `fidelity` compares
 and classes each pair (ADR-0005, ADR-0006); `tests/fixtures/c1/oracle.jsonl`
 holds the 300 slice reports.
-**Next:** `/plan M3`, the `cq` subset on the first slice.
+M3 landed: `dialect="cq"` runs the census's 13 API forms (ADR-0007); the
+300 slice programs: 200 agree, 100 an arris bug, 0 unclassified.
+**Next:** `/plan M4`, reward and metrics.
 
 ## Rules that are not derivable from the code
 

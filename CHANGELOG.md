@@ -5,6 +5,15 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `run(program, dialect="cq")` (also `run_many`, `Sandbox.run`) runs a
+  CadQuery program: `import cadquery as cq` gives a subset over `arris.build`
+  and `show_object` is available. The subset covers `Workplane("XY")`,
+  `Vector`, `transformed`, `box`, `circle`, `extrude`, `union`, `cut`,
+  `moveTo`, `lineTo`, `polyline`, `close` and `revolve`. A program's result
+  is the last `show_object` argument, else `result`. Any other call, name,
+  import or argument form ends `unsupported_api` naming it; a result that is
+  not one solid is `runtime` (none) or `unsupported_api` (several).
+  `Dialect.CQ` is new.
 - `arris_gym.fidelity` compares an `ExecResult` with an oracle report of the
   same program run on CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
   `compare(result, report, verdict=None)` returns a frozen `FidelityRow`:

@@ -256,8 +256,16 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-`Workplane` and its stack, the sketch calls, `extrude`, booleans, selectors,
-STEP export, grown in census order. Inside the worker it is installed as
+the **subset**, grown in census order. Today it is the census's 13 API forms:
+`Workplane("XY")`, `Vector`, `transformed`, `box`, `circle`, `extrude`,
+`union`, `cut`, `moveTo`, `lineTo`, `polyline`, `close` and `revolve`;
+selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
+Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
+kind of argument the census never writes ends `unsupported_api` naming the
+form. A program's result is the last `show_object` argument, else
+module-level `result`, and resolves to the one solid on a `Workplane`'s
+stack: none or a non-`Workplane` is `runtime`, several (a CadQuery compound,
+including a union of disjoint solids) is `unsupported_api`. Inside the worker it is installed as
 `sys.modules["cadquery"]`, so `import cadquery as cq` runs unchanged, and
 `show_object` is a builtin of the program's namespace; under `arris` neither
 exists. A call outside the subset raises `UnsupportedApi` naming it as the
