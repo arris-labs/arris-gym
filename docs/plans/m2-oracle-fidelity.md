@@ -96,7 +96,7 @@ right within the design; **[3]** unproven, correctness established here.
   statuses (fork bomb, 1 GiB under the limit, connect, read outside,
   `os._exit`, segfault), and an infinite loop under `timeout=1.0` returns
   within 2 s.
-- [ ] Step 3 **[2]** — `OracleReport`, `OracleStatus`, the frame parser,
+- [x] Step 3 **[2]** — `OracleReport`, `OracleStatus`, the frame parser,
   and `tools/oracle_run.py`. Property: arbitrary bytes on the result pipe
   give a report or a `crash`, and never raise. A report contradicting its
   status is a `crash`.

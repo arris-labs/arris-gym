@@ -10,9 +10,15 @@ the main environment; needs `uv sync --project tools/oracle` first.
 
 from __future__ import annotations
 
+import argparse
+import json
 import pathlib
+import sys
 import time
+from collections.abc import Sequence
+from concurrent.futures import ThreadPoolExecutor
 
+from arris_gym.fidelity import OracleReport, parse_outcome
 from arris_gym.sandbox import _exec
 from arris_gym.sandbox._zygote import ENVIRONMENT, JobKind, Outcome, Zygote
 
@@ -53,3 +59,58 @@ def run_one(zygote: Zygote, oracle: _exec.ExecSpec, program: str, *, timeout: fl
         deadline=time.monotonic() + timeout,
         memory=MEMORY,
     )
+
+
+# The oracle worker's deadline when none is given. Its start-up is about
+# 1.5 s of the import (ADR-0004), so this leaves a program 28 s of its own.
+DEFAULT_TIMEOUT = 30.0
+# Oracle workers run at once. Each is 1.5 GiB of address space at most and
+# one thread; the report does not depend on the number.
+DEFAULT_WORKERS = 4
+
+
+def run_report(
+    zygote: Zygote, oracle: _exec.ExecSpec, program: str, *, timeout: float
+) -> OracleReport:
+    """The `OracleReport` of `program`: one oracle worker, its frame parsed.
+
+    Never raises on a program; a frame that cannot be believed is a `crash`.
+    """
+    start = time.monotonic()
+    outcome = run_one(zygote, oracle, program, timeout=timeout)
+    return parse_outcome(outcome, program, timeout=timeout, seconds=time.monotonic() - start)
+
+
+def run_many(
+    programs: Sequence[str], *, timeout: float = DEFAULT_TIMEOUT, workers: int = DEFAULT_WORKERS
+) -> list[OracleReport]:
+    """The reports of `programs`, in submission order whatever order they finish."""
+    oracle = spec()
+    with Zygote() as zygote, ThreadPoolExecutor(max_workers=workers) as pool:
+        return list(pool.map(lambda p: run_report(zygote, oracle, p, timeout=timeout), programs))
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run the given program files and write `oracle.jsonl`: one row per program
+    in the order given, `{"path": ..., "report": ...}`, `seconds` included."""
+    parser = argparse.ArgumentParser(description="Run programs on the oracle.")
+    parser.add_argument("programs", nargs="+", type=pathlib.Path)
+    parser.add_argument("--out", type=pathlib.Path, default=pathlib.Path("oracle.jsonl"))
+    parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT)
+    parser.add_argument("--workers", type=int, default=DEFAULT_WORKERS)
+    args = parser.parse_args(argv)
+    texts = [p.read_text(encoding="utf-8", errors="surrogateescape") for p in args.programs]
+    reports = run_many(texts, timeout=args.timeout, workers=args.workers)
+    with args.out.open("w", encoding="utf-8") as out:
+        for path, report in zip(args.programs, reports, strict=True):
+            row = {"path": str(path), "report": json.loads(report.model_dump_json())}
+            out.write(json.dumps(row, sort_keys=True) + "\n")
+    counts: dict[str, int] = {}
+    for report in reports:
+        counts[report.status.value] = counts.get(report.status.value, 0) + 1
+    print(f"{len(reports)} programs: {dict(sorted(counts.items()))}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

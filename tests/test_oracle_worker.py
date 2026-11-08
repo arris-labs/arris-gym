@@ -162,3 +162,44 @@ def test_the_loop_itself_is_killed_at_its_deadline(zygote: Zygote, oracle: _exec
     assert outcome.ending is not None
     assert outcome.ending.kind is EndKind.TIMED_OUT
     assert outcome.stderr.endswith(b"looping\n")
+
+
+def test_run_report_parses_the_real_frame(zygote: Zygote, oracle: _exec.ExecSpec) -> None:
+    from arris_gym.fidelity import OracleStatus, program_sha256
+
+    program = "import cadquery as cq\nresult = cq.Workplane().box(2, 3, 4)\n"
+    report = oracle_run.run_report(zygote, oracle, program, timeout=TIMEOUT)
+    assert report.status is OracleStatus.OK, report.message
+    assert report.measures is not None
+    assert report.measures.faces == 6
+    assert report.measures.solids == 1
+    assert report.program_sha256 == program_sha256(program)
+    assert report.versions is not None
+    assert report.versions.cadquery == "2.3.0"
+
+
+def test_run_many_keeps_submission_order() -> None:
+    from arris_gym.fidelity import OracleStatus
+
+    texts = ["def (:\n", "raise ValueError('boom')\n", "x = 1\n"]
+    reports = oracle_run.run_many(texts, timeout=TIMEOUT, workers=3)
+    assert [r.status for r in reports] == [
+        OracleStatus.SYNTAX,
+        OracleStatus.RUNTIME,
+        OracleStatus.NO_RESULT,
+    ]
+    assert reports[1].message == "ValueError: boom"
+
+
+def test_the_command_writes_one_row_per_program_in_order(tmp_path: Any) -> None:
+    files = []
+    for name, text in [("b.py", "def (:\n"), ("a.py", "x = 1\n")]:
+        (tmp_path / name).write_text(text)
+        files.append(str(tmp_path / name))
+    out = tmp_path / "oracle.jsonl"
+    assert oracle_run.main([*files, "--out", str(out), "--timeout", str(TIMEOUT)]) == 0
+    rows = [json.loads(line) for line in out.read_text().splitlines()]
+    assert [(r["path"], r["report"]["status"]) for r in rows] == [
+        (files[0], "syntax"),
+        (files[1], "no_result"),
+    ]

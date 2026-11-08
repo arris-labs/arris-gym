@@ -351,6 +351,14 @@ about 1.5 s of start-up. `tools/oracle_run.py` builds the exec spec and sends
 the job; the frame comes back on the result pipe and is trusted no more than
 any worker's.
 
+`fidelity.parse_outcome` turns that outcome into an **oracle report**
+(`OracleReport`: an `OracleStatus` of `ok`, `syntax`, `runtime`, `no_result`,
+`invalid`, `timeout` or `crash`, the message verbatim, measures, STEP hash,
+versions). It never raises: a frame that is unparseable, claims a status only
+the caller decides, contradicts its status or carries another program's
+SHA-256 is a `crash`. `tools/oracle_run.py` runs a list of programs and writes
+`oracle.jsonl` in submission order.
+
 **Fidelity** classifies each disagreement as `cq` bug, arris refusal (kind),
 arris bug, Open CASCADE wrong (closed form or second oracle, arris ADR-0015),
 or semantic difference by design (documented). Nothing stays unclassified. The

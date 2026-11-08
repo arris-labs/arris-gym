@@ -106,6 +106,13 @@ interpreter on `tools/oracle/worker.py` to run one program on the oracle; it
 keeps every limit of the worker it replaced (ADR-0004).
 _Avoid_: oracle process, oracle sandbox
 
+**Oracle report**:
+What one program did on the oracle: an `OracleStatus`, the exception's words,
+Open CASCADE's measures and the STEP hash, parsed from the oracle worker's
+frame, which the caller trusts no more than any worker's. A frame that
+contradicts its status or its job is a `crash`.
+_Avoid_: oracle result
+
 ## Scoring
 
 **Reward**:
