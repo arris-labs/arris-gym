@@ -71,9 +71,10 @@ class FamilyCensus(_Frozen):
 class CensusReport(_Frozen):
     """The census of a corpus: totals, families in rank order, every unparsable program.
 
-    Guarantees `programs` = `parsed` + `unparsable` = the corpus's size, each
-    program in exactly one of the two, `families` in rank order (ascending by
-    the ranking triple, then name) and `unparsable_programs` sorted by stem.
+    Guarantees (all validated) `programs` = `parsed` + `unparsable` = the corpus's
+    size, each program in exactly one of the two, the families' programs adding
+    up to `programs`, `families` in rank order (ascending by the ranking
+    triple, then name) and `unparsable_programs` sorted by stem.
     `digest` is the SHA-256 of the report's canonical JSON without the digest
     field (sorted keys, no whitespace, ASCII); a report whose digest is not
     that of its content is refused, so a digest equal is a report equal.
@@ -93,6 +94,16 @@ class CensusReport(_Frozen):
             raise ValueError("programs is not parsed + unparsable")
         if self.unparsable != len(self.unparsable_programs):
             raise ValueError("unparsable does not match the unparsable list")
+        ranks = [_rank(family) for family in self.families]
+        if ranks != sorted(ranks) or len(set(ranks)) != len(ranks):
+            raise ValueError("families are not in rank order, or one is listed twice")
+        stems = [item.stem for item in self.unparsable_programs]
+        if stems != sorted(stems):
+            raise ValueError("unparsable programs are not sorted by stem")
+        if sum(family.programs for family in self.families) != self.programs:
+            raise ValueError("the families' programs do not add up to programs")
+        if sum(family.unparsable for family in self.families) != self.unparsable:
+            raise ValueError("the families' unparsable do not add up to unparsable")
         if self.digest != _digest(self.model_dump(mode="json")):
             raise ValueError("digest is not that of the report's content")
         return self

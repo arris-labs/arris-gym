@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from typing import Any
 
 import pytest
 from hypothesis import given
@@ -10,6 +11,7 @@ from hypothesis import strategies as st
 from pydantic import ValidationError
 
 from arris_gym.census import CensusReport, CorpusInfo, CorpusProgram, census
+from arris_gym.census._report import _digest
 
 INFO = CorpusInfo(source="test", config="code_gen", revision="r0", licence="CC0-1.0")
 LINES = (
@@ -102,3 +104,31 @@ def test_any_selector_string_round_trips(selector: str) -> None:
     text = f"import cadquery as cq\nr = cq.Workplane().faces({selector!r})\n"
     report = census([CorpusProgram(stem="a", family="f", text=text)], INFO)
     assert CensusReport.from_json(report.to_json()) == report
+
+
+def _redigested(data: dict[str, Any]) -> dict[str, Any]:
+    data["digest"] = _digest(data)
+    return data
+
+
+def test_a_report_that_breaks_its_stated_order_or_sums_is_refused() -> None:
+    programs = [
+        CorpusProgram(stem="a", family="f", text="x = ("),
+        CorpusProgram(stem="b", family="f", text="y = ("),
+        CorpusProgram(stem="c", family="g", text="import cadquery as cq\nr = cq.Workplane()\n"),
+    ]
+    good = census(programs, INFO).model_dump(mode="json")
+    assert len(good["families"]) == 2
+
+    swapped = {**good, "families": good["families"][::-1]}
+    unsorted = {**good, "unparsable_programs": good["unparsable_programs"][::-1]}
+    short = {
+        **good,
+        "families": [
+            {**good["families"][0], "programs": 1, "parsed": 1, "unparsable": 0},
+            good["families"][1],
+        ],
+    }
+    for bad, words in ((swapped, "rank order"), (unsorted, "sorted by stem"), (short, "add up")):
+        with pytest.raises(ValidationError, match=words):
+            CensusReport.model_validate(_redigested(bad))
