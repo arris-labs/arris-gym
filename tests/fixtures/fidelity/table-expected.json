@@ -1,0 +1,15 @@
+{
+  "programs": 27,
+  "outcomes": {"agree": 20, "disagree": 5, "unclassified": 2},
+  "classes": {
+    "cq_bug": 1, "arris_refusal": 1, "arris_bug": 1, "occt_wrong": 1, "by_design": 1
+  },
+  "statuses": {
+    "ok": 23, "syntax": 1, "runtime": 1, "unsupported_api": 0, "arris_refusal": 1,
+    "checker_fail": 0, "timeout": 0, "crash": 1
+  },
+  "oracle_statuses": {
+    "ok": 24, "syntax": 1, "runtime": 0, "no_result": 1, "invalid": 0, "timeout": 1, "crash": 0
+  },
+  "timed_out": ["class-timeout"]
+}

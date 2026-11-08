@@ -378,6 +378,13 @@ closed form, which `compare` checks, a second oracle's record, a doc anchor
 for `by_design`, or a regression fixture) classes them. A verdict may also
 replace the rule's class. An unclassified row makes a cycle red. The arris
 rows leave as a consumer report (arris ADR-0020).
+`fidelity.fidelity_table(entries)` gathers rows under their program names
+into a **fidelity table**: sorted by name, counts over all programs (each
+status, class and outcome with its zeros, timeouts named) and a digest that
+input order does not move. `fidelity.arris_rows(table)` cuts the **arris
+report** from it (`to_json`, `to_markdown`): a histogram of refusals by
+kind, then by the kernel's message, and the arris bugs with their program
+SHA-256 and regression fixture.
 
 ## Inspection
 

@@ -1,0 +1,24 @@
+{
+  "programs": 27,
+  "refusals": [
+    {
+      "kind": "OpDegenerateError",
+      "count": 1,
+      "reasons": [
+        {
+          "reason": "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e11, +e4)",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "bugs": [
+    {
+      "name": "class-arris-bug",
+      "program_sha256": "92565d42151138b45671fe81062f79f99415a047202d2081bb6cdb43bd5bbbd9",
+      "status": "crash",
+      "oracle_status": "ok",
+      "fixture": null
+    }
+  ]
+}

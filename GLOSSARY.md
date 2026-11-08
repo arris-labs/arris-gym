@@ -185,6 +185,13 @@ How far `cq` on arris agrees with the oracle on the same programs, as a table
 of classified rows.
 _Avoid_: compatibility
 
+**Fidelity table**:
+The fidelity rows of a corpus under their program names (`FidelityTable`),
+sorted by name and counted over every row, with a digest that the order the
+rows arrive in does not move. Its arris-facing cut is the **arris report**:
+refusals by kind then reason, and arris bugs with their fixture.
+_Avoid_: scoreboard
+
 **Disagreement**:
 One program on which `cq` on arris and the oracle differ, and which gets a
 disagreement class.

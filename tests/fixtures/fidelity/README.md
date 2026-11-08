@@ -49,3 +49,10 @@ table gives. `tests/test_fidelity_compare.py` runs the program and compares.
 | `class-both-fail-agree` | `syntax` | `syntax` | agree |
 | `class-unclassified-gap` | `ok`, the box | `ok`, volume 24.5, no verdict | unclassified |
 | `class-timeout` | `ok` | `timeout` | unclassified, timed out |
+
+`table-expected.json`, `arris-report-expected.json` and `arris-report-expected.md`
+are the `FidelityTable` counts and the arris report that all of the above make
+(the 19 `agree-*` pairs plus the 8 `class-*`), worked out by counting the two
+tables here: 27 programs, 20 agree, 5 disagree (one per class), 2 unclassified.
+`tests/test_fidelity_table.py` holds the table and `arris_rows` to them. The
+refusal's words are the kernel's, as `class-arris-refusal` draws them.

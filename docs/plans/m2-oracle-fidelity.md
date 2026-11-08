@@ -62,6 +62,11 @@ same digest.
     `digest`.
   - `arris_rows(table) -> ArrisReport`: a refusal histogram by kind, then
     reason; arris bugs with program SHA-256 and fixture.
+  - As built (step 6, `fidelity/_table.py`): `TableEntry` (name + row),
+    `fidelity_table(entries)` (sorts by name, so "program order" is name
+    order and the digest ignores input order), `FidelityTable` (validated
+    counts, `to_json`/`from_json`), `ArrisReport` with `ArrisRefusalKind`,
+    `ArrisReason`, `ArrisBug`, `to_json` and `to_markdown`.
 - **ADR-0005, the agreement tolerance** (step 4; as built: `fidelity/_agreement.py`'s `MeasureDeltas`, `measure_deltas`, `within_tolerance` and the four constants; the face count is carried, not judged; `worker.py` measures bounds with `AddOptimal`): relative volume and area,
   centroid over the bbox diagonal, and a rule for face counts, whose
   conventions differ between the kernels. The values are measured by step 4
@@ -117,7 +122,7 @@ right within the design; **[3]** unproven, correctness established here.
   without a verdict (`unclassified`) and a timeout. Each comes back as
   expected. Property: `compare` never raises over drawn result and report
   pairs.
-- [ ] Step 6 **[2]** — `FidelityTable` and its digest; `arris_rows` and the
+- [x] Step 6 **[2]** — `FidelityTable` and its digest; `arris_rows` and the
   consumer report (JSON plus Markdown). Test: the step 4 and 5 fixtures as a
   table give the expected counts over all rows, a digest that input order
   does not move, and an arris report whose content is expected exactly.
