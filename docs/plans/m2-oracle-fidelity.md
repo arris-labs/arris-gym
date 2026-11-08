@@ -177,7 +177,9 @@ right within the design; **[3]** unproven, correctness established here.
   crash is never an answer. The oracle's `crash` or `invalid` alone and arris
   `syntax` against oracle `ok` are `unclassified`. A verdict may replace the
   rule's class (a refusal of a part OCCT builds wrong is `occt_wrong`), never
-  an `agree`. `compare` raises `ValueError` for a verdict on an agreement, an
+  an `agree`. `compare` raises `ValueError` for a verdict on an agreement, a verdict
+  other than `arris_bug` on an arris `crash` or `checker_fail` the rule
+  classes `arris_bug` (retirement review), an
   `arris_refusal` verdict without a refusal, and a closed form that the
   measures contradict or that neither side measured. Deltas are carried
   whenever both sides measured (oracle `ok` or `invalid`).

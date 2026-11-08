@@ -273,9 +273,10 @@ def compare(
     alone. A `verdict` classes such a row, or replaces the rule's class.
 
     Never raises without a verdict. Raises `ValueError`, a caller's
-    mistake, for a verdict on a row that agrees, an `ARRIS_REFUSAL` verdict
-    on a result with no refusal, or a closed form the measures contradict
-    or that neither side measured.
+    mistake, for a verdict on a row that agrees, a verdict of any class but
+    `ARRIS_BUG` on an arris `crash` or `checker_fail` the rule classes
+    `ARRIS_BUG`, an `ARRIS_REFUSAL` verdict on a result with no refusal, or
+    a closed form the measures contradict or that neither side measured.
 
     >>> from arris_gym.sandbox import Dialect, Versions
     >>> sha = "0" * 64
@@ -298,6 +299,13 @@ def compare(
         ruling = _Rule.AGREE if agrees else _Rule.UNCLASSIFIED
     if ruling is _Rule.AGREE and verdict is not None:
         raise ValueError("a verdict on a row that agrees")
+    if (
+        verdict is not None
+        and ruling is DisagreementClass.ARRIS_BUG
+        and result.status in (Status.CRASH, Status.CHECKER_FAIL)
+        and verdict.disagreement is not DisagreementClass.ARRIS_BUG
+    ):
+        raise ValueError(f"an arris {result.status.value} is never an answer: it stays arris_bug")
     disagreement = verdict.disagreement if verdict is not None else None
     if disagreement is None and isinstance(ruling, DisagreementClass):
         disagreement = ruling

@@ -252,6 +252,29 @@ def test_an_arris_refusal_verdict_needs_a_refusal() -> None:
         compare(result(Status.OK), report(OracleStatus.NO_RESULT), verdict)
 
 
+@pytest.mark.parametrize("arris", [Status.CRASH, Status.CHECKER_FAIL], ids=lambda s: s.value)
+@pytest.mark.parametrize(
+    "cls", [c for c in DisagreementClass if c is not DisagreementClass.ARRIS_BUG], ids=str
+)
+def test_a_verdict_cannot_clear_an_arris_crash_or_checker_failure(
+    arris: Status, cls: DisagreementClass
+) -> None:
+    # ADR-0006: a crash is never an answer, so a row the rule classes arris_bug
+    # for it stays arris_bug.
+    evidence: Any = {
+        DisagreementClass.BY_DESIGN: DocAnchor(anchor="docs/ARCHITECTURE.md#outcomes"),
+        DisagreementClass.OCCT_WRONG: SecondOracle(oracle="Parasolid", version="36.1", record="r"),
+    }.get(cls, FIXTURE)
+    verdict = Verdict(disagreement=cls, evidence=evidence)
+    assert compare(result(arris), report(OracleStatus.OK)).disagreement is (
+        DisagreementClass.ARRIS_BUG
+    )
+    with pytest.raises(ValueError, match="never an answer"):
+        compare(result(arris), report(OracleStatus.OK), verdict)
+    bug = Verdict(disagreement=DisagreementClass.ARRIS_BUG, evidence=FIXTURE)
+    assert compare(result(arris), report(OracleStatus.OK), bug).verdict == bug
+
+
 def test_a_closed_form_the_measures_contradict_is_refused() -> None:
     # The oracle is right and arris matches it: occt_wrong cannot rest on this.
     occt = Verdict(disagreement=DisagreementClass.OCCT_WRONG, evidence=BOX_FORM)

@@ -71,11 +71,14 @@ so the oracle's alone are checked when such a row is re-classed
 `ValueError`, as a caller's mistake, for these verdicts:
 
 - a verdict on a row the rule finds agree;
+- a verdict of any class but `arris_bug` on an arris `crash` or
+  `checker_fail` the rule classes `arris_bug`: a crash is never an answer,
+  so no evidence makes it a `cq` bug, Open CASCADE's error or a design;
 - `arris_refusal` on a result with no refusal;
 - a closed form that contradicts the measures, or that no measures can
   test.
 
-It never raises otherwise. A verdict may replace a class the rule gave: an
+It never raises otherwise. A verdict may replace any other class the rule gave: an
 arris refusal of a part Open CASCADE builds wrongly is `occt_wrong` once a
 closed form shows it. The row keeps the verdict beside the class.
 

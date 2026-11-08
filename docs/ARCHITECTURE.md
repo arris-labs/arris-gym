@@ -378,7 +378,8 @@ tolerance. A measure gap, the oracle failing alone and a timeout on either
 side are `unclassified` until a **verdict** (a class and its evidence: a
 closed form, which `compare` checks, a second oracle's record, a doc anchor
 for `by_design`, or a regression fixture) classes them. A verdict may also
-replace the rule's class. An unclassified row makes a cycle red. The arris
+replace the rule's class, except the `arris_bug` of an arris crash or checker
+failure. An unclassified row makes a cycle red. The arris
 rows leave as a consumer report (arris ADR-0020).
 `fidelity.fidelity_table(entries)` gathers rows under their program names
 into a **fidelity table**: sorted by name, counts over all programs (each
