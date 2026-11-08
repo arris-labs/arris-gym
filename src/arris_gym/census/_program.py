@@ -432,7 +432,9 @@ def _end_form(tree: ast.Module) -> str:
             if args and isinstance(args[0], ast.Name):
                 return f"{_SHOW_OBJECT}({args[0].id})"
             return f"{_SHOW_OBJECT}(…)"
-        case ast.Assign(targets=[ast.Name(id=name)]) | ast.AnnAssign(target=ast.Name(id=name)):
+        case ast.Assign(targets=[ast.Name(id=name)]):
+            return f"{name} = …"
+        case ast.AnnAssign(target=ast.Name(id=name), value=ast.expr()):
             return f"{name} = …"
     return "other"
 
