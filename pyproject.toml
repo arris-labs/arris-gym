@@ -30,6 +30,9 @@ corpus = [
     "pyarrow==26.0.1",
 ]
 
+[project.scripts]
+arris-gym = "arris_gym._cli:main"
+
 [project.urls]
 Repository = "https://github.com/arris-labs/arris-gym"
 
@@ -63,6 +66,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "PT", "T20", "BLE"]
 [tool.ruff.lint.per-file-ignores]
 # Command-line tools report by printing.
 "tools/*" = ["T20"]
+"src/arris_gym/_cli.py" = ["T20"]
 
 [tool.mypy]
 strict = true

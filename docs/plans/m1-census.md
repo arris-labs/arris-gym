@@ -128,7 +128,7 @@ guarantee or a CadQuery semantic whose correctness has to be established here.
   `uv.lock` changes here. Tested offline on a parquet the test writes with
   `pyarrow` (columns, order, the row-count refusal); the download itself is
   not in the gate.
-- [ ] Step 5 **[1]** — `arris-gym census` (delta 6): run on the step-4
+- [x] Step 5 **[1]** — `arris-gym census` (delta 6): run on the step-4
   parquet through an injected reader, it writes the two files and the
   digest; without the extra, exit 2 and the line.
 - [ ] Step 6 **[2]** — the run: `arris-gym census --corpus benchcad` twice,
