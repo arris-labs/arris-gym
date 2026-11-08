@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 6.283185307179586,
+    "area": 18.84955592153876,
+    "centroid": [
+      1,
+      1,
+      3
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        2
+      ],
+      [
+        2,
+        2,
+        4
+      ]
+    ],
+    "faces": 3,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "radius 1, height 2 on a plane at (1, 2, 3) turned 90 degrees about x: its normal is -y, so the axis runs from y = 2 to y = 0 at x = 1, z = 3; V = 2 pi, A = 2 pi (1 + 2) = 6 pi"
+}

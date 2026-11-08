@@ -278,6 +278,36 @@ def test_cut_looks_for_its_solid_up_the_chain() -> None:
     assert fixture_cases.close(solid_volume(moved.cut(bar)), 60.0)
 
 
+def test_extrude_needs_one_pending_sketch() -> None:
+    boxed = cq.Workplane("XY").box(1, 1, 1)
+    for wp in (cq.Workplane("XY"), boxed):
+        with pytest.raises(ValueError, match=r"^No pending wires present$"):
+            wp.extrude(1)
+
+
+def test_a_circle_is_pending_until_it_is_extruded() -> None:
+    drawn = cq.Workplane("XY").circle(1)
+    assert drawn._solids() == ()
+    assert len(drawn._stack) == 1
+    solid_wp = drawn.extrude(2)
+    assert solid_wp._parent is drawn
+    assert drawn._solids() == ()
+    assert fixture_cases.close(solid_volume(solid_wp), 2 * math.pi)
+
+
+def test_a_circle_on_a_non_empty_stack_is_unsupported() -> None:
+    with pytest.raises(cq.UnsupportedApi, match=r"^Workplane\.circle on a non-empty stack$"):
+        cq.Workplane("XY").box(1, 1, 1).circle(1)
+
+
+def test_an_extrusion_is_fused_with_the_solid_in_its_chain() -> None:
+    base = cq.Workplane("XY").box(2, 2, 2)
+    # A cylinder along z from the plane at z = 0 to 3, through the box: the
+    # union is the box (8) plus the part above it, pi * 0.25 * 2.
+    both = base.transformed().circle(0.5).extrude(3)
+    assert fixture_cases.close(solid_volume(both), 8 + math.pi * 0.25 * 2)
+
+
 def matrix(axis: int, degrees: float) -> list[list[float]]:
     """The right-handed rotation by `degrees` about world axis `axis`."""
     c, s = math.cos(math.radians(degrees)), math.sin(math.radians(degrees))

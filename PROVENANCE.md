@@ -34,3 +34,8 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   the solid acted on is the nearest one up the chain (this stack, then the
   parent's); the other is the solid of the Workplane given; the result sits on
   the same plane. Disjoint solids make a compound in CadQuery.
+- `Workplane.circle` and `Workplane.extrude` (`cadquery/cq.py`, with
+  `eachpoint` and `_getFaces`): a circle is centred on the plane's origin
+  where the stack is empty; `extrude` grows the pending wire from the plane
+  along its normal by `distance` (not about it) and fuses the result with
+  the solid in the chain (`combine=True`).

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 28.274333882308138,
+    "area": 51.83627878423159,
+    "centroid": [
+      0,
+      0,
+      2
+    ],
+    "bounds": [
+      [
+        -1.5,
+        -1.5,
+        0
+      ],
+      [
+        1.5,
+        1.5,
+        4
+      ]
+    ],
+    "faces": 3,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "radius 1.5 from the plane up 4: V = pi r^2 h = 9 pi; A = 2 pi r (r + h) = 16.5 pi; centroid on the axis at mid-height; the extrusion grows from the plane, not about it"
+}

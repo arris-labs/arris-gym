@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 5.054815608570829,
+    "area": 18.48721162671444,
+    "centroid": [
+      0.5,
+      0,
+      0.5
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        0
+      ],
+      [
+        2,
+        1,
+        1
+      ]
+    ],
+    "faces": 9,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "two unit cylinders of height 1 with axes 1 apart: the lens of their disks is 2 acos(1/2) - (1/2) sqrt(3) = 2 pi / 3 - sqrt(3) / 2, so V = 2 pi - lens = 4 pi / 3 + sqrt(3) / 2; the side outside the other is an arc of 4 pi / 3 each and the ends are two disks' union, 2 (2 pi - lens): A = 16 pi / 3 + sqrt(3); faces carried (the kernel splits what it cuts)"
+}

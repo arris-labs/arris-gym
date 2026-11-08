@@ -105,9 +105,14 @@ correctness has to be established here.
   as many shells as the two operands together, and then keep both solids on
   the stack; resolving that stack ends `unsupported_api` (`a Workplane
   holding 2 solids`), and a further `union`/`cut`/`box` on it likewise.
-- [ ] Step 4 **[2]** — `circle`, `extrude` along the plane's normal.
+- [x] Step 4 **[2]** — `circle`, `extrude` along the plane's normal.
   Fixtures: a cylinder (πr²h, 2πr(r+h)), a transformed cylinder, a
   two-lobe union whose lens volume is the closed form.
+  *Settled:* the pending circle is the stack's one sketch (not a context
+  shared along the chain); `circle` on a non-empty stack, where CadQuery
+  centres it on each object, is `unsupported_api` (`Workplane.circle on a
+  non-empty stack`), and `extrude` needs exactly one sketch on the stack
+  (`ValueError`, `runtime`). Step 6 still checks the call forms.
 - [ ] Step 5 **[3]** — `moveTo`, `lineTo`, `polyline`, `close`, `revolve`.
   Fixtures by Pappus: a revolved rectangle (tube), a revolved trapezoid
   (frustum shell), one profile drawn by `polyline` and by `moveTo`/`lineTo`

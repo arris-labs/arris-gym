@@ -162,6 +162,39 @@ class Workplane:
         sketch = self._plane.offset(-height / 2).rect(length, width)
         return self._combined(sketch.extrude(height))
 
+    def circle(self, radius: float) -> Workplane:
+        """A pending circle of `radius` centred on the workplane's origin.
+
+        The circle is the one sketch on the new stack, waiting for `extrude`.
+        Refuses, as `UnsupportedApi`, a workplane whose stack is not empty:
+        CadQuery centres the circle on each object there, which the subset
+        does not model (`transformed` leaves a stack empty).
+
+        >>> import arris_gym.cq as cq
+        >>> round(cq.Workplane("XY").circle(1).extrude(2)._solids()[0].measure().volume, 9)
+        6.283185307
+        """
+        if self._stack:
+            raise UnsupportedApi("Workplane.circle on a non-empty stack")
+        return self._derive(self._plane.circle(radius))
+
+    def extrude(self, distance: float) -> Workplane:
+        """The pending sketch extruded `distance` along the plane's normal.
+
+        The solid grows from the plane, not about it, and is fused with the
+        chain's solid if there is one (CadQuery's `combine=True`). Raises
+        `ValueError` (`runtime`) when the stack holds no pending sketch.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").circle(1).extrude(2)
+        >>> round(wp._solids()[0].measure().centroid[2], 9)
+        1.0
+        """
+        sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
+        if len(sketches) != 1 or len(self._stack) != 1:
+            raise ValueError("No pending wires present")
+        return self._combined(sketches[0].extrude(distance))
+
     def union(self, toUnion: Workplane) -> Workplane:
         """The chain's solid fused with the solid of `toUnion`, on this plane.
 
