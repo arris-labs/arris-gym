@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 60.0,
+    "area": 110.0,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -2
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "faces": 10,
+    "shells": 1,
+    "genus": 1,
+    "face_kinds": [
+      [
+        "plane",
+        10
+      ]
+    ]
+  },
+  "note": "4 x 4 x 4 block less a 1 x 1 x 6 bar through it: V = 64 - 4 = 60; A = 96 - 2 * 1 (the openings) + 4 * 4 (the bore's walls) = 110; one through hole, genus 1; symmetric about the origin"
+}

@@ -10,6 +10,7 @@ import copy
 import doctest
 import hashlib
 import math
+from collections.abc import Callable
 
 import arris.build
 import pytest
@@ -196,14 +197,85 @@ def test_transformed_and_box_change_no_workplane() -> None:
     assert isinstance(boxed._stack[0], arris.build.Solid)
 
 
-def test_a_box_onto_a_solid_in_the_chain_is_unsupported() -> None:
-    # CadQuery fuses it with that solid; the subset does not yet (plan step 3).
+def test_a_box_onto_a_solid_in_the_chain_is_fused_with_it() -> None:
+    boxed = cq.Workplane("XY").box(2, 2, 2)
+    for wp in (boxed, boxed.transformed(offset=cq.Vector(0, 0, 1.5))):
+        fused = wp.box(2, 2, 2)
+        assert len(fused._stack) == 1
+        assert fused._parent is wp
+
+
+def solid_volume(wp: cq.Workplane) -> float:
+    (solid,) = wp._solids()
+    return solid.measure().volume
+
+
+def test_arris_fuse_of_disjoint_solids_is_one_solid_of_two_shells() -> None:
+    # What `union` of disjoint solids rests on (ADR-0007): `fuse` does not
+    # refuse them nor return two solids; the body holds both outer shells.
+    near = arris.build.Solid.box((0, 0, 0), (1, 1, 1))
+    far = arris.build.Solid.box((5, 0, 0), (6, 1, 1))
+    fused = near.fuse(far)
+    assert isinstance(fused, arris.build.Solid)
+    assert fixture_cases.close(fused.measure().volume, 2.0)
+    assert len(fused.model.shells(fused.body)) == 2
+
+
+def test_a_disjoint_union_keeps_both_solids_and_cannot_be_shown() -> None:
+    a = cq.Workplane("XY").box(1, 1, 1)
+    b = cq.Workplane("XY").transformed(offset=cq.Vector(5, 0, 0)).box(1, 1, 1)
+    both = a.union(b)
+    assert len(both._stack) == 2
+    with pytest.raises(cq.UnsupportedApi, match=r"^a Workplane holding 2 solids$"):
+        both.cut(a)
+
+
+def test_a_cut_that_leaves_a_cavity_is_one_solid() -> None:
+    block = cq.Workplane("XY").box(3, 3, 3)
+    cavity = cq.Workplane("XY").box(1, 1, 1)
+    hollow = block.cut(cavity)
+    assert len(hollow._stack) == 1
+    assert fixture_cases.close(solid_volume(hollow), 26.0)
+
+
+def test_union_and_cut_return_new_workplanes_and_change_none() -> None:
+    a = cq.Workplane("XY").box(2, 2, 2)
+    b = cq.Workplane("XY").transformed(offset=cq.Vector(1, 0, 0)).box(2, 2, 2)
+    before = (a._stack, b._stack)
+    united, cut = a.union(b), a.cut(b)
+    assert united is not a
+    assert cut is not a
+    assert (a._stack, b._stack) == before
+    assert fixture_cases.close(solid_volume(united), 12.0)
+    assert fixture_cases.close(solid_volume(cut), 4.0)
+
+
+def test_union_and_cut_need_a_solid_on_both_sides() -> None:
+    empty, boxed = cq.Workplane("XY"), cq.Workplane("XY").box(1, 1, 1)
+    calls: list[Callable[[], cq.Workplane]] = [
+        lambda: empty.union(boxed),
+        lambda: boxed.union(empty),
+        lambda: empty.cut(boxed),
+        lambda: boxed.cut(empty),
+    ]
+    for call in calls:
+        with pytest.raises(ValueError, match=r"solid"):
+            call()
+
+
+def test_union_and_cut_take_a_workplane_only() -> None:
     boxed = cq.Workplane("XY").box(1, 1, 1)
-    for wp in (boxed, boxed.transformed(offset=cq.Vector(0, 0, 1))):
-        with pytest.raises(
-            cq.UnsupportedApi, match=r"^Workplane\.box combined with a solid in its chain$"
-        ):
-            wp.box(1, 1, 1)
+    with pytest.raises(cq.UnsupportedApi, match=r"^Workplane\.union\(Workplane\) with int$"):
+        boxed.union(5)  # type: ignore[arg-type]
+    with pytest.raises(cq.UnsupportedApi, match=r"^Workplane\.cut\(Workplane\) with str$"):
+        boxed.cut("a")  # type: ignore[arg-type]
+
+
+def test_cut_looks_for_its_solid_up_the_chain() -> None:
+    block = cq.Workplane("XY").box(4, 4, 4)
+    moved = block.transformed(offset=cq.Vector(0, 0, 1))
+    bar = cq.Workplane("XY").box(1, 1, 6)
+    assert fixture_cases.close(solid_volume(moved.cut(bar)), 60.0)
 
 
 def matrix(axis: int, degrees: float) -> list[list[float]]:

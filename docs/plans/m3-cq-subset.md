@@ -93,11 +93,18 @@ correctness has to be established here.
   *Settled:* a `box` on a workplane whose chain already holds a solid is
   `unsupported_api` (`Workplane.box combined with a solid in its chain`)
   until step 3, since CadQuery fuses the two and a fuse is step 3's.
-- [ ] Step 3 **[2]** — `union`, `cut` of Workplanes onto the stack's solid;
+- [x] Step 3 **[2]** — `union`, `cut` of Workplanes onto the stack's solid;
   `box` fused with a solid in its chain (step 2's *Settled*).
   Fixtures: overlapping boxes (V by inclusion–exclusion), a box less a
   through box, a disjoint union ending `unsupported_api` (ADR-0007; what
   arris's `fuse` returns for it is recorded here first).
+  *Settled:* `fuse` of disjoint solids returns one Solid whose body holds both
+  outer shells (a test records it). A cavity (`cut` of an inner box) also has
+  two shells, so shells alone cannot tell it from a compound: `union` and a
+  fusing `box` treat the result as disjoint when the fused body has at least
+  as many shells as the two operands together, and then keep both solids on
+  the stack; resolving that stack ends `unsupported_api` (`a Workplane
+  holding 2 solids`), and a further `union`/`cut`/`box` on it likewise.
 - [ ] Step 4 **[2]** — `circle`, `extrude` along the plane's normal.
   Fixtures: a cylinder (πr²h, 2πr(r+h)), a transformed cylinder, a
   two-lobe union whose lens volume is the closed form.

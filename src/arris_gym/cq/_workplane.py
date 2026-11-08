@@ -25,6 +25,11 @@ _RADIANS_PER_DEGREE = math.pi / 180.0
 _ZERO = Vector(0, 0, 0)
 
 
+def _shell_count(solid: arris.build.Solid) -> int:
+    """The shells of `solid`'s body, cavities included."""
+    return len(solid.model.shells(solid.body))
+
+
 class Workplane:
     """CadQuery's `Workplane` over `arris.build`: a frozen value.
 
@@ -76,14 +81,45 @@ class Workplane:
         """The solids on the stack, in stack order."""
         return tuple(o for o in self._stack if isinstance(o, arris.build.Solid))
 
-    def _chain_holds_a_solid(self) -> bool:
-        """Whether this workplane's stack or any parent's holds a solid."""
+    def _base_solid(self) -> arris.build.Solid | None:
+        """The solid a combining call acts on: the nearest in this chain, else `None`.
+
+        CadQuery looks at this workplane's stack, then its parent's, and so
+        on. A stack holding several solids is a compound, outside the subset.
+        """
         node: Workplane | None = self
         while node is not None:
-            if node._solids():
-                return True
+            solids = node._solids()
+            if len(solids) > 1:
+                raise UnsupportedApi(f"a Workplane holding {len(solids)} solids")
+            if solids:
+                return solids[0]
             node = node._parent
-        return False
+        return None
+
+    def _combined(self, new: arris.build.Solid) -> Workplane:
+        """A workplane on this plane with `new` fused into the chain's solid, if any.
+
+        Where the two are disjoint, `fuse` returns one solid with the shells
+        of both; CadQuery's compound of two solids is modelled as both on the
+        stack, so the result resolves to `unsupported_api` (ADR-0007).
+        """
+        base = self._base_solid()
+        if base is None:
+            return self._derive(new)
+        fused = base.fuse(new)
+        if _shell_count(fused) >= _shell_count(base) + _shell_count(new):
+            return self._derive(base, new)
+        return self._derive(fused)
+
+    def _operand(self, other: object, form: str) -> tuple[arris.build.Solid, ...]:
+        """The solids of the workplane given to `union` or `cut`; `form` names the call."""
+        if not isinstance(other, Workplane):
+            raise UnsupportedApi(f"{form} with {type(other).__name__}")
+        solids = other._solids()
+        if not solids:
+            raise ValueError(f"{form} was given a Workplane holding no solid")
+        return solids
 
     def transformed(self, rotate: Vector = _ZERO, offset: Vector = _ZERO) -> Workplane:
         """A workplane moved to `offset` and turned by `rotate`, its stack empty.
@@ -116,17 +152,56 @@ class Workplane:
 
         `length` runs along the workplane's x, `width` along its y and
         `height` along its normal; the box is the one solid on the new stack.
-        Refuses, as `UnsupportedApi`, a box on a workplane whose chain already
-        holds a solid: CadQuery fuses the two, which the subset does not yet.
+        A box on a workplane whose chain holds a solid is fused with it, as
+        CadQuery's `combine=True` does.
 
         >>> import arris_gym.cq as cq
         >>> round(cq.Workplane("XY").box(2, 3, 4)._solids()[0].measure().volume, 9)
         24.0
         """
-        if self._chain_holds_a_solid():
-            raise UnsupportedApi("Workplane.box combined with a solid in its chain")
         sketch = self._plane.offset(-height / 2).rect(length, width)
-        return self._derive(sketch.extrude(height))
+        return self._combined(sketch.extrude(height))
+
+    def union(self, toUnion: Workplane) -> Workplane:
+        """The chain's solid fused with the solid of `toUnion`, on this plane.
+
+        Raises `ValueError` (a CadQuery error, `runtime`) when the chain holds
+        no solid or `toUnion` holds none. Disjoint solids make a compound,
+        which the subset lacks: the result then holds both and ends
+        `unsupported_api` when it resolves (ADR-0007).
+
+        >>> import arris_gym.cq as cq
+        >>> a = cq.Workplane("XY").box(2, 2, 2)
+        >>> b = cq.Workplane("XY").transformed(offset=cq.Vector(1, 1, 1)).box(2, 2, 2)
+        >>> round(a.union(b)._solids()[0].measure().volume, 9)
+        15.0
+        """
+        others = self._operand(toUnion, "Workplane.union(Workplane)")
+        base = self._base_solid()
+        if base is None:
+            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+        result = self
+        for other in others:
+            result = result._combined(other)
+        return result
+
+    def cut(self, toCut: Workplane) -> Workplane:
+        """The chain's solid less the solid of `toCut`, on this plane.
+
+        Raises `ValueError` (`runtime`) when the chain holds no solid or
+        `toCut` holds none.
+
+        >>> import arris_gym.cq as cq
+        >>> a = cq.Workplane("XY").box(4, 4, 4)
+        >>> b = cq.Workplane("XY").box(1, 1, 6)
+        >>> round(a.cut(b)._solids()[0].measure().volume, 9)
+        60.0
+        """
+        tools = self._operand(toCut, "Workplane.cut(Workplane)")
+        base = self._base_solid()
+        if base is None:
+            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+        return self._derive(base.cut(*tools))
 
     def __copy__(self) -> Workplane:
         return self

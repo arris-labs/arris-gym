@@ -30,3 +30,7 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   `_combineWithBase`): `length`, `width` and `height` along the plane's x, y
   and normal, centred on its origin by default, and fused with a solid
   already in the chain.
+- `Workplane.union`, `Workplane.cut` and `_combineWithBase` (`cadquery/cq.py`):
+  the solid acted on is the nearest one up the chain (this stack, then the
+  parent's); the other is the solid of the Workplane given; the result sits on
+  the same plane. Disjoint solids make a compound in CadQuery.

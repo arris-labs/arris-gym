@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 14.0,
+    "area": 36.0,
+    "centroid": [
+      0,
+      0,
+      0.75
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1
+      ],
+      [
+        1,
+        1,
+        2.5
+      ]
+    ],
+    "faces": 14,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        14
+      ]
+    ]
+  },
+  "note": "box 2 x 2 x 2 and a second one on the plane moved 1.5 up the chain, fused (CadQuery's combine): z in [-1, 1] and [0.5, 2.5] overlap 0.5, V = 8 + 8 - 2 = 14; the union is a 2 x 2 x 3.5 prism, A = 4 * 2 * 3.5 + 2 * 4 = 36; centroid z = (8 * 0 + 8 * 1.5 - 2 * 0.75) / 14 = 0.75; faces carried (the sides split where the boxes meet)"
+}
