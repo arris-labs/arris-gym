@@ -14,11 +14,16 @@ the program.
 
 Measured on CPython 3.12.3: `ast.parse` refuses a NUL byte with a
 `SyntaxError`, a too-deep expression with a `RecursionError` ("during ast
-construction", at about 5,000 chained calls, at every caller stack depth
-tried) or a `MemoryError` (the parser's own stack, at about 6,000 unary
-minuses), and emits a `SyntaxWarning` for an invalid escape such as `"\d"`,
-which a caller's `-W error` turns into an exception. `ast.unparse` recurses
-in Python and fails on trees `ast.parse` accepts.
+construction", at about 5,000 chained calls) or a `MemoryError` (the
+parser's own stack, at about 6,000 unary minuses), and emits a
+`SyntaxWarning` for an invalid escape such as `"\d"`, which a caller's
+`-W error` turns into an exception. The `RecursionError`'s limit counts
+from the C stack depth `ast.parse` is called at: it falls by one chained
+call per C-level frame the caller is under (4,997 calls at a
+script's top level, 4,937 under 60 nested `map` calls), and on a thread
+whose stack is too small (256 KiB) the parser overflows it and the process
+dies. `ast.unparse` recurses in Python and fails on trees `ast.parse`
+accepts.
 
 ## Decision
 
@@ -29,9 +34,12 @@ nothing of it, so the census works in the caller's process. Any exception
 out of parsing or counting makes the program **unparsable**, its class name
 and `str()` kept verbatim; the census never raises on a program. Warnings
 are silenced around the parse, so the caller's warning filters cannot change
-an answer, and every traversal is iterative (`ast.walk`, loops), so the
-answer depends on the program and the Python grammar only, never on the
-caller's stack depth.
+an answer. Each program is parsed and counted on a fresh thread started
+with a fixed stack size (16 MiB; the deepest programs tried just inside
+the parser's limits parse on 1 MiB), so the parser always starts at the
+same C stack depth, on a stack no `ulimit -s` shrinks, and every
+traversal is iterative (`ast.walk`, loops): the answer depends on the
+program and the Python grammar only, never on the caller's stack depth.
 
 **What is counted.** Every call node in the program, wherever it stands
 (inside a function that is never called too), names a **receiver**:

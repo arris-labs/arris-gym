@@ -52,8 +52,9 @@ families are ranked by how few API forms they need, and
    (`math.sqrt`); a method on a plain attribute is `?`. Kinds `none` and
    `*kind` join the list; `selector=` counts like the first positional.
    End forms also `show_object(…)` and `empty`. Warnings are silenced
-   around the parse and every walk is iterative, so neither the caller's
-   warning filters nor its stack depth can move an answer.
+   around the parse, which runs on a fresh thread of a fixed stack size,
+   and every walk is iterative, so neither the caller's warning filters
+   nor its stack depth can move an answer.
 2. **The ranking** (ADR-0003). Per family: distinct calls, distinct
    selector strings, distinct argument forms. Families rank ascending by
    that triple, then by name; only families with ≥ 100 programs are

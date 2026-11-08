@@ -11,6 +11,7 @@ import doctest
 import keyword
 import warnings
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import pytest
@@ -267,3 +268,23 @@ def test_counting_a_chain_is_linear_in_its_length(monkeypatch: pytest.MonkeyPatc
     assert isinstance(got, ProgramCensus), got
     assert dict(got.calls) == {"cq.Workplane": 1, "Workplane.b": n}
     assert steps <= 4 * (n + 1)
+
+
+def _under_c_frames[T](depth: int, then: Callable[[], T]) -> T:
+    """`then()` called under `depth` more C-level frames (each `map` one)."""
+    if depth == 0:
+        return then()
+    return next(map(lambda _: _under_c_frames(depth - 1, then), [0]))
+
+
+def test_whether_a_deep_program_parses_does_not_depend_on_the_callers_stack() -> None:
+    # Chains around the parser's limit (about 5,000 calls on 3.12), each counted
+    # at this depth and under 200 more C frames, which used to move the limit by 200.
+    texts = [
+        f"import cadquery as cq\nx = cq.Workplane(){'.b()' * n}\n" for n in range(4700, 5101, 25)
+    ]
+    here = [census(text) for text in texts]
+    deep = _under_c_frames(200, lambda: [census(text) for text in texts])
+    assert deep == here
+    kinds = {type(got).__name__ for got in here}
+    assert kinds == {"ProgramCensus", "Unparsable"}, "the chains no longer straddle the limit"

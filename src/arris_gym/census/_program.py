@@ -1,15 +1,18 @@
 """What one program writes: its calls, argument forms, selector strings and end (ADR-0003).
 
 A program is parsed with `ast.parse` and never compiled or run: parsing runs
-nothing of it, so it may happen in the caller's process. Every traversal here
-is iterative, so whether a program is counted depends on the program and the
-Python grammar only, never on how deep the caller's stack is.
+nothing of it, so it may happen in the caller's process. CPython's limit on how
+deep a tree `ast.parse` builds counts from the C stack depth it is called at,
+so each program is parsed and counted on a fresh thread of a fixed stack size:
+whether a program is counted depends on the program and the Python grammar
+only, never on how deep the caller's stack is. Every traversal is iterative.
 """
 
 from __future__ import annotations
 
 import ast
 import builtins
+import threading
 import warnings
 from collections import Counter
 from collections.abc import Iterable
@@ -34,6 +37,14 @@ NON_LITERAL: Final = "<non-literal>"
 SELECTOR_METHODS: Final = ("faces", "edges", "vertices", "wires", "solids", "shells", "compounds")
 _CADQUERY: Final = "cadquery"
 _SHOW_OBJECT: Final = "show_object"
+# The stack of the thread a program is parsed on. A thread's default stack
+# comes from the process's `ulimit -s`; a fixed one makes the parser's own
+# limits (`RecursionError`, `MemoryError`) the only ones a program meets. The
+# deepest programs tried just inside them (about 5,000 chained calls, 6,000
+# unary minuses) parse on 1 MiB on CPython 3.12; 256 KiB overflows.
+_PARSE_STACK_BYTES: Final = 16 * 1024 * 1024
+# `threading.stack_size` is process-wide: held while one parse thread starts.
+_STACK_SIZE_LOCK: Final = threading.Lock()
 # Python's own builtins, as the interpreter defines them: what `site` or a
 # notebook adds to the module (`exit`, `help`, `display`) depends on the
 # caller's process, so it is left out. Membership only: no order from this
@@ -124,6 +135,20 @@ def census_program(program: CorpusProgram) -> ProgramCensus | Unparsable:
     >>> census_program(CorpusProgram(stem="q", family="f", text="x = (")).kind
     'SyntaxError'
     """
+    outcome: list[ProgramCensus | Unparsable] = []
+    thread = threading.Thread(target=lambda: outcome.append(_census_here(program)))
+    with _STACK_SIZE_LOCK:
+        previous = threading.stack_size(_PARSE_STACK_BYTES)
+        try:
+            thread.start()
+        finally:
+            threading.stack_size(previous)
+    thread.join()
+    return outcome[0]
+
+
+def _census_here(program: CorpusProgram) -> ProgramCensus | Unparsable:
+    """`census_program` on the calling thread, whose stack depth moves the parser's limit."""
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
