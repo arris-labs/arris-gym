@@ -1,0 +1,34 @@
+{
+  "status": "ok",
+  "message": "",
+  "measures": {
+    "volume": 23.999999999999996,
+    "area": 52.0,
+    "centroid": [
+      1.0,
+      1.5,
+      2.0
+    ],
+    "bounds": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        2.0,
+        3.0,
+        4.0
+      ]
+    ],
+    "faces": 6,
+    "solids": 1
+  },
+  "step_sha256": "09853dbd9417742f64321591b2582e1f49ea4c0d5161c286e3ce8d1e95f4d1d7",
+  "program_sha256": "f3f4df85630320a9a897f91ccca5b7b7363fa67d1b893e30e8cc6d0ececa7955",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

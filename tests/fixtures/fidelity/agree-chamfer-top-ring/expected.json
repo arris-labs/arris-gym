@@ -1,0 +1,24 @@
+{
+  "volume": 981.3333333333334,
+  "area": 574.9116882454314,
+  "centroid": [
+    5,
+    5,
+    4.911345108695652
+  ],
+  "bounds": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      10,
+      10,
+      10
+    ]
+  ],
+  "faces": 10,
+  "solids": 1,
+  "note": "d 1 on the four top edges: removed volume int_0^1 (100 - (8 + 2t)^2) dt = 20 - 4/3; A = 64 + 4 (9 sqrt2) + 360 + 100; z from the moment 10 (20 - 4/3) - 19/3 removed"
+}

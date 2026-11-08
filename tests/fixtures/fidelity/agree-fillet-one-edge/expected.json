@@ -1,0 +1,24 @@
+{
+  "volume": 71.1415926535898,
+  "area": 105.85398163397448,
+  "centroid": [
+    3.033503345519589,
+    2.0,
+    1.4845959262507953
+  ],
+  "bounds": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      6,
+      4,
+      3
+    ]
+  ],
+  "faces": 7,
+  "solids": 1,
+  "note": "box 6 x 4 x 3, an r 1 fillet on the top edge along y at x = 0: V = 72 - 4 (1 - pi/4); A = 108 - 2*4 - 2 (1 - pi/4) + (pi/2) 4 (the two end faces lose the corner too); centroid from the removed corner, area 1 - pi/4 at ((5/6 - pi/4)/(1 - pi/4)) from the corner in x and in z"
+}

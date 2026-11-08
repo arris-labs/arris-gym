@@ -89,7 +89,10 @@ def _measures(shape: cq.Shape) -> dict[str, Any]:
     BRepGProp.SurfaceProperties_s(shape.wrapped, surf)
     c = vol.CentreOfMass()
     box = Bnd_Box()
-    BRepBndLib.Add_s(shape.wrapped, box)
+    # Tight, from the geometry: the plain Add_s boxes a torus by its control
+    # net (0.33 too wide on a 8 x 8 x 2 one). Neither triangulation nor the
+    # shapes' tolerances, so it is the part's own extent.
+    BRepBndLib.AddOptimal_s(shape.wrapped, box, False, False)
     lo_x, lo_y, lo_z, hi_x, hi_y, hi_z = box.Get()
     return {
         "volume": vol.Mass(),

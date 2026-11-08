@@ -359,6 +359,11 @@ the caller decides, contradicts its status or carries another program's
 SHA-256 is a `crash`. `tools/oracle_run.py` runs a list of programs and writes
 `oracle.jsonl` in submission order.
 
+Two measurements **agree** when volume, area, centroid and bounds are each
+inside the **agreement tolerance** (`fidelity/_agreement.py`, ADR-0005), set
+from the calibration set `tests/fixtures/fidelity/agree-*`; face counts are
+carried in the deltas and never judged.
+
 **Fidelity** classifies each disagreement as `cq` bug, arris refusal (kind),
 arris bug, Open CASCADE wrong (closed form or second oracle, arris ADR-0015),
 or semantic difference by design (documented). Nothing stays unclassified. The

@@ -1,0 +1,24 @@
+{
+  "volume": 965.6637061435918,
+  "area": 558.79644737231,
+  "centroid": [
+    5,
+    5,
+    5
+  ],
+  "bounds": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      10,
+      10,
+      10
+    ]
+  ],
+  "faces": 10,
+  "solids": 1,
+  "note": "four r 2 fillets of length 10 each remove (4 - pi) 10; A = 2 (100 - 4 (4 - pi)) + 10 (4 (10 - 4) + 2 pi 2)"
+}

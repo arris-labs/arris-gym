@@ -36,7 +36,8 @@ one thread per processor hangs under the worker's `RLIMIT_NPROC` (ADR-0004).
 As the oracle worker, `worker.py PAYLOAD_FD RESULT_FD` reads the program from
 the payload descriptor and writes one JSON report to the result descriptor;
 `tools/oracle_run.py` builds its exec spec and sends the job. By hand, for a
-trusted program only, `worker.py PROGRAM.py` prints the report. STEP is
+trusted program only, `worker.py PROGRAM.py` prints the report. The bounds are the tight box (`BRepBndLib.AddOptimal`): the plain
+`Add` boxes a torus by its control net (ADR-0005). STEP is
 written to memory (an oracle worker writes no file), and `step_sha256` hashes
 its data section with the per-process translator counter blanked.
 

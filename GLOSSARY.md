@@ -174,6 +174,12 @@ CadQuery on Open CASCADE, run out of process under `tools/oracle/`, never
 imported.
 _Avoid_: reference implementation
 
+**Agreement tolerance**:
+The four constants in `fidelity` (volume, area, centroid, bounds) inside which
+`cq` on arris and the oracle measure the same part; face counts are carried,
+never judged (ADR-0005).
+_Avoid_: epsilon
+
 **Fidelity**:
 How far `cq` on arris agrees with the oracle on the same programs, as a table
 of classified rows.

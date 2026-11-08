@@ -62,7 +62,7 @@ same digest.
     `digest`.
   - `arris_rows(table) -> ArrisReport`: a refusal histogram by kind, then
     reason; arris bugs with program SHA-256 and fixture.
-- **ADR-0005, the agreement tolerance** (step 4): relative volume and area,
+- **ADR-0005, the agreement tolerance** (step 4; as built: `fidelity/_agreement.py`'s `MeasureDeltas`, `measure_deltas`, `within_tolerance` and the four constants; the face count is carried, not judged; `worker.py` measures bounds with `AddOptimal`): relative volume and area,
   centroid over the bbox diagonal, and a rule for face counts, whose
   conventions differ between the kernels. The values are measured by step 4
   as named constants in `fidelity`.
@@ -100,7 +100,7 @@ right within the design; **[3]** unproven, correctness established here.
   and `tools/oracle_run.py`. Property: arbitrary bytes on the result pipe
   give a report or a `crash`, and never raise. A report contradicting its
   status is a `crash`.
-- [ ] Step 4 **[2]** — The calibration set, ADR-0005. About 20
+- [x] Step 4 **[2]** — The calibration set, ADR-0005. About 20
   `tests/fixtures/fidelity/agree-*/` fixtures, each with `program.py`
   (arris), `oracle.py` (CadQuery text), `oracle.json` (recorded) and
   `expected.json` (closed form): boxes, cylinders, holes, revolves, fillets

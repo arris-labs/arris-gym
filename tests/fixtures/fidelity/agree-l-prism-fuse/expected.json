@@ -1,0 +1,24 @@
+{
+  "volume": 24,
+  "area": 56,
+  "centroid": [
+    1.6666666666666667,
+    1.6666666666666667,
+    1
+  ],
+  "bounds": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      4,
+      4,
+      2
+    ]
+  ],
+  "faces": 8,
+  "solids": 1,
+  "note": "an L of area 12 and perimeter 16, 2 thick: V = 24; A = 2*12 + 16*2; centroid from 8 at (2,1) and 4 at (1,3)"
+}
