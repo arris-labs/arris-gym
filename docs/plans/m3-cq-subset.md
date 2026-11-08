@@ -139,10 +139,15 @@ correctness has to be established here.
   values being `call`. The census-chains property is built in-process
   from recipes (box, cylinder, prism, ring, each maybe on a turned plane)
   joined by `union`/`cut`; a compound is the one `unsupported_api` it allows.
-- [ ] Step 7 **[2]** — `tools/cq_slice.py` and its first run: 300 rows,
+- [x] Step 7 **[2]** — `tools/cq_slice.py` and its first run: 300 rows,
   the table and arris report committed with their digests (two runs equal);
   `tests/test_c1_slice.py` checks the committed table offline (300 rows,
   counts summing to 300, digest).
+  *Settled:* `OracleReport.digest()` is used by the tool: it prints the
+  digest of the 300 reports' digests (README records it), and the offline
+  test pairs each row with its report; the backlog line is gone. The first
+  run: agree 200, `arris_refusal` 100 (all `lobed_knob`, `OpDegenerateError`
+  in a union), unclassified 0; step 8 judges those 100.
 - [ ] Step 8 **[3]** — every disagreement of step 7 classed: each shrunk
   under the `inspect` skill to `tests/fixtures/regression/<slug>/` (strict
   `xfail`) or given a verdict in `verdicts.json`; a `cq` bug fixed in the
@@ -202,5 +207,6 @@ correctness has to be established here.
   list); three coordinates, a `Vector` or anything else is `unsupported_api`
   (`Workplane.polyline(list with a point of 3 numbers)`): a path leaving its
   plane is not one the subset draws. `revolve`'s axis points keep two or three.
-- ⚠ OPEN (agent, step 7): the slice run's timeout and memory — the sandbox's
-  defaults unless a program needs more, measured by step 7.
+- *Settled* (agent, step 7): the slice run uses the sandbox's defaults (30 s,
+  512 MiB); no program of the 300 timed out or hit the limit, and the whole
+  run takes about 2 s on 32 cores.

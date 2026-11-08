@@ -41,6 +41,29 @@ Status counts over all 300 programs:
 No program timed out or crashed, and Open CASCADE failed on none (so none
 waits for its M3 row); each result is one solid.
 
+## The slice under `cq`
+
+`fidelity.json` is the fidelity table of the 300 slice programs run under
+`dialect="cq"` against `oracle.jsonl` (ADR-0006), with `arris-report.json`
+and `arris-report.md` taken from it. Written by
+`uv run --extra corpus tools/cq_slice.py` (the corpus from the Hugging Face
+cache or the network; outside the gate; about 2 s on 32 cores, the sandbox's
+defaults of 30 s and 512 MiB). Digests: table
+`d975e910fe1c6d02923d0f2705d8516e2adbd40df5d6e8bb185c320a40f5e7d5`;
+the 300 oracle reports' digests (`OracleReport.digest()`, one per line, in stem
+order) `e8879b59d640b3948f0e69abbd4b228414587466cc2dac2c2e2425edfc5065bc`;
+`arris-report.json` SHA-256
+`f3f43fde375226106623fb9909e06a3b6d760df76d61a54c3ab9d69c8bdf3385`, `arris-report.md`
+`c588ff5bca422f6263ee663271d4d85dd8ad654bed16c428b845ecb3750da02d`
+(three runs equal, at 2 and 32 workers). `verdicts.json` does not exist yet.
+
+Over all 300 programs: agree 200, disagree 100, unclassified 0. Disagreements
+by class: `arris_refusal` 100, every other class 0. Arris statuses: ok 200,
+`arris_refusal` 100, every other 0; oracle statuses: ok 300. No timeouts.
+All 100 `phone_stand` and 100 `venturi_tube` programs agree; all 100
+`lobed_knob` programs end `OpDegenerateError` ("the faces touch along a curve
+interior to both result faces") in a union, where the oracle builds a solid.
+
 ## Attribution
 
 BenchCAD (`BenchCAD/BenchCAD` on Hugging Face), licensed CC-BY-4.0. The stems
