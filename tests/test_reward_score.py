@@ -58,7 +58,12 @@ def _failed(status: Status, reward: float) -> Score:
     )
 
 
-def _ok(reward: float, terms: tuple[float, float, float, float]) -> Score:
+FIELD = FieldMetrics(voxel_iou_64=1.0, chamfer_x1000=0.0)
+
+
+def _ok(
+    reward: float, terms: tuple[float, float, float, float], field: FieldMetrics | None = FIELD
+) -> Score:
     return Score(
         status=Status.OK,
         message="",
@@ -68,7 +73,7 @@ def _ok(reward: float, terms: tuple[float, float, float, float]) -> Score:
         surface=terms[1],
         measures=terms[2],
         topology=terms[3],
-        field=FieldMetrics(voxel_iou_64=1.0, chamfer_x1000=0.0),
+        field=field,
         reward_version=1,
         versions=VERSIONS,
     )
@@ -158,10 +163,37 @@ def test_a_score_for_ok_needs_its_terms_and_a_reward_in_range() -> None:
         _ok(0.05, (0.5, 0.5, 0.5, 0.5))
     with pytest.raises(ValidationError, match="finite number in"):
         _ok(0.55, (1.5, 0.5, 0.5, 0.5))
+    with pytest.raises(ValidationError, match="the field metrics"):
+        _ok(0.55, (0.5, 0.5, 0.5, 0.5), field=None)
     with pytest.raises(ValidationError, match="all four terms"):
         Score(
             status=Status.OK, message="", reward=0.5, iou=None, iou_route=None, surface=None,
             measures=None, topology=None, field=None, reward_version=1, versions=VERSIONS,
+        )  # fmt: skip
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {"voxel_iou_64": 1.5},
+        {"voxel_iou_64": -0.1},
+        {"voxel_iou_64": math.nan},
+        {"chamfer_x1000": -1.0},
+        {"chamfer_x1000": math.inf},
+        {"chamfer_x1000": "0.5"},
+        {"rank": 1},
+    ],
+)
+def test_field_metrics_out_of_range_are_refused(bad: dict[str, object]) -> None:
+    with pytest.raises(ValidationError):
+        FieldMetrics.model_validate({"voxel_iou_64": 0.5, "chamfer_x1000": 2.0, **bad})
+
+
+def test_a_failure_with_field_metrics_is_refused() -> None:
+    with pytest.raises(ValidationError, match="no terms"):
+        Score(
+            status=Status.CRASH, message="", reward=-1.0, iou=None, iou_route=None, surface=None,
+            measures=None, topology=None, field=FIELD, reward_version=1, versions=VERSIONS,
         )  # fmt: skip
 
 
@@ -220,3 +252,13 @@ def test_the_digest_moves_with_one_bit_of_the_reward() -> None:
     b = _ok(math.nextafter(0.55, 1.0), (0.5, 0.5, 0.5, 0.5))
     assert a.digest() == _ok(0.55, (0.5, 0.5, 0.5, 0.5)).digest()
     assert a.digest() != b.digest()
+
+
+def test_the_digest_moves_with_one_bit_of_either_field_metric() -> None:
+    terms = (0.5, 0.5, 0.5, 0.5)
+    base = _ok(0.55, terms, FieldMetrics(voxel_iou_64=0.5, chamfer_x1000=2.0))
+    for nudged in (
+        FieldMetrics(voxel_iou_64=math.nextafter(0.5, 1.0), chamfer_x1000=2.0),
+        FieldMetrics(voxel_iou_64=0.5, chamfer_x1000=math.nextafter(2.0, 3.0)),
+    ):
+        assert _ok(0.55, terms, nudged).digest() != base.digest()

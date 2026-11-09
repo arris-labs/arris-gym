@@ -76,6 +76,7 @@ def parse_outcome(outcome: Outcome, config: RewardConfig, *, timeout: float) -> 
     assert frame.surface is not None
     assert frame.measures is not None
     assert frame.topology is not None
+    assert frame.field is not None
     return Score(
         status=Status.OK,
         message="",
@@ -91,7 +92,7 @@ def parse_outcome(outcome: Outcome, config: RewardConfig, *, timeout: float) -> 
         surface=frame.surface,
         measures=frame.measures,
         topology=frame.topology,
-        field=None,
+        field=frame.field,
         reward_version=config.version,
         versions=current_versions(),
     )

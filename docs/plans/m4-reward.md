@@ -117,7 +117,7 @@ to be established here.
   a worker cannot read, a forged frame, a frame out of range, a deadline passed,
   each its status. `hypothesis`: `score` never raises on arbitrary body bytes.
   Self scores reward exactly 1.0.
-- [ ] Step 7 **[3]** — field metrics in `reward/_field.py`, from the source above
+- [x] Step 7 **[3]** — field metrics in `reward/_field.py`, from the source above
   and trimesh 4.12.2's voxeliser read and named in `PROVENANCE.md`. Closed forms:
   self 1 and Chamfer 0, cube against double 1, a box's filled voxel count.
 - [ ] Step 8 **[2]** — `tools/oracle/benchcad_score.py`, 10 pair programs (a
@@ -193,6 +193,17 @@ faceted hole's `topology` below 1 and below the plate against itself), plus:
   writes its frame unvalidated and the caller parses it strictly, so a forged
   or out-of-range term is a `crash` there, never coerced. `Score.field` stays
   `None` until step 7.
+- *Settled* (agent, step 7): `reward/_field.py` cuts each triangle on its own,
+  in bounded chunks, which hits the same voxels as trimesh cutting the whole
+  mesh (a test holds it against that), and fills holes by a flood from the
+  border, held against a breadth-first one. `FieldMetrics` is strict and
+  ranged, and an `ok` `Score` and frame now need it. Its cost on the slice's
+  200 bodies, each against itself: at most 2.0 s alone (`venturi_tube`, the
+  subdivision of its long cone slivers), 2.3 s under 16 at once, inside the
+  score deadline's headroom over ADR-0008's 17 s. The absolute chord of 0.05
+  is BenchCAD's: a body thousands of times larger than the corpus's meshes
+  into millions of triangles, and its score then ends `timeout` or `runtime`,
+  counted; BenchCAD's scorer meshes it at the same chord.
 - *Settled* (agent): `benchcad_score.py` runs the 10 pairs on CadQuery outside
   the sandbox, because their scorer reads STEP files and every sandbox mount is
   read-only. The pairs are our own programs; nothing from a corpus reaches it.

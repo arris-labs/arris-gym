@@ -56,3 +56,31 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   CASCADE's `Standard_DomainError` (observed by running it, not read in its
   source); the subset raises `ValueError`, so the program ends `runtime` as
   the oracle's does.
+
+## Benchmark scorers read
+
+Read to reproduce the field's metrics in `src/arris_gym/reward/_field.py`;
+none of their code is carried over, and the module cites each step.
+
+- **BenchCAD** (MIT), `BenchCAD/BenchCAD-main` at commit
+  `77fd16a80a4e5fc39964ee23b6cc3225beefac8f`:
+  `benchcad_core/scoring/iou.py` (`_load_normalized_mesh`, `_vox_dense`,
+  `iou_step_vs_step`) and `Vision2Code/scoring/composite_metrics.py`
+  (`compute_iou`, `compute_chamfer`). Taken: the tessellation at 0.05, each
+  mesh normalised to its own box (centre 0.5, longest side 1, refused below
+  1e-9), the 64³ grid centred by shape in 68³ and cut where it overflows, an
+  empty union scored 0, and Chamfer as the mean squared nearest distance both
+  ways between 2,048 area-weighted samples per body. Their samples are
+  unseeded; ours are seeded.
+- **trimesh** 4.12.2 (MIT), the sdist from PyPI: `trimesh/base.py`
+  (`Trimesh.voxelized`), `trimesh/voxel/creation.py` (`voxelize`,
+  `voxelize_subdivide`), `trimesh/remesh.py` (`subdivide`,
+  `subdivide_to_size`), `trimesh/voxel/base.py` (`VoxelGrid.fill`,
+  `VoxelGrid.matrix`), `trimesh/voxel/encoding.py` (a sparse encoding's
+  shape), `trimesh/voxel/morphology.py` (`fill`, `fill_holes`) and
+  `trimesh/sample.py` (`sample_surface`). Taken: a triangle with an edge over
+  pitch / 2 cut into four at its edges' midpoints, at most 10 rounds; every
+  corner of the triangles left rounded half to even to its voxel; the grid
+  spanning the hit voxels' box; holes filled by
+  `scipy.ndimage.binary_fill_holes` at its documented default structure
+  (faces-only connectivity), here a flood from the border.

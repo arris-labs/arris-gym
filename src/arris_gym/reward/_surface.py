@@ -98,12 +98,12 @@ def surface_samples(triangles: _Mesh, count: int, seed: int) -> _Floats:
     return np.asarray(a[picks] + u[:, None] * e1[picks] + v[:, None] * e2[picks])
 
 
-def nearest_distances(points: _Floats, others: _Floats) -> _Floats:
-    """Each of `points`' distance to its nearest point of `others` (both n by 3).
+def nearest_squared(points: _Floats, others: _Floats) -> _Floats:
+    """Each of `points`' squared distance to its nearest point of `others` (both n by 3).
 
     By brute force in chunks of `CHUNK_ELEMENTS` pairs: squared distances
-    elementwise, their minimum, then one `sqrt` per point, all exactly
-    rounded, so the bits do not depend on the chunk or the machine.
+    elementwise and their minimum, all exactly rounded, so the bits do not
+    depend on the chunk or the machine.
     """
     out = np.empty(len(points), dtype=np.float64)
     rows = max(1, CHUNK_ELEMENTS // len(others))
@@ -113,8 +113,17 @@ def nearest_distances(points: _Floats, others: _Floats) -> _Floats:
         dx = p[:, 0, None] - ox
         dy = p[:, 1, None] - oy
         dz = p[:, 2, None] - oz
-        out[start : start + rows] = np.sqrt((dx * dx + dy * dy + dz * dz).min(axis=1))
+        out[start : start + rows] = (dx * dx + dy * dy + dz * dz).min(axis=1)
     return out
+
+
+def nearest_distances(points: _Floats, others: _Floats) -> _Floats:
+    """Each of `points`' distance to its nearest point of `others` (both n by 3).
+
+    One `sqrt` of each of `nearest_squared`'s minima, exactly rounded, so the
+    bits do not depend on the chunk or the machine.
+    """
+    return np.asarray(np.sqrt(nearest_squared(points, others)))
 
 
 def surface_distance(

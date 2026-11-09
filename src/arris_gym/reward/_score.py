@@ -12,7 +12,7 @@ import hashlib
 import math
 from typing import Self, assert_never
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from arris_gym.reward._config import RewardConfig
 from arris_gym.reward._iou import IouRoute
@@ -32,14 +32,20 @@ class FieldMetrics(BaseModel):
 
     `voxel_iou_64` is the IoU of two 64³ occupancy grids, each body
     normalised to its own box (scale-blind, so a cube and its double give 1);
-    `chamfer_x1000` is its Chamfer distance times 1000. Both in the field's
-    units; neither shares a name with our IoU or surface term.
+    `chamfer_x1000` is the mean squared nearest distance both ways between
+    2,048 seeded surface samples of each normalised body, times 1000. Both in
+    the field's units; neither shares a name with our IoU or surface term,
+    and neither moves the reward. Guarantees: `voxel_iou_64` is a finite
+    number in [0, 1] and `chamfer_x1000` a finite number at least 0. Refuses
+    anything else, a number written as a string included.
     """
 
-    model_config = ConfigDict(frozen=True, extra="forbid")
+    # Strict: a score worker's frame carries these, and a number written as
+    # a string is a forgery there, not a coercion.
+    model_config = ConfigDict(frozen=True, extra="forbid", strict=True)
 
-    voxel_iou_64: float
-    chamfer_x1000: float
+    voxel_iou_64: float = Field(ge=0.0, le=1.0, allow_inf_nan=False)
+    chamfer_x1000: float = Field(ge=0.0, allow_inf_nan=False)
 
 
 def failure_reward(status: Status) -> float | None:
@@ -97,7 +103,7 @@ class Score(BaseModel):
     a valid body failed; `message` is the kernel's or the result's words,
     verbatim. Guarantees, enforced on construction: for a failure status the
     four terms, `iou_route` and `field` are `None` and `reward` is exactly the
-    table's; for `ok` all four terms and `iou_route` are set, each term in
+    table's; for `ok` all four terms, `iou_route` and `field` are set, each term in
     [0, 1], and `reward` is in [0.1, 1]. `reward_version` is the config's.
     Refuses any other combination.
     """
@@ -126,8 +132,8 @@ class Score(BaseModel):
             if any(t is not None for t in terms) or self.iou_route or self.field:
                 raise ValueError("a failure has no terms, route or field metrics")
             return self
-        if any(t is None for t in terms) or self.iou_route is None:
-            raise ValueError("an ok score has all four terms and a route")
+        if any(t is None for t in terms) or self.iou_route is None or self.field is None:
+            raise ValueError("an ok score has all four terms, a route and the field metrics")
         if not all(t is not None and math.isfinite(t) and 0.0 <= t <= 1.0 for t in terms):
             raise ValueError("every term must be a finite number in [0, 1]")
         if not (math.isfinite(self.reward) and REWARD_FLOOR <= self.reward <= 1.0):

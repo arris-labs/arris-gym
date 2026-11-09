@@ -22,6 +22,7 @@ from hypothesis import strategies as st
 import arris_gym as ag
 import fixture_cases
 from arris_gym.reward import DEFAULT_REWARD, combine
+from arris_gym.reward._field import field_metrics
 from arris_gym.reward._iou import iou
 from arris_gym.reward._job import ScoreJob, frame
 from arris_gym.reward._measures import measures
@@ -82,7 +83,7 @@ def test_a_body_against_itself_scores_exactly_one(sandbox: ag.Sandbox) -> None:
         assert (got.iou, got.surface, got.measures, got.topology) == (1.0, 1.0, 1.0, 1.0)
         assert got.reward == 1.0
         assert got.iou_route is ag.IouRoute.EXACT
-        assert got.field is None  # step 7 computes the field metrics
+        assert got.field == ag.FieldMetrics(voxel_iou_64=1.0, chamfer_x1000=0.0)
         assert got.reward_version == DEFAULT_REWARD.version
 
 
@@ -114,16 +115,18 @@ def test_the_worker_gives_the_in_process_terms_bit_for_bit(sandbox: ag.Sandbox, 
     )
     shape = measures(model, a, b)
     kinds = topology(model, a, b, kind_weight=config.kind_weight)
+    field = field_metrics(model, a, b, seed=config.seed)
     expected = json.loads((REWARD_ROOT / slug / "expected.json").read_text(encoding="utf-8"))
     assert got.status is ag.Status.OK, got.message
     assert got.iou_route is not None
     assert got.iou_route.value == expected["route"]
-    assert (got.iou, got.iou_route, got.surface, got.measures, got.topology) == (
+    assert (got.iou, got.iou_route, got.surface, got.measures, got.topology, got.field) == (
         want.value,
         want.route,
         near,
         shape,
         kinds,
+        field,
     )
     assert got.reward == combine(
         config, iou=want.value, surface=near, measures=shape, topology=kinds
@@ -194,6 +197,7 @@ def _ok_frame(**changes: Any) -> bytes:
         "surface": 0.25,
         "measures": 0.75,
         "topology": 1.0,
+        "field": {"voxel_iou_64": 0.5, "chamfer_x1000": 2.0},
     }
     return json.dumps({**base, **changes}).encode()
 
@@ -207,6 +211,7 @@ def test_a_whole_frame_is_scored_by_the_caller() -> None:
     got = _parse(_ok_frame())
     assert got.status is ag.Status.OK
     assert got.reward == combine(DEFAULT_REWARD, iou=0.5, surface=0.25, measures=0.75, topology=1.0)
+    assert got.field == ag.FieldMetrics(voxel_iou_64=0.5, chamfer_x1000=2.0)
 
 
 @pytest.mark.parametrize(
@@ -229,6 +234,21 @@ def test_a_whole_frame_is_scored_by_the_caller() -> None:
         _ok_frame(status="checker_fail"),
         _ok_frame(status="runtime"),
         _ok_frame(reward=1.0),
+        _ok_frame(field=None),
+        _ok_frame(field={"voxel_iou_64": 1.5, "chamfer_x1000": 2.0}),
+        _ok_frame(field={"voxel_iou_64": 0.5, "chamfer_x1000": -2.0}),
+        _ok_frame(field={"voxel_iou_64": 0.5, "chamfer_x1000": float("inf")}),
+        _ok_frame(field={"voxel_iou_64": "0.5", "chamfer_x1000": 2.0}),
+        _ok_frame(field={"voxel_iou_64": 0.5}),
+        _ok_frame(
+            status="runtime",
+            message="m",
+            iou=None,
+            iou_route=None,
+            surface=None,
+            measures=None,
+            topology=None,
+        ),
     ],
     ids=lambda d: d[:40].decode("utf-8", "replace"),
 )

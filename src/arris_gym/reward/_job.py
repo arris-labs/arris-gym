@@ -2,7 +2,8 @@
 
 docs/ARCHITECTURE.md §The sandbox and §The reward. The payload is a
 `ScoreJob`, both bodies' bytes and the reward config; the worker reads both
-into one fresh model, computes the four terms and writes one `ScoreFrame`.
+into one fresh model, computes the four terms and the field's metrics and
+writes one `ScoreFrame`.
 The bytes are a program's (the candidate) and the caller's (the target),
 so reading them is a kernel call on hostile input, and a kernel crash here
 costs the job, never the caller. The zygote's entry registers `execute` for
@@ -20,8 +21,10 @@ import arris
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from arris_gym.reward._config import RewardConfig
+from arris_gym.reward._field import field_metrics
 from arris_gym.reward._iou import IouRoute, iou
 from arris_gym.reward._measures import measures
+from arris_gym.reward._score import FieldMetrics
 from arris_gym.reward._surface import surface
 from arris_gym.reward._topology import topology
 from arris_gym.sandbox._program import exception_line, read_all, write_frame
@@ -46,12 +49,13 @@ class ScoreJob(BaseModel):
 
 
 class ScoreFrame(BaseModel):
-    """A score worker's account of one pair: its four terms and the IoU's route.
+    """A score worker's account of one pair: its four terms, the IoU's route, the field's metrics.
 
     Guarantees, enforced on parsing in the caller: `status` is `ok` or
-    `runtime`; the four terms and `iou_route` are set exactly when it is `ok`,
-    each term a finite number in [0, 1]. The worker writes it unvalidated, so
-    a number out of range reaches the caller and is refused there.
+    `runtime`; the four terms, `iou_route` and `field` are set exactly when
+    it is `ok`, each term a finite number in [0, 1] and `field` within
+    `FieldMetrics`' ranges. The worker writes it unvalidated, so a number out
+    of range reaches the caller and is refused there.
     """
 
     # Strict: a number written as a string is a forgery, not a coercion.
@@ -64,6 +68,7 @@ class ScoreFrame(BaseModel):
     surface: float | None
     measures: float | None
     topology: float | None
+    field: FieldMetrics | None
 
     @model_validator(mode="after")
     def _fields_agree_with_status(self) -> Self:
@@ -71,18 +76,23 @@ class ScoreFrame(BaseModel):
             raise ValueError(f"a score worker does not decide {self.status.value}")
         terms = (self.iou, self.surface, self.measures, self.topology)
         ok = self.status is Status.OK
-        if any((t is None) == ok for t in terms) or (self.iou_route is None) == ok:
-            raise ValueError("the terms and the route are set exactly when status is OK")
+        if (
+            any((t is None) == ok for t in terms)
+            or (self.iou_route is None) == ok
+            or (self.field is None) == ok
+        ):
+            raise ValueError("the terms, the route and the field are set exactly when status is OK")
         if not all(t is None or (math.isfinite(t) and 0.0 <= t <= 1.0) for t in terms):
             raise ValueError("every term must be a finite number in [0, 1]")
         return self
 
 
 def evaluate(job: ScoreJob) -> ScoreFrame:
-    """The four terms of `job.candidate` against `job.target`, both read into one fresh model.
+    """The four terms and the field's metrics of `job.candidate` against `job.target`.
 
-    Raises the kernel's `ArrisError` where it cannot read, measure or mesh a
-    body, and what the terms raise.
+    Both bodies are read into one fresh model. Raises the kernel's
+    `ArrisError` where it cannot read, measure or mesh a body, and what the
+    terms and the field's metrics raise.
     """
     config = job.config
     model = arris.Model()
@@ -115,6 +125,7 @@ def evaluate(job: ScoreJob) -> ScoreFrame:
         surface=near,
         measures=measures(model, candidate, target),
         topology=topology(model, candidate, target, kind_weight=config.kind_weight),
+        field=field_metrics(model, candidate, target, seed=config.seed),
     )
 
 
@@ -135,6 +146,7 @@ def frame(payload: bytes) -> ScoreFrame:
             surface=None,
             measures=None,
             topology=None,
+            field=None,
         )
 
 

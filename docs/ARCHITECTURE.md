@@ -310,10 +310,21 @@ verbatim: a target it cannot read, say), `timeout` or `crash`, and its reward
 `RewardConfig` with a version, written into every result row, and a change
 that can move a reward bumps it.
 
-**The field's metrics sit beside ours** under `s.field`: voxel IoU, Chamfer
-×10³ and invalidity rate, computed as the benchmark's own scorer does
-(`benchcad_core/scoring/iou.py` for BenchCAD, read at M4), so numbers compare
-with published ones. Theirs and ours never share a name.
+**The field's metrics sit beside ours** under `s.field` (`FieldMetrics`,
+`reward/_field.py`), computed in the score worker as BenchCAD's own scorer
+computes them (`benchcad_core/scoring/iou.py` and
+`Vision2Code/scoring/composite_metrics.py` at `77fd16a8`, with trimesh
+4.12.2's voxeliser reimplemented on numpy), so numbers compare with published
+ones; they never move the reward. Each body is tessellated at an absolute
+chord of 0.05, normalised to its own mesh's box (centre 0.5, longest side 1),
+subdivided until no edge passes half a voxel, every vertex rounded to its
+voxel, the shell's holes filled (faces-only connectivity) and the occupied box
+centred in 68³: `voxel_iou_64` counts both grids. `chamfer_x1000` is the mean
+squared nearest distance both ways between 2,048 surface samples per
+normalised body, ×1000. Theirs are unseeded; ours come from `PCG64(seed)`, so
+a body against itself is exactly 1 and 0. Both are scale-blind: a cube
+against its double is `voxel_iou_64` 1 where our IoU is 1/8. Theirs and ours
+never share a name.
 
 **The IoU has two routes** (ADR-0008, `reward/_iou.py`). The **exact route**
 asks the kernel's `interference` under a step budget, 10⁷ by default: `apart`

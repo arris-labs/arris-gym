@@ -17,8 +17,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   fails the score is `runtime` with the kernel's words, `timeout` or `crash`,
   and its reward -1.0. `RewardConfig` and `RewardWeights` set the weights, τ,
   sample counts and seed; a config's `version` is written into every `Score`,
-  and `Score.digest()` hashes its numbers. `Score.field` (`FieldMetrics`) is
-  not computed yet and is `None`.
+  and `Score.digest()` hashes its numbers. A valid body's `Score.field`
+  (`FieldMetrics`) holds BenchCAD's own metrics beside ours, computed as its
+  scorer does: `voxel_iou_64`, in [0, 1], and `chamfer_x1000`, at least 0.
+  Both normalise each body to its own box, so they ignore size and place (a
+  cube against its double gives 1 and 0), and neither moves the reward. The
+  Chamfer samples are seeded, so a body against itself gives exactly 0.
 - `run(program, dialect="cq")` (also `run_many`, `Sandbox.run`) runs a
   CadQuery program: `import cadquery as cq` gives a subset over `arris.build`
   and `show_object` is available. The subset covers `Workplane("XY")`,
