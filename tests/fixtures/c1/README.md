@@ -102,6 +102,17 @@ timeouts none. Invalidity 1/3; mean reward 0.483560 over all 300, and 0.975340
 over the 200 valid ones alone (survivors, never reported without the first).
 Each row carries the source, CC-BY-4.0, and the arris, numpy and reward versions.
 
+Across machines (CI run 42709431327 on commit 9d25b86, all 4 jobs green): the
+digest `70e66667de9089860f07e69b6507713fa5945eb6986216480bee964ff5ad658c` was
+equal on three machines of two architectures:
+
+- the development machine: AMD Ryzen 9 7950X, x86-64, glibc 2.39;
+- GitHub `ubuntu-latest`: AMD EPYC 7763, x86-64, glibc 2.43;
+- GitHub `ubuntu-24.04-arm`: ARM Neoverse-N2, aarch64, glibc 2.39.
+
+So `transformed`'s libm did not move any body's bytes between x86-64 and
+aarch64.
+
 Why the rows look as they do (the `inspect` skill, probed on the pairs):
 
 - **The 100 `arris_refusal`** are all `lobed_knob`, ending `OpDegenerateError`

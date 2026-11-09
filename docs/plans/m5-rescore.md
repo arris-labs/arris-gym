@@ -86,6 +86,11 @@ text, sorted by stem, gzip `mtime=0`, 1.5 MB, attribution in its README.
 `rescore.json`'s, logs the digest, `lscpu` and glibc, and uploads `rescore.json`.
 Step 9 is ticked when both jobs are green, i.e. both digests are equal.
 
+*Settled* (step 9): CI run 42709431327 on 9d25b86, all 4 jobs green; the
+digest was equal on three machines (x86-64 and aarch64), so `transformed`'s
+libm did not move body bytes across architectures. Numbers in
+`tests/fixtures/c1/README.md`.
+
 ## Steps
 A step's grade is its tier (`.agents/tiers.md`): **[1]** routine; **[2]** careful,
 a numeric or semantic case; **[3]** unproven, or changes what a worker sends back.
@@ -121,7 +126,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
 - [x] Step 8 **[2]** — `tools/rescore_diff.py A B`: from two `rescore.json`, the
   rows that differ and the first stage each differs at (candidate body, target
   body, each term); exit 1 on any. Tests on planted differences.
-- [ ] Step 9 **[2] [CI]** — The second machine: CI's `rescore` job on `ubuntu-latest` and `ubuntu-24.04-arm` (`.github/workflows/ci.yml`), a clean clone, `uv sync --locked
+- [x] Step 9 **[2] [CI]** — The second machine: CI's `rescore` job on `ubuntu-latest` and `ubuntu-24.04-arm` (`.github/workflows/ci.yml`), a clean clone, `uv sync --locked
   --extra corpus`, the command. Record both digests, CPUs and glibc in the README.
   A difference is diffed by step 8, shrunk to a regression fixture, reported to
   arris if the kernel's; the plan stays open until the digests are equal.
@@ -151,10 +156,9 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
 - `docs/adr/README.md` — ADR-0011.
 
 ## Open questions
-- ⚠ OPEN (agent, step 9): if `transformed`'s libm moves body bytes across
-  architectures (`arris.build.Workplane.rotated`), the rows that call it differ
-  and arris must answer. That would hold M5 open: closing it with a
-  narrower claim changes C1's scope, which is the human's.
+- *Settled* (agent, step 9): `transformed`'s libm did not move body bytes
+  across architectures: the digests are equal on x86-64 and aarch64 (CI run
+  42709431327). Closed.
 - *Settled* (human, step 9): `tests/fixtures/sandbox/crash-abort` ended by
   `SIGSEGV` on x86-64 and `SIGTRAP` on arm64 (glibc's abort instruction,
   `hlt` and `brk`, under ADR-0002's PID 1). The human kept `abort` with a
