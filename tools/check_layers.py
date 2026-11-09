@@ -23,17 +23,26 @@ FORBIDDEN_IN_CORE = (f"{PACKAGE}.train", f"{PACKAGE}.rescore")
 # A score's path takes no BLAS and no vectorised transcendental
 # (.agents/rules/gym.md, docs/ARCHITECTURE.md §Determinism): their last bits
 # depend on the BLAS build and the CPU. `reward/` is where a score is made.
-# The winding number's `arctan2`, which only feeds a threshold, is not listed.
+# The winding number's numpy `arctan2`, which only feeds a threshold, is not
+# listed (`math.atan2` is). `**` is allowed only with an integer literal exponent.
 NUMERIC_LAYER = "reward"
 NUMPY_ROOTS = ("np", "numpy")
 BANNED_NUMPY = frozenset(
     (
         *("dot", "vdot", "inner", "matmul", "einsum", "tensordot"),
         *("exp", "expm1", "exp2", "sin", "cos", "tan", "sinh", "cosh", "tanh"),
-        *("log", "log2", "log10", "log1p"),
+        *("log", "log2", "log10", "log1p", "power", "float_power", "hypot", "cbrt"),
+        *("arcsin", "arccos", "arctan", "arcsinh", "arccosh", "arctanh"),
     )
 )
-BANNED_MATH = frozenset(("exp", "expm1", "sin", "cos", "tan"))
+BANNED_MATH = frozenset(
+    (
+        *("exp", "expm1", "exp2", "sin", "cos", "tan", "sinh", "cosh", "tanh"),
+        *("log", "log2", "log10", "log1p", "pow", "hypot", "cbrt"),
+        *("asin", "acos", "atan", "atan2", "asinh", "acosh", "atanh"),
+        *("erf", "erfc", "gamma", "lgamma"),
+    )
+)
 
 
 def within(name: str, root: str) -> bool:
@@ -100,10 +109,17 @@ def attribute_chain(node: ast.expr) -> list[str]:
 
 
 def numeric_breaches(tree: ast.AST) -> Iterator[tuple[int, str]]:
-    """Every (line, why) of the `reward` layer's banned operations: `@`, BLAS, libm."""
+    """Every (line, why) of the `reward` layer's banned operations: `@`, BLAS, libm, `**`."""
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp | ast.AugAssign) and isinstance(node.op, ast.MatMult):
             yield node.lineno, "the matrix product `@` takes a BLAS path"
+        elif isinstance(node, ast.BinOp | ast.AugAssign) and isinstance(node.op, ast.Pow):
+            exponent = node.right if isinstance(node, ast.BinOp) else node.value
+            if not (isinstance(exponent, ast.Constant) and type(exponent.value) is int):
+                yield (
+                    node.lineno,
+                    "`**` with an exponent that is not an integer literal calls libm pow",
+                )
         elif isinstance(node, ast.Attribute):
             chain = attribute_chain(node)
             if len(chain) < 2:

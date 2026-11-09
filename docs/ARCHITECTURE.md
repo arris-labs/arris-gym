@@ -388,7 +388,8 @@ The same program gives the same body, ids and score on every machine.
   `math.fsum`, which is exactly rounded and so independent of order.
 - **Outside that set**: `@`, `np.dot` and `np.linalg.*` follow the BLAS build;
   `np.exp`, `np.sin` and friends follow the CPU's SIMD dispatch; `math.exp`
-  follows the platform's libm. So `exp(−d/τ)` and the principal moments'
+  follows the platform's libm, as do `math.pow`, `math.log*`, `math.hypot`,
+  `math.atan2` and `**` with an exponent that is not an integer literal. So `exp(−d/τ)` and the principal moments'
   eigenvalues are written in `reward/` from the exact operations alone (a
   fixed polynomial, fixed Jacobi sweeps). A transcendental whose result only
   feeds a threshold, as a winding number's does, is allowed. The gate
