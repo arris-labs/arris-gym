@@ -131,10 +131,11 @@ def test_the_loader_runs_any_readable_program_inside_the_same_boundary(zygote: Z
         sys.executable, str(LOADER_PROBE), ENVIRONMENT | {"LOADER": loader}
     )
     assert "/usr/bin/bash" not in spec.executable
-    assert "/usr/bin/id" not in spec.executable
+    assert "/usr/bin/perl" not in spec.executable
     # ADR-0004's case: a system interpreter's reach holds `/usr`, and so bash
-    # and id. A standalone one's (uv's) holds only its own libraries; `/usr`
-    # is granted here so the probe asks the same question of either.
+    # and perl (exec_loader.py says why perl, not a coreutils `id`). A
+    # standalone one's (uv's) holds only its own libraries; `/usr` is granted
+    # here so the probe asks the same question of either.
     spec = dataclasses.replace(spec, readable=tuple(sorted({*spec.readable, "/usr"})))
     outcome = zygote.execute(
         JobKind.EXEC,
@@ -146,7 +147,7 @@ def test_the_loader_runs_any_readable_program_inside_the_same_boundary(zygote: Z
     assert (outcome.ending.kind, outcome.ending.value) == (EndKind.EXITED, 0), outcome.stderr
     report = json.loads(outcome.data)
     assert report["direct"] == ["PermissionError", 13]
-    assert report["id"] == {"code": 0, "stdout": "65534\n", "stderr": ""}
+    assert report["perl"] == {"code": 0, "stdout": "65534\n", "stderr": ""}
     bash = report["bash"]
     assert bash["code"] == 0, bash
     assert bash["stdout"].splitlines() == ["uid=65534", "connect=1", "write=1"], bash
