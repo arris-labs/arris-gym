@@ -173,3 +173,21 @@ def test_overlap_counts_every_kind_and_two_empty_histograms_are_alike() -> None:
     assert overlap((0,) * 7, (0,) * 7) == 1.0
     assert overlap((2, 0, 0, 0, 0, 0, 0), (0, 2, 0, 0, 0, 0, 0)) == 0.0
     assert overlap((2, 1, 0, 0, 0, 0, 0), (1, 1, 0, 0, 0, 0, 0)) == 2 / 3
+
+
+def test_no_float_power_reaches_a_score_in_measures() -> None:
+    """`x ** 2` on a float calls libm `pow`, whose last bit is the platform's.
+
+    The squared centroid gap is `d * d` (exactly rounded), so the gap is the
+    same bits on every machine (docs/ARCHITECTURE.md §Determinism).
+    """
+    import ast
+    import inspect
+
+    import arris_gym.reward._measures as module
+
+    tree = ast.parse(inspect.getsource(module))
+    powers = [
+        n.lineno for n in ast.walk(tree) if isinstance(n, ast.BinOp) and isinstance(n.op, ast.Pow)
+    ]
+    assert powers == []

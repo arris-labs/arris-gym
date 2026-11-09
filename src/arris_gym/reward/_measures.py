@@ -91,7 +91,7 @@ def measures(model: arris.Model, candidate: arris.Body, target: arris.Body) -> f
     if not diagonal > 0.0:
         raise ValueError("the target has no extent")
     gap = math.sqrt(
-        math.fsum((x - y) ** 2 for x, y in zip(ours.centroid, theirs.centroid, strict=True))
+        math.fsum((x - y) * (x - y) for x, y in zip(ours.centroid, theirs.centroid, strict=True))
     )
     mine = principal_moments(ours.inertia_about(ours.centroid))
     want = principal_moments(theirs.inertia_about(theirs.centroid))
