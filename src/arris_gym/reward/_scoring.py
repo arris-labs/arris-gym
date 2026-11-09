@@ -33,7 +33,8 @@ DEFAULT_SCORE_TIMEOUT = 30.0
 SCORE_WORKER = "score worker"
 
 
-def _failed(status: Status, message: str, config: RewardConfig) -> Score:
+def failed_score(status: Status, message: str, config: RewardConfig = DEFAULT_REWARD) -> Score:
+    """The `Score` of a failure `status`: the table's reward, no terms, this process's versions."""
     reward = failure_reward(status)
     assert reward is not None, "a failure status has a table reward"
     return Score(
@@ -63,15 +64,15 @@ def parse_outcome(outcome: Outcome, config: RewardConfig, *, timeout: float) -> 
     """
     early = ended(outcome, SCORE_WORKER, timeout)
     if early is not None:
-        return _failed(early.status, early.message, config)
+        return failed_score(early.status, early.message, config)
     try:
         frame = ScoreFrame.model_validate_json(outcome.data)
     except (pydantic.ValidationError, ValueError, RecursionError):
-        return _failed(
+        return failed_score(
             Status.CRASH, f"the {SCORE_WORKER} delivered a result that is not a valid frame", config
         )
     if frame.status is Status.RUNTIME:  # the frame is `ok` or `runtime` (SCORE_STATUSES)
-        return _failed(Status.RUNTIME, frame.message, config)
+        return failed_score(Status.RUNTIME, frame.message, config)
     assert frame.iou is not None
     assert frame.surface is not None
     assert frame.measures is not None
@@ -138,7 +139,7 @@ def score(
         raise TypeError(f"config must be a RewardConfig, got {type(config).__name__}")
     check_arguments(Dialect.ARRIS, timeout, memory)
     if failure_reward(result.status) is not None:
-        return _failed(result.status, result.message, config)
+        return failed_score(result.status, result.message, config)
     body = result.body
     assert body is not None, "an ok result has a body (ExecResult's guarantee)"
     zygote = (sandbox if sandbox is not None else default_sandbox())._live_zygote()

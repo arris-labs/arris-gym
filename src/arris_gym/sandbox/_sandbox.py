@@ -21,7 +21,7 @@ from arris_gym.sandbox.outcome import Dialect, ExecResult, TargetResult
 DEFAULT_WORKERS_CAP = 32
 
 
-def _check_workers(workers: int | None) -> int:
+def check_workers(workers: int | None) -> int:
     """The number of live forks `workers` asks for, or the caller's mistake."""
     if workers is None:
         return max(1, min(DEFAULT_WORKERS_CAP, os.cpu_count() or 1))
@@ -118,7 +118,7 @@ class Sandbox:
         Arguments are checked before any program runs.
         """
         resolved = _run.check_arguments(dialect, timeout, memory)
-        live = _check_workers(workers)
+        live = check_workers(workers)
         texts = tuple(programs)
         for text in texts:
             if not isinstance(text, str):

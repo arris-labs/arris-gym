@@ -4,7 +4,7 @@ from arris_gym.reward._aggregate import invalidity_rate
 from arris_gym.reward._config import DEFAULT_REWARD, RewardConfig, RewardWeights
 from arris_gym.reward._iou import IouRoute
 from arris_gym.reward._score import FieldMetrics, Score
-from arris_gym.reward._scoring import score
+from arris_gym.reward._scoring import failed_score, score
 
 __all__ = [
     "DEFAULT_REWARD",
@@ -13,6 +13,7 @@ __all__ = [
     "RewardConfig",
     "RewardWeights",
     "Score",
+    "failed_score",
     "invalidity_rate",
     "score",
 ]

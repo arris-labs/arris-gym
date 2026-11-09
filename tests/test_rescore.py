@@ -16,7 +16,7 @@ import arris_gym as ag
 from arris_gym import rescore as rescore_package
 from arris_gym.rescore import RescoreEntry, Stage, rescore
 from arris_gym.rescore import _rescore as module
-from arris_gym.reward import Score
+from arris_gym.reward import Score, failed_score
 from arris_gym.sandbox import Dialect, Status
 
 BOX = "import arris.build as b\nresult = b.Solid.box((0, 0, 0), (1, 2, 3))"
@@ -88,7 +88,7 @@ def test_a_scoring_failure_is_the_scoring_stage(
     sandbox: ag.Sandbox, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def failing(result: ag.ExecResult, target: ag.BodyRef, **_: object) -> Score:
-        return module._failed(Status.TIMEOUT, "scoring took 30.0 s")
+        return failed_score(Status.TIMEOUT, "scoring took 30.0 s")
 
     monkeypatch.setattr(module, "score", failing)
     table = rescore([entry("a")], sandbox=sandbox)

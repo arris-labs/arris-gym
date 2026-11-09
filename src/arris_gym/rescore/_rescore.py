@@ -12,30 +12,15 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import assert_never
 
 from arris_gym.rescore._table import RescoreEntry, RescoreRow, RescoreTable, Stage
-from arris_gym.reward import DEFAULT_REWARD, Score, score
-from arris_gym.reward._score import failure_reward
-from arris_gym.sandbox import ExecResult, Sandbox, Status, TargetResult, read_target
-from arris_gym.sandbox._run import current_versions
-from arris_gym.sandbox._sandbox import _check_workers
-
-
-def _failed(status: Status, message: str) -> Score:
-    """The `Score` of a failure `status`: the table's reward, no terms, this process's versions."""
-    reward = failure_reward(status)
-    assert reward is not None, "a failure status has a table reward"
-    return Score(
-        status=status,
-        message=message,
-        reward=reward,
-        iou=None,
-        iou_route=None,
-        surface=None,
-        measures=None,
-        topology=None,
-        field=None,
-        reward_version=DEFAULT_REWARD.version,
-        versions=current_versions(),
-    )
+from arris_gym.reward import Score, failed_score, score
+from arris_gym.sandbox import (
+    ExecResult,
+    Sandbox,
+    Status,
+    TargetResult,
+    check_workers,
+    read_target,
+)
 
 
 def _target_failure(target: TargetResult) -> Score:
@@ -51,11 +36,11 @@ def _target_failure(target: TargetResult) -> Score:
     )
     match target.status:
         case Status.TIMEOUT | Status.CRASH | Status.RUNTIME:
-            return _failed(target.status, message)
+            return failed_score(target.status, message)
         case Status.ARRIS_REFUSAL | Status.CHECKER_FAIL:
-            return _failed(Status.RUNTIME, message)
+            return failed_score(Status.RUNTIME, message)
         case Status.SYNTAX | Status.UNSUPPORTED_API:
-            return _failed(Status.CRASH, f"a target ended {target.status.value}: {message}")
+            return failed_score(Status.CRASH, f"a target ended {target.status.value}: {message}")
         case Status.OK:
             raise AssertionError("an ok target is not a failure")
         case _ as unreachable:
@@ -65,7 +50,7 @@ def _target_failure(target: TargetResult) -> Score:
 def _row(entry: RescoreEntry, result: ExecResult, target: TargetResult, sb: Sandbox) -> RescoreRow:
     """The row of one entry from its program's result and its target."""
     if result.status is not Status.OK:
-        stage, pair = Stage.PROGRAM, _failed(result.status, result.message)
+        stage, pair = Stage.PROGRAM, failed_score(result.status, result.message)
     elif target.body is None or target.status is not Status.OK:
         stage, pair = Stage.TARGET, _target_failure(target)
     else:
@@ -119,7 +104,7 @@ def rescore(
     >>> table.mean_reward, table.stages["none"]
     (1.0, 1)
     """
-    live = _check_workers(workers)
+    live = check_workers(workers)
     names = [entry.name for entry in entries]
     if len(set(names)) != len(names):
         raise ValueError("an entry name is given twice")
