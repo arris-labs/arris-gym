@@ -21,6 +21,8 @@ from arris_gym.census import (
     select_slice,
     slice_families,
 )
+from arris_gym.rescore import RescoreTable, rescore
+from arris_gym.rescore import benchcad as rescore_benchcad
 
 Reader = Callable[[], list[CorpusProgram]]
 """Reads a corpus's programs; the CLI's seam, so a test needs no download."""
@@ -33,7 +35,7 @@ SLICE_FAMILIES: Final = 3
 """How many ranked families the slice takes."""
 PER_FAMILY: Final = 100
 """How many programs of each (and the fewest a family may have to be eligible)."""
-MISSING_EXTRA: Final = "arris-gym census needs the corpus extra: pip install 'arris-gym[corpus]'"
+MISSING_EXTRA: Final = "arris-gym needs the corpus extra: pip install 'arris-gym[corpus]'"
 
 
 def _extra_present() -> bool:
@@ -65,6 +67,38 @@ def run_census(reader: Reader, out: Path) -> CensusReport:
     return report
 
 
+def run_rescore(
+    reader: Reader, slice_path: Path, targets: Path, out: Path, workers: int | None
+) -> RescoreTable:
+    """Re-score the slice, write `rescore.json` and `rescore.md` into `out`."""
+    table = rescore(rescore_benchcad.load(slice_path, targets, reader), workers=workers)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "rescore.json").write_text(table.to_json() + "\n", encoding="utf-8")
+    (out / "rescore.md").write_text(table.to_markdown(), encoding="utf-8")
+    return table
+
+
+def run_rescore_command(args: argparse.Namespace, reader: Reader) -> int:
+    """`arris-gym rescore benchcad`: run it and print the counts and the digest."""
+    table = run_rescore(reader, args.slice_path, args.targets, args.out, args.workers)
+    print(f"programs {table.programs}")
+    print("statuses: " + ", ".join(f"{k} {n}" for k, n in table.statuses.items() if n))
+    print("stages: " + ", ".join(f"{k} {n}" for k, n in table.stages.items() if n))
+    print(f"invalidity rate {table.invalidity_rate:.6f}")
+    print(f"mean reward over all {table.programs} programs: {table.mean_reward:.6f}")
+    valid = table.mean_reward_valid
+    print(
+        f"mean reward over the {table.valid} valid programs only (survivors): "
+        + ("none" if valid is None else f"{valid:.6f}")
+    )
+    print(
+        "timed out: "
+        + (", ".join(f"{t.name} ({t.stage.value})" for t in table.timed_out) or "none")
+    )
+    print(f"digest {table.digest}")
+    return 0
+
+
 def main(argv: Sequence[str] | None = None, *, reader: Reader | None = None) -> int:
     """Run the command; returns the exit status. `reader` replaces the corpus download (tests)."""
     parser = argparse.ArgumentParser(prog="arris-gym")
@@ -72,6 +106,12 @@ def main(argv: Sequence[str] | None = None, *, reader: Reader | None = None) -> 
     cmd = sub.add_parser("census", help="count the API a corpus uses, never running a program")
     cmd.add_argument("--corpus", required=True, choices=["benchcad"])
     cmd.add_argument("--out", type=Path, default=Path("census-out"))
+    res = sub.add_parser("rescore", help="re-score a corpus's slice against its committed targets")
+    res.add_argument("corpus", choices=["benchcad"])
+    res.add_argument("--slice", type=Path, default=rescore_benchcad.SLICE, dest="slice_path")
+    res.add_argument("--targets", type=Path, default=rescore_benchcad.TARGETS)
+    res.add_argument("--out", type=Path, default=Path("rescore-out"))
+    res.add_argument("--workers", type=int, default=None)
     args = parser.parse_args(argv)
 
     if reader is None:
@@ -79,6 +119,8 @@ def main(argv: Sequence[str] | None = None, *, reader: Reader | None = None) -> 
             print(MISSING_EXTRA, file=sys.stderr)
             return EXIT_USAGE
         reader = benchcad.read
+    if args.command == "rescore":
+        return run_rescore_command(args, reader)
     report = run_census(reader, args.out)
     print(f"programs {report.programs}: parsed {report.parsed}, unparsable {report.unparsable}")
     print(f"families {len(report.families)}; top {TOP_ROWS} by rank (calls/selectors/forms):")

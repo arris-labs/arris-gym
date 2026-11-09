@@ -15,6 +15,7 @@ from typing import Any, Final, Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
+from arris_gym.fidelity._table import _code
 from arris_gym.reward import IouRoute, Score, invalidity_rate
 from arris_gym.sandbox.outcome import ArrisRefusal, Dialect, Status, Versions
 
@@ -272,3 +273,73 @@ class RescoreTable(_Frozen):
             if getattr(self, key) != want:
                 raise ValueError(f"{key} disagrees with the rows")
         return self
+
+    def to_json(self) -> str:
+        """The table as canonical JSON, digest included: `from_json` returns an equal table."""
+        return json.dumps(
+            self.model_dump(mode="json"), sort_keys=True, separators=(",", ":"), ensure_ascii=True
+        )
+
+    @classmethod
+    def from_json(cls, text: str) -> Self:
+        """Read a table written by `to_json`; refuses one whose digest or counts disagree."""
+        return cls.model_validate(json.loads(text))
+
+    def to_markdown(self) -> str:
+        """The table as Markdown: the counts, the means (each with its denominator), the rows.
+
+        Every string a program, a kernel or a corpus wrote (a name, a source,
+        a licence, a version) is one code span holding its JSON string
+        literal, so nothing in it can break the document. `to_json` holds the
+        same strings unchanged.
+        """
+
+        def counts(name: str, values: dict[str, int]) -> str:
+            return f"{name}: " + ", ".join(f"{key} {n}" for key, n in values.items())
+
+        valid = "none" if self.mean_reward_valid is None else f"{self.mean_reward_valid:.6f}"
+        reward_versions = sorted({r.score.reward_version for r in self.rows})
+        versions = sorted({(r.versions.arris, r.versions.numpy) for r in self.rows})
+        lines = [
+            "# re-scored table",
+            "",
+            f"Digest `{self.digest}`.",
+            "",
+            f"Over {self.programs} programs (every failure counted):",
+            "",
+            f"- {counts('statuses', self.statuses)}",
+            f"- {counts('stages', self.stages)}",
+            f"- {counts('IoU routes', self.iou_routes)}",
+            f"- invalidity rate {self.invalidity_rate:.6f}",
+            f"- mean reward over all {self.programs} programs: {self.mean_reward:.6f}",
+            f"- mean reward over the {self.valid} valid programs only "
+            f"(survivors, not comparable): {valid}",
+            "- timed out: "
+            + (", ".join(f"{_code(t.name)} at {t.stage.value}" for t in self.timed_out) or "none"),
+            "",
+            "Sources: "
+            + ", ".join(
+                _code(f"{s} ({lic})")
+                for s, lic in sorted({(r.source, r.licence) for r in self.rows})
+            )
+            + ".",
+            "arris and numpy: "
+            + ", ".join(f"{_code(a)} / {_code(n)}" for a, n in versions)
+            + f"; reward version {_code(str(reward_versions))}.",
+            "",
+            "| name | stage | status | reward | IoU route | IoU | surface | measures | topology |",
+            "|---|---|---|---|---|---|---|---|---|",
+        ]
+
+        def term(value: float | None) -> str:
+            return "" if value is None else f"{value:.4f}"
+
+        for r in self.rows:
+            sc = r.score
+            route = "" if sc.iou_route is None else sc.iou_route.value
+            lines.append(
+                f"| {_code(r.name)} | {r.stage.value} | {sc.status.value} | {sc.reward:.4f} | "
+                f"{route} | {term(sc.iou)} | {term(sc.surface)} | {term(sc.measures)} | "
+                f"{term(sc.topology)} |"
+            )
+        return "\n".join(lines) + "\n"

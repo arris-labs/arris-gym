@@ -104,7 +104,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
   each target, score, in submission order. Fixtures, one per stage: a valid pair
   (reward 1.0 for a part against itself by construction), a refusal, a target
   that fails, a scoring failure. Failures are counted and none dropped.
-- [ ] Step 6 **[1]** — `rescore/benchcad.py` and `arris-gym rescore benchcad`,
+- [x] Step 6 **[1]** — `rescore/benchcad.py` and `arris-gym rescore benchcad`,
   `rescore.md` included; `tests/test_cli.py` through the `Reader` seam.
 - [ ] Step 7 **[2]** — Run it; commit `tests/fixtures/c1/rescore.json`, `.md` and
   the digest. Two runs at 2 and 16 workers give equal digests. With the `inspect`

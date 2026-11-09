@@ -155,6 +155,16 @@ def test_a_permutation_does_not_move_the_digest(order: list[RescoreRow]) -> None
     assert RescoreTable.of(order).digest == RescoreTable.of(ROWS).digest
 
 
+def test_json_round_trips_and_markdown_names_the_denominators() -> None:
+    table = RescoreTable.of(ROWS)
+    assert RescoreTable.from_json(table.to_json()) == table
+    markdown = table.to_markdown()
+    assert table.digest in markdown
+    assert f"over all {len(ROWS)} programs" in markdown
+    assert "survivors" in markdown
+    assert markdown.count("\n| ") == len(ROWS) + 1
+
+
 def test_a_table_whose_digest_or_counts_disagree_is_refused() -> None:
     table = RescoreTable.of(ROWS)
     fields = table.model_dump()
