@@ -20,6 +20,20 @@ FORBIDDEN_EVERYWHERE = ("cadquery", "OCP", "tools")
 # The core must stay usable without what is built on it.
 CORE = ("sandbox", "reward", "cq")
 FORBIDDEN_IN_CORE = (f"{PACKAGE}.train", f"{PACKAGE}.rescore")
+# A score's path takes no BLAS and no vectorised transcendental
+# (.agents/rules/gym.md, docs/ARCHITECTURE.md §Determinism): their last bits
+# depend on the BLAS build and the CPU. `reward/` is where a score is made.
+# The winding number's `arctan2`, which only feeds a threshold, is not listed.
+NUMERIC_LAYER = "reward"
+NUMPY_ROOTS = ("np", "numpy")
+BANNED_NUMPY = frozenset(
+    (
+        *("dot", "vdot", "inner", "matmul", "einsum", "tensordot"),
+        *("exp", "expm1", "exp2", "sin", "cos", "tan", "sinh", "cosh", "tanh"),
+        *("log", "log2", "log10", "log1p"),
+    )
+)
+BANNED_MATH = frozenset(("exp", "expm1", "sin", "cos", "tan"))
 
 
 def within(name: str, root: str) -> bool:
@@ -74,6 +88,52 @@ def breach(name: str, layer: str) -> str | None:
     return None
 
 
+def attribute_chain(node: ast.expr) -> list[str]:
+    """The names of `a.b.c` as ["a", "b", "c"]; empty where its root is not a name."""
+    names: list[str] = []
+    while isinstance(node, ast.Attribute):
+        names.append(node.attr)
+        node = node.value
+    if not isinstance(node, ast.Name):
+        return []
+    return [node.id, *reversed(names)]
+
+
+def numeric_breaches(tree: ast.AST) -> Iterator[tuple[int, str]]:
+    """Every (line, why) of the `reward` layer's banned operations: `@`, BLAS, libm."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.BinOp | ast.AugAssign) and isinstance(node.op, ast.MatMult):
+            yield node.lineno, "the matrix product `@` takes a BLAS path"
+        elif isinstance(node, ast.Attribute):
+            chain = attribute_chain(node)
+            if len(chain) < 2:
+                continue
+            root, name = chain[0], chain[-1]
+            if root in NUMPY_ROOTS and (name in BANNED_NUMPY or "linalg" in chain[1:]):
+                yield node.lineno, f"{'.'.join(chain)} takes a BLAS or CPU-dispatched path"
+            elif root == "math" and name in BANNED_MATH:
+                yield node.lineno, f"{'.'.join(chain)} follows the platform's libm"
+            elif root == "random":
+                yield node.lineno, "the global RNG: use numpy.random.Generator(PCG64(seed))"
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            top = node.module.split(".")[0]
+            names = {alias.name for alias in node.names}
+            if top == "random":
+                yield node.lineno, "the global RNG: use numpy.random.Generator(PCG64(seed))"
+            elif top in NUMPY_ROOTS and (
+                "linalg" in node.module.split(".") or names & (BANNED_NUMPY | {"linalg"})
+            ):
+                yield node.lineno, f"{node.module} imports a BLAS or CPU-dispatched path"
+            elif top == "math" and names & BANNED_MATH:
+                yield node.lineno, "math's transcendentals follow the platform's libm"
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == "random":
+                    yield node.lineno, "the global RNG: use numpy.random.Generator(PCG64(seed))"
+                elif alias.name.startswith("numpy.linalg"):
+                    yield node.lineno, "numpy.linalg takes a BLAS path"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     default = pathlib.Path(__file__).resolve().parent.parent
@@ -91,6 +151,10 @@ def main() -> int:
         for line, name in imports(tree, module, is_package):
             why = breach(name, layer)
             if why:
+                print(f"{path.relative_to(root)}:{line}: {why}", file=sys.stderr)
+                bad += 1
+        if layer == NUMERIC_LAYER:
+            for line, why in numeric_breaches(tree):
                 print(f"{path.relative_to(root)}:{line}: {why}", file=sys.stderr)
                 bad += 1
     if bad:

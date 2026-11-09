@@ -32,6 +32,7 @@ and `sketch/` (SEED.md §7, Layout). None exists until its cycle opens.
 | everything in `src/` | `cadquery`, `OCP`, `tools` |
 | `sandbox`, `reward`, `cq` | `arris_gym.train`, `arris_gym.rescore` |
 | `cq` | anything but the standard library, `arris` and `arris_gym.cq` |
+| `reward` | `@`, `np.dot`, `np.linalg`, `np.exp`, `np.sin` and their kin, `math.exp`, `random` (§Determinism) |
 
 `cq` keeps its boundary so it can become its own package (`arris-cq`) once
 fidelity is good. It never moves into the `arris` repository, whose API is
@@ -324,7 +325,14 @@ squared nearest distance both ways between 2,048 surface samples per
 normalised body, ×1000. Theirs are unseeded; ours come from `PCG64(seed)`, so
 a body against itself is exactly 1 and 0. Both are scale-blind: a cube
 against its double is `voxel_iou_64` 1 where our IoU is 1/8. Theirs and ours
-never share a name.
+never share a name. Against BenchCAD's scorer itself on ten pairs the field
+agrees within 0.04 on the voxel IoU and 2.0 + 10% on the Chamfer, whose floor
+(their independent sampling against our shared seed) is the larger part
+(ADR-0010).
+
+**`invalidity_rate(scores)`** is the corpus aggregate beside it: the share of
+all rows whose status is not `ok`, failures and scoring failures counted,
+none dropped; no rows raise, since a rate over nothing has no value.
 
 **The IoU has two routes** (ADR-0008, `reward/_iou.py`). The **exact route**
 asks the kernel's `interference` under a step budget, 10⁷ by default: `apart`
@@ -383,7 +391,8 @@ The same program gives the same body, ids and score on every machine.
   follows the platform's libm. So `exp(−d/τ)` and the principal moments'
   eigenvalues are written in `reward/` from the exact operations alone (a
   fixed polynomial, fixed Jacobi sweeps). A transcendental whose result only
-  feeds a threshold, as a winding number's does, is allowed.
+  feeds a threshold, as a winding number's does, is allowed. The gate
+(`tools/check_layers.py`) refuses the listed operations in `reward/`.
 - **Reported, not hidden**: a `timeout` is the one status a slower machine can
   change. ⚠ OPEN: whether the kernel's `budget` argument can give a work limit
   that is the same everywhere, leaving wall-clock as a backstop.

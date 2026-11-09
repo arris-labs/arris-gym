@@ -12,6 +12,7 @@ from arris_gym.reward import (
     RewardConfig,
     RewardWeights,
     Score,
+    invalidity_rate,
     score,
 )
 from arris_gym.sandbox import (
@@ -53,6 +54,7 @@ __all__ = [
     "digest",
     "dump_png",
     "dump_text",
+    "invalidity_rate",
     "run",
     "run_many",
     "score",

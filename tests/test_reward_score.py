@@ -6,6 +6,7 @@ written out; the range property holds for any terms and any valid weights.
 
 from __future__ import annotations
 
+import doctest
 import math
 
 import pytest
@@ -22,6 +23,7 @@ from arris_gym.reward import (
     Score,
     combine,
     failure_reward,
+    invalidity_rate,
 )
 from arris_gym.sandbox.outcome import Status, Versions
 
@@ -262,3 +264,45 @@ def test_the_digest_moves_with_one_bit_of_either_field_metric() -> None:
         FieldMetrics(voxel_iou_64=0.5, chamfer_x1000=math.nextafter(2.0, 3.0)),
     ):
         assert _ok(0.55, terms, nudged).digest() != base.digest()
+
+
+# --- the corpus aggregate -------------------------------------------------------
+
+
+def test_the_invalidity_rate_counts_every_row_and_every_failure() -> None:
+    ok = _ok(1.0, (1.0, 1.0, 1.0, 1.0))
+    rows = [
+        ok,
+        _failed(Status.SYNTAX, -1.0),
+        _failed(Status.ARRIS_REFUSAL, -0.5),
+        _failed(Status.CHECKER_FAIL, -0.3),
+        _failed(Status.TIMEOUT, -1.0),
+        _failed(Status.CRASH, -1.0),
+        _failed(Status.RUNTIME, -1.0),
+        ok,
+    ]
+    assert invalidity_rate(rows) == 6 / 8
+    assert invalidity_rate([ok]) == 0.0
+    assert invalidity_rate(iter([_failed(Status.SYNTAX, -1.0)])) == 1.0
+
+
+@given(
+    st.lists(st.sampled_from(sorted(FAILURES, key=lambda s: s.value)), max_size=20),
+    st.integers(0, 20),
+)
+def test_the_invalidity_rate_is_the_failures_over_all_rows(
+    failures: list[Status], valid: int
+) -> None:
+    rows = [_failed(status, FAILURES[status]) for status in failures]
+    rows += [_ok(1.0, (1.0, 1.0, 1.0, 1.0))] * valid
+    if not rows:
+        with pytest.raises(ValueError, match="no scores"):
+            invalidity_rate(rows)
+        return
+    assert invalidity_rate(rows) == len(failures) / len(rows)
+
+
+def test_the_aggregate_examples_run() -> None:
+    from arris_gym.reward import _aggregate
+
+    assert doctest.testmod(_aggregate).failed == 0

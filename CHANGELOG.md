@@ -23,6 +23,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   Both normalise each body to its own box, so they ignore size and place (a
   cube against its double gives 1 and 0), and neither moves the reward. The
   Chamfer samples are seeded, so a body against itself gives exactly 0.
+- `invalidity_rate(scores)` is the share of all given scores whose status is not
+  `ok` (BenchCAD's invalidity rate): every failure counts, and no scores raise
+  `ValueError`.
 - `run(program, dialect="cq")` (also `run_many`, `Sandbox.run`) runs a
   CadQuery program: `import cadquery as cq` gives a subset over `arris.build`
   and `show_object` is available. The subset covers `Workplane("XY")`,

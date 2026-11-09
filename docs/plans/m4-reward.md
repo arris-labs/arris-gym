@@ -124,7 +124,7 @@ to be established here.
   cone pair among them), `tests/fixtures/reward/benchcad-scorer/`: their output
   from STEP, repeated to measure the spread of their unseeded sampling. The
   tolerance is measured here and cited from the fixture's README (**ADR-0010**).
-- [ ] Step 9 **[1]** — the gate's ban on `reward/`, with its own test; the
+- [x] Step 9 **[1]** — the gate's ban on `reward/`, with its own test; the
   digest of the fixtures' scores equal over three runs, two `PYTHONHASHSEED`s and
   1 against 8 workers; `invalidity_rate` over all rows.
 - [ ] Step 10 **[1]** — `tests/test_m4_acceptance.py`, the roadmap's list as
