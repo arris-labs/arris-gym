@@ -127,7 +127,7 @@ to be established here.
 - [x] Step 9 **[1]** — the gate's ban on `reward/`, with its own test; the
   digest of the fixtures' scores equal over three runs, two `PYTHONHASHSEED`s and
   1 against 8 workers; `invalidity_rate` over all rows.
-- [ ] Step 10 **[1]** — `tests/test_m4_acceptance.py`, the roadmap's list as
+- [x] Step 10 **[1]** — `tests/test_m4_acceptance.py`, the roadmap's list as
   written; file `../arris/docs/ideas/` asks with step 2's numbers (cone against
   cone, the batch `classify_points`); the backlog line removed.
 
@@ -214,3 +214,8 @@ faceted hole's `topology` below 1 and below the plate against itself), plus:
   here and 0.6 to 1.8 there), which the ADR states and the tolerance carries;
   no pair is outside it. The tool fetches the two scorer files at the pinned
   commit and checks their SHA-256 before importing them.
+- *Settled* (agent, step 10): the two arris asks are
+  `../arris/docs/ideas/classify-points-batch.md` and `interference-cone-against-cone.md`
+  (arris's working tree, uncommitted there). The backlog line is rewritten, not
+  deleted: its `Model` reset and id-stable `read_body` half is not something M4
+  measured, so it stays as a line of its own.
