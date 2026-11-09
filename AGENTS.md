@@ -39,7 +39,10 @@ M3 landed: `dialect="cq"` runs the census's 13 API forms (ADR-0007); the
 M4 landed: `score` returns a frozen `Score` (reward version 1; ADR-0008 to
 ADR-0010): the IoU exact where the kernel answers and sampled elsewhere,
 BenchCAD's field metrics beside it, scored in a score worker.
-**Next:** `/plan M5`, the re-scored table.
+M5 landed: `arris-gym rescore benchcad` re-scores the 300 slice programs
+against the oracle's STEPs (ADR-0011); its table's digest is equal on x86-64
+and aarch64.
+**Next:** `/close-cycle` C1.
 
 ## Rules that are not derivable from the code
 

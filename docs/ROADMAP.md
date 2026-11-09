@@ -58,7 +58,11 @@ end plane), **0 unclassified**, 0 timeouts. **M4 landed:** `score` and its
 `Score` under reward version 1 (ADR-0008, ADR-0009), BenchCAD's field metrics
 within ADR-0010's tolerance of its own scorer on 10 pairs; the IoU is exact
 where the kernel answers (1,645 of 1,800 slice pairs) and sampled elsewhere
-(cone against cone), `Score.iou_route` saying which. Next: M5.
+(cone against cone), `Score.iou_route` saying which. **M5 landed:** `arris-gym
+rescore benchcad` scores the 300 slice programs through `cq` against the
+oracle's STEP (ADR-0011): `ok` 200, `arris_refusal` 100, mean reward 0.484 over
+all 300 (0.975 over the 200 valid), 0 timeouts; the table's digest `70e66667…`
+is equal on x86-64 (two CPUs) and aarch64. Next: `/close-cycle` C1.
 
 ### M0 — the sandbox and the harness
 Retires: can a hostile program cost one status and nothing else?

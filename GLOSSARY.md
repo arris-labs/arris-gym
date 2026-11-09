@@ -66,7 +66,7 @@ and the pipes its status and result come back on.
 _Avoid_: request (a kernel task is a thread or process)
 
 **Frame**:
-The one JSON document a program worker or a body worker writes to its result
+The one JSON document a program worker, a body worker or a step worker writes to its result
 pipe to say how its job ended. The caller parses it and trusts none of it
 beyond what costs only that program (ARCHITECTURE.md §The sandbox).
 

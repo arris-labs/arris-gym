@@ -3,9 +3,8 @@
 arris-gym is a Python library: it runs model-written CAD programs on the
 `arris` kernel in a sandbox, returns a typed outcome for every program, and
 scores the result against a target. This document is the design the code is
-held to. Only the package skeleton exists so far; the roadmap says what lands
-when, and a sentence here describes what a milestone must build until that
-milestone lands.
+held to. The roadmap says what lands when; a sentence here describes what a
+milestone must build until that milestone lands.
 
 `⚠ OPEN:` marks a question left for implementation time; an ADR closes it.
 
@@ -18,7 +17,7 @@ src/arris_gym/
   reward/    iou, surface, measures, topology, field metrics, the reward
   census/    parses a corpus and counts the API forms it writes (`arris-gym census`)
   fidelity/  oracle comparison and the disagreement classes
-  rescore/   per-benchmark adapters and the report
+  rescore/   per-benchmark adapters, the re-scored table (`arris-gym rescore`)
 tools/oracle/  its own uv env: CadQuery/OCP, run and never imported
 ```
 
@@ -31,6 +30,7 @@ and `sketch/` (SEED.md §7, Layout). None exists until its cycle opens.
 |---|---|
 | everything in `src/` | `cadquery`, `OCP`, `tools` |
 | `sandbox`, `reward`, `cq` | `arris_gym.train`, `arris_gym.rescore` |
+| `rescore` | `arris_gym.train`, `tools` (it imports `sandbox`, `reward`, `census`, `fidelity`) |
 | `cq` | anything but the standard library, `arris` and `arris_gym.cq` |
 | `reward` | `@`, `np.dot`, `np.linalg`, `np.exp`, `np.sin` and their kin, `math.exp`, `random` (§Determinism) |
 
@@ -416,6 +416,13 @@ The determinism digest is the SHA-256 of a report's rows in program order,
 each row carrying status, refusal, body digest and measures as hex floats, and
 nothing wall-clock. It is the acceptance: equal on two machines.
 
+**Measured.** The re-scored table's digest (§The re-scored table) is equal on
+three machines: AMD Ryzen 9 7950X and AMD EPYC 7763 (x86-64), ARM Neoverse-N2
+(aarch64), glibc 2.39 to 2.43. So `Workplane.rotated`'s libm did not move body
+bytes on the slice. The digest moves with any version it records: a new
+arris-gym, `arris` or `numpy` version, or the reward's, changes it, and the
+committed `rescore.json` is recommitted in a `fixtures:` commit with it.
+
 ## The oracle
 
 `tools/oracle/` is its own `uv` environment holding CadQuery and OCP. It takes
@@ -487,6 +494,39 @@ oracle versions of all the table's rows. Its Markdown writes each kernel's,
 program's or caller's string as a code span of its JSON literal, so no
 backtick or line ending in a message breaks the document, and the JSON keeps
 the string as it is.
+
+## The re-scored table
+
+`arris-gym rescore benchcad` runs the 300 slice programs under `cq` and scores
+each against the oracle's STEP of the same program (the target), read into
+arris. `rescore.rescore(entries, *, sandbox, workers)` returns one
+`RescoreTable`; `rescore/benchcad.py` builds the entries from the pinned
+corpus, `slice.txt` and `tests/fixtures/c1/targets.jsonl.gz`, so the table
+depends on the main environment alone, never on CadQuery (ADR-0011).
+
+- **A row per program**, in name order: source, licence, program SHA-256,
+  dialect, the program's status and refusal, the candidate's and the target's
+  body digests, the target's `step_sha256`, the `Score` and the versions
+  (arris, numpy, reward).
+- **`Stage`** says where a failure happened: `none`, `program`, `target` or
+  `scoring`. A failed target gives a `Score` of status `runtime`, `timeout` or
+  `crash` and reward −1.0; the target is read for every entry, so a `program`
+  row keeps the target's digests. `Score` itself does not change.
+- **Aggregates** state their denominator: counts of every `Status`, `Stage` and
+  `IouRoute`, zeros included; `invalidity_rate`; `mean_reward` over all
+  programs by `math.fsum`; beside it `mean_reward_valid`, labelled as survivors,
+  with its count; `timed_out`, naming each row and stage.
+- **The digest** is the SHA-256 of each row's name, statuses, body digests,
+  `step_sha256` and `Score.digest()`, then the counts and aggregates as hex
+  floats. No timeout message, nothing wall-clock; input order does not move it.
+- **Measured on the slice (reward 1):** `ok` 200, `arris_refusal` 100
+  (`lobed_knob`, reward −0.5), stages `none` 200 and `program` 100, no
+  timeouts; `mean_reward` 0.4836 over 300, 0.9753 over the 200 valid;
+  invalidity 1/3. The IoU is 1.0 on all 200 valid rows, exact on 100 and
+  sampled on the 100 `phone_stand` rows, whose exact route the kernel refuses
+  (`BACKLOG.md`, Findings). Digest `70e66667…`, equal on two architectures.
+- `tools/rescore_diff.py A B` names the rows two tables differ at and the first
+  stage each differs at.
 
 ## Inspection
 

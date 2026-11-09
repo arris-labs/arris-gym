@@ -5,6 +5,28 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `arris-gym rescore benchcad` (needs the `[corpus]` extra) runs the 300 slice
+  programs under `cq` and scores each against the CadQuery oracle's STEP of the
+  same program, writing `rescore.json` and `rescore.md`: a row per program with
+  its status, stage, terms, digests, source, licence and versions, and
+  aggregates over all 300. `mean_reward_valid` (valid programs only) is printed
+  beside `mean_reward` and labelled as survivors. The table's digest is equal
+  on x86-64 and aarch64. From Python: `arris_gym.rescore.rescore(entries)`
+  returns a `RescoreTable` (`RescoreEntry`, `RescoreRow`, `Stage`, `TimedOut`).
+  `Stage` says whether a failure was the program's (`program`), its target's
+  (`target`) or the scorer's (`scoring`). `tools/rescore_diff.py A B` lists the
+  rows two tables differ at.
+- `read_target(step)` (also `Sandbox.read_target`) reads a STEP in a worker of
+  its own and returns a frozen `TargetResult`: one valid solid gives its body,
+  measures and `step_sha256`; text the kernel cannot read, no solid or several
+  give `arris_refusal` or `runtime` with the kernel's words. It never raises on
+  the text.
+- `sandbox.check_workers` and `reward.failed_score` are public: the second
+  builds the `Score` of a failed scorer (status, message, reward -1.0).
+- A program run on a standalone Python (such as one `uv` downloads) now starts
+  inside the sandbox: an exec job may read the shared libraries its
+  interpreter links.
+
 - `score(result, target)` gives an `ExecResult` its reward against a target
   body, under reward version 1 (`DEFAULT_REWARD`), as a frozen `Score`:
   `syntax`, `runtime`, `unsupported_api`, `timeout` and `crash` get -1.0,
