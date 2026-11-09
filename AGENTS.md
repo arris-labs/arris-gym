@@ -36,7 +36,10 @@ and classes each pair (ADR-0005, ADR-0006); `tests/fixtures/c1/oracle.jsonl`
 holds the 300 slice reports.
 M3 landed: `dialect="cq"` runs the census's 13 API forms (ADR-0007); the
 300 slice programs: 200 agree, 100 an arris bug, 0 unclassified.
-**Next:** `/plan M4`, reward and metrics.
+M4 landed: `score` returns a frozen `Score` (reward version 1; ADR-0008 to
+ADR-0010): the IoU exact where the kernel answers and sampled elsewhere,
+BenchCAD's field metrics beside it, scored in a score worker.
+**Next:** `/plan M5`, the re-scored table.
 
 ## Rules that are not derivable from the code
 

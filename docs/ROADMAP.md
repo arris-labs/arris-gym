@@ -51,7 +51,11 @@ classification rule (ADR-0006); all 300 slice programs are `ok` on the oracle,
 the same digest on three runs. **M3 landed:** `dialect="cq"` runs the census's
 13 API forms; the 300 slice programs run under `cq`: 200 agree with the
 oracle, 100 (`lobed_knob`) are an arris bug (chained `fuse` of operands on one
-end plane), **0 unclassified**, 0 timeouts. Next: M4.
+end plane), **0 unclassified**, 0 timeouts. **M4 landed:** `score` and its
+`Score` under reward version 1 (ADR-0008, ADR-0009), BenchCAD's field metrics
+within ADR-0010's tolerance of its own scorer on 10 pairs; the IoU is exact
+where the kernel answers (1,645 of 1,800 slice pairs) and sampled elsewhere
+(cone against cone), `Score.iou_route` saying which. Next: M5.
 
 ### M0 — the sandbox and the harness
 Retires: can a hostile program cost one status and nothing else?

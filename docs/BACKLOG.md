@@ -13,6 +13,9 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - BenchCAD 2.0 (`BenchCAD/benchcad-2.0-public` and `-core`, drawing → STEP, gated, licence "other") is not in the survey: read its terms before C3 and decide if it belongs among the re-scored benchmarks
 - Census: a chain on a receiver it cannot place (`x = a.b().b()…`) keys each `?` call by its whole source prefix, so a hostile program can make `unknown` quadratic in size (4,000 calls: 32 M characters); decide a truncation of the key
 - File with arris (SEED.md §10.6) whether a public `Model` reset or id-stable `read_body` would help consumers; the batch `classify_points` and cone-against-cone asks are filed (`../arris/docs/ideas/`)
+- A scoring failure (`runtime`, `timeout`, `crash` from the score worker) shares its status with a program failure, told apart only by `Score.message`, and `invalidity_rate` counts both; decide a flag on `Score` or a separate count before M5's table, and count scoring `timeout`s apart (wall-clock reaches that reward)
+- `Score` does not check that an `ok` score's `reward` equals `combine(terms, config)`; a validator would refuse a forged one
+- `sandbox/_zygote_main.py` imports `reward._job` to register the score handler, an edge `tools/check_layers.py` does not hold: allow only that module or register through a plugin point
 - `fidelity/_oracle.py` imports the private `sandbox._run.ended` and `sandbox._zygote.Outcome`, so the public `parse_outcome` takes a private type: give `sandbox` a public outcome type or move the parse
 - An oracle zygote (import cadquery once, fork per program): each oracle program pays ~1.5 s of start-up, so the slice takes minutes
 - A crash on both sides is `agree` under ADR-0006, so it never reaches the arris report; decide whether `arris_rows` lists every arris `crash` regardless of outcome (gym.md: an arris crash goes to arris as a fixture candidate)

@@ -336,8 +336,8 @@ none dropped; no rows raise, since a rate over nothing has no value.
 
 **The IoU has two routes** (ADR-0008, `reward/_iou.py`). The **exact route**
 asks the kernel's `interference` under a step budget, 10⁷ by default: `apart`
-or `touching` is 0, containment either way is the smaller volume over the
-larger, otherwise `v∩ / (vA + vB − v∩)`. Any `ArrisError`, the spent budget's
+or `touching` is 0, both containment flags is 1, one flag is the smaller volume
+over the larger, otherwise `v∩ / (vA + vB − v∩)`. Any `ArrisError`, the spent budget's
 `Interrupted` included, sends the pair to the **sampled route**: one PCG64
 point in each of k³ equal cells of the box holding both bodies (k³ ≤ N,
 10,648 by default), classed by a winding number on each body's mesh at 1/200
@@ -395,8 +395,10 @@ The same program gives the same body, ids and score on every machine.
   feeds a threshold, as a winding number's does, is allowed. The gate
 (`tools/check_layers.py`) refuses the listed operations in `reward/`.
 - **Reported, not hidden**: a `timeout` is the one status a slower machine can
-  change. ⚠ OPEN: whether the kernel's `budget` argument can give a work limit
-  that is the same everywhere, leaving wall-clock as a backstop.
+  change. The score's IoU route is decided by the kernel's `budget`, a step
+  count the same everywhere (ADR-0008), so scoring has no wall-clock switch.
+  ⚠ OPEN: whether a program's own run can be given such a work limit, leaving
+  wall-clock as a backstop.
 
 The determinism digest is the SHA-256 of a report's rows in program order,
 each row carrying status, refusal, body digest and measures as hex floats, and
