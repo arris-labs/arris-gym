@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Measure the IoU's routes on the C1 slice: the exact route's budget, the sampled route's draw.
 
-docs/plans/m4-reward.md step 2; its numbers are ADR-0008's. Three commands,
-each short enough to run in pieces (`--start`/`--stop`) and outside the gate:
+docs/plans/m4-reward.md steps 2 and 3; its numbers are ADR-0008's and
+ADR-0009's. Five commands, each short enough to run in pieces
+(`--start`/`--stop`) and outside the gate:
 
 - `bodies` runs the slice under `dialect="cq"` in the sandbox (the pinned
   BenchCAD corpus, the `[corpus]` extra) and writes each `ok` body's bytes to
@@ -15,6 +16,12 @@ each short enough to run in pieces (`--start`/`--stop`) and outside the gate:
 - `summary` prints the tables the ADR holds: every pair counted, the exact
   route's answers by budget, and each estimator's bias and RMSE against the
   exact IoU over the pairs it answered.
+- `surface` measures, for each body, the surface term's noise floor (the
+  distance d between two samplings of the body from two seeds) and d against
+  the same candidates as `pairs`, at each sample count tried; one JSON row
+  per body goes to `<dir>/surface.jsonl`.
+- `surface-summary` prints the floor and the shift ladder ADR-0009 sets τ
+  from, every body counted.
 
 Bodies are read in-process on fresh models: the bodies were made in the
 sandbox, and only this measuring tool, never the library, scores them here.
@@ -42,6 +49,7 @@ import numpy.typing as npt
 
 import arris_gym as ag
 from arris_gym.reward._iou import exact_iou, inside
+from arris_gym.reward._surface import nearest_distances, surface_distance, surface_samples
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 C1 = ROOT / "tests" / "fixtures" / "c1"
@@ -318,15 +326,7 @@ def run_pair(job: Job, index: int) -> dict[str, object]:
 
 def pairs(directory: pathlib.Path, start: int, stop: int | None, workers: int) -> int:
     """The pairs of bodies `start`:`stop` (in stem order), appended to `pairs.jsonl`."""
-    statuses: dict[str, str] = json.loads((directory / "statuses.json").read_text("utf-8"))
-    ok = [s for s, status in statuses.items() if status == "ok"]
-    family = {s: s.rsplit("_", 2)[0] for s in ok}
-    jobs = []
-    for stem in ok:
-        same = [s for s in ok if family[s] == family[stem]]
-        nxt = same[(same.index(stem) + 1) % len(same)]
-        jobs.append(Job(stem, str(directory / f"{stem}.body"), nxt, str(directory / f"{nxt}.body")))
-    chosen = jobs[start:stop]
+    chosen = _jobs(directory)[start:stop]
     path = directory / "pairs.jsonl"
     rows = [json.loads(line) for line in path.open(encoding="utf-8")] if path.is_file() else []
     measured = {(r["stem"], r["kind"], r["value"]) for r in rows}
@@ -411,10 +411,134 @@ def summary(directory: pathlib.Path) -> int:
     return 0
 
 
+# --- the surface term (step 3) ------------------------------------------------
+# The sample counts tried: the seed's N/2 of ADR-0008's N, and half and twice
+# it. The chord is ADR-0008's.
+SURFACE_POINTS = (2_662, 5_324, 10_648)
+SURFACE_CHORD = 1 / 200
+# The τ candidates the summary prints the shift ladder's term under.
+TAUS = (0.02, 0.05, 0.1, 0.2)
+
+
+def _floor(mesh: _Mesh, diagonal: float, n: int, seed: int) -> float:
+    """d between two samplings of one mesh from two seeds: the term's noise floor."""
+    first = surface_samples(mesh, n, seed)
+    second = surface_samples(mesh, n, seed + 1)
+    forward = math.fsum(nearest_distances(first, second).tolist()) / n
+    backward = math.fsum(nearest_distances(second, first).tolist()) / n
+    return (forward + backward) / (2.0 * diagonal)
+
+
+def run_surface(job: Job) -> dict[str, object]:
+    """One body's row: its floor and its d against each candidate, at each sample count."""
+    seed = _seed(job.stem)
+    model = arris.Model()
+    target = model.read_body(pathlib.Path(job.path).read_bytes()).body
+    low, high = _corners(model, target)
+    diagonal = math.dist(low.tolist(), high.tolist())
+    mesh = _mesh(model, target, SURFACE_CHORD)
+    row: dict[str, object] = {"stem": job.stem, "triangles": len(mesh[0])}
+    floors: dict[str, float] = {}
+    distances: dict[str, float] = {}
+    seconds: dict[str, float] = {}
+    for n in SURFACE_POINTS:
+        floors[str(n)] = _floor(mesh, diagonal, n, seed)
+    for index, (kind, value) in enumerate(KINDS):
+        if kind == "self":
+            continue
+        if kind == "neighbour":
+            other = model.read_body(pathlib.Path(job.neighbour_path).read_bytes()).body
+        else:
+            other = candidate(model, target, kind, value, seed + index)
+        label = kind if kind == "neighbour" else f"{kind} {value:g}"
+        for n in SURFACE_POINTS:
+            t = time.perf_counter()
+            distances[f"{label}/{n}"] = surface_distance(
+                model, other, target, chord_fraction=SURFACE_CHORD, points=n, seed=seed
+            )
+            seconds[f"{label}/{n}"] = time.perf_counter() - t
+    row |= {"floor": floors, "d": distances, "seconds": seconds}
+    return row
+
+
+def _jobs(directory: pathlib.Path) -> list[Job]:
+    statuses: dict[str, str] = json.loads((directory / "statuses.json").read_text("utf-8"))
+    ok = [s for s, status in statuses.items() if status == "ok"]
+    family = {s: s.rsplit("_", 2)[0] for s in ok}
+    jobs = []
+    for stem in ok:
+        same = [s for s in ok if family[s] == family[stem]]
+        nxt = same[(same.index(stem) + 1) % len(same)]
+        jobs.append(Job(stem, str(directory / f"{stem}.body"), nxt, str(directory / f"{nxt}.body")))
+    return jobs
+
+
+def surface(directory: pathlib.Path, start: int, stop: int | None, workers: int) -> int:
+    """The surface rows of bodies `start`:`stop` (in stem order), appended to `surface.jsonl`."""
+    path = directory / "surface.jsonl"
+    rows = [json.loads(line) for line in path.open(encoding="utf-8")] if path.is_file() else []
+    measured = {r["stem"] for r in rows}
+    todo = [job for job in _jobs(directory)[start:stop] if job.stem not in measured]
+    with ProcessPoolExecutor(max_workers=workers) as pool, path.open("a", encoding="utf-8") as out:
+        futures = {pool.submit(run_surface, job): job for job in todo}
+        for done, future in enumerate(as_completed(futures), 1):
+            out.write(json.dumps(future.result()) + "\n")
+            out.flush()
+            print(f"{done}/{len(futures)} {futures[future].stem}", file=sys.stderr)
+    return 0
+
+
+def _quantiles(values: Sequence[float]) -> str:
+    ordered = sorted(values)
+    median = statistics.median(ordered)
+    return f"{ordered[0]:.4f} | {median:.4f} | {ordered[-1]:.4f}"
+
+
+def surface_summary(directory: pathlib.Path) -> int:
+    """Print the floor by family and sample count, then the ladder's d and term under each τ."""
+    rows = [json.loads(line) for line in (directory / "surface.jsonl").open(encoding="utf-8")]
+    statuses: dict[str, str] = json.loads((directory / "statuses.json").read_text("utf-8"))
+    ok = sorted(s for s, v in statuses.items() if v == "ok")
+    print(f"bodies {len(rows)} of {len(ok)} ok bodies")
+    family = {r["stem"]: r["stem"].rsplit("_", 2)[0] for r in rows}
+    families = ["all", *sorted(set(family.values()))]
+    print("\n| family | points | floor min | median | max | median s per d |")
+    print("|---|---|---|---|---|---|")
+    for fam in families:
+        chosen = [r for r in rows if fam in ("all", family[r["stem"]])]
+        for n in SURFACE_POINTS:
+            floors = [r["floor"][str(n)] for r in chosen]
+            secs = statistics.median(
+                v for r in chosen for k, v in r["seconds"].items() if k.endswith(f"/{n}")
+            )
+            print(f"| {fam} | {n} | {_quantiles(floors)} | {secs:.3f} |")
+    labels = sorted({k.rsplit("/", 1)[0] for r in rows for k in r["d"]})
+    for n in SURFACE_POINTS:
+        print(f"\nd by candidate, {n} points (min | median | max over every body)")
+        print(
+            "\n| candidate | family | d min | median | max |"
+            + "".join(f" term τ={t:g} |" for t in TAUS)
+        )
+        print("|---|---|---|---|---|" + "---|" * len(TAUS))
+        for label in ["floor", *labels]:
+            for fam in families:
+                ds = [
+                    r["floor"][str(n)] if label == "floor" else r["d"][f"{label}/{n}"]
+                    for r in rows
+                    if fam in ("all", family[r["stem"]])
+                ]
+                median = statistics.median(ds)
+                terms = "".join(f" {math.exp(-median / t):.3f} |" for t in TAUS)
+                print(f"| {label} | {fam} | {_quantiles(ds)} |{terms}")
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
-    """The three commands: `bodies`, `pairs`, `summary`."""
+    """The five commands: `bodies`, `pairs`, `summary`, `surface`, `surface-summary`."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("command", choices=("bodies", "pairs", "summary"))
+    parser.add_argument(
+        "command", choices=("bodies", "pairs", "summary", "surface", "surface-summary")
+    )
     parser.add_argument("--dir", type=pathlib.Path, required=True)
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--stop", type=int)
@@ -424,6 +548,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return bodies(args.dir, args.start, args.stop, args.workers)
     if args.command == "pairs":
         return pairs(args.dir, args.start, args.stop, args.workers)
+    if args.command == "surface":
+        return surface(args.dir, args.start, args.stop, args.workers)
+    if args.command == "surface-summary":
+        return surface_summary(args.dir)
     return summary(args.dir)
 
 

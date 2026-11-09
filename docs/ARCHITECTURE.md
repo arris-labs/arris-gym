@@ -314,6 +314,14 @@ answers 1,645 of 1,800 pairs by construction, the 155 others a cone face
 against a cone face, and the sampled route's RMSE against it is 0.009. The
 seed's near-surface points feed only `surface`, never the IoU.
 
+**The surface term is exp(−d/τ)** (ADR-0009, `reward/_surface.py`). Each body
+draws N/2 surface samples (5,324) by area on its mesh at the IoU's chord, from
+a fresh `PCG64(seed)`, so bodies that mesh alike draw the same samples and
+score exactly 1. d is the mean of the two one-way mean nearest-sample
+distances, over the target's diagonal. Two samplings of one surface sit at a
+d of at most 0.0083 on the slice, the noise floor a part built two ways
+meets; τ is 0.05, six times it. `exp` is a fixed polynomial with `ldexp`.
+
 ## Determinism
 
 The same program gives the same body, ids and score on every machine.

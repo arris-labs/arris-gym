@@ -84,7 +84,8 @@ machine speed move a score.
 - **Gate**: `tools/check_layers.py` refuses `@`, `np.dot`, `np.linalg`, `np.exp`,
   `np.sin`, `math.exp` and `random` in `reward/`; the winding number's
   `arctan2`, which only feeds a threshold, is the one named exception.
-- **Glossary**: **Score worker**, **Exact route**, **Sampled route**, **Reward config**.
+- **Glossary**: **Score worker**, **Exact route**, **Sampled route**, **Reward config**;
+  **Surface sample** and **Noise floor** (step 3).
 
 ## Steps
 Complexity grades; a step's grade is its tier (`.agents/tiers.md`), and
@@ -102,7 +103,7 @@ to be established here.
 - [x] Step 2 **[3]** — **ADR-0008**, from `tools/reward_calibrate.py` over the
   slice: `iou_budget`, chord, N and the strata, with each candidate's bias and
   RMSE against the exact route written in the ADR.
-- [ ] Step 3 **[3]** — `surface`: seeded area-weighted points, nearest-point
+- [x] Step 3 **[3]** — `surface`: seeded area-weighted points, nearest-point
   distances in chunks, the `exp` polynomial (its error bounded against
   `math.exp` in the test only). **ADR-0009**: the formulas and τ, measured.
 - [ ] Step 4 **[2]** — `measures` (Jacobi against the closed-form inertia of a
@@ -176,6 +177,13 @@ faceted hole's `topology` below 1 and below the plate against itself), plus:
   concurrent processes, so step 6's score deadline (30 s in the deltas) has
   1.8× headroom on this machine; step 6 keeps the deadline above it and a
   scoring `timeout` stays counted.
+- *Settled* (agent, step 3): ADR-0009 measured τ = 0.05 from the slice's
+  200 bodies: the noise floor (one mesh sampled from two seeds) is at most
+  0.0083 of the diagonal at 5,324 samples per body, N/2 of ADR-0008's N, so
+  `RewardConfig` needs no field of its own for the count; τ is six times it.
+  A move under about 0.02 of the diagonal sits at the floor, and the IoU
+  carries that range. The topology split is ½ by default, unmeasured: step 4
+  holds its closed forms, step 5 writes the weight into the config.
 - *Settled* (agent): `benchcad_score.py` runs the 10 pairs on CadQuery outside
   the sandbox, because their scorer reads STEP files and every sandbox mount is
   read-only. The pairs are our own programs; nothing from a corpus reaches it.

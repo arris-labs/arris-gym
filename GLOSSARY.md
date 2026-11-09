@@ -135,6 +135,16 @@ body's mesh: what answers when the exact route refuses or spends its budget
 (ADR-0008).
 _Avoid_: mesh IoU, Monte Carlo IoU
 
+**Surface sample**:
+A point drawn uniformly by area on a body's mesh from a seed, for the
+`surface` term (ADR-0009). Never a part of a corpus: that is a slice.
+_Avoid_: surface point cloud
+
+**Noise floor**:
+The `surface` term's distance between two samplings of one surface from two
+seeds: what a part built two ways meets. τ is held at least five times it
+(ADR-0009).
+
 **Field metric**:
 A metric computed the way a published benchmark defines it, so its numbers
 compare with theirs. Kept apart from ours.
