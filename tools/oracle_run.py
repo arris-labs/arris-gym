@@ -104,8 +104,8 @@ def slice_rows(
 
     Reads the pinned corpus through `census.benchcad` (the `[corpus]` extra
     and the network, outside the gate). Each row is the stem, family, licence
-    and revision beside the report without its wall-clock `seconds`, so the
-    rows are the same bytes on every run. Raises `ValueError` for a stem the
+    and revision beside the report without its STEP text and wall-clock
+    `seconds`, so the rows are the same bytes on every run. Raises `ValueError` for a stem the
     corpus lacks or lists twice.
     """
     from arris_gym.census import benchcad
@@ -125,7 +125,7 @@ def slice_rows(
             "family": p.family,
             "licence": benchcad.LICENCE,
             "revision": benchcad.REVISION,
-            "report": json.loads(r.model_dump_json(exclude={"seconds"})),
+            "report": json.loads(r.model_dump_json(exclude={"step", "seconds"})),
         }
         for p, r in zip(programs, reports, strict=True)
     ]
@@ -143,7 +143,8 @@ def rows_digest(text: str) -> str:
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the given program files and write `oracle.jsonl`: one row per program
-    in the order given, `{"path": ..., "report": ...}`, `seconds` included.
+    in the order given, `{"path": ..., "report": ...}`, `seconds` included and
+    the STEP text left out.
     With `--slice FILE`, run the BenchCAD programs of those stems instead
     (`slice_rows`), sorted by stem, and print the status counts and digest."""
     parser = argparse.ArgumentParser(description="Run programs on the oracle.")
@@ -173,7 +174,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     reports = run_many(texts, timeout=args.timeout, workers=args.workers)
     with args.out.open("w", encoding="utf-8") as out:
         for path, report in zip(args.programs, reports, strict=True):
-            row = {"path": str(path), "report": json.loads(report.model_dump_json())}
+            row = {
+                "path": str(path),
+                "report": json.loads(report.model_dump_json(exclude={"step"})),
+            }
             out.write(json.dumps(row, sort_keys=True) + "\n")
     counts = {}
     for report in reports:

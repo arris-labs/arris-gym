@@ -55,10 +55,13 @@ cq.Shape.hashCode = _shape_hash_code  # type: ignore[method-assign]
 # and its size would make a report depend on the machine. The pool is created
 # here, before any program, with one thread: the calling one.
 OSD_ThreadPool.DefaultPool_s(1)
-# STEP's header carries a timestamp, and the product name a per-process counter
-# ("translator 7.9 2"); the data section is hashed with the counter blanked.
-_STEP_DATA_MARK = b"DATA;"
-_STEP_COUNTER = re.compile(rb"(translator \d+\.\d+ )\d+")
+# STEP's header carries a timestamp, FILE_NAME's second argument, and the
+# product name a per-process counter ("translator 7.9 2"). The text sent back
+# has both blanked, so it is the same bytes on every run; its hash is of the
+# data section alone, which `fidelity/_oracle.py` recomputes the same way.
+_STEP_DATA_MARK = "DATA;"
+_STEP_COUNTER = re.compile(r"(translator \d+\.\d+ )\d+")
+_STEP_TIMESTAMP = re.compile(r"(FILE_NAME\('(?:[^']|'')*',)'[^']*'")
 
 
 def _count(shape: cq.Shape, kind: Any) -> int:
@@ -104,23 +107,35 @@ def _measures(shape: cq.Shape) -> dict[str, Any]:
     }
 
 
-def _step_sha256(shape: cq.Shape) -> str:
-    # As ``cq.exporters.export`` writes STEP (a compound, ``Shape.exportStep``'s
-    # defaults), but to memory: an oracle worker can write no file.
+def _step_text(shape: cq.Shape) -> str:
+    """The STEP of ``shape``, its timestamp and translator counter blanked.
+
+    As ``cq.exporters.export`` writes STEP (a compound, ``Shape.exportStep``'s
+    defaults), but to memory: an oracle worker can write no file. Open
+    CASCADE writes ISO 10303-21's ASCII.
+    """
     writer = STEPControl_Writer()
     Interface_Static.SetIVal_s("write.surfacecurve.mode", 1)
     Interface_Static.SetIVal_s("write.precision.mode", 0)
     writer.Transfer(cq.Compound.makeCompound([shape]).wrapped, STEPControl_AsIs)
     stream = io.BytesIO()
     writer.WriteStream(stream)
-    data = stream.getvalue()
-    return hashlib.sha256(
-        _STEP_COUNTER.sub(rb"\1N", data[data.index(_STEP_DATA_MARK) :])
-    ).hexdigest()
+    text = stream.getvalue().decode("ascii")
+    text = _STEP_TIMESTAMP.sub(r"\1''", text, count=1)
+    return _STEP_COUNTER.sub(r"\1N", text)
+
+
+def _step_sha256(text: str) -> str:
+    """The hash of a blanked STEP text: its data section's UTF-8 bytes."""
+    data = text[text.index(_STEP_DATA_MARK) :]
+    return hashlib.sha256(data.encode("utf-8", "surrogatepass")).hexdigest()
 
 
 def run_program(text: str) -> dict[str, Any]:
     """Run ``text`` and return its report: status, message, measures, hashes.
+
+    ``step_text`` is the result's STEP, blanked as ``_step_text`` says, and
+    ``step_sha256`` its hash: both set exactly when the status is ``ok``.
 
     Statuses: ``ok``, ``syntax``, ``runtime``, ``no_result`` and ``invalid``
     (``BRepCheck_Analyzer`` fails). Messages are the exception's own words.
@@ -130,6 +145,7 @@ def run_program(text: str) -> dict[str, Any]:
         "message": "",
         "measures": None,
         "step_sha256": None,
+        "step_text": None,
         "program_sha256": hashlib.sha256(text.encode("utf-8", "surrogatepass")).hexdigest(),
         "versions": {
             "cadquery": cq.__version__,
@@ -162,7 +178,8 @@ def run_program(text: str) -> dict[str, Any]:
     if not BRepCheck_Analyzer(shape.wrapped).IsValid():
         report.update(status="invalid", message="BRepCheck_Analyzer: shape is not valid")
         return report
-    report["step_sha256"] = _step_sha256(shape)
+    step = _step_text(shape)
+    report.update(step_text=step, step_sha256=_step_sha256(step))
     return report
 
 

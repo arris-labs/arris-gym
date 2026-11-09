@@ -26,7 +26,9 @@ licence (`CC-BY-4.0`), the corpus revision above and the oracle's report
 `uv run --extra corpus tools/oracle_run.py --slice tests/fixtures/c1/slice.txt
 --workers 16` (network; outside the gate). Digest, the SHA-256 of the file:
 `6bbfb7724508505b44e664d1b74d16c2ce70bf777d2c8e70e86de93cd3add68b`
-(three runs equal, at 8 and 16 workers).
+(three runs equal, at 8 and 16 workers; a fourth, after the worker began
+sending its STEP text back (ADR-0011), equal too: the text is left out of
+the rows).
 
 Status counts over all 300 programs:
 

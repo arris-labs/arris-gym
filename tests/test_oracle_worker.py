@@ -9,6 +9,7 @@ worker's one JSON frame.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import signal
 import time
@@ -176,6 +177,23 @@ def test_run_report_parses_the_real_frame(zygote: Zygote, oracle: _exec.ExecSpec
     assert report.program_sha256 == program_sha256(program)
     assert report.versions is not None
     assert report.versions.cadquery == "2.3.0"
+
+
+def test_the_step_text_is_the_same_bytes_on_every_run_and_holds_its_hash(
+    zygote: Zygote, oracle: _exec.ExecSpec
+) -> None:
+    # Two workers, so two processes' translator counters and two clocks: the
+    # blanked text is equal, and its data section hashes to `step_sha256`.
+    program = "import cadquery as cq\nresult = cq.Workplane().box(2, 3, 4)\n"
+    a, b = (oracle_run.run_report(zygote, oracle, program, timeout=TIMEOUT) for _ in range(2))
+    assert a.step is not None
+    assert a.step == b.step
+    assert "FILE_NAME('Open CASCADE Shape Model','',(" in a.step
+    assert "'Open CASCADE STEP translator 7.9 N'" in a.step
+    data = a.step[a.step.index("DATA;") :].encode("ascii")
+    assert a.step_sha256 == hashlib.sha256(data).hexdigest()
+    assert a.step.startswith("ISO-10303-21;")
+    assert a.step.rstrip().endswith("END-ISO-10303-21;")
 
 
 def test_run_many_keeps_submission_order() -> None:

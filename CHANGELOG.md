@@ -49,7 +49,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `fidelity.parse_outcome` turns an oracle worker's outcome into an
   `OracleReport` (`OracleStatus`: `ok`, `syntax`, `runtime`, `no_result`,
   `invalid`, `timeout`, `crash`) and never raises: a report that contradicts
-  itself is a `crash`.
+  itself is a `crash`. An `ok` report carries the oracle's STEP as `step`,
+  the same text on every run (its timestamp and translator counter blanked),
+  and `step_sha256` is its data section's hash; a STEP that contradicts its
+  hash is a `crash`. `step` stays out of `OracleReport.digest()`.
 - `fidelity.fidelity_table(entries)` gathers rows, each with its program's
   source and licence, into a `FidelityTable`: sorted by name, counts over every
   row, and a digest that input order does not move. `fidelity.arris_rows(table)`

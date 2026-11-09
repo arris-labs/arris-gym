@@ -428,10 +428,19 @@ any worker's.
 `fidelity.parse_outcome` turns that outcome into an **oracle report**
 (`OracleReport`: an `OracleStatus` of `ok`, `syntax`, `runtime`, `no_result`,
 `invalid`, `timeout` or `crash`, the message verbatim, measures, STEP hash,
-versions). It never raises: a frame that is unparseable, claims a status only
-the caller decides, contradicts its status or carries another program's
-SHA-256 is a `crash`. `tools/oracle_run.py` runs a list of programs and writes
-`oracle.jsonl` in submission order.
+versions, and for `ok` the STEP text). It never raises: a frame that is
+unparseable, claims a status only the caller decides, contradicts its status,
+carries another program's SHA-256 or a STEP text whose recomputed hash is not
+its `step_sha256` is a `crash`. `tools/oracle_run.py` runs a list of programs
+and writes `oracle.jsonl` in submission order.
+
+The STEP text (`step_text` in the frame, `OracleReport.step`) is what the
+re-scored table reads as a target (ADR-0011). The worker blanks the two
+things in it that change from run to run, `FILE_NAME`'s timestamp and the
+translator's per-process counter, so the text is the same bytes on every
+run. `step_sha256` hashes its data section, from `DATA;` on. The text stays
+out of `OracleReport.digest()` and out of `oracle.jsonl`, which the hash
+already pins.
 
 Two measurements **agree** when volume, area, centroid and bounds are each
 inside the **agreement tolerance** (`fidelity/_agreement.py`, ADR-0005), set

@@ -101,6 +101,12 @@ model and computes the reward's four terms, under the same limits as the
 others; the caller computes the reward from its frame and trusts none of it.
 _Avoid_: scorer process, evaluator
 
+**Step worker**:
+The worker that reads a STEP text into a fresh model with `read_step` and
+writes the one solid's body bytes, which a body worker then checks and
+measures; a STEP from the oracle is a hostile program's output (ADR-0011).
+_Avoid_: STEP reader, importer
+
 **Exec spec**:
 What an exec job's worker runs once isolated: an interpreter, its arguments
 and environment, and the paths it may read and execute, in place of the
@@ -114,9 +120,10 @@ _Avoid_: oracle process, oracle sandbox
 
 **Oracle report**:
 What one program did on the oracle: an `OracleStatus`, the exception's words,
-Open CASCADE's measures and the STEP hash, parsed from the oracle worker's
-frame, which the caller trusts no more than any worker's. A frame that
-contradicts its status or its job is a `crash`.
+Open CASCADE's measures, the STEP hash and, for `ok`, the STEP text with its
+timestamp and counter blanked, parsed from the oracle worker's frame, which
+the caller trusts no more than any worker's. A frame that contradicts its
+status, its job or its STEP's hash is a `crash`.
 _Avoid_: oracle result
 
 ## Scoring

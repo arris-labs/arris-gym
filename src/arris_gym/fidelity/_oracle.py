@@ -4,7 +4,7 @@ An oracle worker (ADR-0004) writes one JSON frame; the caller trusts none of
 it, as it trusts none of any worker's (a program can reach its result pipe
 and write its own). `parse_outcome` turns a job's `Outcome` into an
 `OracleReport` and never raises: a frame that is not one whole, or that
-contradicts its status or the program sent, is a `crash`.
+contradicts its status, the program sent or its own STEP's hash, is a `crash`.
 """
 
 from __future__ import annotations
@@ -24,6 +24,17 @@ from arris_gym.sandbox._zygote import Outcome
 # How a failed job names the worker in a `crash` or `timeout` message.
 ORACLE_WORKER = "oracle worker"
 _SHA256 = re.compile(r"[0-9a-f]{64}")
+# Where a STEP text's data section starts: `step_sha256` hashes from here on,
+# as `tools/oracle/worker.py` does, so a header the worker blanked stays out.
+_STEP_DATA_MARK = "DATA;"
+
+
+def _step_sha256(step: str) -> str | None:
+    """The `step_sha256` of a STEP text, or None when it has no data section."""
+    start = step.find(_STEP_DATA_MARK)
+    if start < 0:
+        return None
+    return hashlib.sha256(step[start:].encode("utf-8", "surrogatepass")).hexdigest()
 
 
 class OracleStatus(enum.Enum):
@@ -96,8 +107,14 @@ class OracleReport(BaseModel):
     `status` is `OK` or `INVALID` (the checker runs after the measures);
     `step_sha256` exactly when it is `OK`; `versions` exactly when the worker
     answered, so not for `TIMEOUT` or `CRASH`; both hashes are 64 lower-case
-    hex digits. `message` is the exception's own words, verbatim. `seconds`
-    is wall-clock and sits outside `digest`.
+    hex digits. `message` is the exception's own words, verbatim.
+
+    `step` is the result's STEP text with its header's timestamp and the
+    translator counter blanked (ADR-0011): set only when `status` is `OK`, and
+    then `step_sha256` is its data section's hash. It is left out of a
+    recorded report (`oracle.jsonl`, a fixture's `oracle.json`), so a report
+    read back has it None. `seconds` is wall-clock; `step` and `seconds` sit
+    outside `digest`, which `step_sha256` already pins.
     """
 
     model_config = _CONFIG
@@ -108,6 +125,7 @@ class OracleReport(BaseModel):
     step_sha256: str | None
     program_sha256: str
     versions: OracleVersions | None
+    step: str | None = None
     seconds: float = 0.0
 
     @model_validator(mode="after")
@@ -121,10 +139,14 @@ class OracleReport(BaseModel):
         for sha in (self.program_sha256, self.step_sha256):
             if sha is not None and not _SHA256.fullmatch(sha):
                 raise ValueError("a SHA-256 is 64 lower-case hex digits")
+        if self.step is not None and (
+            self.status is not OracleStatus.OK or _step_sha256(self.step) != self.step_sha256
+        ):
+            raise ValueError("step is set only when status is OK, and step_sha256 is its hash")
         return self
 
     def digest(self) -> str:
-        """The SHA-256 of this report without its wall-clock `seconds`.
+        """The SHA-256 of this report without its `step` text or wall-clock `seconds`.
 
         >>> r = OracleReport(
         ...     status=OracleStatus.SYNTAX, message="m", measures=None, step_sha256=None,
@@ -134,12 +156,13 @@ class OracleReport(BaseModel):
         >>> r.digest() == r.model_copy(update={"seconds": 9.0}).digest()
         True
         """
-        data = self.model_dump_json(exclude={"seconds"}).encode("utf-8")
+        data = self.model_dump_json(exclude={"step", "seconds"}).encode("utf-8")
         return hashlib.sha256(data).hexdigest()
 
 
 class _OracleFrame(BaseModel):
-    """The frame an oracle worker writes: an `OracleReport` without `seconds`."""
+    """The frame an oracle worker writes: an `OracleReport` with `step_text`
+    for its `step`, without `seconds`."""
 
     model_config = _CONFIG
 
@@ -147,6 +170,7 @@ class _OracleFrame(BaseModel):
     message: str
     measures: OracleMeasures | None
     step_sha256: str | None
+    step_text: str | None
     program_sha256: str
     versions: OracleVersions
 
@@ -166,8 +190,9 @@ def parse_outcome(
     `TIMEOUT` or `CRASH` with the sandbox's own message. A frame is believed
     only when whole and consistent: unparseable, claiming a status only the
     caller decides (it would carry versions the caller's statuses do not),
-    contradicting its status, or carrying another program's SHA-256, it is a
-    `CRASH`.
+    contradicting its status, carrying another program's SHA-256, or carrying
+    a STEP text whose recomputed hash is not its `step_sha256`, it is a
+    `CRASH`. An `OK` frame carries its STEP text; any other carries none.
     """
     sha = program_sha256(program)
     early = ended(outcome, ORACLE_WORKER, timeout)
@@ -176,10 +201,18 @@ def parse_outcome(
         return _caller_report(status, early.message, sha, seconds)
     try:
         frame = _OracleFrame.model_validate_json(outcome.data)
-        report = OracleReport(
-            **dict(frame),  # one level only: the nested models are already validated
-            seconds=seconds,
-        )
+        fields = dict(frame)  # one level only: the nested models are already validated
+        step = fields.pop("step_text")
+        if (step is not None) != (frame.status is OracleStatus.OK):
+            raise ValueError("step_text is set exactly when status is OK")
+        if step is not None and _step_sha256(step) != frame.step_sha256:
+            return _caller_report(
+                OracleStatus.CRASH,
+                f"the {ORACLE_WORKER} delivered a STEP that contradicts its hash",
+                sha,
+                seconds,
+            )
+        report = OracleReport(**fields, step=step, seconds=seconds)
     except (pydantic.ValidationError, ValueError, RecursionError):
         return _caller_report(
             OracleStatus.CRASH,

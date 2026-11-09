@@ -27,3 +27,4 @@ training cycle starts from.
 | [0008](0008-the-iou-is-exact-where-the-kernel-answers-and-sampled-on-a-jittered-grid-elsewhere.md) | The IoU is exact where the kernel answers, and sampled on a jittered grid elsewhere | accepted |
 | [0009](0009-the-surface-term-is-a-seeded-nearest-sample-distance-under-a-tau-five-times-its-noise-floor.md) | The surface term is a seeded nearest-sample distance, under a τ five times its noise floor | accepted |
 | [0010](0010-the-field-metrics-agree-with-benchcads-scorer-within-a-floor-and-a-tenth.md) | The field metrics agree with BenchCAD's scorer within a voxel tolerance of 0.04, and a Chamfer floor of 2.0 plus a tenth | accepted |
+| [0011](0011-a-target-is-the-oracles-step-read-in-a-step-worker-and-committed.md) | A target is the oracle's STEP, read in a step worker and committed | accepted |
