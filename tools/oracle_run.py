@@ -11,6 +11,7 @@ the main environment; needs `uv sync --project tools/oracle` first.
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import pathlib
@@ -19,6 +20,7 @@ import time
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor
 
+from arris_gym.census import CorpusProgram
 from arris_gym.fidelity import OracleReport, parse_outcome
 from arris_gym.sandbox import _exec
 from arris_gym.sandbox._zygote import ENVIRONMENT, JobKind, Outcome, Zygote
@@ -97,15 +99,13 @@ def read_slice(path: pathlib.Path) -> list[str]:
     return [line for line in lines if line and not line.startswith("#")]
 
 
-def slice_rows(
+def slice_reports(
     stems: Sequence[str], *, timeout: float = DEFAULT_TIMEOUT, workers: int = DEFAULT_WORKERS
-) -> list[dict[str, object]]:
-    """The oracle rows of BenchCAD programs by stem, sorted by stem.
+) -> tuple[list[CorpusProgram], list[OracleReport]]:
+    """The BenchCAD programs of `stems` sorted by stem, and their oracle reports.
 
     Reads the pinned corpus through `census.benchcad` (the `[corpus]` extra
-    and the network, outside the gate). Each row is the stem, family, licence
-    and revision beside the report without its STEP text and wall-clock
-    `seconds`, so the rows are the same bytes on every run. Raises `ValueError` for a stem the
+    and the network, outside the gate). Raises `ValueError` for a stem the
     corpus lacks or lists twice.
     """
     from arris_gym.census import benchcad
@@ -119,6 +119,20 @@ def slice_rows(
         raise ValueError(f"stems not in the pinned corpus: {missing[:5]}")
     programs = [by_stem[stem] for stem in ordered]
     reports = run_many([p.text for p in programs], timeout=timeout, workers=workers)
+    return programs, reports
+
+
+def slice_rows(
+    programs: Sequence[CorpusProgram], reports: Sequence[OracleReport]
+) -> list[dict[str, object]]:
+    """The oracle rows of BenchCAD programs, in the order given.
+
+    Each row is the stem, family, licence and revision beside the report
+    without its STEP text and wall-clock `seconds`, so the rows are the same
+    bytes on every run.
+    """
+    from arris_gym.census import benchcad
+
     return [
         {
             "stem": p.stem,
@@ -129,6 +143,22 @@ def slice_rows(
         }
         for p, r in zip(programs, reports, strict=True)
     ]
+
+
+def targets_bytes(programs: Sequence[CorpusProgram], reports: Sequence[OracleReport]) -> bytes:
+    """The targets file: gzip (`mtime=0`) of one JSON line per program, `stem`,
+    `step_sha256` and the `step` text, in the order given.
+
+    A report with no STEP (the oracle did not end `ok`) has no target: a
+    `ValueError` names its stem, never a row left out.
+    """
+    lines = []
+    for p, r in zip(programs, reports, strict=True):
+        if r.step is None or r.step_sha256 is None:
+            raise ValueError(f"{p.stem}: the oracle gave no STEP ({r.status.value})")
+        row = {"stem": p.stem, "step_sha256": r.step_sha256, "step": r.step}
+        lines.append(json.dumps(row, sort_keys=True) + "\n")
+    return gzip.compress("".join(lines).encode("utf-8"), mtime=0)
 
 
 def rows_text(rows: Sequence[dict[str, object]]) -> str:
@@ -153,6 +183,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--start", type=int, default=0, help="with --slice: first stem to run")
     parser.add_argument("--stop", type=int, help="with --slice: stop before this stem")
     parser.add_argument("--out", type=pathlib.Path, default=pathlib.Path("oracle.jsonl"))
+    parser.add_argument(
+        "--targets",
+        type=pathlib.Path,
+        help="with --slice: also write the targets file (stem, step_sha256, STEP text), gzipped",
+    )
     parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT)
     parser.add_argument("--workers", type=int, default=DEFAULT_WORKERS)
     args = parser.parse_args(argv)
@@ -160,9 +195,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.error("give program files, or --slice FILE, not both and not neither")
     if args.slice is not None:
         stems = sorted(read_slice(args.slice))[args.start : args.stop]
-        rows = slice_rows(stems, timeout=args.timeout, workers=args.workers)
+        programs, reports = slice_reports(stems, timeout=args.timeout, workers=args.workers)
+        rows = slice_rows(programs, reports)
         text = rows_text(rows)
         args.out.write_text(text, encoding="utf-8")
+        if args.targets is not None:
+            args.targets.write_bytes(targets_bytes(programs, reports))
         counts: dict[str, int] = {}
         for row in rows:
             status = str(row["report"]["status"])  # type: ignore[index]

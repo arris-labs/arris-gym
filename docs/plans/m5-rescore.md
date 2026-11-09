@@ -93,7 +93,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
   volume; garbage, empty, a NUL byte, no solid and two solids each give their
   status; `hypothesis`: arbitrary text never raises. Body bytes equal across two
   runs.
-- [ ] Step 3 **[1]** — `tools/oracle_run.py --targets` writes the targets file;
+- [x] Step 3 **[1]** — `tools/oracle_run.py --targets` writes the targets file;
   commit it with its README section (`fixtures:` commit). Test, offline: 300
   rows, stems equal `slice.txt`, each hash equal to `oracle.jsonl`'s.
 - [ ] Step 4 **[2]** — `rescore/_table.py`: `RescoreEntry`, `RescoreRow`,

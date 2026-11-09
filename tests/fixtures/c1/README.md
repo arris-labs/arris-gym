@@ -77,9 +77,23 @@ builds the same part: the programs' cylinders fused by one n-ary
 `Solid.fuse` (then cut) match the oracle's volume to 8e-15 relative, all 100.
 The fixture's README holds the shrink.
 
+## The slice's targets
+
+`targets.jsonl.gz` holds the target of each slice program for M5 (ADR-0011):
+the oracle's STEP of the same program, one JSON line per stem (`stem`,
+`step_sha256`, `step`), sorted by stem, gzipped with `mtime=0` (1.5 MB). The
+STEP text has `FILE_NAME`'s timestamp and the translator counter blanked, and
+each `step_sha256` equals the one in `oracle.jsonl`. Written by
+`uv run --extra corpus tools/oracle_run.py --slice tests/fixtures/c1/slice.txt
+--workers 16 --targets tests/fixtures/c1/targets.jsonl.gz` (network; outside
+the gate); the same run leaves `oracle.jsonl` byte-identical. Read by
+`read_target` in a step worker, never by anything that trusts it.
+
 ## Attribution
 
 BenchCAD (`BenchCAD/BenchCAD` on Hugging Face), licensed CC-BY-4.0. The stems
 and the counts derived from the programs are adapted from it; they are
 shared under the same licence. `oracle.jsonl` adapts the programs' measures
-and STEP hashes from the same source and is shared under CC-BY-4.0 too.
+and STEP hashes from the same source and is shared under CC-BY-4.0 too;
+`targets.jsonl.gz` holds STEP files built from those programs, shared under
+CC-BY-4.0 as well.
