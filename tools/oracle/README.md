@@ -20,7 +20,8 @@ the sandbox's warden that execs this environment's interpreter on
 override: cadquery 2.3.0 imports on OCP 7.9.3.0. But the cadquery wheel
 declares no runtime dependencies, so `pyproject.toml` lists the ones its
 source imports (`typing_extensions`, `multimethod`, `typish`, `nptyping`,
-`ezdxf`, `casadi`, `nlopt`), unpinned beyond `numpy<2`; `uv.lock` fixes them.
+`ezdxf`, `casadi`, `nlopt`), unpinned beyond `numpy<2`; `uv.lock` fixes them. It also pins `trimesh==4.12.2`
+and `scipy==1.17.1`, BenchCAD's locked versions, for `benchcad_score.py`.
 
 cadquery 2.3.0 calls `TopoDS_Shape.HashCode()`, which OCP 7.9 removed, so
 every selector (`faces`, `edges`) raised `AttributeError`. `worker.py`
@@ -56,3 +57,13 @@ Neither is in the gate, which runs without this environment:
 --workers 16 --out tests/fixtures/c1/oracle.jsonl` runs the 300 slice programs
 (network; not in the gate) and prints the status counts and the file's
 digest. Two runs give the same bytes (`tests/fixtures/c1/README.md`).
+
+## BenchCAD's scorer
+
+`uv run --project tools/oracle tools/oracle/benchcad_score.py` (network; not in
+the gate) runs BenchCAD's own scorer (`BenchCAD-main@77fd16a8`, two files
+fetched and checked by SHA-256) on the ten pairs of
+`tests/fixtures/reward/benchcad-scorer/` and writes `scorer.json` there: their
+voxel IoU and 100 draws of their unseeded Chamfer. The pairs are our own
+programs, run on CadQuery unisolated; ADR-0010 sets the tolerance the field is
+held to.

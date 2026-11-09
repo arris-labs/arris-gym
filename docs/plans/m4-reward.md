@@ -120,7 +120,7 @@ to be established here.
 - [x] Step 7 **[3]** — field metrics in `reward/_field.py`, from the source above
   and trimesh 4.12.2's voxeliser read and named in `PROVENANCE.md`. Closed forms:
   self 1 and Chamfer 0, cube against double 1, a box's filled voxel count.
-- [ ] Step 8 **[2]** — `tools/oracle/benchcad_score.py`, 10 pair programs (a
+- [x] Step 8 **[2]** — `tools/oracle/benchcad_score.py`, 10 pair programs (a
   cone pair among them), `tests/fixtures/reward/benchcad-scorer/`: their output
   from STEP, repeated to measure the spread of their unseeded sampling. The
   tolerance is measured here and cited from the fixture's README (**ADR-0010**).
@@ -207,3 +207,10 @@ faceted hole's `topology` below 1 and below the plate against itself), plus:
 - *Settled* (agent): `benchcad_score.py` runs the 10 pairs on CadQuery outside
   the sandbox, because their scorer reads STEP files and every sandbox mount is
   read-only. The pairs are our own programs; nothing from a corpus reaches it.
+- *Settled* (agent, step 8): the pairs are `cq`-dialect programs, since `cq`
+  runs on `XY` alone and CadQuery runs the same text; ADR-0010 measured the
+  tolerance (voxel 0.04; Chamfer 2.0 + 10% of theirs). Their Chamfer is not
+  comparable to ours at its floor by design (seeded, one shape twice is 0
+  here and 0.6 to 1.8 there), which the ADR states and the tolerance carries;
+  no pair is outside it. The tool fetches the two scorer files at the pinned
+  commit and checks their SHA-256 before importing them.
