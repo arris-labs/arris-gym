@@ -322,6 +322,13 @@ distances, over the target's diagonal. Two samplings of one surface sit at a
 d of at most 0.0083 on the slice, the noise floor a part built two ways
 meets; τ is 0.05, six times it. `exp` is a fixed polynomial with `ldexp`.
 
+**The measures and topology terms** (ADR-0009, `reward/_measures.py`,
+`reward/_topology.py`). `measures` is the mean of four min/max ratios: volume,
+area, 1 − the centroid gap over the target's diagonal, and the sorted
+principal moments about the centroid (fixed Jacobi sweeps). `topology` blends
+the overlap Σmin/Σmax of the faces-per-kind counts with 1/(1+|Δgenus|) by a
+weight, so a round hole and a faceted one differ.
+
 ## Determinism
 
 The same program gives the same body, ids and score on every machine.

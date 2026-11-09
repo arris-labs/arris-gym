@@ -106,7 +106,7 @@ to be established here.
 - [x] Step 3 **[3]** — `surface`: seeded area-weighted points, nearest-point
   distances in chunks, the `exp` polynomial (its error bounded against
   `math.exp` in the test only). **ADR-0009**: the formulas and τ, measured.
-- [ ] Step 4 **[2]** — `measures` (Jacobi against the closed-form inertia of a
+- [x] Step 4 **[2]** — `measures` (Jacobi against the closed-form inertia of a
   box and a cylinder) and `topology` (a plate with a round hole against a
   faceted one: below 1, and below the plate against itself, which is 1).
 - [ ] Step 5 **[2]** — `RewardConfig`, `Score`, the reward by a `match` on
