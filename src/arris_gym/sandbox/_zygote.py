@@ -41,7 +41,7 @@ import arris.build
 import numpy
 
 import arris_gym.cq
-from arris_gym.sandbox import _body, _exec, _isolate, _mesh, _program
+from arris_gym.sandbox import _body, _exec, _isolate, _mesh, _program, _step
 
 # Imported for the forks, not used here: every worker starts with them loaded.
 _PRELOADED = (arris, arris.build, numpy, arris_gym.cq)
@@ -100,6 +100,7 @@ class JobKind(enum.IntEnum):
     MESH = 3  # tessellate the payload, a body's bytes, for a picture (`sandbox/_mesh.py`)
     EXEC = 4  # exec the interpreter the payload's spec names on its text (`sandbox/_exec.py`)
     SCORE = 5  # score a body against a target (`reward/_job.py`, registered by the entry)
+    STEP = 6  # read the payload as a STEP text, deliver its one solid (`sandbox/_step.py`)
 
 
 # The job message: kind, deadline (a `time.monotonic()` instant: the clock is
@@ -112,6 +113,7 @@ _HANDLERS: dict[int, Callable[[int, int], None]] = {
     JobKind.PROGRAM: _program.execute,
     JobKind.BODY: _body.execute,
     JobKind.MESH: _mesh.execute,
+    JobKind.STEP: _step.execute,
 }
 
 

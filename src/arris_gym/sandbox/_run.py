@@ -133,7 +133,7 @@ def ended(outcome: Outcome, worker: str, timeout: float) -> Verdict | None:
     return None
 
 
-def _not_a_frame(worker: str, outcome: Outcome) -> Verdict:
+def not_a_frame(worker: str, outcome: Outcome) -> Verdict:
     return _crash(f"the {worker} delivered a result that is not a valid frame", outcome)
 
 
@@ -145,7 +145,7 @@ def program_verdict(outcome: Outcome, timeout: float) -> Verdict | ProgramFrame:
     try:
         return ProgramFrame.model_validate_json(outcome.data)
     except pydantic.ValidationError:
-        return _not_a_frame(PROGRAM_WORKER, outcome)
+        return not_a_frame(PROGRAM_WORKER, outcome)
 
 
 def body_verdict(outcome: Outcome, body: bytes, timeout: float) -> Verdict:
@@ -157,7 +157,7 @@ def body_verdict(outcome: Outcome, body: bytes, timeout: float) -> Verdict:
     try:
         frame = BodyFrame.model_validate_json(outcome.data)
     except pydantic.ValidationError:
-        return _not_a_frame(BODY_WORKER, outcome)
+        return not_a_frame(BODY_WORKER, outcome)
     has_body = frame.status in (Status.OK, Status.CHECKER_FAIL)
     return Verdict(
         frame.status,

@@ -61,7 +61,7 @@ _Avoid_: master
 
 **Job**:
 One worker's run, as the caller hands it to the zygote: its kind (a
-program, a body to read back, a mesh, a pair to score, an exec on another interpreter), its deadline and memory limit, its payload,
+program, a body to read back, a STEP to read, a mesh, a pair to score, an exec on another interpreter), its deadline and memory limit, its payload,
 and the pipes its status and result come back on.
 _Avoid_: request (a kernel task is a thread or process)
 

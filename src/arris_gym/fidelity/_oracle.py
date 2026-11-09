@@ -19,22 +19,12 @@ from pydantic import BaseModel, ConfigDict, FiniteFloat, model_validator
 
 from arris_gym.sandbox import Status
 from arris_gym.sandbox._run import ended
+from arris_gym.sandbox._target import step_sha256 as _step_sha256
 from arris_gym.sandbox._zygote import Outcome
 
 # How a failed job names the worker in a `crash` or `timeout` message.
 ORACLE_WORKER = "oracle worker"
 _SHA256 = re.compile(r"[0-9a-f]{64}")
-# Where a STEP text's data section starts: `step_sha256` hashes from here on,
-# as `tools/oracle/worker.py` does, so a header the worker blanked stays out.
-_STEP_DATA_MARK = "DATA;"
-
-
-def _step_sha256(step: str) -> str | None:
-    """The `step_sha256` of a STEP text, or None when it has no data section."""
-    start = step.find(_STEP_DATA_MARK)
-    if start < 0:
-        return None
-    return hashlib.sha256(step[start:].encode("utf-8", "surrogatepass")).hexdigest()
 
 
 class OracleStatus(enum.Enum):

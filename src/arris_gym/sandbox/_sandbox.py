@@ -12,9 +12,9 @@ import threading
 from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor
 
-from arris_gym.sandbox import _cache, _picture, _run
+from arris_gym.sandbox import _cache, _picture, _run, _target
 from arris_gym.sandbox._zygote import Zygote
-from arris_gym.sandbox.outcome import Dialect, ExecResult
+from arris_gym.sandbox.outcome import Dialect, ExecResult, TargetResult
 
 # The most programs alive at once when the caller does not say: one per core,
 # capped, since each live program holds up to `memory` bytes of address space.
@@ -140,6 +140,19 @@ class Sandbox:
         _run.check_arguments(Dialect.ARRIS, timeout, memory)
         _picture.draw(self._live_zygote(), result, path, timeout, memory)
 
+    def read_target(
+        self,
+        step: str,
+        *,
+        timeout: float = _run.DEFAULT_TIMEOUT,
+        memory: int = _run.DEFAULT_MEMORY,
+    ) -> TargetResult:
+        """Read one STEP text as a target; see `arris_gym.read_target`."""
+        _run.check_arguments(Dialect.ARRIS, timeout, memory)
+        if not isinstance(step, str):
+            raise TypeError(f"step must be text, got {type(step).__name__}")
+        return _target.read(self._live_zygote(), step, timeout=timeout, memory=memory)
+
     def close(self) -> None:
         """Stop the zygote. Programs already forked keep their deadlines."""
         with self._lock:
@@ -254,3 +267,37 @@ def dump_png(
     b'\\x89PNG'
     """
     default_sandbox().dump_png(result, path, timeout=timeout, memory=memory)
+
+
+def read_target(
+    step: str,
+    *,
+    sandbox: Sandbox | None = None,
+    timeout: float = _run.DEFAULT_TIMEOUT,
+    memory: int = _run.DEFAULT_MEMORY,
+) -> TargetResult:
+    """Read a STEP text as a target: its one solid, checked and measured.
+
+    The text is read by arris's `read_step` on a fresh model in a step
+    worker of `sandbox` (the process's shared one by default), and the
+    solid's bytes are checked and measured by a body worker, `timeout`
+    seconds of wall clock and `memory` bytes of address space at most for
+    both. A STEP is untrusted input, as a program is. Exactly one solid the
+    kernel builds and the checker accepts is `ok`; zero or several solids are
+    `runtime` naming the count; a file the kernel cannot parse, or a solid it
+    refuses, is `arris_refusal` with its words; then `checker_fail`,
+    `timeout` and `crash` as for a program. Never raises on the text; raises
+    `TypeError` for a `step` that is not text, `ValueError` for a `timeout`
+    or `memory` that is not positive, and `SandboxUnavailable` where this
+    machine cannot isolate a worker.
+
+    >>> import arris_gym as ag, arris.build as b
+    >>> box = b.Solid.box((0, 0, 0), (1, 2, 3))
+    >>> target = ag.read_target(box.model.write_step([box.body]))
+    >>> target.status.value, target.measures is not None and round(target.measures.volume, 6)
+    ('ok', 6.0)
+    >>> ag.read_target("hello").refusal.kind
+    'StepParseError'
+    """
+    chosen = default_sandbox() if sandbox is None else sandbox
+    return chosen.read_target(step, timeout=timeout, memory=memory)

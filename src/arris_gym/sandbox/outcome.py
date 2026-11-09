@@ -149,3 +149,78 @@ class ExecResult(_Frozen):
         if self.violations and self.status is not Status.CHECKER_FAIL:
             raise ValueError("violations belong to CHECKER_FAIL alone")
         return self
+
+
+# The statuses a target can end with: those the step worker, the body worker
+# and the caller decide. `syntax` and `unsupported_api` are a program's alone.
+TARGET_STATUSES = frozenset(
+    {
+        Status.OK,
+        Status.RUNTIME,
+        Status.ARRIS_REFUSAL,
+        Status.CHECKER_FAIL,
+        Status.TIMEOUT,
+        Status.CRASH,
+    }
+)
+
+
+class TargetResult(_Frozen):
+    """A target: a STEP text read by arris in a step worker (ADR-0011).
+
+    Every STEP text has one, whatever it holds. Guarantees, enforced on
+    construction: `status` is one a target can end with (`ok`, `runtime`,
+    `arris_refusal`, `checker_fail`, `timeout` or `crash`; never `syntax` or
+    `unsupported_api`); `refusal` is set exactly when `status` is
+    `ARRIS_REFUSAL`; `body` exactly when it is `OK` or `CHECKER_FAIL`,
+    `measures` exactly when it is `OK`; `violations` is empty unless it is
+    `CHECKER_FAIL`. `message`, `refusal` and `violations` are the kernel's
+    words, verbatim. `step_sha256` is the hex SHA-256 of the text's data
+    section, from `DATA;` on, as the oracle hashes it, or None for a text
+    with no data section. Nothing here is wall-clock.
+
+    >>> result = TargetResult(
+    ...     status=Status.RUNTIME,
+    ...     message="the STEP holds 0 solids; a target is exactly 1",
+    ...     refusal=None,
+    ...     body=None,
+    ...     measures=None,
+    ...     violations=(),
+    ...     step_sha256=None,
+    ...     versions=Versions(arris="0.10.0", numpy="2.3.4", arris_gym="0.1.0"),
+    ... )
+    >>> result.status is Status.RUNTIME
+    True
+    """
+
+    status: Status
+    message: str
+    refusal: ArrisRefusal | None
+    body: BodyRef | None
+    measures: Measures | None
+    violations: tuple[str, ...]
+    step_sha256: str | None
+    versions: Versions
+
+    @model_validator(mode="after")
+    def _fields_agree_with_status(self) -> Self:
+        if self.status not in TARGET_STATUSES:
+            raise ValueError(f"a target does not end {self.status.value}")
+        if (self.refusal is not None) != (self.status is Status.ARRIS_REFUSAL):
+            raise ValueError("refusal is set exactly when status is ARRIS_REFUSAL")
+        if (self.body is not None) != (self.status in (Status.OK, Status.CHECKER_FAIL)):
+            raise ValueError("body is set exactly when status is OK or CHECKER_FAIL")
+        if (self.measures is not None) != (self.status is Status.OK):
+            raise ValueError("measures are set exactly when status is OK")
+        if self.violations and self.status is not Status.CHECKER_FAIL:
+            raise ValueError("violations belong to CHECKER_FAIL alone")
+        if self.step_sha256 is not None and not _is_sha256(self.step_sha256):
+            raise ValueError("step_sha256 is not a hex SHA-256")
+        return self
+
+
+def _is_sha256(text: str) -> bool:
+    """Whether `text` is 64 lower-case hex digits."""
+    return len(text) == hashlib.sha256().digest_size * 2 and all(
+        c in "0123456789abcdef" for c in text
+    )

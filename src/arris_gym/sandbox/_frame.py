@@ -1,8 +1,9 @@
 """Frames: what a worker tells the caller, as one JSON document each.
 
 A `ProgramFrame` is written by `sandbox/_program.py` inside a program
-worker, a `BodyFrame` by `sandbox/_body.py` inside a body worker; both are
-parsed by `sandbox/_run.py` in the caller. The caller trusts neither (a
+worker, a `StepFrame` by `sandbox/_step.py` inside a step worker, a
+`BodyFrame` by `sandbox/_body.py` inside a body worker; each is parsed in
+the caller (`sandbox/_run.py`, `sandbox/_target.py`). The caller trusts neither (a
 program can reach its result pipe and write its own): a frame that is not
 one whole, or whose fields contradict its status, is refused at parsing and
 the job is a `crash`. Private.
@@ -25,6 +26,9 @@ PROGRAM_STATUSES = frozenset(
 # The statuses a body worker decides: the body read back, checked and
 # measured (`ok`), rejected by the checker, or unreadable (`runtime`).
 BODY_STATUSES = frozenset({Status.OK, Status.CHECKER_FAIL, Status.RUNTIME})
+# The statuses a step worker decides: one solid's bytes to read back (`ok`),
+# the kernel refusing the file or its solid, or anything else (`runtime`).
+STEP_STATUSES = frozenset({Status.OK, Status.RUNTIME, Status.ARRIS_REFUSAL})
 
 _CONFIG = ConfigDict(frozen=True, extra="forbid", ser_json_bytes="base64", val_json_bytes="base64")
 
@@ -53,6 +57,36 @@ class ProgramFrame(BaseModel):
     def _fields_agree_with_status(self) -> Self:
         if self.status not in PROGRAM_STATUSES:
             raise ValueError(f"a program worker does not decide {self.status.value}")
+        if (self.body is not None) != (self.status is Status.OK):
+            raise ValueError("body is set exactly when status is OK")
+        if (self.refusal is not None) != (self.status is Status.ARRIS_REFUSAL):
+            raise ValueError("refusal is set exactly when status is ARRIS_REFUSAL")
+        return self
+
+
+class StepFrame(BaseModel):
+    """A step worker's account of the STEP text it was given (ADR-0011).
+
+    Guarantees, enforced on parsing: `status` is one a step worker decides
+    (`STEP_STATUSES`); `body`, the `write_body` bytes of the STEP's one
+    solid, is set exactly when `status` is `OK`, which then means only "a
+    body to read back"; `refusal` is set exactly when `status` is
+    `ARRIS_REFUSAL`. `body` travels as base64. `out_of_memory` is as in
+    `ProgramFrame`.
+    """
+
+    model_config = _CONFIG
+
+    status: Status
+    message: str
+    refusal: ArrisRefusal | None
+    body: bytes | None
+    out_of_memory: bool = False
+
+    @model_validator(mode="after")
+    def _fields_agree_with_status(self) -> Self:
+        if self.status not in STEP_STATUSES:
+            raise ValueError(f"a step worker does not decide {self.status.value}")
         if (self.body is not None) != (self.status is Status.OK):
             raise ValueError("body is set exactly when status is OK")
         if (self.refusal is not None) != (self.status is Status.ARRIS_REFUSAL):

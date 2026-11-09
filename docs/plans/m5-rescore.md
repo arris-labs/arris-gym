@@ -46,6 +46,12 @@ through the existing body worker (checker and measures). New public
 frozen model: `status`, `message`, `refusal`, `body`, `measures`, `step_sha256`,
 `versions`; never raises on the text. Zero or several solids are `runtime`
 naming the count; a solid's refusal is `arris_refusal` with the kernel's words.
+*Settled* (step 2): `TargetResult` also carries `violations`, so a
+`checker_fail` target keeps the checker's words, as `ExecResult` does; a file
+`read_step` cannot parse (`StepParseError`: garbage, empty, a NUL byte) is
+`arris_refusal` by its type, as a program's `ArrisError` is; text the kernel
+cannot take (a lone surrogate) is `runtime`. `step_sha256` is None for a text
+with no `DATA;`.
 
 **`rescore/`** (imports `sandbox`, `reward`, `census`; the layer rule is
 unchanged).
@@ -82,7 +88,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
   `OracleReport.step`, the hash recomputed by `parse_outcome`. Fixtures: a text
   that contradicts its hash is `crash`. Re-running the slice leaves
   `oracle.jsonl`'s digest at `6bbfb772…`.
-- [ ] Step 2 **[3]** — `JobKind.STEP`, `sandbox/_step.py`, `TargetResult`,
+- [x] Step 2 **[3]** — `JobKind.STEP`, `sandbox/_step.py`, `TargetResult`,
   `read_target`, public export. Fixtures: a closed-form box's STEP gives its
   volume; garbage, empty, a NUL byte, no solid and two solids each give their
   status; `hypothesis`: arbitrary text never raises. Body bytes equal across two

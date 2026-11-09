@@ -205,6 +205,16 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   finite number in [0, 1] is a `crash`; the caller computes the reward from the
   terms itself. Its deadline is 30 s by default, above the 17 s ADR-0008
   measured for the slowest exact answer under 30 concurrent processes.
+- The **step worker** (`sandbox/_step.py`) is a job of its own kind, `step`,
+  under the same warden and limits: a target's STEP text is the output of a
+  hostile program (ADR-0011). It runs `read_step` on a fresh model and writes
+  a frame like a program worker's: exactly one solid's `write_body` bytes
+  (`ok`), zero or several solids as `runtime` naming the count, or the
+  kernel's refusal of the file or of its solid as `arris_refusal`. The bytes
+  then go to a body worker under the same deadline, and `read_target` returns
+  a `TargetResult` (status, message, refusal, body, measures, violations,
+  `step_sha256` of the text's data section, versions). A step frame that is
+  not whole or contradicts its status is a `crash`, as any frame is.
 - The **warden** is one fork per program. It enters new user, network, PID,
   mount and IPC namespaces, makes every mount read-only, forks the program
   worker and reports how it ended on a status pipe the worker never holds,

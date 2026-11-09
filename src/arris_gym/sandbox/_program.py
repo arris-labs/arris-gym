@@ -111,7 +111,7 @@ def entity_name(entity: object) -> str:
     return f"{sign}{letter}{getattr(entity, 'index')}"  # noqa: B009 - index is on every handle
 
 
-def _refusal(error: arris.ArrisError) -> ArrisRefusal:
+def refusal_of(error: arris.ArrisError) -> ArrisRefusal:
     """The refusal an `ArrisError` is: its class, its `str()`, its entity fields."""
     named: list[object] = []
     single = getattr(error, "entity", None)
@@ -257,7 +257,7 @@ def classify(text: str, dialect: Dialect) -> ProgramFrame:
     except NotASolid as error:
         return _failure(Status.RUNTIME, _text(error))
     except arris.ArrisError as error:
-        return _failure(Status.ARRIS_REFUSAL, _text(error), _refusal(error))
+        return _failure(Status.ARRIS_REFUSAL, _text(error), refusal_of(error))
     except BaseException as error:  # noqa: BLE001 - SystemExit and MemoryError included
         return _failure(Status.RUNTIME, exception_line(error), error=error)
 
