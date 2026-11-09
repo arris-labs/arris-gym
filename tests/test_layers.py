@@ -89,6 +89,9 @@ def test_an_allowed_import_is_green(tmp_path: pathlib.Path, module: str, text: s
         "def f(x):\n    return x ** 0.5\n",
         "def f(x, n):\n    return x ** n\n",
         "def f(x):\n    return x ** 2.0\n",
+        "def f(x):\n    return x ** 2\n",
+        "def f(k):\n    return (k + 1) ** 3\n",
+        "def f(k):\n    k **= 2\n",
         "def f(x, n):\n    x **= n\n",
     ],
 )
@@ -105,8 +108,7 @@ def test_a_blas_or_libm_path_in_reward_is_red(tmp_path: pathlib.Path, text: str)
         "import numpy as np\nnp.random.Generator(np.random.PCG64(1))\n",
         "import math\nmath.fsum([1.0])\nmath.sqrt(2.0)\nmath.ldexp(1.0, 2)\n",
         "import numpy as np\nnp.cross(a, b)\nnp.sqrt(a)\n",
-        "def f(k):\n    return (k + 1) ** 3 + 10**7\n",
-        "def f(k):\n    k **= 2\n",
+        "def f(k):\n    return (k + 1) * (k + 1) * (k + 1) + 10_000_000\n",
     ],
 )
 def test_the_reward_ban_leaves_the_fixed_order_operations(

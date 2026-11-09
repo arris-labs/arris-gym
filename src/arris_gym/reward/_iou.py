@@ -140,7 +140,7 @@ def grid_side(points: int) -> int:
     if points < 1:
         raise ValueError(f"points must be positive, got {points}")
     k = 1
-    while (k + 1) ** 3 <= points:
+    while (k + 1) * (k + 1) * (k + 1) <= points:
         k += 1
     return k
 
@@ -158,7 +158,7 @@ def jittered_points(points: int, seed: int) -> _Floats:
     index = np.arange(k, dtype=np.float64)
     gx, gy, gz = np.meshgrid(index, index, index, indexing="ij")
     cells = np.stack([gx.ravel(), gy.ravel(), gz.ravel()], axis=1)
-    jitter = np.random.Generator(np.random.PCG64(seed)).random((k**3, 3))
+    jitter = np.random.Generator(np.random.PCG64(seed)).random((k * k * k, 3))
     return np.asarray((cells + jitter) / k, dtype=np.float64)
 
 

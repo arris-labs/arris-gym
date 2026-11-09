@@ -24,7 +24,7 @@ FORBIDDEN_IN_CORE = (f"{PACKAGE}.train", f"{PACKAGE}.rescore")
 # (.agents/rules/gym.md, docs/ARCHITECTURE.md §Determinism): their last bits
 # depend on the BLAS build and the CPU. `reward/` is where a score is made.
 # The winding number's numpy `arctan2`, which only feeds a threshold, is not
-# listed (`math.atan2` is). `**` is allowed only with an integer literal exponent.
+# listed (`math.atan2` is). `**` is banned outright: a float base is invisible to ast.
 NUMERIC_LAYER = "reward"
 NUMPY_ROOTS = ("np", "numpy")
 BANNED_NUMPY = frozenset(
@@ -114,12 +114,7 @@ def numeric_breaches(tree: ast.AST) -> Iterator[tuple[int, str]]:
         if isinstance(node, ast.BinOp | ast.AugAssign) and isinstance(node.op, ast.MatMult):
             yield node.lineno, "the matrix product `@` takes a BLAS path"
         elif isinstance(node, ast.BinOp | ast.AugAssign) and isinstance(node.op, ast.Pow):
-            exponent = node.right if isinstance(node, ast.BinOp) else node.value
-            if not (isinstance(exponent, ast.Constant) and type(exponent.value) is int):
-                yield (
-                    node.lineno,
-                    "`**` with an exponent that is not an integer literal calls libm pow",
-                )
+            yield node.lineno, "`**` on a float calls libm pow: multiply instead"
         elif isinstance(node, ast.Attribute):
             chain = attribute_chain(node)
             if len(chain) < 2:

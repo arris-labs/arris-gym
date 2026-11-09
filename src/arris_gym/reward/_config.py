@@ -66,7 +66,7 @@ class RewardConfig(_Frozen):
     tau: float = Field(default=0.05, gt=0.0)
     points: int = Field(default=10_648, ge=2)
     seed: int = Field(default=0, ge=0)
-    iou_budget: int = Field(default=10**7, ge=1)
+    iou_budget: int = Field(default=10_000_000, ge=1)
     chord_fraction: float = Field(default=1 / 200, gt=0.0)
     kind_weight: float = Field(default=0.5, ge=0.0, le=1.0)
 
