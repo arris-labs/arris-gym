@@ -329,6 +329,14 @@ principal moments about the centroid (fixed Jacobi sweeps). `topology` blends
 the overlap Σmin/Σmax of the faces-per-kind counts with 1/(1+|Δgenus|) by a
 weight, so a round hole and a faceted one differ.
 
+**The reward** (`reward/_config.py`, `reward/_score.py`). `RewardConfig`
+(version 1) holds the weights 0.6/0.15/0.15/0.10 (refused unless they sum to
+1), τ 0.05, N 10,648, the seed, `iou_budget` 10⁷, the chord 1/200 and the
+topology weight ½. `Score` is a frozen record whose constructor enforces the
+table: a failure status carries exactly −1.0, −0.5 or −0.3 and no terms, an
+`ok` one carries four terms in [0, 1] and a reward in [0.1, 1]; the table is a
+`match` on `Status` ending in `assert_never`. Four terms of 1 give exactly 1.0.
+
 ## Determinism
 
 The same program gives the same body, ids and score on every machine.

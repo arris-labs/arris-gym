@@ -109,7 +109,7 @@ to be established here.
 - [x] Step 4 **[2]** — `measures` (Jacobi against the closed-form inertia of a
   box and a cylinder) and `topology` (a plate with a round hole against a
   faceted one: below 1, and below the plate against itself, which is 1).
-- [ ] Step 5 **[2]** — `RewardConfig`, `Score`, the reward by a `match` on
+- [x] Step 5 **[2]** — `RewardConfig`, `Score`, the reward by a `match` on
   `Status` ending in `assert_never`. `hypothesis`: any terms give a reward in
   [0.1, 1]; weights not summing to 1 are refused; the three failure rewards exact.
 - [ ] Step 6 **[3]** — the score worker and public `score`. Hostile cases: bytes

@@ -123,6 +123,13 @@ _Avoid_: fitness
 What `score` returns: the reward, its terms and the field's metrics.
 _Avoid_: evaluation
 
+**Reward config**:
+The frozen `RewardConfig` holding everything a reward depends on besides the
+two bodies: weights, τ, N, seed, the IoU's budget and chord, the topology
+split, and the version written into every `Score` (ARCHITECTURE.md §The reward,
+ADR-0008, ADR-0009).
+_Avoid_: reward settings, hyperparameters
+
 **Exact route**:
 The IoU from the kernel's `interference` under a step budget: exact up to the
 kernel's rounding, where the kernel answers (ARCHITECTURE.md §The reward,
