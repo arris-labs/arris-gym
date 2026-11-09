@@ -89,11 +89,57 @@ each `step_sha256` equals the one in `oracle.jsonl`. Written by
 the gate); the same run leaves `oracle.jsonl` byte-identical. Read by
 `read_target` in a step worker, never by anything that trusts it.
 
+## The re-scored table
+
+`rescore.json` and `rescore.md` are the 300 slice programs run under `cq`
+and scored against their targets: `uv run --locked --extra corpus arris-gym
+rescore benchcad --out DIR --workers N` (network once, for the corpus; outside
+the gate). Digest `70e66667de9089860f07e69b6507713fa5945eb6986216480bee964ff5ad658c`,
+equal from a run at 2 workers and a run at 16 (the two `rescore.json` files are
+byte-identical). 300 rows: `ok` 200, `arris_refusal` 100, every other status
+0; stages `none` 200, `program` 100; IoU routes `exact` 100, `sampled` 100;
+timeouts none. Invalidity 1/3; mean reward 0.483560 over all 300, and 0.975340
+over the 200 valid ones alone (survivors, never reported without the first).
+Each row carries the source, CC-BY-4.0, and the arris, numpy and reward versions.
+
+Why the rows look as they do (the `inspect` skill, probed on the pairs):
+
+- **The 100 `arris_refusal`** are all `lobed_knob`, ending `OpDegenerateError`
+  ("the faces touch along a curve interior to both result faces"): reward -0.5
+  and stage `program`, as planned (the arris fix is out of scope).
+- **`phone_stand` takes the sampled route on all 100.** The exact route asks
+  `interference` of the candidate against the target and the kernel answers
+  `OpDegenerateError` with the same words ("the faces touch along a curve
+  interior to both result faces"), though every face is a plane; a body
+  against itself answers 1.0. The cause is the pair, not the part: the
+  candidate has 14 or more planar faces and the target, read from Open
+  Cascade's STEP, fewer (it merges coplanar faces), so coincident faces split
+  differently meet along curves. ADR-0008's `phone_stand` pairs were arris-built
+  perturbations of one body with the same split, so all 900 answered; "refusals
+  only cone against cone" holds for those, not for an arris body against an
+  Open Cascade one. The IoU is 1.0 on all 100 by the sampled route all the same.
+  Filed as a Finding in `docs/BACKLOG.md` (arris: interference of coincident
+  planar faces split differently).
+- **`phone_stand`'s `topology` is 0.80 to 0.91 and `venturi_tube`'s is 1.0**
+  for the same reason: `topology` is ½ · Σmin/Σmax over the face-kind histogram
+  plus ½ · 1/(1 + |Δgenus|) (ADR-0009). All of `phone_stand`'s faces are planes,
+  the candidate has more of them than the target on all 100, and the formula
+  recomputed from the two bodies' measures equals the recorded term on all 100
+  (for the first, 10 planes against 14: ½ · 10/14 + ½ = 0.857); `venturi_tube`'s
+  candidate and target have identical histograms (4 cones, 6 cylinders,
+  2 planes for the first) and genus.
+- **`surface` is 0.85 to 0.89** in both families: the two bodies are the same
+  surface, so the term is exp(−d/τ) of the sampling's own noise floor, d between
+  0.0063 and 0.0083 (ADR-0009), and exp(−0.0083/0.05) = 0.847. The recorded
+  minima are 0.847 (`venturi_tube`) and 0.858 (`phone_stand`, floor 0.0077:
+  0.857). `iou` is 1.0 and `measures` at least 0.99999999999 on all 200.
+
 ## Attribution
 
 BenchCAD (`BenchCAD/BenchCAD` on Hugging Face), licensed CC-BY-4.0. The stems
 and the counts derived from the programs are adapted from it; they are
 shared under the same licence. `oracle.jsonl` adapts the programs' measures
 and STEP hashes from the same source and is shared under CC-BY-4.0 too;
-`targets.jsonl.gz` holds STEP files built from those programs, shared under
-CC-BY-4.0 as well.
+`targets.jsonl.gz` holds STEP files built from those programs, and
+`rescore.json` and `rescore.md` the scores of those programs against them;
+both are shared under CC-BY-4.0 as well.

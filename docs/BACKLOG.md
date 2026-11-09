@@ -52,6 +52,14 @@ A defect a run measured, one block each:
 - Measured: 100 of 100 refused (98 at the second union, 2 at the fourth); rebuilt by n-ary fuse, all 100 within 8e-15 of the oracle's volume
 - State: regression/cq-union-three-coplanar-cylinders; reported in `../arris/docs/ideas/union-coplanar-third-operand.md`; lift the xfail and drop the 100 verdicts when an arris bump builds it
 
+### interference-split-planar-faces
+- What: `interference` of an arris-built body against the same part read from Open Cascade's STEP refuses (`OpDegenerateError`, "the faces touch along a curve interior to both result faces") when both are all planes but the STEP's coplanar faces are merged (the candidate has more faces); the pair then takes the sampled IoU route, not the exact one
+- Where: arris 0.10.0 `Model.interference`, reached by `reward`'s exact IoU route; ADR-0008 measured `phone_stand` pairs of one split, never an arris body against an Open Cascade one
+- Seen: plans/m5-rescore step 7, `arris-gym rescore benchcad`, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, all 100 `phone_stand` slice pairs, 2026-11-09
+- Reproduce: `uv run --extra corpus arris-gym rescore benchcad`, then the `iou_route` of the `phone_stand` rows in `rescore.json`
+- Measured: 100 of 100 refused; the sampled IoU is 1.0 on all 100; the same body against itself answers 1.0 exactly
+- State: measured; not yet reported to arris; no regression fixture (a pair of two bodies, not one program)
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)

@@ -106,7 +106,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
   that fails, a scoring failure. Failures are counted and none dropped.
 - [x] Step 6 **[1]** — `rescore/benchcad.py` and `arris-gym rescore benchcad`,
   `rescore.md` included; `tests/test_cli.py` through the `Reader` seam.
-- [ ] Step 7 **[2]** — Run it; commit `tests/fixtures/c1/rescore.json`, `.md` and
+- [x] Step 7 **[2]** — Run it; commit `tests/fixtures/c1/rescore.json`, `.md` and
   the digest. Two runs at 2 and 16 workers give equal digests. With the `inspect`
   skill, write in the README why each of these holds, or file a Finding:
   `phone_stand` takes the sampled route on all 100 (ADR-0008 saw refusals only
