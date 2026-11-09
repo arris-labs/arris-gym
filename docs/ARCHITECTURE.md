@@ -234,8 +234,10 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
 - **Filesystem**: Landlock allows reading only beneath the interpreter's
   prefixes, the site-packages directories and `arris_gym`'s own directory;
   nothing is written anywhere, since every mount is read-only, and no file is
-  `execve`d. An exec job (ADR-0004) reads its spec's paths instead, and its
-  `execve` reaches its interpreter and that interpreter's ELF loader alone.
+  `execve`d. An exec job (ADR-0004) reads its spec's paths instead (the
+  interpreter's prefixes and the shared libraries its loader lists for it,
+  which a standalone build keeps outside them), and its `execve` reaches its
+  interpreter and that interpreter's ELF loader alone.
   The loader runs any file the job can read (Landlock cannot refuse
   `mmap` with `PROT_EXEC`), under every other limit here.
 - **Processes**: `RLIMIT_NPROC` is 4, counted per user namespace: the warden,
@@ -428,9 +430,10 @@ reason it cannot share an environment with the library.
 A program runs on the oracle in an **oracle worker** (ADR-0004): a program
 worker forked and isolated as any other, which then execs the oracle's
 interpreter on `tools/oracle/worker.py` and keeps every limit across the exec.
-Its reach is the oracle environment's prefixes, its memory limit 1.5 GiB (the
-import of cadquery and OCP maps 875 MiB), and Open CASCADE's thread pool is
-held to one thread so a boolean runs within `RLIMIT_NPROC`. Each program pays
+Its reach is the oracle environment's prefixes and its interpreter's shared
+libraries, its memory limit 1.5 GiB (the import of cadquery and OCP maps
+875 MiB), and Open CASCADE's thread pool is held to one thread so a boolean
+runs within `RLIMIT_NPROC`. Each program pays
 about 1.5 s of start-up. `tools/oracle_run.py` builds the exec spec and sends
 the job; the frame comes back on the result pipe and is trusted no more than
 any worker's.

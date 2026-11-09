@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import struct
 import subprocess
 from collections.abc import Mapping
@@ -51,6 +52,10 @@ _ROOTS_QUERY = (
 )
 # How long the trusted query may take: an interpreter's start-up, with margin.
 _QUERY_TIMEOUT = 30.0
+# A line of the ELF loader's `--list` (what `ldd` prints) naming a library it
+# found: `name => /path (0x...)`, or `/path (0x...)` for the loader itself.
+# The vDSO has no path, and `name => not found` none either.
+_LISTED = re.compile(r"^\s*(?:\S+ => )?(/.*) \(0x[0-9a-f]+\)$")
 
 
 @dataclass(frozen=True)
@@ -61,7 +66,8 @@ class ExecSpec:
     `bin/python`, whose path tells the interpreter its environment), the rest
     its arguments; the payload and result descriptors' numbers are appended.
     `env` is the whole environment: nothing of the zygote's is passed.
-    `readable` are the directories or files the worker may read beneath;
+    `readable` are the directories or files the worker may read beneath,
+    the shared libraries the interpreter links among them;
     `executable` the files `execve` may reach, the interpreter's real path
     and its ELF loader; the loader then runs anything readable (ADR-0004).
     All paths are absolute.
@@ -96,11 +102,34 @@ def elf_loader(executable: str) -> str | None:
     return None
 
 
+def shared_libraries(executable: str, loader: str, env: Mapping[str, str]) -> tuple[str, ...]:
+    """The real paths of the shared libraries `loader` maps to start `executable`.
+
+    The loader's own `--list` (a trusted run, `ldd`'s), under the environment
+    the exec gets. A system interpreter's libraries sit beneath its prefix
+    `/usr`; a standalone build's (uv's) do not, so without them the exec ends
+    127 before the interpreter runs. A library the loader does not find is
+    left out, and the exec then ends with the loader's own message. Raises
+    `subprocess.CalledProcessError` or `OSError` if the loader cannot run.
+    """
+    done = subprocess.run(
+        [loader, "--list", executable],
+        env=dict(env),
+        capture_output=True,
+        check=True,
+        timeout=_QUERY_TIMEOUT,
+        text=True,
+    )
+    found = (m.group(1) for line in done.stdout.splitlines() if (m := _LISTED.match(line)))
+    return tuple(sorted({os.path.realpath(p) for p in found if os.path.isfile(p)}))
+
+
 def interpreter_spec(python: str, script: str, env: Mapping[str, str]) -> ExecSpec:
     """The spec that runs `script` on the interpreter `python`, isolated.
 
     `python` is asked for its prefixes and site-packages (a trusted run, no
-    program in it); those and `script` are the worker's whole reach, and
+    program in it); those, the shared libraries its loader maps for it
+    (`shared_libraries`) and `script` are the worker's whole reach, and
     the interpreter's real path and its loader all `execve` may reach. The
     interpreter runs with `-s -P -B`: no user site, no script directory on
     `sys.path`, no bytecode written. Raises `subprocess.CalledProcessError`
@@ -117,9 +146,10 @@ def interpreter_spec(python: str, script: str, env: Mapping[str, str]) -> ExecSp
         text=True,
     )
     prefixes: list[str] = json.loads(done.stdout)
-    roots = {os.path.realpath(p) for p in prefixes if os.path.isdir(p)} | {script}
     real = os.path.realpath(python)
     loader = elf_loader(real)
+    libraries = shared_libraries(real, loader, env) if loader else ()
+    roots = {os.path.realpath(p) for p in prefixes if os.path.isdir(p)} | {script, *libraries}
     return ExecSpec(
         argv=(python, "-s", "-P", "-B", script),
         env=tuple(sorted(env.items())),

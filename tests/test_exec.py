@@ -7,10 +7,12 @@ script that keeps every limit of the worker it replaced.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import pathlib
 import sys
+import sysconfig
 import time
 from collections.abc import Iterator
 
@@ -130,6 +132,10 @@ def test_the_loader_runs_any_readable_program_inside_the_same_boundary(zygote: Z
     )
     assert "/usr/bin/bash" not in spec.executable
     assert "/usr/bin/id" not in spec.executable
+    # ADR-0004's case: a system interpreter's reach holds `/usr`, and so bash
+    # and id. A standalone one's (uv's) holds only its own libraries; `/usr`
+    # is granted here so the probe asks the same question of either.
+    spec = dataclasses.replace(spec, readable=tuple(sorted({*spec.readable, "/usr"})))
     outcome = zygote.execute(
         JobKind.EXEC,
         _exec.payload(spec, b""),
@@ -146,3 +152,47 @@ def test_the_loader_runs_any_readable_program_inside_the_same_boundary(zygote: Z
     assert bash["stdout"].splitlines() == ["uid=65534", "connect=1", "write=1"], bash
     assert "Network is unreachable" in bash["stderr"], bash
     assert "Read-only file system" in bash["stderr"] or "Permission denied" in bash["stderr"]
+
+
+def _run(zygote: Zygote, spec: _exec.ExecSpec) -> tuple[int, bytes, bytes]:
+    outcome = zygote.execute(
+        JobKind.EXEC,
+        _exec.payload(spec, b"result = 1\n"),
+        deadline=time.monotonic() + TIMEOUT,
+        memory=MEMORY,
+    )
+    assert outcome.ending is not None
+    assert (outcome.ending.kind, outcome.ending.armed) == (EndKind.EXITED, True), outcome.stderr
+    return outcome.ending.value, outcome.stderr, outcome.data
+
+
+def test_an_interpreter_whose_prefix_misses_its_libraries_still_starts(zygote: Zygote) -> None:
+    # A standalone interpreter (uv's, CI's x86-64 runner) links libpthread and
+    # libc from `/lib`, outside every prefix it reports. Its stdlib alone is
+    # left readable here, which is what that layout looks like on any machine:
+    # the loader cannot open a library and the exec ends 127 before Python
+    # runs. With the libraries `shared_libraries` lists, as files, it starts.
+    real = os.path.realpath(sys.executable)
+    loader = _exec.elf_loader(real)
+    assert loader is not None
+    libraries = _exec.shared_libraries(real, loader, ENVIRONMENT)
+    assert any(os.path.basename(p).startswith("libc.so") for p in libraries), libraries
+    assert all(os.path.isabs(p) and os.path.realpath(p) == p for p in libraries)
+    spec = _exec.interpreter_spec(sys.executable, str(ECHO), ENVIRONMENT)
+    assert set(libraries) <= set(spec.readable)
+
+    def covers(root: str) -> bool:
+        return any(p == root or p.startswith(root + "/") for p in libraries)
+
+    stdlib = {os.path.realpath(sysconfig.get_paths()[k]) for k in ("stdlib", "platstdlib")}
+    kept = {r for r in spec.readable if not covers(r)} | stdlib
+    assert not any(covers(r) for r in kept), kept
+
+    code, stderr, _ = _run(zygote, dataclasses.replace(spec, readable=tuple(sorted(kept))))
+    assert code == 127, stderr
+    assert b"error while loading shared libraries" in stderr, stderr
+
+    granted = tuple(sorted(kept | set(libraries)))
+    code, stderr, data = _run(zygote, dataclasses.replace(spec, readable=granted))
+    assert code == 0, stderr
+    assert json.loads(data)["text"] == "result = 1\n"
