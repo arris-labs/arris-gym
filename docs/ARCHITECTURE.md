@@ -96,9 +96,9 @@ never from a message's wording:
 A crash's message names the worker and the signal or exit code, then the
 last `STDERR_TAIL_BYTES` (4 KiB) of the worker's stderr, where a kernel abort
 writes its reason; stdout goes to `/dev/null`. An `abort` in the program
-worker ends by `SIGSEGV` on x86-64: the kernel does not deliver the
-`SIGABRT` to PID 1 of a namespace, and glibc falls back to its abort
-instruction.
+worker ends by `SIGSEGV` on x86-64 and by `SIGTRAP` on arm64: the kernel
+does not deliver the `SIGABRT` to PID 1 of a namespace, and glibc falls back
+to its abort instruction, `hlt` on one and `brk` on the other.
 
 **Where a program's result comes from.** In the `cq` dialect, the argument of
 its last `show_object` call, else a module-level `result`: BenchCAD programs

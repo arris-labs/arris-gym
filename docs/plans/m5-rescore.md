@@ -155,3 +155,9 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
   architectures (`arris.build.Workplane.rotated`), the rows that call it differ
   and arris must answer. That would hold M5 open: closing it with a
   narrower claim changes C1's scope, which is the human's.
+- ⚠ OPEN (human, step 9): `tests/fixtures/sandbox/crash-abort` expects
+  `SIGSEGV`; arm64 gives `SIGTRAP` (glibc's abort instruction is `brk` there,
+  `hlt` on x86-64), so the same program's crash message differs by machine.
+  Its subject is `abort`, which no program can make portable (`crash-segfault`
+  already covers a null read). Keep `abort` with a per-machine expectation, or
+  have the worker turn an abort into one portable ending (ADR-0002's PID 1)?

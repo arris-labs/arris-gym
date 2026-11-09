@@ -68,17 +68,19 @@ def test_a_program_that_exits_the_process_is_a_crash() -> None:
 def test_a_crash_keeps_only_the_tail_of_a_flooded_stderr() -> None:
     last = "the last words\n"
     program = (
-        "import os, sys\n"
+        "import ctypes, sys\n"
         "for _ in range(256):\n"
         "    sys.stderr.write('x' * 4096)\n"
         f"sys.stderr.write({last!r})\n"
         "sys.stderr.flush()\n"
-        "os.abort()\n"
+        "ctypes.string_at(0)\n"
     )
     result = ag.run(program)
     assert result.status is ag.Status.CRASH
     head, tail = result.message.split("; its stderr ends:\n")
-    assert head == "the program worker was killed by SIGSEGV"  # see fixtures/sandbox/crash-abort
+    # A null read faults as SIGSEGV on both machines; an `abort` would not
+    # (fixtures/sandbox/crash-abort).
+    assert head == "the program worker was killed by SIGSEGV"
     assert tail == ("x" * (_zygote.STDERR_TAIL_BYTES - len(last))) + last
 
 
