@@ -15,7 +15,7 @@ from typing import Any, Final, Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from arris_gym.fidelity._table import _code
+from arris_gym._markdown import code_span as _code
 from arris_gym.reward import IouRoute, Score, invalidity_rate
 from arris_gym.sandbox.outcome import ArrisRefusal, Dialect, Status, Versions
 
