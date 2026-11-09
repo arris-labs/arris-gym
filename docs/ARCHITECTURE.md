@@ -194,6 +194,16 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   whole; so is a program frame claiming a status only the body worker or
   the caller decides. A worker's frame counts only if the warden saw it
   complete its isolation and exit with code 0.
+- The **score worker** (`reward/_job.py`) is a job of its own kind, `score`,
+  under the same warden and limits: its payload is both bodies' bytes and the
+  reward config, which it reads into one fresh model to compute the four
+  terms, and its frame holds the terms and the IoU's route. The zygote's entry
+  (`sandbox/_zygote_main.py`) registers its handler before serving, so the
+  zygote module never imports `reward`. The caller parses the frame strictly:
+  one that is not whole, contradicts its status or holds a term that is not a
+  finite number in [0, 1] is a `crash`; the caller computes the reward from the
+  terms itself. Its deadline is 30 s by default, above the 17 s ADR-0008
+  measured for the slowest exact answer under 30 concurrent processes.
 - The **warden** is one fork per program. It enters new user, network, PID,
   mount and IPC namespaces, makes every mount read-only, forks the program
   worker and reports how it ended on a status pipe the worker never holds,
@@ -290,9 +300,13 @@ valid body                                                  →  0.1 + 0.9·S
 S = 0.6·IoU + 0.15·surface + 0.15·measures + 0.10·topology
 ```
 
-`score(result, target)` reads both bodies into one fresh model, inside a
-worker like any other kernel call on a body a program made: a kernel crash in
-scoring costs a status, not the run. Weights, τ and N live in a frozen
+`score(result, target)` gives a failure status the table's reward with no
+kernel call. A valid body is scored in a **score worker** (§The sandbox),
+which reads both bodies into one fresh model like any other kernel call on a
+body a program made: a kernel crash in scoring costs a status, not the run.
+When scoring fails the `Score`'s status is `runtime` (the kernel's words,
+verbatim: a target it cannot read, say), `timeout` or `crash`, and its reward
+−1.0, so a scorer that fails never pays. Weights, τ and N live in a frozen
 `RewardConfig` with a version, written into every result row, and a change
 that can move a reward bumps it.
 

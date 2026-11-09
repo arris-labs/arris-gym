@@ -99,6 +99,7 @@ class JobKind(enum.IntEnum):
     BODY = 2  # read the payload back as body bytes (`sandbox/_body.py`)
     MESH = 3  # tessellate the payload, a body's bytes, for a picture (`sandbox/_mesh.py`)
     EXEC = 4  # exec the interpreter the payload's spec names on its text (`sandbox/_exec.py`)
+    SCORE = 5  # score a body against a target (`reward/_job.py`, registered by the entry)
 
 
 # The job message: kind, deadline (a `time.monotonic()` instant: the clock is
@@ -112,6 +113,19 @@ _HANDLERS: dict[int, Callable[[int, int], None]] = {
     JobKind.BODY: _body.execute,
     JobKind.MESH: _mesh.execute,
 }
+
+
+def register(kind: JobKind, handler: Callable[[int, int], None]) -> None:
+    """Serve jobs of `kind` with `handler(payload_fd, result_fd)` in this zygote.
+
+    For a job a layer above the sandbox defines: the zygote's entry
+    (`sandbox/_zygote_main.py`) registers the score job's handler before it
+    serves, so this module never imports `reward`. Raises `ValueError` for a
+    kind already served.
+    """
+    if kind in _HANDLERS or kind == JobKind.EXEC:
+        raise ValueError(f"job kind {kind.name} is already served")
+    _HANDLERS[kind] = handler
 
 
 class SandboxUnavailable(RuntimeError):

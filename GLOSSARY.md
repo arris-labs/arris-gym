@@ -61,7 +61,7 @@ _Avoid_: master
 
 **Job**:
 One worker's run, as the caller hands it to the zygote: its kind (a
-program, a body to read back, an exec on another interpreter), its deadline and memory limit, its payload,
+program, a body to read back, a mesh, a pair to score, an exec on another interpreter), its deadline and memory limit, its payload,
 and the pipes its status and result come back on.
 _Avoid_: request (a kernel task is a thread or process)
 
@@ -94,6 +94,12 @@ _Avoid_: verifier
 The worker that tessellates a body's bytes for a picture (`dump_png`), under the
 same limits as the others: the caller parses what it writes and trusts none of it.
 _Avoid_: renderer
+
+**Score worker**:
+The worker that reads a candidate's and a target's body bytes into one fresh
+model and computes the reward's four terms, under the same limits as the
+others; the caller computes the reward from its frame and trusts none of it.
+_Avoid_: scorer process, evaluator
 
 **Exec spec**:
 What an exec job's worker runs once isolated: an interpreter, its arguments

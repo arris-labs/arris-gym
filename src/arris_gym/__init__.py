@@ -5,6 +5,15 @@
 
 from importlib.metadata import version
 
+from arris_gym.reward import (
+    DEFAULT_REWARD,
+    FieldMetrics,
+    IouRoute,
+    RewardConfig,
+    RewardWeights,
+    Score,
+    score,
+)
 from arris_gym.sandbox import (
     ArrisRefusal,
     BodyRef,
@@ -25,13 +34,19 @@ from arris_gym.sandbox import (
 __version__ = version("arris-gym")
 
 __all__ = [
+    "DEFAULT_REWARD",
     "ArrisRefusal",
     "BodyRef",
     "Dialect",
     "ExecResult",
+    "FieldMetrics",
+    "IouRoute",
     "Measures",
+    "RewardConfig",
+    "RewardWeights",
     "Sandbox",
     "SandboxUnavailable",
+    "Score",
     "Status",
     "Versions",
     "__version__",
@@ -40,4 +55,5 @@ __all__ = [
     "dump_text",
     "run",
     "run_many",
+    "score",
 ]

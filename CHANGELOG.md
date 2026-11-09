@@ -5,6 +5,20 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `score(result, target)` gives an `ExecResult` its reward against a target
+  body, under reward version 1 (`DEFAULT_REWARD`), as a frozen `Score`:
+  `syntax`, `runtime`, `unsupported_api`, `timeout` and `crash` get -1.0,
+  `arris_refusal` -0.5, `checker_fail` -0.3, and a valid body
+  `0.1 + 0.9·S` over its IoU, surface, measures and topology terms, each in
+  [0, 1]; a body scored against itself gets exactly 1.0. `Score.iou_route`
+  (`IouRoute`: `exact` or `sampled`) says whether the kernel answered the IoU
+  exactly or it was estimated from seeded points. A valid body is scored in a
+  worker of its own (`sandbox=`, `timeout=` 30 s, `memory=`): when scoring
+  fails the score is `runtime` with the kernel's words, `timeout` or `crash`,
+  and its reward -1.0. `RewardConfig` and `RewardWeights` set the weights, τ,
+  sample counts and seed; a config's `version` is written into every `Score`,
+  and `Score.digest()` hashes its numbers. `Score.field` (`FieldMetrics`) is
+  not computed yet and is `None`.
 - `run(program, dialect="cq")` (also `run_many`, `Sandbox.run`) runs a
   CadQuery program: `import cadquery as cq` gives a subset over `arris.build`
   and `show_object` is available. The subset covers `Workplane("XY")`,

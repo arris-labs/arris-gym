@@ -60,7 +60,8 @@ machine speed move a score.
   -> Score`; `RewardConfig` (version, weights, τ, N, seed, `iou_budget`, chord);
   `Score` (status, message, reward, `iou`, `iou_route`, `surface`, `measures`,
   `topology`, `field`, `reward_version`, versions, `digest()` over hex floats);
-  `FieldMetrics` (`voxel_iou_64`, `chamfer_x1000`); `IouRoute`;
+  `FieldMetrics` (`voxel_iou_64`, `chamfer_x1000`); `IouRoute`; `RewardWeights` and
+  `DEFAULT_REWARD`, since a config is built from them (exported at step 6);
   `invalidity_rate(scores)`, a corpus aggregate over all rows. It replaces the
   per-result field ARCHITECTURE.md lists, since a rate has no value for one
   result. SEED.md's `voxel_iou_256` was illustrative: BenchCAD's grid is 64³.
@@ -112,7 +113,7 @@ to be established here.
 - [x] Step 5 **[2]** — `RewardConfig`, `Score`, the reward by a `match` on
   `Status` ending in `assert_never`. `hypothesis`: any terms give a reward in
   [0.1, 1]; weights not summing to 1 are refused; the three failure rewards exact.
-- [ ] Step 6 **[3]** — the score worker and public `score`. Hostile cases: bytes
+- [x] Step 6 **[3]** — the score worker and public `score`. Hostile cases: bytes
   a worker cannot read, a forged frame, a frame out of range, a deadline passed,
   each its status. `hypothesis`: `score` never raises on arbitrary body bytes.
   Self scores reward exactly 1.0.
@@ -184,6 +185,14 @@ faceted hole's `topology` below 1 and below the plate against itself), plus:
   A move under about 0.02 of the diagonal sits at the floor, and the IoU
   carries that range. The topology split is ½ by default, unmeasured: step 4
   holds its closed forms, step 5 writes the weight into the config.
+- *Settled* (agent, step 6): the score job's handler lives in `reward/_job.py`
+  and `sandbox/_zygote_main.py` registers it (`_zygote.register`) before
+  serving, so `_zygote.py` never imports `reward`. `score`'s memory default is
+  the program's, 512 MiB: 120 slice pairs (each body against the next) scored
+  in it with no `runtime`, the slowest in 2.1 s under 16 at once. The worker
+  writes its frame unvalidated and the caller parses it strictly, so a forged
+  or out-of-range term is a `crash` there, never coerced. `Score.field` stays
+  `None` until step 7.
 - *Settled* (agent): `benchcad_score.py` runs the 10 pairs on CadQuery outside
   the sandbox, because their scorer reads STEP files and every sandbox mount is
   read-only. The pairs are our own programs; nothing from a corpus reaches it.
