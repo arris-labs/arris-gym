@@ -25,3 +25,38 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --locked
       - run: tools/gate.sh
+
+  # plans/m5-rescore step 9: the re-scored table on both architectures. Needs
+  # the network (the pinned corpus), so it is not in the gate. Fails unless the
+  # table's digest equals the committed one; both digests, the CPU and glibc
+  # are in the job log, and rescore.json is kept as an artifact so the two
+  # machines' tables can be diffed with tools/rescore_diff.py.
+  rescore:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked --extra corpus
+      - name: Machine
+        run: |
+          uname -m
+          lscpu
+          ldd --version | head -n 1
+      - name: Re-score the slice
+        run: uv run --locked --extra corpus arris-gym rescore benchcad --out rescore-out
+      - name: Compare with the committed table
+        run: |
+          echo "committed digest: $(jq -r .digest tests/fixtures/c1/rescore.json)"
+          echo "this machine:     $(jq -r .digest rescore-out/rescore.json)"
+          python3 tools/rescore_diff.py tests/fixtures/c1/rescore.json rescore-out/rescore.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rescore-${{ matrix.os }}
+          path: rescore-out/

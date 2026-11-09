@@ -4,7 +4,7 @@
 - Milestone: M5 (cycle C1, docs/ROADMAP.md)
 - Idea: none; the roadmap's M5. Absorbs two `docs/BACKLOG.md` lines: telling a
   scoring failure from a program's, and measuring `transformed`'s libm.
-- Branch: `main`, unless step 9's second machine is CI (see Open questions).
+- Branch: `plan/m5-rescore` (step 9 is [CI]).
 
 ## Goal
 `arris-gym rescore benchcad` runs the 300 slice programs under `cq`, scores each
@@ -80,6 +80,12 @@ and prints counts and the digest; no `[corpus]` extra exits 2, as `census` does.
 **Targets file.** `tests/fixtures/c1/targets.jsonl.gz`: stem, `step_sha256`, STEP
 text, sorted by stem, gzip `mtime=0`, 1.5 MB, attribution in its README.
 
+*Settled* (step 9): the human chose CI (`ubuntu-24.04-arm` against
+`ubuntu-latest`) as the second machine. The GitHub remote is theirs to create
+(SEED.md §10.1); the `rescore` job fails unless its digest equals the committed
+`rescore.json`'s, logs the digest, `lscpu` and glibc, and uploads `rescore.json`.
+Step 9 is ticked when both jobs are green, i.e. both digests are equal.
+
 ## Steps
 A step's grade is its tier (`.agents/tiers.md`): **[1]** routine; **[2]** careful,
 a numeric or semantic case; **[3]** unproven, or changes what a worker sends back.
@@ -115,7 +121,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
 - [x] Step 8 **[2]** — `tools/rescore_diff.py A B`: from two `rescore.json`, the
   rows that differ and the first stage each differs at (candidate body, target
   body, each term); exit 1 on any. Tests on planted differences.
-- [ ] Step 9 **[2]** — The second machine: a clean clone, `uv sync --locked
+- [ ] Step 9 **[2] [CI]** — The second machine: CI's `rescore` job on `ubuntu-latest` and `ubuntu-24.04-arm` (`.github/workflows/ci.yml`), a clean clone, `uv sync --locked
   --extra corpus`, the command. Record both digests, CPUs and glibc in the README.
   A difference is diffed by step 8, shrunk to a regression fixture, reported to
   arris if the kernel's; the plan stays open until the digests are equal.
@@ -145,12 +151,6 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
 - `docs/adr/README.md` — ADR-0011.
 
 ## Open questions
-- ⚠ OPEN (**the human**, by step 9): which second machine. This one is an AMD
-  Ryzen 9 7950X, x86-64, glibc 2.39. Either another machine of yours that allows
-  unprivileged user namespaces and Landlock (not Docker: its default seccomp
-  profile refuses them), or CI's `ubuntu-24.04-arm`, which needs the GitHub
-  remote, your act (SEED.md §10.1). CI makes step 9 **[CI]** and moves the plan to
-  `plan/m5-rescore`.
 - ⚠ OPEN (agent, step 9): if `transformed`'s libm moves body bytes across
   architectures (`arris.build.Workplane.rotated`), the rows that call it differ
   and arris must answer. That would hold M5 open: closing it with a
