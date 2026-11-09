@@ -100,7 +100,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
   `Stage`, `RescoreTable` and its digest. Tests by construction: every count
   over all rows, a `mean_reward` by hand; `hypothesis`: a permutation does not
   move the digest; a table whose digest or counts disagree is refused.
-- [ ] Step 5 **[2]** — `rescore.rescore(entries, *, sandbox, workers)`: run, read
+- [x] Step 5 **[2]** — `rescore.rescore(entries, *, sandbox, workers)`: run, read
   each target, score, in submission order. Fixtures, one per stage: a valid pair
   (reward 1.0 for a part against itself by construction), a refusal, a target
   that fails, a scoring failure. Failures are counted and none dropped.
