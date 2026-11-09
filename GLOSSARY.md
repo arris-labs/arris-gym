@@ -267,3 +267,16 @@ One program's comparison of arris with the oracle (`FidelityRow`): `agree`,
 `disagree` with its disagreement class, or `unclassified`, with both statuses,
 the measure deltas and any verdict. An unclassified row makes a cycle red.
 _Avoid_: fidelity result
+
+**Stage**:
+Where a re-scored program's failure happened: `none`, `program` (it did not
+end `ok`), `target` (its target could not be read into a valid body) or
+`scoring` (both bodies valid, scoring the pair failed). A `Score` carries a
+status, not the stage that decided it, so the row does (ADR-0011).
+_Avoid_: phase
+
+**Re-scored table**:
+The result of `rescore`: a row per program with its statuses, stage, digests
+and `Score`, and aggregates over all of them, failures included, with its own
+digest, the same on every machine (`RescoreTable`, ADR-0011).
+_Avoid_: results table, leaderboard

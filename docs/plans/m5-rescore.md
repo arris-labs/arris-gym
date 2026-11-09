@@ -96,7 +96,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
 - [x] Step 3 **[1]** — `tools/oracle_run.py --targets` writes the targets file;
   commit it with its README section (`fixtures:` commit). Test, offline: 300
   rows, stems equal `slice.txt`, each hash equal to `oracle.jsonl`'s.
-- [ ] Step 4 **[2]** — `rescore/_table.py`: `RescoreEntry`, `RescoreRow`,
+- [x] Step 4 **[2]** — `rescore/_table.py`: `RescoreEntry`, `RescoreRow`,
   `Stage`, `RescoreTable` and its digest. Tests by construction: every count
   over all rows, a `mean_reward` by hand; `hypothesis`: a permutation does not
   move the digest; a table whose digest or counts disagree is refused.
