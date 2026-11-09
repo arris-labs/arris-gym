@@ -112,7 +112,7 @@ a numeric or semantic case; **[3]** unproven, or changes what a worker sends bac
   `phone_stand` takes the sampled route on all 100 (ADR-0008 saw refusals only
   for cone against cone); its `topology` is 0.80–0.91 where `venturi_tube`'s is
   1.0; `surface` is 0.85–0.89 (ADR-0009's noise floor: exp(−0.0083/0.05) = 0.85).
-- [ ] Step 8 **[2]** — `tools/rescore_diff.py A B`: from two `rescore.json`, the
+- [x] Step 8 **[2]** — `tools/rescore_diff.py A B`: from two `rescore.json`, the
   rows that differ and the first stage each differs at (candidate body, target
   body, each term); exit 1 on any. Tests on planted differences.
 - [ ] Step 9 **[2]** — The second machine: a clean clone, `uv sync --locked
