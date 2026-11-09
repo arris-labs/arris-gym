@@ -21,11 +21,12 @@ from hypothesis import strategies as st
 
 import arris_gym as ag
 import fixture_cases
-from arris_gym.reward import DEFAULT_REWARD, combine
+from arris_gym.reward import DEFAULT_REWARD
 from arris_gym.reward._field import field_metrics
 from arris_gym.reward._iou import iou
 from arris_gym.reward._job import ScoreJob, frame
 from arris_gym.reward._measures import measures
+from arris_gym.reward._score import combine
 from arris_gym.reward._scoring import SCORE_WORKER, parse_outcome
 from arris_gym.reward._surface import surface
 from arris_gym.reward._topology import topology
@@ -330,3 +331,11 @@ def test_the_examples_run() -> None:
     from arris_gym.reward import _scoring
 
     assert doctest.testmod(_scoring).failed == 0
+
+
+def test_combine_and_failure_reward_are_not_public() -> None:
+    import arris_gym.reward as reward
+
+    assert "combine" not in reward.__all__
+    assert "failure_reward" not in reward.__all__
+    assert not hasattr(ag, "combine")

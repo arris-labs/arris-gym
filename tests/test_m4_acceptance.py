@@ -20,6 +20,7 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 import arris_gym as ag
+import benchcad_pairs as pairs
 import fixture_cases
 import test_reward_benchcad as benchcad
 
@@ -164,10 +165,10 @@ def test_a_faceted_hole_has_a_topology_below_one_and_below_the_plate_against_its
 # --- the field against BenchCAD's scorer ---------------------------------------
 
 
-@pytest.mark.parametrize("slug", benchcad.SLUGS)
+@pytest.mark.parametrize("slug", pairs.SLUGS)
 def test_the_field_is_within_adr_0010_of_their_scorer_on_ten_pairs(slug: str) -> None:
-    row = benchcad.SCORER["pairs"][slug]
-    ours = benchcad._ours(slug)
+    row = pairs.SCORER["pairs"][slug]
+    ours = pairs.ours(slug)
     assert ours.field is not None
     assert abs(ours.field.voxel_iou_64 - row["voxel_iou_64"][0]) <= benchcad.VOXEL_TOLERANCE
     theirs = math.fsum(1000.0 * v for v in row["chamfer"]) / len(row["chamfer"])

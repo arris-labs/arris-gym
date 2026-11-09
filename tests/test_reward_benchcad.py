@@ -9,20 +9,15 @@ holds `repeats` draws of it and the tolerance is built from their spread.
 
 from __future__ import annotations
 
-import functools
-import json
 import math
 import statistics
 
 import pytest
 
 import arris_gym as ag
-import fixture_cases
+import benchcad_pairs as pairs
 from arris_gym.reward import IouRoute
-
-ROOT = fixture_cases.ROOT / "reward" / "benchcad-scorer"
-SCORER = json.loads((ROOT / "scorer.json").read_text(encoding="utf-8"))
-SLUGS = sorted(d.name for d in ROOT.iterdir() if d.is_dir())
+from benchcad_pairs import SCORER, SLUGS
 
 # ADR-0010's tolerances, measured against `scorer.json`.
 # Voxel IoU: their answer is deterministic, so the gap is the two meshes' (Open
@@ -39,15 +34,6 @@ CHAMFER_RELATIVE = 0.10
 SIGMAS = 4
 # Pairs whose two bodies are one shape once each is normalised to its own box.
 FLOOR_PAIRS = ("box-and-double", "box-shifted", "plate-self")
-
-
-@functools.cache
-def _ours(slug: str) -> ag.Score:
-    with ag.Sandbox() as sandbox:
-        candidate = sandbox.run((ROOT / slug / "program.py").read_text("utf-8"), dialect="cq")
-        target = sandbox.run((ROOT / slug / "target.py").read_text("utf-8"), dialect="cq")
-        assert target.body is not None
-        return ag.score(candidate, target.body, sandbox=sandbox)
 
 
 def test_the_fixture_holds_ten_pairs_and_their_repeats() -> None:
@@ -76,7 +62,7 @@ def test_the_chamfer_floor_is_held_above_their_sampling_noise() -> None:
 @pytest.mark.parametrize("slug", SLUGS)
 def test_our_field_is_within_the_measured_tolerance_of_their_scorer(slug: str) -> None:
     row = SCORER["pairs"][slug]
-    ours = _ours(slug)
+    ours = pairs.ours(slug)
     assert ours.status is ag.Status.OK
     assert ours.field is not None
     assert abs(ours.field.voxel_iou_64 - row["voxel_iou_64"][0]) <= VOXEL_TOLERANCE
@@ -86,7 +72,7 @@ def test_our_field_is_within_the_measured_tolerance_of_their_scorer(slug: str) -
 
 @pytest.mark.parametrize("slug", FLOOR_PAIRS)
 def test_one_shape_twice_is_a_perfect_field_for_us_and_a_floor_for_them(slug: str) -> None:
-    ours = _ours(slug).field
+    ours = pairs.ours(slug).field
     assert ours is not None
     assert (ours.voxel_iou_64, ours.chamfer_x1000) == (1.0, 0.0)
     assert SCORER["pairs"][slug]["voxel_iou_64"][0] == 1.0
@@ -94,7 +80,7 @@ def test_one_shape_twice_is_a_perfect_field_for_us_and_a_floor_for_them(slug: st
 
 
 def test_a_cone_against_a_cone_is_answered_by_the_sampled_route() -> None:
-    scored = _ours("cone-pair")
+    scored = pairs.ours("cone-pair")
     assert scored.iou_route is IouRoute.SAMPLED
     assert scored.iou is not None
     assert 0.0 < scored.iou < 1.0

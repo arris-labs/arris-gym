@@ -21,10 +21,9 @@ from arris_gym.reward import (
     RewardConfig,
     RewardWeights,
     Score,
-    combine,
-    failure_reward,
     invalidity_rate,
 )
+from arris_gym.reward._score import combine, failure_reward
 from arris_gym.sandbox.outcome import Status, Versions
 
 VERSIONS = Versions(arris="0.10.0", numpy="2.3.4", arris_gym="0.1.0")
