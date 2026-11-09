@@ -1,5 +1,8 @@
 {
   "dialect": "arris",
   "status": "crash",
-  "message": "the program worker was killed by SIGSEGV; its stderr ends:\nthe last words\n"
+  "message_by_machine": {
+    "aarch64": "the program worker was killed by SIGTRAP; its stderr ends:\nthe last words\n",
+    "x86_64": "the program worker was killed by SIGSEGV; its stderr ends:\nthe last words\n"
+  }
 }

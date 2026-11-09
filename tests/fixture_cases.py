@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import platform
 from dataclasses import dataclass
 
 import arris_gym
@@ -24,6 +25,10 @@ DEFAULT_TOLERANCE = 1e-6
 # The deadline, in seconds, a fixture expected to end in `timeout` runs to;
 # its expected message names it. Every other fixture runs to `run`'s default.
 TIMEOUT_DEADLINE = 1.0
+# The key a fixture declares in place of `message` when the same program's
+# message differs by machine: `platform.machine()` -> message. Its fixture
+# directory holds a README.md saying why (tools/check-fixtures.sh).
+BY_MACHINE = "message_by_machine"
 
 
 @dataclass(frozen=True)
@@ -39,12 +44,15 @@ def load(area: str) -> list[Case]:
     """Every fixture under `tests/fixtures/<area>/`, sorted by slug.
 
     Raises `ValueError` for a fixture outside `regression/` whose measures
-    leave out `faces` or `face_kinds`: only a desired, unbuilt body may.
+    leave out `faces` or `face_kinds`: only a desired, unbuilt body may; and
+    for one whose message is declared per machine but not for this one
+    (`for_machine`).
     """
     cases = []
     for directory in sorted((ROOT / area).iterdir()):
         if (directory / "program.py").is_file():
-            expected = json.loads((directory / "expected.json").read_text(encoding="utf-8"))
+            declared = json.loads((directory / "expected.json").read_text(encoding="utf-8"))
+            expected = for_machine(declared, f"{area}/{directory.name}", platform.machine())
             measures = expected.get("measures")
             counted = isinstance(measures, dict) and {"faces", "face_kinds"} <= measures.keys()
             if area != "regression" and isinstance(measures, dict) and not counted:
@@ -55,6 +63,28 @@ def load(area: str) -> list[Case]:
                 )
             )
     return cases
+
+
+def for_machine(expected: dict[str, object], where: str, machine: str) -> dict[str, object]:
+    """`expected` with its message for `machine`, a `platform.machine()` name.
+
+    A fixture without `message_by_machine` comes back unchanged: one
+    expectation on every machine. One with it gets that machine's entry as its
+    `message`. Raises `ValueError` when it declares nothing for `machine`, or
+    declares `message` beside it: a machine nobody wrote an expectation for
+    never passes silently.
+    """
+    if BY_MACHINE not in expected:
+        return expected
+    by_machine = expected[BY_MACHINE]
+    if "message" in expected or not isinstance(by_machine, dict):
+        raise ValueError(f"{where}: {BY_MACHINE} is a mapping, declared in place of message")
+    if machine not in by_machine:
+        declared = ", ".join(sorted(by_machine))
+        raise ValueError(f"{where}: no expected message for machine {machine!r} ({declared})")
+    resolved = {k: v for k, v in expected.items() if k != BY_MACHINE}
+    resolved["message"] = by_machine[machine]
+    return resolved
 
 
 def run(case: Case) -> ExecResult:

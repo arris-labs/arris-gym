@@ -21,7 +21,10 @@ The unit of acceptance: a directory `tests/fixtures/<area>/<slug>/` with
   from arris-gym's output.
 
 Measures compare within a named default tolerance unless the fixture's README
-cites the ADR that decided another (`tools/check-fixtures.sh`). A failure
+cites the ADR that decided another (`tools/check-fixtures.sh`). A message
+that the same program's run makes differ by machine (only `crash-abort`'s
+signal) is declared per `platform.machine()` as `message_by_machine`, with a
+README saying why; a machine with no entry fails to load. A failure
 shrunk from a run goes under `regression/` with the desired assertion, strict
 `xfail` (`.agents/rules/gym.md`). Corpus programs are not fixtures: a corpus
 is pinned by revision and fetched by a command outside the gate; a committed
