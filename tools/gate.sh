@@ -14,6 +14,7 @@ stage lock uv lock --check --quiet
 stage layers uv run --locked tools/check_layers.py
 stage fixtures tools/check-fixtures.sh
 stage bash-guard tools/bash-guard-test.sh
+stage release-check tools/release-check-test.sh
 stage arris-api uv run --locked tools/gen_arris_api.py --check
 stage ruff-format uv run --locked ruff format --check --quiet
 stage ruff-lint uv run --locked ruff check --quiet

@@ -7,9 +7,7 @@ ideas keep one line below with the reason, so the same idea is not
 re-brainstormed. A *measured* defect is not a raw idea: it goes under
 [Findings](#findings) below, in the fixed shape.
 
-- The human's: the GitHub repository `arris-labs/arris-gym`, and reserving `arris-gym` on PyPI with a minimal 0.0.x release (free on PyPI as of 2026-11-07, SEED.md §2)
 - `readable_roots` includes `sys.prefix`: for a system interpreter that is all of `/usr`, wider than the interpreter's own files; narrow it when a consumer runs a system Python
-- Port `/release` and `release.yml` from laman when the first real release is planned; until then git.md says an agent never tags or uploads
 - BenchCAD 2.0 (`BenchCAD/benchcad-2.0-public` and `-core`, drawing → STEP, gated, licence "other") is not in the survey: read its terms before C3 and decide if it belongs among the re-scored benchmarks
 - Census: a chain on a receiver it cannot place (`x = a.b().b()…`) keys each `?` call by its whole source prefix, so a hostile program can make `unknown` quadratic in size (4,000 calls: 32 M characters); decide a truncation of the key
 - `rescore`'s `SLICE` and `TARGETS` defaults are paths relative to the repository root: an installed `arris-gym rescore benchcad` fails without `--slice` and `--targets`; resolve them from the package or require the flags

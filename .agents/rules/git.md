@@ -50,10 +50,11 @@ Name any public type or signature it changes.
 
 ## Tags and publishing
 
-- Creating the remote, reserving `arris-gym` on PyPI and every release are the
-  human's acts (SEED.md §2, §10.1). No release workflow exists yet: an agent
-  never tags, pushes or uploads. `/release` and `release.yml` are ported from
-  laman when the first release is planned (`docs/BACKLOG.md`).
+- Creating the remote, reserving `arris-gym` on PyPI (a trusted publisher
+  for `release.yml`, environment `pypi`) and every release are the human's
+  acts. `/release` prepares the commits; the **human tags and pushes** and
+  approves the `pypi` reviewer; an agent never tags, pushes, approves or
+  uploads. `release.yml` publishes only from a `v*` tag.
 
 ### The version
 

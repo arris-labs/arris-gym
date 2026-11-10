@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Refuses anything but a v* tag whose version equals pyproject's and whose
+  # changelog has a section. The build job does not need it, so a dispatch on
+  # a branch builds and checks everything and then refuses to publish.
+  release-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the release
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          test "$REF_TYPE" = tag || { echo 'A real release requires a v* tag'; exit 1; }
+          tools/release-check.sh "$REF_NAME" "$RUNNER_TEMP/notes.md"
+
+  # The sdist and the wheel (pure Python: one wheel serves every platform),
+  # checked for metadata and installed into a clean environment.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv build --out-dir dist
+      - run: uvx twine check --strict dist/*
+      - name: Install the wheel into a clean environment
+        run: |
+          uv venv "$RUNNER_TEMP/clean"
+          uv pip install --python "$RUNNER_TEMP/clean/bin/python" dist/*.whl
+          "$RUNNER_TEMP/clean/bin/python" -I -c "import arris_gym; print(arris_gym.__file__)"
+          "$RUNNER_TEMP/clean/bin/arris-gym" --help
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  # Configure the pypi environment with a required reviewer and a PyPI trusted
+  # publisher (owner arris-labs, repo arris-gym, workflow release.yml,
+  # environment pypi) before the first release. The tag's own CI run is the
+  # gate: an early approval fails safe, so re-run this job once CI is green.
+  publish-pypi:
+    needs: [release-check, build]
+    environment: pypi
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: tools/release-check.sh "$GITHUB_REF_NAME"
+      - name: Require a green CI run on this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh run list --workflow ci.yml --commit "$GITHUB_SHA" --status success --json databaseId --jq length)
+          test "$n" -ge 1 || { echo "No successful ci.yml run for $GITHUB_SHA yet"; exit 1; }
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  # The GitHub Release, its notes the version's CHANGELOG.md section, once
+  # PyPI holds the version.
+  github-release:
+    needs: [release-check, publish-pypi]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: tools/release-check.sh "$GITHUB_REF_NAME" "$RUNNER_TEMP/notes.md"
+      - run: gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md"
+        env:
+          GH_TOKEN: ${{ github.token }}
