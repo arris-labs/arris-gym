@@ -26,6 +26,12 @@ EXIT_UNREADABLE: Final = 2
 
 Row = dict[str, Any]
 
+
+def _pinned(versions: dict[str, str]) -> dict[str, str]:
+    """`versions` without arris-gym's own: a release bump is not a difference (ADR-0011)."""
+    return {key: value for key, value in versions.items() if key != "arris_gym"}
+
+
 # The pipeline's order: a row is blamed on the first of these that differs, so
 # an upstream difference (the program, its body, the target) is named before the
 # terms it moves.
@@ -42,7 +48,14 @@ STAGES: Final[tuple[tuple[str, Callable[[Row], Any]], ...]] = (
     ("field metrics", lambda r: r["score"]["field"]),
     ("reward", lambda r: r["score"]["reward"]),
     ("status", lambda r: (r["stage"], r["score"]["status"], r["score"]["message"])),
-    ("versions", lambda r: (r["versions"], r["score"]["versions"], r["score"]["reward_version"])),
+    (
+        "versions",
+        lambda r: (
+            _pinned(r["versions"]),
+            _pinned(r["score"]["versions"]),
+            r["score"]["reward_version"],
+        ),
+    ),
 )
 """Each stage: its name and what of a row it compares, in pipeline order."""
 
@@ -60,12 +73,21 @@ AGGREGATES: Final = (
 )
 
 
+def _unversioned(row: Row) -> Row:
+    """`row` with arris-gym's own version removed, as the stages compare it."""
+    return {
+        **row,
+        "versions": _pinned(row["versions"]),
+        "score": {**row["score"], "versions": _pinned(row["score"]["versions"])},
+    }
+
+
 def first_difference(a: Row, b: Row) -> str | None:
     """The name of the first stage at which rows `a` and `b` differ, None when they do not."""
     for name, pick in STAGES:
         if pick(a) != pick(b):
             return name
-    return None if a == b else "other fields"
+    return None if _unversioned(a) == _unversioned(b) else "other fields"
 
 
 def diff(a: dict[str, Any], b: dict[str, Any]) -> list[str]:

@@ -86,3 +86,21 @@ claim is about arris, `cq` and the reward, not about Open CASCADE.
   byte for byte.
 - **Hashing the whole blanked text**: it would move every `step_sha256` and
   `oracle.jsonl`, with nothing gained, since the header carries no geometry.
+
+## Amendment (2026-11-10): arris-gym's own version is outside every digest
+
+Tagging 0.1.0 moved `pyproject.toml` from `0.1.0.dev0` to `0.1.0`. Every row
+records `versions.arris_gym` and `Score.digest()` hashed it, so the re-scored
+table's digest moved on both architectures and CI's comparison with the
+committed `rescore.json` failed on all 300 rows, at stage `versions`. Nothing
+else differed. A release bump would have broken it every time.
+
+Decision: `Score.digest()` and `digest()` hash the `arris` and `numpy`
+versions and the reward's, not `arris_gym`'s. What determinism pins is the
+kernel and numpy (gym.md); a change of this library's own code that moves a
+result is caught by the digest itself, not by its version string. The rows
+still record `arris_gym`, `dump_text` still shows it, and the cache key keeps
+it (a new release must not reuse an old release's cached results).
+`tools/rescore_diff.py` ignores it. The committed `rescore.json` was
+regenerated (digest `f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812`) and re-checked on both architectures; this
+is not a reward change, so the reward stays at version 1.

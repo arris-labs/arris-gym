@@ -3,7 +3,8 @@
 A result is written as one line per field, each value on its own line and
 strings JSON-quoted so none spans lines. `digest` is the SHA-256 of those
 lines with every float in hex (`float.hex`, exact), rows in program order.
-`seconds` is wall-clock and is in neither: it is not a result. Private; the
+`seconds` is wall-clock and is in neither: it is not a result. Nor is
+`arris_gym`'s own version in the digest: a release bump must not move it. Private; the
 public names are re-exported by `arris_gym`.
 """
 
@@ -45,7 +46,7 @@ def _measure_lines(measures: Measures, number: Number) -> list[str]:
     ]
 
 
-def _lines(result: ExecResult, number: Number) -> list[str]:
+def _lines(result: ExecResult, number: Number, *, own_version: bool) -> list[str]:
     lines = [f"status: {result.status.value}", f"message: {_string(result.message)}"]
     if result.refusal is None:
         lines.append("refusal: none")
@@ -64,10 +65,10 @@ def _lines(result: ExecResult, number: Number) -> list[str]:
         f"violations: {_strings(result.violations)}",
         f"program_sha256: {result.program_sha256}",
         f"dialect: {result.dialect.value}",
-        f"versions: arris={_string(result.versions.arris)}"
-        f" numpy={_string(result.versions.numpy)}"
-        f" arris_gym={_string(result.versions.arris_gym)}",
+        f"versions: arris={_string(result.versions.arris)} numpy={_string(result.versions.numpy)}",
     ]
+    if own_version:
+        lines[-1] += f" arris_gym={_string(result.versions.arris_gym)}"
     return lines
 
 
@@ -81,7 +82,7 @@ def dump_text(result: ExecResult) -> str:
     >>> print(ag.dump_text(ag.run("result = (")).splitlines()[0])
     status: syntax
     """
-    return "\n".join(_lines(result, repr)) + "\n"
+    return "\n".join(_lines(result, repr, own_version=True)) + "\n"
 
 
 def digest(results: Iterable[ExecResult]) -> str:
@@ -98,7 +99,7 @@ def digest(results: Iterable[ExecResult]) -> str:
     """
     hasher = hashlib.sha256()
     for result in results:
-        for line in _lines(result, float.hex):
+        for line in _lines(result, float.hex, own_version=False):
             hasher.update(line.encode("ascii"))
             hasher.update(b"\n")
         hasher.update(b"--\n")

@@ -1,6 +1,6 @@
 # re-scored table
 
-Digest `70e66667de9089860f07e69b6507713fa5945eb6986216480bee964ff5ad658c`.
+Digest `f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812`.
 
 Over 300 programs (every failure counted):
 

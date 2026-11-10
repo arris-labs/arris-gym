@@ -143,9 +143,10 @@ class Score(BaseModel):
     def digest(self) -> str:
         """The SHA-256 (hex) of the score's numbers and names, floats in hex.
 
-        Status, reward, terms, route, field metrics and versions; `message`
-        is left out, since a timeout's words may carry a duration. The same
-        score always digests the same.
+        Status, reward, terms, route, field metrics and the `arris` and `numpy`
+        versions; `message` is left out, since a timeout's words may carry a
+        duration, and so is `arris_gym`'s own version, which a release moves.
+        The same score always digests the same.
 
         >>> from arris_gym.reward import DEFAULT_REWARD
         >>> s = Score(status=Status.SYNTAX, message="x", reward=-1.0, iou=None,
@@ -171,7 +172,6 @@ class Score(BaseModel):
             f"voxel_iou_64: {hexed(None if field is None else field.voxel_iou_64)}",
             f"chamfer_x1000: {hexed(None if field is None else field.chamfer_x1000)}",
             f"reward_version: {self.reward_version}",
-            f"versions: arris={self.versions.arris!r} numpy={self.versions.numpy!r}"
-            f" arris_gym={self.versions.arris_gym!r}",
+            f"versions: arris={self.versions.arris!r} numpy={self.versions.numpy!r}",
         ]
         return hashlib.sha256(("\n".join(lines) + "\n").encode("utf-8")).hexdigest()

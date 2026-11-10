@@ -420,8 +420,9 @@ nothing wall-clock. It is the acceptance: equal on two machines.
 **Measured.** The re-scored table's digest (§The re-scored table) is equal on
 three machines: AMD Ryzen 9 7950X and AMD EPYC 7763 (x86-64), ARM Neoverse-N2
 (aarch64), glibc 2.39 to 2.43. So `Workplane.rotated`'s libm did not move body
-bytes on the slice. The digest moves with any version it records: a new
-arris-gym, `arris` or `numpy` version, or the reward's, changes it, and the
+bytes on the slice. The digest moves with any version it covers: a new
+`arris` or `numpy` version, or the reward's, changes it (arris-gym's own
+version is recorded in each row but not hashed, ADR-0011), and the
 committed `rescore.json` is recommitted in a `fixtures:` commit with it.
 
 ## The oracle
@@ -528,7 +529,7 @@ depends on the main environment alone, never on CadQuery (ADR-0011).
   timeouts; `mean_reward` 0.4836 over 300, 0.9753 over the 200 valid;
   invalidity 1/3. The IoU is 1.0 on all 200 valid rows, exact on 100 and
   sampled on the 100 `phone_stand` rows, whose exact route the kernel refuses
-  (`BACKLOG.md`, Findings). Digest `70e66667…`, equal on two architectures.
+  (`BACKLOG.md`, Findings). Digest `f89bce24…`, equal on two architectures.
 - `tools/rescore_diff.py A B` names the rows two tables differ at and the first
   stage each differs at.
 
