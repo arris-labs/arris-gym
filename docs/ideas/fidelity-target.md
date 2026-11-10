@@ -165,13 +165,42 @@ and amends `docs/ROADMAP.md` §C2's "from that number" to "from the reach curve
 over both corpora".
 ➡️ Yes: a kickoff `⚠ OPEN` closes only by ADR.
 
-*Later* (they wait on Q1–Q3):
-- the value of T per corpus, read from the measured reach curves;
-- whether an in-subset `by_design` row needs a budget, so the subset cannot
-  meet "0 `cq_bug`" by narrowing itself to nothing;
-- whether the oracle zygote comes before the baseline run, or the first run
-  just pays the 7.5 hours.
+Round 2:
+
+❓ **Q5 — A `by_design` cap**: narrowing the subset re-classes an in-subset
+`cq_bug` as `by_design`, which could meet "0 `cq_bug`" by giving the subset
+away. (A) No cap; the ADR requires each `by_design` anchor to name the CadQuery
+behaviour it declines, and the fidelity table counts `by_design` rows per
+corpus beside reach. (B) A cap: at most a fixed share of the in-subset programs
+(say 1%) may be `by_design`. (C) No `by_design` among in-subset programs at all:
+a declined behaviour leaves the subset, so its programs stop being in-subset
+and lower reach instead.
+➡️ C: a declined behaviour then costs reach, the number it should cost, and no
+second cap is needed. Narrowing becomes visible on the curve rather than hidden
+in a class count.
+
+❓ **Q6 — The oracle zygote first**: (A) the plan makes the oracle start-up
+cheap (import CadQuery once, fork per program; the backlog line) before the
+baseline run; (B) the first full run pays the ~7.5 CPU-hours, and the zygote
+waits.
+➡️ A: C2 re-runs the full table on every lifted form and every `arris` bump.
+Paying 1.5 s per program each time is what makes the full corpora (Q2)
+expensive.
+
+*Later*: the value of T per corpus, read from the measured reach curves. It
+is not a question for this idea: the plan measures the curves, then writes the
+ADR with T, and the human approves the number there.
 
 ## Decision
 
-(empty)
+Round 1 (2026-11-10), "yes" to all:
+- **Q1 — C**: the target is reach ≥ T and no `cq_bug` among in-subset
+  programs; plain agreement over all programs is published beside it, never
+  targeted.
+- **Q2 — A**: the full corpora, BenchCAD `code_gen` and the CAD-Recode
+  validation split, each with its own target, nothing pooled.
+- **Q3 — A**: T is set from the census's reach curves over both corpora, in
+  the same ADR.
+- **Q4 — yes**: one ADR, written by the plan, closes SEED.md §9.8's `⚠ OPEN`
+  and amends `docs/ROADMAP.md` §C2's "from that number".
+- Glossary: *In-subset program*, *Reach* and *Fidelity target* added.

@@ -277,6 +277,21 @@ One program's comparison of arris with the oracle (`FidelityRow`): `agree`,
 the measure deltas and any verdict. An unclassified row makes a cycle red.
 _Avoid_: fidelity result
 
+**In-subset program**:
+A corpus program whose every API form the census counts lies in the subset;
+decided statically from the census, never by running it.
+
+**Reach**:
+The share of a corpus's programs that are in-subset, over all its programs: a
+property of a corpus against the subset, not of the subset alone.
+_Avoid_: coverage
+
+**Fidelity target**:
+What C2 must meet on each corpus, set by ADR: a reach of at least T and no
+`cq_bug` row among its in-subset programs. Plain agreement over all programs
+is published beside it, never targeted.
+_Avoid_: pass rate
+
 **Stage**:
 Where a re-scored program's failure happened: `none`, `program` (it did not
 end `ok`), `target` (its target could not be read into a valid body) or
