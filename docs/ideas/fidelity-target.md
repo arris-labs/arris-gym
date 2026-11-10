@@ -1,6 +1,6 @@
 # Idea: fidelity-target
 
-- Status: Open
+- Status: Open (decided; awaits /plan)
 - Raised: 2026-11-10
 - Prompt (verbatim from the human): "/idea fidelity-target"
 
@@ -204,3 +204,13 @@ Round 1 (2026-11-10), "yes" to all:
 - **Q4 — yes**: one ADR, written by the plan, closes SEED.md §9.8's `⚠ OPEN`
   and amends `docs/ROADMAP.md` §C2's "from that number".
 - Glossary: *In-subset program*, *Reach* and *Fidelity target* added.
+
+Round 2 (2026-11-10), "yes" to both:
+- **Q5 — C**: no `by_design` row among in-subset programs. A declined
+  CadQuery behaviour leaves the subset; its programs stop being in-subset and
+  lower reach, so narrowing shows on the curve and needs no cap.
+- **Q6 — A**: the oracle zygote (import CadQuery once, fork per program)
+  lands before the first full-corpus run.
+
+Nothing is left for this idea: T per corpus is measured and written by the
+plan's ADR, approved there.
