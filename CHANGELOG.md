@@ -5,6 +5,8 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+## 0.1.0 — 2026-11-10
+
 - `arris-gym rescore benchcad` (needs the `[corpus]` extra) runs the 300 slice
   programs under `cq` and scores each against the CadQuery oracle's STEP of the
   same program, writing `rescore.json` and `rescore.md`: a row per program with

@@ -1,6 +1,6 @@
 [project]
 name = "arris-gym"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "Run, score and train CAD-code models on a kernel you can trust: exact, deterministic, every failure counted."
 readme = "README.md"
 requires-python = ">=3.12"

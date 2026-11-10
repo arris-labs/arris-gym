@@ -35,6 +35,7 @@ of the 300 slice programs agreeing with the oracle, 100 an arris bug, 0
 unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
 (ADR-0008 to ADR-0010); `arris-gym rescore benchcad` re-scores the slice
 against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
+**0.1.0 tagged** (2026-11-10; published once `release.yml` finishes).
 **Next:** C2, the fidelity gate: its first step is the fidelity target, by ADR
 (`docs/ROADMAP.md`).
 
