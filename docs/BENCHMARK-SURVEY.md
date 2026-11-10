@@ -12,7 +12,7 @@ and was not read.
 
 | Benchmark | Task / input → output | Backend | Size | Notable result (unverified unless marked) |
 |---|---|---|---|---|
-| BenchCAD (2605.10865) | image → code, code edit, visual/code QA | CadQuery (OCCT) | 17.9k parts, 106 industrial families (52 anchored to ISO/DIN/…), 748 edit pairs | Data **CC-BY-4.0**, eval code MIT (read). A Qwen3-VL-2B trained with SFT + GRPO (reward 0.2·op recall + 0.8·IoU) scores 0.768 on image→code, above frontier models and the CADEvolve v3 specialist (0.601) |
+| BenchCAD (2605.10865) | image → code, code edit, visual/code QA | CadQuery (OCCT) | 17.9k parts, 106 industrial families (52 anchored to ISO/DIN/…), 748 edit pairs (17,900 programs in 106 families confirmed by arris-gym's census of `code_gen`) | Data **CC-BY-4.0**, eval code MIT (read). A Qwen3-VL-2B trained with SFT + GRPO (reward 0.2·op recall + 0.8·IoU) scores 0.768 on image→code, above frontier models and the CADEvolve v3 specialist (0.601) |
 | Text2CAD-Bench (2605.18430) | text → code, 4 levels | CadQuery 2.4 | 600 human-curated | Read: execution failure rate rises from ~11–20% (L1–L2) to 70–90% at L3, driven by sweep/loft/shell. Best L1 IoU 0.59 (GPT-5.2). IoU is a 256³ voxel grid over meshes, computed only over samples that executed |
 | MUSE (2605.28579) | text → manufacturable, assemblable B-Rep | CAD code | — | Staged scoring (code → geometry → design intent); project leaderboard; GPT-5.5 67, Gemini 3.1 Pro 54 (self-reported) |
 | Parametric CAD Bench / cadbench.ai, v3 (2611.02659) | text + engineering drawings → native FreeCAD parametric model, agentic | FreeCAD (OCCT) | 100 tasks | Editability gate (harmonic mean); scored on geometry, dimensions and history; GPT-5.5 via Codex 0.832; harness changes swing scores ~10% |
@@ -65,8 +65,8 @@ and was not read.
 
 | Weakness seen | What arris brings |
 |---|---|
-| IoU from voxelised meshes (256³) or renders; resolution-bound, normalisation often unstated | Exact B-Rep mass properties and (once bound) exact point classification |
-| Metrics only over executed samples, so a high failure rate makes scores look better (Text2CAD-Bench notes this survivorship bias) | A typed status for every sample: refusal kind, checker failure, timeout. Report failures as first-class outcomes, never dropped |
+| IoU from voxelised meshes (256³ in Text2CAD-Bench, 64³ in BenchCAD's own scorer, read) or renders; resolution-bound, normalisation often unstated | Exact B-Rep mass properties and (once bound) exact point classification |
+| Metrics only over executed samples, so a high failure rate makes scores look better (Text2CAD-Bench notes this survivorship bias) | A typed status for every program: refusal kind, checker failure, timeout. Report failures as first-class outcomes, never dropped |
 | "Degenerate volume" heuristics instead of a validity check; invalid solids can score | The invariant checker on every result |
 | No discussion of nondeterminism, kernel crashes or version pinning | Deterministic bit-for-bit, wasm included; no-panic contract |
 | 30–60 s timeouts; heavy conda/OCCT installs | Pure-Rust wheel, `pip install`; cancellation by poll/budget |
@@ -115,7 +115,7 @@ Revised strategy:
    existing benchmarks.
 
 Open questions:
-- Front-end language: the `cq` subset first (reach) or `arris.build`
+- Front-end dialect: the `cq` subset first (reach) or `arris.build`
   first (expressiveness, provenance via `tag`)? Suggested: the `cq`
   subset for evaluation and data, `arris.build` for our own model, with a
   translation path between them.

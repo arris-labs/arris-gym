@@ -12,11 +12,23 @@ Apache-2.0.
 
 ## Status
 
-Nothing runs yet: the package is a skeleton, and this is the design it is being
-built to. [`SEED.md`](SEED.md) is the charter and
-[`docs/ROADMAP.md`](docs/ROADMAP.md) says what comes first.
+Pre-alpha, Linux only (x86-64 and AArch64, with user namespaces, Landlock,
+`mount_setattr` and seccomp). What runs today:
 
-The intended use:
+- `run`, `run_many` and `Sandbox` execute a program in the `arris` dialect or
+  the `cq` subset in an isolated worker and return a frozen `ExecResult` with
+  one of eight statuses; results are cached exactly and digested bit for bit.
+- `score` gives a result its reward against a target body, with its IoU,
+  surface, measures and topology terms and BenchCAD's own field metrics beside
+  them; `read_target` reads a STEP as a target.
+- `arris-gym census --corpus benchcad` counts the API a corpus writes, and
+  `arris-gym rescore benchcad` re-scores a 300-program BenchCAD slice against
+  CadQuery's own output (both need the `arris-gym[corpus]` extra).
+
+The `cq` subset is still small (13 API forms: no selectors, `hole`,
+`chamfer` or export yet), and nothing for training exists yet.
+[`SEED.md`](SEED.md) is the charter, [`docs/ROADMAP.md`](docs/ROADMAP.md) says
+what comes next and [`CHANGELOG.md`](CHANGELOG.md) what each change gives.
 
 ```python
 import arris_gym as ag
@@ -24,11 +36,9 @@ import arris_gym as ag
 target = ag.run(open("target.py").read(), dialect="cq").body
 result = ag.run(model_output, dialect="cq", timeout=5.0)
 
-if result.status is ag.Status.OK:
-    s = ag.score(result, target)        # deterministic
-    print(s.reward, s.iou, s.chamfer, s.field.voxel_iou_256)
-else:
-    print(result.status, result.message)
+s = ag.score(result, target)    # a failure gets its fixed reward, no kernel call
+print(result.status, result.message)
+print(s.reward, s.iou, s.iou_route, s.field)
 ```
 
 ## Contributing

@@ -12,6 +12,9 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - Port `/release` and `release.yml` from laman when the first real release is planned; until then git.md says an agent never tags or uploads
 - BenchCAD 2.0 (`BenchCAD/benchcad-2.0-public` and `-core`, drawing → STEP, gated, licence "other") is not in the survey: read its terms before C3 and decide if it belongs among the re-scored benchmarks
 - Census: a chain on a receiver it cannot place (`x = a.b().b()…`) keys each `?` call by its whole source prefix, so a hostile program can make `unknown` quadratic in size (4,000 calls: 32 M characters); decide a truncation of the key
+- `rescore`'s `SLICE` and `TARGETS` defaults are paths relative to the repository root: an installed `arris-gym rescore benchcad` fails without `--slice` and `--targets`; resolve them from the package or require the flags
+- `_cli.py`'s docstring names only `census`; `.github/workflows/ci.yml` comments cite deleted plans (`m0-sandbox`, `m5-rescore` step 9); `tools/check_layers.py` does not hold `rescore` against importing `train` (harmless until `train` exists)
+- BENCHMARK-SURVEY.md's numbers (BenchCAD 0.768/0.601, 52 ISO families, 748 edit pairs; Text2CAD-Bench, MUSE, cadbench, CADWorld, CAD-Recode ~1M) are unverified until read in each paper; verify before C3's report cites them
 - File with arris (SEED.md §10.6) whether a public `Model` reset or id-stable `read_body` would help consumers; the batch `classify_points` and cone-against-cone asks are filed (`../arris/docs/ideas/`)
 - Compare `step_sha256` across machines: regenerate the slice's STEPs on the second architecture (ADR-0011 does not claim OCCT is equal across machines)
 - `Score` does not check that an `ok` score's `reward` equals `combine(terms, config)`; a validator would refuse a forged one
@@ -57,7 +60,7 @@ A defect a run measured, one block each:
 - Seen: plans/m5-rescore step 7, `arris-gym rescore benchcad`, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, all 100 `phone_stand` slice pairs, 2026-11-09
 - Reproduce: `uv run --extra corpus arris-gym rescore benchcad`, then the `iou_route` of the `phone_stand` rows in `rescore.json`
 - Measured: 100 of 100 refused; the sampled IoU is 1.0 on all 100; the same body against itself answers 1.0 exactly
-- State: measured; not yet reported to arris; no regression fixture (a pair of two bodies, not one program)
+- State: measured; reported in `../arris/docs/ideas/interference-split-planar-faces.md`; no regression fixture (a pair of two bodies, not one program)
 
 ## Rejected
 

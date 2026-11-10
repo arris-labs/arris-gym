@@ -26,23 +26,17 @@ uv sync                               # the locked environment, Python 3.12
 
 ## Current state
 
-**C1 open.** M0 landed: `run`, `run_many` and `Sandbox` execute `arris`
-programs in a warden-supervised, namespaced, Landlocked worker (ADR-0001,
-ADR-0002), with an exact cache, the digest and text/PNG dumps.
-M1 landed: `arris-gym census` parses BenchCAD's 17,900 programs (ADR-0003)
-and `tests/fixtures/c1/slice.txt` lists the 300 slice stems.
-M2 landed: CadQuery runs in an oracle worker (ADR-0004); `fidelity` compares
-and classes each pair (ADR-0005, ADR-0006); `tests/fixtures/c1/oracle.jsonl`
-holds the 300 slice reports.
-M3 landed: `dialect="cq"` runs the census's 13 API forms (ADR-0007); the
-300 slice programs: 200 agree, 100 an arris bug, 0 unclassified.
-M4 landed: `score` returns a frozen `Score` (reward version 1; ADR-0008 to
-ADR-0010): the IoU exact where the kernel answers and sampled elsewhere,
-BenchCAD's field metrics beside it, scored in a score worker.
-M5 landed: `arris-gym rescore benchcad` re-scores the 300 slice programs
-against the oracle's STEPs (ADR-0011); its table's digest is equal on x86-64
-and aarch64.
-**Next:** `/close-cycle` C1.
+**C1 closed** (2026-11-10): the vertical slice runs end to end. `run`,
+`run_many` and `Sandbox` execute programs in a warden-supervised, namespaced,
+Landlocked worker (ADR-0001, ADR-0002); `arris-gym census` fixed the 300-program
+slice (ADR-0003); CadQuery runs in an oracle worker and `fidelity` classes each
+pair (ADR-0004 to ADR-0006); `dialect="cq"` runs the census's 13 API forms, 200
+of the 300 slice programs agreeing with the oracle, 100 an arris bug, 0
+unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
+(ADR-0008 to ADR-0010); `arris-gym rescore benchcad` re-scores the slice
+against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
+**Next:** C2, the fidelity gate: its first step is the fidelity target, by ADR
+(`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code
 

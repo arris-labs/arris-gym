@@ -44,25 +44,10 @@ least 100 programs each, and the first **100** programs of each by `stem`,
 make **300** programs, listed in `tests/fixtures/c1/slice.txt`. The census
 ranked `phone_stand`, `venturi_tube` and `lobed_knob` first.
 
-**Status: open.** Docs system, tooling, package skeleton and
-`docs/ARRIS_API.md` landed. **M0 landed:** `run`, `run_many`, `Sandbox`, the
-cache, `digest`, `dump_text` and `dump_png`, under ADR-0002. **M1 landed:**
-`arris-gym census` parsed all 17,900 programs (none unparsable) and fixed the
-slice. **M2 landed:** the oracle worker (ADR-0004), `fidelity`'s `compare`,
-table and arris report under the agreement tolerance (ADR-0005) and the
-classification rule (ADR-0006); all 300 slice programs are `ok` on the oracle,
-the same digest on three runs. **M3 landed:** `dialect="cq"` runs the census's
-13 API forms; the 300 slice programs run under `cq`: 200 agree with the
-oracle, 100 (`lobed_knob`) are an arris bug (chained `fuse` of operands on one
-end plane), **0 unclassified**, 0 timeouts. **M4 landed:** `score` and its
-`Score` under reward version 1 (ADR-0008, ADR-0009), BenchCAD's field metrics
-within ADR-0010's tolerance of its own scorer on 10 pairs; the IoU is exact
-where the kernel answers (1,645 of 1,800 slice pairs) and sampled elsewhere
-(cone against cone), `Score.iou_route` saying which. **M5 landed:** `arris-gym
-rescore benchcad` scores the 300 slice programs through `cq` against the
-oracle's STEP (ADR-0011): `ok` 200, `arris_refusal` 100, mean reward 0.484 over
-all 300 (0.975 over the 200 valid), 0 timeouts; the table's digest `70e66667…`
-is equal on x86-64 (two CPUs) and aarch64. Next: `/close-cycle` C1.
+**Status: done 2026-11-10.** Retired: can a hostile program cost one status
+and nothing else, do `cq`'s stack semantics fit over `arris.build`, and does
+the whole path reproduce on another machine? The re-scored table's digest is
+equal on x86-64 and aarch64; ADR-0001 to ADR-0011.
 
 ### M0 — the sandbox and the harness
 Retires: can a hostile program cost one status and nothing else?
@@ -77,7 +62,7 @@ Retires: can a hostile program cost one status and nothing else?
   of them hostile, give 1000 rows in submission order; a second run makes 0
   executions and identical rows; `run` raises on no text `hypothesis` draws.
 
-### M1 — the census (landed)
+### M1 — the census
 Retires: what does the corpus actually call?
 - **In:** `census`: every API call, selector string and argument form over
   `code_gen`, by family; `arris-gym census`; `slice.txt`.
@@ -85,7 +70,7 @@ Retires: what does the corpus actually call?
 - **Accept:** 17,900 programs parsed, each counted or listed as unparsable;
   the same counts on a re-run; `slice.txt` committed with its 300 stems.
 
-### M2 — the oracle and fidelity classes (landed)
+### M2 — the oracle and fidelity classes
 Retires: can a disagreement be classified, before there is much to classify?
 - **In:** `tools/oracle/` on `cadquery==2.3.0`, `cadquery-ocp==7.9.3.0`;
   `fidelity`: the comparer, the five classes, the arris rows' export.
@@ -94,7 +79,7 @@ Retires: can a disagreement be classified, before there is much to classify?
   fixture of each disagreement class, planted by construction, comes back in
   that class; the comparison tolerance is measured and decided by ADR.
 
-### M3 — the `cq` subset, first slice (landed)
+### M3 — the `cq` subset, first slice
 Retires: do CadQuery's stack semantics fit over `arris.build`?
 - **In:** `Workplane` and its stack, the sketch calls, `extrude`, booleans,
   `UnsupportedApi`: the 13 API forms the slice's census found (it writes no
@@ -138,11 +123,24 @@ training.
 
 **Goal.** The `cq` subset grows in census order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified
-and the target set by ADR after M3 is met.
+and a fidelity target is met. M3 reported agreement (200 of 300) without
+targeting it; this cycle sets the target by ADR from that number, before the
+subset grows.
 
-**In:** census order only. **Out:** CadQuery assemblies, `cq.Sketch`
-constraints, plugins, `.wrapped`, raw OCP calls.
-**Accept:** 0 unclassified on both corpora; the fidelity target met.
+**In:**
+- the fidelity target, by ADR;
+- the CAD-Recode validation split pinned by revision, and a census over it;
+- the `cq` forms the two censuses rank next, in census order only: selectors,
+  `hole`, `chamfer`, `fillet`, the bare `cq.Workplane()` and `centered=False`
+  (the backlog's open `cq` lines); each lifted form a fixture by construction;
+- the fidelity table over both corpora, every disagreement classed;
+- the arris rows (the 100 `lobed_knob` refusals, the split-face `interference`
+  refusals) filed, and the fidelity table re-run on each `arris` bump.
+
+**Out:** CadQuery assemblies, `cq.Sketch` constraints, plugins, `.wrapped`,
+raw OCP calls; model outputs and baselines (C3); training.
+**Accept:** 0 unclassified on both corpora; the fidelity target met; the
+table's digest equal on two machines of different architecture.
 **Decision point:** low fidelity from arris refusals ranks arris's next cycle;
 low fidelity from CadQuery semantics narrows the subset.
 

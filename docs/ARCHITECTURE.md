@@ -18,6 +18,7 @@ src/arris_gym/
   census/    parses a corpus and counts the API forms it writes (`arris-gym census`)
   fidelity/  oracle comparison and the disagreement classes
   rescore/   per-benchmark adapters, the re-scored table (`arris-gym rescore`)
+  _cli.py    the `arris-gym` command; _markdown.py, the code span fidelity and rescore share
 tools/oracle/  its own uv env: CadQuery/OCP, run and never imported
 ```
 
@@ -30,9 +31,9 @@ and `sketch/` (SEED.md §7, Layout). None exists until its cycle opens.
 |---|---|
 | everything in `src/` | `cadquery`, `OCP`, `tools` |
 | `sandbox`, `reward`, `cq` | `arris_gym.train`, `arris_gym.rescore` |
-| `rescore` | `arris_gym.train`, `tools` (it imports `sandbox`, `reward`, `census`, `fidelity`) |
+| `rescore` | `arris_gym.train`, `tools` (it imports `sandbox`, `reward`, `census`) |
 | `cq` | anything but the standard library, `arris` and `arris_gym.cq` |
-| `reward` | `@`, `np.dot`, `np.linalg`, `np.exp`, `np.sin` and their kin, `math.exp`, `random` (§Determinism) |
+| `reward` | `@`, `**`, `np.dot`, `np.linalg`, `np.exp`, `np.sin` and their kin, `math.exp` and its kin, `random` (§Determinism) |
 
 `cq` keeps its boundary so it can become its own package (`arris-cq`) once
 fidelity is good. It never moves into the `arris` repository, whose API is
@@ -432,7 +433,9 @@ STEP hash and its versions. Library code never imports it
 (`tools/check_layers.py`); `fidelity/` reads its reports. It pins BenchCAD's
 own `cadquery==2.3.0` and `cadquery-ocp==7.9.3.0`, so the comparison is with
 the kernel the benchmark's numbers came from. Those need `numpy<2`, one more
-reason it cannot share an environment with the library.
+reason it cannot share an environment with the library. It also holds
+BenchCAD's locked `trimesh` and `scipy` for `tools/oracle/benchcad_score.py`,
+which runs BenchCAD's own scorer on the field metrics' pairs (ADR-0010).
 
 A program runs on the oracle in an **oracle worker** (ADR-0004): a program
 worker forked and isolated as any other, which then execs the oracle's
@@ -497,17 +500,18 @@ the string as it is.
 
 ## The re-scored table
 
-`arris-gym rescore benchcad` runs the 300 slice programs under `cq` and scores
-each against the oracle's STEP of the same program (the target), read into
-arris. `rescore.rescore(entries, *, sandbox, workers)` returns one
+`arris-gym rescore benchcad [--slice F] [--targets F] [--out DIR] [--workers N]`
+(the `[corpus]` extra) runs the 300 slice programs under `cq`, scores each
+against the oracle's STEP of the same program (the target), read into arris,
+writes `rescore.json` and `rescore.md` and prints the counts and the digest. `rescore.rescore(entries, *, sandbox, workers)` returns one
 `RescoreTable`; `rescore/benchcad.py` builds the entries from the pinned
 corpus, `slice.txt` and `tests/fixtures/c1/targets.jsonl.gz`, so the table
 depends on the main environment alone, never on CadQuery (ADR-0011).
 
 - **A row per program**, in name order: source, licence, program SHA-256,
   dialect, the program's status and refusal, the candidate's and the target's
-  body digests, the target's `step_sha256`, the `Score` and the versions
-  (arris, numpy, reward).
+  body digests, the target's `step_sha256`, the `Score` (which carries the
+  reward's version) and the versions (arris, numpy, arris-gym).
 - **`Stage`** says where a failure happened: `none`, `program`, `target` or
   `scoring`. A failed target gives a `Score` of status `runtime`, `timeout` or
   `crash` and reward −1.0; the target is read for every entry, so a `program`

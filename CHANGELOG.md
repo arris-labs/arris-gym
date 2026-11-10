@@ -21,7 +21,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   measures and `step_sha256`; text the kernel cannot read, no solid or several
   give `arris_refusal` or `runtime` with the kernel's words. It never raises on
   the text.
-- `sandbox.check_workers` and `reward.failed_score` are public: the second
+- `sandbox.check_workers` and `reward.failed_score` are public: the first
+  checks a `workers=` count as `run_many` does (a positive integer, or
+  `None` for the default) and raises `ValueError` otherwise; the second
   builds the `Score` of a failed scorer (status, message, reward -1.0).
 - A program run on a standalone Python (such as one `uv` downloads) now starts
   inside the sandbox: an exec job may read the shared libraries its
@@ -83,8 +85,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   SHA-256 and fixture, and the licences and versions behind them.
 
 - `arris-gym census --corpus benchcad` parses BenchCAD's `code_gen` programs
-  without running any and writes `census.json`: every CadQuery call, selector
-  string and argument form by family, each program counted or listed as
+  without running any and writes `census.json` and `slice.txt` (the first 100
+  programs of each of the 3 families, of at least 100, that call the least
+  distinct API): every CadQuery call, selector string and argument form by
+  family, each program counted or listed as
   unparsable with its exception verbatim, under a digest that a re-run
   reproduces. It needs the `arris-gym[corpus]` extra (without it the command
   prints one line and exits 2). `arris_gym.census` offers `census_program`,

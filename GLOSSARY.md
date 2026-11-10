@@ -31,7 +31,7 @@ crash.
 _Avoid_: kernel error
 
 **Crash**:
-A program worker or body worker that ended without delivering a valid frame.
+A worker that ended without delivering a valid frame.
 Distinct from a refusal: something died.
 _Avoid_: panic
 
@@ -44,19 +44,24 @@ Any status but `ok`. Failures are counted in every aggregate. An error is
 something else: a Python exception.
 
 **Target**:
-The body a result is scored against.
+The body a result is scored against; in the re-scored table, the oracle's
+STEP of the same program read by a step worker (ADR-0011).
 _Avoid_: gold
+
+**Candidate**:
+The body a program made, scored against its target; the other side of a
+score worker's pair.
 
 ## The sandbox
 
 **Sandbox**:
-The whole of what runs a program in isolation: the zygote, and the wardens,
-program workers and body workers it forks (ADR-0002).
+The whole of what runs a program in isolation: the zygote, and the wardens
+and workers it forks (ADR-0002).
 _Avoid_: jail
 
 **Zygote**:
 The clean interpreter that imports everything, builds nothing and forks a
-program worker per program (ADR-0001).
+warden per job, which forks its worker (ADR-0001, ADR-0002).
 _Avoid_: master
 
 **Job**:
@@ -66,8 +71,8 @@ and the pipes its status and result come back on.
 _Avoid_: request (a kernel task is a thread or process)
 
 **Frame**:
-The one JSON document a program worker, a body worker or a step worker writes to its result
-pipe to say how its job ended. The caller parses it and trusts none of it
+The one JSON document a worker writes to its result pipe to say how its job
+ended. The caller parses it and trusts none of it
 beyond what costs only that program (ARCHITECTURE.md §The sandbox).
 
 **Backstop**:
@@ -169,6 +174,10 @@ seeds: what a part built two ways meets. τ is held at least five times it
 A metric computed the way a published benchmark defines it, so its numbers
 compare with theirs. Kept apart from ours.
 _Avoid_: baseline metric
+
+**Invalidity rate**:
+The share of all rows whose status is not `ok`, failures and scoring
+failures counted (`invalidity_rate`): BenchCAD's measure, over every row.
 
 **Digest**:
 The SHA-256 of a body's bytes, or of a report's rows without anything
