@@ -18,8 +18,10 @@ from typing import Final
 
 from arris_gym.census import (
     CensusReport,
+    CorpusInfo,
     CorpusProgram,
     benchcad,
+    cadrecode,
     census,
     census_program,
     reach_curve,
@@ -62,14 +64,15 @@ def slice_text(report: CensusReport, stems: Sequence[str]) -> str:
     return "\n".join([*header, *stems, ""])
 
 
-def run_census(reader: Reader, out: Path) -> CensusReport:
-    """Write aggregate and per-program census, reach curve and C1 slice, never source text."""
+def run_census(reader: Reader, out: Path, info: CorpusInfo = benchcad.INFO) -> CensusReport:
+    """Write census and reach without source text; BenchCAD also gets the C1 slice."""
     programs = reader()
-    report = census(programs, benchcad.INFO)
-    stems = select_slice(report, programs, SLICE_FAMILIES, PER_FAMILY, PER_FAMILY)
+    report = census(programs, info)
     out.mkdir(parents=True, exist_ok=True)
     (out / "census.json").write_text(report.to_json() + "\n", encoding="utf-8")
-    (out / "slice.txt").write_text(slice_text(report, stems), encoding="utf-8")
+    if info == benchcad.INFO:
+        stems = select_slice(report, programs, SLICE_FAMILIES, PER_FAMILY, PER_FAMILY)
+        (out / "slice.txt").write_text(slice_text(report, stems), encoding="utf-8")
     rows = []
     outcomes = []
     for program in sorted(programs, key=lambda p: p.stem):
@@ -128,12 +131,19 @@ def run_rescore_command(args: argparse.Namespace, reader: Reader) -> int:
     return 0
 
 
+CORPORA: Final[dict[str, tuple[Reader, CorpusInfo]]] = {
+    "benchcad": (benchcad.read, benchcad.INFO),
+    "cadrecode": (cadrecode.read, cadrecode.INFO),
+}
+"""Each census corpus's reader and the source and licence its rows carry."""
+
+
 def main(argv: Sequence[str] | None = None, *, reader: Reader | None = None) -> int:
     """Run the command; returns the exit status. `reader` replaces the corpus download (tests)."""
     parser = argparse.ArgumentParser(prog="arris-gym")
     sub = parser.add_subparsers(dest="command", required=True)
     cmd = sub.add_parser("census", help="count the API a corpus uses, never running a program")
-    cmd.add_argument("--corpus", required=True, choices=["benchcad"])
+    cmd.add_argument("--corpus", required=True, choices=sorted(CORPORA))
     cmd.add_argument("--out", type=Path, default=Path("census-out"))
     res = sub.add_parser("rescore", help="re-score a corpus's slice against its committed targets")
     res.add_argument("corpus", choices=["benchcad"])
@@ -147,10 +157,10 @@ def main(argv: Sequence[str] | None = None, *, reader: Reader | None = None) -> 
         if not _extra_present():
             print(MISSING_EXTRA, file=sys.stderr)
             return EXIT_USAGE
-        reader = benchcad.read
+        reader = CORPORA[args.corpus][0]
     if args.command == "rescore":
         return run_rescore_command(args, reader)
-    report = run_census(reader, args.out)
+    report = run_census(reader, args.out, CORPORA[args.corpus][1])
     print(f"programs {report.programs}: parsed {report.parsed}, unparsable {report.unparsable}")
     print(f"families {len(report.families)}; top {TOP_ROWS} by rank (calls/selectors/forms):")
     for family in report.families[:TOP_ROWS]:

@@ -109,7 +109,10 @@ all 17,900 programs end in `show_object(result)`. A `cq` result resolves to
 the single solid on its `Workplane`'s stack (ADR-0007): no result, a value
 that is not a `Workplane` or a stack with no solid is `runtime`; several
 solids are a compound the subset lacks, `unsupported_api` naming the count.
-⚠ OPEN: what CAD-Recode's programs end in (C2).
+CAD-Recode's original validation split ends in `r = …` on all 968 programs.
+The C1 subset does not admit that end form; its static reach is therefore
+0/968 even after admitting every missing API form. Lifting an end form is
+subset growth, outside the fidelity-target baseline.
 
 ## The census
 
@@ -140,7 +143,14 @@ none of them (ADR-0003).
 - **The corpus.** `census.benchcad` downloads `code_gen` at the pinned
   revision with `huggingface_hub` and reads `stem`, `family` and `code` with
   `pyarrow`; both are the `[corpus]` extra, imported lazily. A row count other
-  than 17,900 raises.
+  than 17,900 raises. `census.cadrecode` reads only `val/*.py` from the
+  authors' `filapro/cad-recode` original release at revision
+  `17d554bbc50a23de6cf6a742a3e0ed867f000153`, under CC-BY-NC-4.0. Its exact
+  count is 968 (the source card says approximately 1k); another count or
+  duplicate stem raises. It keeps the original file stem and labels the
+  family `validation`, since the source supplies no families. Downloads
+  list only the validation directory, avoiding the million training files;
+  text is read without newline translation.
 - **Reach** (ADR-0012). `census.reach(programs, cq.subset())` returns a
   frozen `Reach`: the count of all programs, the in-subset count and its
   sorted stems. It accepts source records or saved per-program census
@@ -160,15 +170,15 @@ none of them (ADR-0003).
   remains in the denominator. The initial subset has reach 1,871/17,900 on
   BenchCAD; seven additional forms reach 4,523/17,900 and twenty 5,030/17,900.
   Input order cannot move the curve's canonical-JSON digest.
-- **The command.** `arris-gym census --corpus benchcad [--out DIR]` writes
-  `census.json`, `slice.txt`, `programs.jsonl.gz` and `reach.json`, and prints
-  totals and the census digest. Per-program rows carry the census outcome,
-  family, program SHA-256 and corpus source, revision and licence, never
-  program text. Gzip uses a zero timestamp. The C2 BenchCAD census and reach
-  curve live under `tests/fixtures/c2/benchcad/`. Without the
-  extra it exits 2. The committed run is `tests/fixtures/c1/`: 17,900 parsed,
-  none unparsable, 106 families, slice `phone_stand`, `venturi_tube`,
-  `lobed_knob`.
+- **The command.** `arris-gym census --corpus benchcad|cadrecode [--out DIR]`
+  writes `census.json`, `programs.jsonl.gz` and `reach.json` (`slice.txt` for
+  BenchCAD only), and prints totals and the census digest. Per-program rows
+  carry the census outcome, family, program SHA-256 and corpus source,
+  revision and licence, never program text. Gzip uses a zero timestamp. The
+  C2 BenchCAD census and reach curve live under `tests/fixtures/c2/benchcad/`;
+  CAD-Recode's under `tests/fixtures/c2/cadrecode/`. Without the extra it
+  exits 2. The committed run is `tests/fixtures/c1/`: 17,900 parsed, none
+  unparsable, 106 families, slice `phone_stand`, `venturi_tube`, `lobed_knob`.
 
 ## The sandbox
 
