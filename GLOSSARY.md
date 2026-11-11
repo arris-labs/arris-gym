@@ -298,9 +298,11 @@ _Avoid_: coverage
 
 **Reach curve**:
 Initial reach followed by the in-subset count after admitting each missing
-API form, chosen greedily by programs immediately unlocked, ties by key.
-Zero-gain forms stay in the curve; selectors, end forms and other static
-blockers stay fixed. Every count uses all corpus programs as its denominator.
+census item (an API form, selector or end form), chosen greedily by programs
+immediately unlocked, then by programs still missing it, then kind and key.
+Zero-gain items stay in the curve; unknown receivers and foreign calls
+outside the admitted list stay fixed. Every count uses all corpus programs
+as its denominator.
 
 **Fidelity target**:
 What C2 must meet on each corpus, set by ADR: a reach of at least T and no

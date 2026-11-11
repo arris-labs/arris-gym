@@ -5,30 +5,40 @@ from __future__ import annotations
 import json
 from collections import Counter
 from collections.abc import Iterable
-from typing import Self
+from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from arris_gym.census._program import CorpusProgram, ProgramCensus, Unparsable, census_program
-from arris_gym.census._reach import Reach, _eligible, _missing_forms, reach
+from arris_gym.census._reach import (
+    Reach,
+    _end_admitted,
+    _foreign_admitted,
+    _missing_forms,
+    reach,
+)
 from arris_gym.census._report import _canonical, _digest
 from arris_gym.cq import Subset
 
+Kind = Literal["end_form", "form", "selector"]
+"""What a curve step admits: a census end form, API form or selector."""
+
 
 class ReachStep(BaseModel):
-    """One additional census API form and the in-subset count after admitting it."""
+    """One additional census item of `kind` and the in-subset count after admitting it."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
-    form: str
+    kind: Kind
+    item: str
     in_subset: int
 
 
 class ReachCurve(BaseModel):
-    """Initial reach and greedy API-form admissions, with every program counted.
+    """Initial reach and greedy admissions of forms, selectors and end forms.
 
-    Selectors, end forms, unknown receivers and foreign calls stay fixed.
-    Counts never decrease or exceed the all-program denominator. Forms are
-    unique. The digest names canonical JSON excluding its own field.
+    Unknown receivers and foreign calls outside the admitted list stay fixed.
+    Counts never decrease or exceed the all-program denominator. Each
+    `(kind, item)` is admitted once. The digest names canonical JSON excluding its own field.
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -41,9 +51,9 @@ class ReachCurve(BaseModel):
         counts = [self.initial.in_subset, *(step.in_subset for step in self.steps)]
         if counts != sorted(counts) or counts[-1] > self.initial.programs:
             raise ValueError("reach counts must increase within the all-program denominator")
-        forms = [step.form for step in self.steps]
-        if len(set(forms)) != len(forms):
-            raise ValueError("a form is admitted more than once")
+        items = [(step.kind, step.item) for step in self.steps]
+        if len(set(items)) != len(items):
+            raise ValueError("an item is admitted more than once")
         if self.digest != _digest(self.model_dump(mode="json")):
             raise ValueError("digest is not that of the curve's content")
         return self
@@ -58,51 +68,65 @@ class ReachCurve(BaseModel):
         return cls.model_validate(json.loads(text))
 
 
+Item = tuple[Kind, str]
+
+
+def _missing(program: ProgramCensus, subset: Subset) -> frozenset[Item]:
+    items: set[Item] = {("form", form) for form in _missing_forms(program, subset)}
+    items.update(("selector", sel) for sel, _ in program.selectors if sel not in subset.selectors)
+    if not _end_admitted(program.end_form, subset):
+        items.add(("end_form", program.end_form))
+    return frozenset(items)
+
+
+def _unlockable(program: ProgramCensus) -> bool:
+    return not program.unknown and all(_foreign_admitted(call) for call, _ in program.foreign)
+
+
 def reach_curve(
     programs: Iterable[CorpusProgram | ProgramCensus | Unparsable], subset: Subset
 ) -> ReachCurve:
-    """Admit missing census forms greedily by programs unlocked, ties by form key.
+    """Admit missing census items greedily: programs unlocked, then programs using it.
 
-    Each step hypothetically admits one exact census form, without changing
-    the runtime subset. A form used often can rank after a rarer form when
-    the latter alone unlocks more programs. Zero-gain steps are retained:
-    programs needing several forms may unlock only after these bridges.
-    Selectors, end forms, unknown receivers and foreign calls never change.
-    Unparsable programs remain in the denominator. Input order cannot move
-    the curve or digest; duplicate stems raise ValueError.
+    An item is an exact census API form, selector or end form; each step
+    hypothetically admits one, without changing the runtime subset. The next
+    item unlocks the most programs immediately. When several tie, zero among
+    them, the one missing from the most programs that admitting items can
+    still unlock goes first, then by kind and key. So a corpus whose programs
+    all need several items is bridged in the order its programs share them,
+    not alphabetically. Items only blocked programs use (an unknown receiver,
+    a foreign call outside the admitted list) come last with zero gain: those
+    blockers never move. Unparsable programs stay in the denominator. Input
+    order cannot move the curve or digest; duplicate stems raise ValueError.
 
     >>> from arris_gym.cq import subset
-    >>> text = "import cadquery as cq\\nresult = cq.Workplane()"
+    >>> text = "import cadquery as cq\\nr = cq.Workplane()"
     >>> p = CorpusProgram(stem="a", family="f", text=text)
-    >>> curve = reach_curve([p], subset())
-    >>> curve.initial.in_subset, curve.steps[0].form, curve.steps[0].in_subset
-    (0, 'cq.Workplane()', 1)
+    >>> [(s.kind, s.item, s.in_subset) for s in reach_curve([p], subset()).steps]
+    [('end_form', 'r = …', 0), ('form', 'cq.Workplane()', 1)]
     """
     rows = [census_program(p) if isinstance(p, CorpusProgram) else p for p in programs]
     initial = reach(rows, subset)
-    missing = [
-        _missing_forms(p, subset)
-        for p in rows
-        if isinstance(p, ProgramCensus) and _eligible(p, subset)
-    ]
-    # Missing forms of blocked programs are retained too: their zero gain
-    # states explicitly that lifting API forms cannot remove other blockers.
-    remaining: set[str] = set().union(
-        *(_missing_forms(p, subset) for p in rows if isinstance(p, ProgramCensus))
-    )
-    pending = Counter(forms for forms in missing if forms)
+    parsed = [p for p in rows if isinstance(p, ProgramCensus)]
+    remaining: set[Item] = set().union(*(_missing(p, subset) for p in parsed))
+    pending = Counter(m for p in parsed if _unlockable(p) and (m := _missing(p, subset)))
     count = initial.in_subset
     steps: list[ReachStep] = []
     while remaining:
-        gains = Counter({min(forms): n for forms, n in pending.items() if len(forms) == 1})
-        form = min(remaining, key=lambda key: (-gains[key], key))
-        count += gains[form]
-        steps.append(ReachStep(form=form, in_subset=count))
-        remaining.remove(form)
-        updated: Counter[frozenset[str]] = Counter()
-        for forms, n in pending.items():
-            reduced = forms - {form}
-            if reduced:
+        gains: Counter[Item] = Counter()
+        usage: Counter[Item] = Counter()
+        for items, n in pending.items():
+            if len(items) == 1:
+                gains[min(items)] += n
+            for missing in items:
+                usage[missing] += n
+        kind, item = min(remaining, key=lambda key: (-gains[key], -usage[key], key))
+        count += gains[(kind, item)]
+        steps.append(ReachStep(kind=kind, item=item, in_subset=count))
+        remaining.remove((kind, item))
+        updated: Counter[frozenset[Item]] = Counter()
+        for items, n in pending.items():
+            if reduced := items - {(kind, item)}:
                 updated[reduced] += n
         pending = updated
     draft = ReachCurve.model_construct(initial=initial, steps=tuple(steps), digest="")

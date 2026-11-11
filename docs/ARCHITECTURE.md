@@ -110,9 +110,9 @@ the single solid on its `Workplane`'s stack (ADR-0007): no result, a value
 that is not a `Workplane` or a stack with no solid is `runtime`; several
 solids are a compound the subset lacks, `unsupported_api` naming the count.
 CAD-Recode's original validation split ends in `r = …` on all 968 programs.
-The C1 subset does not admit that end form; its static reach is therefore
-0/968 even after admitting every missing API form. Lifting an end form is
-subset growth, outside the fidelity-target baseline.
+The C1 subset does not admit that end form, so its static reach is 0/968;
+the reach curve admits it as its first item. Lifting it in `cq` is subset
+growth.
 
 ## The census
 
@@ -161,15 +161,20 @@ none of them (ADR-0003).
   duplicate stems are refused. The C1 slice has reach 300/300, checked
   offline from `tests/fixtures/c1/reach-programs.jsonl.gz`.
 - **Reach curve.** `census.reach_curve(programs, subset)` returns a frozen
-  `ReachCurve`: initial reach and `ReachStep` records admitting one exact
-  missing census API form at a time. Each step chooses the form unlocking
-  the most programs immediately, ties by form key. Zero-gain admissions stay
-  in the curve, including bridges to programs needing several forms. This
-  greedy order measures programs unlocked, not frequency of calls. Selectors,
-  end forms, unknown receivers and foreign calls stay fixed. Every program
-  remains in the denominator. The initial subset has reach 1,871/17,900 on
-  BenchCAD; seven additional forms reach 4,523/17,900 and twenty 5,030/17,900.
-  Input order cannot move the curve's canonical-JSON digest.
+  `ReachCurve`: initial reach and `ReachStep` records, each admitting one
+  missing census item (`kind` `form`, `selector` or `end_form`, and the exact
+  `item`). Each step chooses the item unlocking the most programs
+  immediately; among ties, zero included, the item missing from the most
+  still-unlockable programs, then kind and key. Programs needing several
+  items are so bridged in the order they share them, never alphabetically.
+  Unknown receivers and foreign calls outside the admitted list stay fixed:
+  items only such programs use come last with zero gain. Every program
+  remains in the denominator. On BenchCAD the initial subset has reach
+  1,871/17,900; seven forms reach 4,523, the first selector (`>Z`) comes
+  fifteenth, and twenty-four items pass half (9,061); all 17,900 after 57. On
+  CAD-Recode the end form `r = …` comes first, and nothing is in-subset
+  until its sketch forms are: 299/968 after 14 items, 697 after 15, all 968
+  after 18. Input order cannot move the curve's canonical-JSON digest.
 - **The command.** `arris-gym census --corpus benchcad|cadrecode [--out DIR]`
   writes `census.json`, `programs.jsonl.gz` and `reach.json` (`slice.txt` for
   BenchCAD only), and prints totals and the census digest. Per-program rows

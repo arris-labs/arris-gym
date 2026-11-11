@@ -30,8 +30,9 @@ def programs() -> list[CorpusProgram]:
         "result = cq.Workplane('XY').b()",  # one missing form, wins first
         "result = cq.Workplane('XY').b()",
         "result = cq.Workplane('XY').b()",
-        "result = cq.Workplane('XY').a().faces('>Z')",  # selector stays blocked
+        "result = cq.Workplane('XY').a().faces('>Z')",  # a selector, admitted last
         "result = mystery()",  # unknown stays blocked
+        "r = cq.Workplane('XY')",  # an end form is an item too
         "(",
     ]
     return [
@@ -40,16 +41,32 @@ def programs() -> list[CorpusProgram]:
     ]
 
 
-def test_greedy_unlocks_then_lexical_bridges_with_fixed_blockers() -> None:
+def test_greedy_unlocks_then_bridges_by_use_with_fixed_blockers() -> None:
     curve = reach_curve(programs(), cq.subset())
-    assert curve.initial.programs == 9
+    assert curve.initial.programs == 10
     assert curve.initial.stems == ("0",)
-    assert [(step.form, step.in_subset) for step in curve.steps] == [
-        ("Workplane.b()", 4),
-        ("?.mystery()", 4),
-        ("Workplane.a()", 4),
-        ("cq.Workplane()", 6),
-        ("Workplane.faces(str)", 6),
+    assert [(step.kind, step.item, step.in_subset) for step in curve.steps] == [
+        ("form", "Workplane.b()", 4),  # unlocks three
+        ("end_form", "r = …", 5),  # unlocks one, before the key-earlier form
+        ("form", "Workplane.a()", 5),  # no gain; missing from three programs
+        ("form", "cq.Workplane()", 7),
+        ("form", "Workplane.faces(str)", 7),  # ties the selector on use; kind
+        ("selector", ">Z", 8),
+        ("form", "?.mystery()", 8),  # only an unknown-receiver program uses it
+    ]
+
+
+def test_a_corpus_needing_several_items_bridges_by_shared_use_not_key() -> None:
+    texts = ["r = cq.Workplane('XY').z().y()", "r = cq.Workplane('XY').z().x()"]
+    ps = [
+        CorpusProgram(stem=str(i), family="f", text="import cadquery as cq\n" + t)
+        for i, t in enumerate(texts)
+    ]
+    assert [(s.item, s.in_subset) for s in reach_curve(ps, cq.subset()).steps] == [
+        ("r = …", 0),  # missing from both, as is z, but its kind sorts first
+        ("Workplane.z()", 0),
+        ("Workplane.x()", 1),
+        ("Workplane.y()", 2),
     ]
 
 
@@ -75,7 +92,7 @@ def test_duplicate_stems_and_changed_digest_are_refused() -> None:
     with pytest.raises(ValueError, match="stem"):
         reach_curve([p, p], cq.subset())
     data = reach_curve(programs(), cq.subset()).model_dump(mode="json")
-    data["steps"][0]["form"] = "changed"
+    data["steps"][0]["item"] = "changed"
     with pytest.raises(ValidationError, match="digest"):
         ReachCurve.model_validate(data)
     assert doctest.testmod(_curve).failed == 0
@@ -97,7 +114,9 @@ def test_committed_benchcad_curve_repeats_offline() -> None:
     assert report.digest == manifest["census_digest"]
     assert report.programs == expected.initial.programs
     assert expected.steps[6].in_subset == 4523
-    assert expected.steps[19].in_subset == 5030
+    assert (expected.steps[14].kind, expected.steps[14].item) == ("selector", ">Z")
+    assert expected.steps[23].in_subset == 9061  # past half after 24 items
+    assert expected.steps[-1].in_subset == 17900
 
 
 def test_admission_is_one_exact_census_form_not_a_generalized_declaration() -> None:
@@ -114,9 +133,9 @@ def test_admission_is_one_exact_census_form_not_a_generalized_declaration() -> N
         ),
     ]
     steps = reach_curve(ps, cq.subset()).steps
-    assert [(s.form, s.in_subset) for s in steps] == [
-        ("Workplane.cylinder(name, num)", 0),
-        ("cq.Workplane()", 1),
+    assert [(s.item, s.in_subset) for s in steps] == [
+        ("cq.Workplane()", 0),  # no gain, missing from both
+        ("Workplane.cylinder(name, num)", 1),
         ("Workplane.cylinder(num, num)", 2),
     ]
 
@@ -133,9 +152,10 @@ def test_curve_refuses_broken_count_and_unique_form_guarantees(mutation: str) ->
     if mutation == "decrease":
         data["steps"][0]["in_subset"] = 0
     elif mutation == "exceed":
-        data["steps"][-1]["in_subset"] = 10
+        data["steps"][-1]["in_subset"] = data["initial"]["programs"] + 1
     else:
-        data["steps"][1]["form"] = data["steps"][0]["form"]
+        data["steps"][1]["kind"] = data["steps"][0]["kind"]
+        data["steps"][1]["item"] = data["steps"][0]["item"]
     with pytest.raises(ValidationError, match=r"counts|more than once"):
         ReachCurve.model_validate(data)
 
@@ -145,4 +165,4 @@ def test_curve_and_steps_are_frozen() -> None:
     with pytest.raises(ValidationError):
         curve.digest = "changed"
     with pytest.raises(ValidationError):
-        curve.steps[0].form = "changed"
+        curve.steps[0].item = "changed"

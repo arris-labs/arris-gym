@@ -9,10 +9,11 @@ The 17,900 programs all parse. The aggregate census digest remains C1's
 `programs.jsonl.gz` holds canonical JSON lines sorted by stem, with each
 program's SHA-256, family, census outcome and corpus source, revision and
 licence. Gzip has `mtime=0`. `reach.json` starts at 1,871/17,900 and admits
-one exact missing census form per step, greedily by programs immediately
-unlocked, ties by key. Other static blockers stay fixed. Seven forms reach
-4,523/17,900 (25.27%); twenty reach 5,030/17,900 (28.10%). Zero-gain forms
-remain. `manifest.json` records the uncompressed rows' SHA-256 and the
+one missing census item (form, selector or end form) per step, greedily by
+programs immediately unlocked, then by programs still missing it, then kind
+and key. Seven forms reach 4,523/17,900 (25.27%); the first selector, `>Z`,
+is the fifteenth item; twenty-four reach 9,061/17,900 (50.62%) and all 57
+reach 17,900. Zero-gain items remain. `manifest.json` records the uncompressed rows' SHA-256 and the
 validated census and reach digests. Two independent census runs give equal
 bytes and digests.
 

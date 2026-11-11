@@ -8,11 +8,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `census.cadrecode` reads the pinned original CAD-Recode validation split
   with the `[corpus]` extra; `arris-gym census --corpus cadrecode` writes its
   census and reach curve. All derived rows carry CC-BY-NC-4.0. The 968
-  programs end in `r = …`, outside the current subset's admitted end forms.
+  programs end in `r = …`, outside the current subset's admitted end forms,
+  which the curve admits first.
 
 - `census.reach_curve(programs, subset)` returns frozen `ReachCurve` /
-  `ReachStep` records showing how many programs each additional API form
-  admits, with a deterministic digest. `arris-gym census` also writes
+  `ReachStep` records showing how many programs each additional census item
+  (`kind` form, selector or end form; the exact `item`) admits, with a
+  deterministic digest. `arris-gym census` also writes
   licensed per-program counts to `programs.jsonl.gz` and the curve to
   `reach.json`, without program text.
 

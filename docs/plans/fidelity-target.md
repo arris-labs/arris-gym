@@ -46,10 +46,11 @@ CadQuery once per oracle zygote, not once per program.
   `census.reach(programs, subset) -> Reach` (frozen) holds the in-subset count
   and stems over all programs, unparsable programs included in the
   denominator. `census.reach_curve(programs, subset) -> ReachCurve` holds reach
-  after admitting the next missing API form, one form at a time, in census
-  order, using frozen `ReachStep` records and a validated canonical digest:
-  the form whose admission makes the most programs in-subset first,
-  ties broken by key, so the curve is deterministic. `arris-gym census`
+  after admitting the next missing census item (API form, selector or end
+  form), one at a time, in census order, using frozen `ReachStep` records
+  and a validated canonical digest: the item whose admission makes the most
+  programs in-subset first, ties by programs still missing it, then kind and
+  key, so the curve is deterministic. `arris-gym census`
   writes `programs.jsonl.gz` and `reach.json` beside `census.json`.
 - **`census.cadrecode`**: the CAD-Recode validation split pinned to a
   revision, read lazily under `[corpus]`: `download()`, `read_files(paths,
@@ -156,10 +157,15 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
 - ⚠ OPEN: the census order the curve follows: greedy by programs unlocked
   (proposed), or by programs that write the form. The agent decides in step 2
   and records it in `census.reach_curve`'s docstring and ARCHITECTURE; ADR-0014
-  cites it. **Settled (step 2):** greedy by programs immediately unlocked,
-  ties by key. Zero-gain forms remain, so multi-form programs have bridges;
-  selectors, end forms and other static blockers remain fixed. BenchCAD
-  reaches 25% after seven forms, so its flat-curve stop does not trigger.
+  cites it. **Settled (step 2, repaired after step 3):** greedy by programs
+  immediately unlocked, ties by programs still missing the item, then kind
+  and key. Selectors and end forms are items like API forms; only unknown
+  receivers and foreign calls outside the admitted list stay fixed. The first
+  version kept selectors and end forms fixed and broke ties by key alone:
+  BenchCAD stopped at 5,030/17,900 (11,723 programs use a selector) and
+  CAD-Recode at 0/968, with zero-gain bridges in alphabetical order. Now
+  BenchCAD reaches 25% after seven forms and half after 24 items, so the
+  flat-curve stop does not trigger; CAD-Recode reaches 968 after 18.
 - ⚠ OPEN: committing derived rows of CC BY-NC data to a public repository.
   Rows carry the licence (gym.md), and no program is committed. The human
   confirms before step 3's commit, since it publishes. **Settled (step 3):**
@@ -167,10 +173,7 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
   are committed locally with CC-BY-NC-4.0 on each and attribution beside
   them. Nothing is pushed by an agent.
 - ⚠ OPEN (step 3 measurement): all 968 CAD-Recode validation programs end
-  in `r = …`, which the C1 subset does not admit, so reach is 0/968 at every
-  point of a curve that admits API forms only. BenchCAD's curve is capped the
-  same way: 11,723 of its 17,900 programs use a selector, and it flattens at
-  5,030 after twelve forms. The subset still does not grow here (non-goal);
-  the curve is repaired instead (step 2): it admits selectors and end forms
-  as curve items too, so T is read from where the corpus bends, not where the
-  curve's construction stops.
+  in `r = …`, which the C1 subset does not admit. **Settled (step 2
+  repair):** the subset does not grow here (non-goal); the curve admits
+  `r = …` as an item, so step 7 reads CAD-Recode's T from where its programs
+  bend, and lifting `r = …` in `cq` is the first subset-growth candidate.

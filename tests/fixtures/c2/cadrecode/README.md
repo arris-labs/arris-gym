@@ -11,9 +11,9 @@ the source has no family labels. No source programs are committed.
 family, census outcome, source, config, revision and licence. Gzip has
 `mtime=0`. Every row carries **CC-BY-NC-4.0**. `census.json` holds the
 aggregate counts; `reach.json` the curve with the unchanged C1 subset.
-Its initial reach is **0/968** and every additional API form leaves it
-0/968: the end form is outside the subset and API-form admission does not
-change end forms. `manifest.json` records the uncompressed rows' SHA-256
+Its initial reach is **0/968**: the end form is outside the subset. The curve
+admits `r = …` first, then its sketch forms in the order the programs share
+them: 299/968 after 14 items, 697 after 15, all 968 after 18. `manifest.json` records the uncompressed rows' SHA-256
 and the validated census and reach digests. Two complete runs give equal
 bytes and digests.
 

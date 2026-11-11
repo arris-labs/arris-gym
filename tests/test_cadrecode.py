@@ -88,7 +88,9 @@ def test_committed_cadrecode_census_and_curve_recheck_offline() -> None:
     assert reach_curve(rows, cq.subset()) == curve
     assert curve.initial.programs == 968
     assert curve.initial.in_subset == 0
-    assert all(step.in_subset == 0 for step in curve.steps)
+    assert (curve.steps[0].kind, curve.steps[0].item) == ("end_form", "r = …")
+    assert curve.steps[1].in_subset == 0  # every program needs several items
+    assert curve.steps[-1].in_subset == 968
 
 
 def test_download_lists_only_validation_and_preserves_sorted_paths(
