@@ -125,7 +125,8 @@ training.
 CAD-Recode validation split until the fidelity table has nothing unclassified
 and a fidelity target is met. M3 reported agreement (200 of 300) without
 targeting it; this cycle sets the target by ADR from that number, before the
-subset grows.
+subset grows. *(Pending approval of ADR-0014, proposed: "from the reach curves
+over both corpora", T = 85% BenchCAD, 100% CAD-Recode; amended on acceptance.)*
 
 **In:**
 - the fidelity target, by ADR;

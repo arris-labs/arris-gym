@@ -113,10 +113,12 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
   `tests/fixtures/c2/`. A gate test re-reads each digest offline. Figures go
   into ARCHITECTURE: reach, agreement, unclassified, timeouts, and in-subset
   `cq_bug`, each over all programs.
-- [ ] Step 7 **[2]** — ADR-0014, the fidelity target: T per corpus read from
+- [x] Step 7 **[2]** — ADR-0014, the fidelity target: T per corpus read from
   the reach curves, the knee and the forms it takes named. It closes SEED.md
   §9.8's `⚠ OPEN` and amends ROADMAP §C2 in the same commit. **The human
-  approves T** before it is accepted.
+  approves T** before it is accepted. *Landed as ADR-0014 `Proposed`; SEED §9.8
+  and ROADMAP §C2 carry a pending note, and acceptance (status, closing both,
+  the README row) is a follow-up commit after approval.*
 
 ## Acceptance
 - `tests/fixtures/reach/` passes, including the `hypothesis` property. The 300
