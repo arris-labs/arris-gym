@@ -312,6 +312,11 @@ Zero-gain items stay in the curve; unknown receivers and foreign calls
 outside the admitted list stay fixed. Every count uses all corpus programs
 as its denominator.
 
+**Reach report**:
+One corpus's fidelity table joined with its reach: reach, agreement over all
+programs, timeouts, and the in-subset rows by outcome and class, with
+`in_subset_cq_bug` and `in_subset_by_design` named (`fidelity.ReachReport`).
+
 **Fidelity target**:
 What C2 must meet on each corpus, set by ADR: a reach of at least T and no
 `cq_bug` row among its in-subset programs. Plain agreement over all programs

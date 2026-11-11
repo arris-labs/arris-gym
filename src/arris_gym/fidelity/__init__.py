@@ -29,6 +29,7 @@ from arris_gym.fidelity._oracle import (
     parse_outcome,
     program_sha256,
 )
+from arris_gym.fidelity._reach import ReachReport, reach_report
 from arris_gym.fidelity._table import (
     ArrisBug,
     ArrisReason,
@@ -61,6 +62,7 @@ __all__ = [
     "OracleReport",
     "OracleStatus",
     "OracleVersions",
+    "ReachReport",
     "RegressionFixture",
     "SecondOracle",
     "TableEntry",
@@ -71,5 +73,6 @@ __all__ = [
     "measure_deltas",
     "parse_outcome",
     "program_sha256",
+    "reach_report",
     "within_tolerance",
 ]

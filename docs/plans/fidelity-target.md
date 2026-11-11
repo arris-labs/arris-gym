@@ -104,7 +104,7 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
   state left in a module, a write outside reach) each cost one report, and
   the next program on the same zygote sees none of it. Per-program start-up
   is measured and written in the ADR.
-- [ ] Step 5 **[2]** — `fidelity.reach_report` / `ReachReport` and
+- [x] Step 5 **[2]** — `fidelity.reach_report` / `ReachReport` and
   `tools/cq_corpus.py`. Fixtures by construction: a table of 4 programs with
   their reach, agreement and in-subset classes. On the slice, the report
   equals C1's figures (200 agree, 100 `arris_bug`, reach 300/300).

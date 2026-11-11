@@ -566,6 +566,18 @@ program's or caller's string as a code span of its JSON literal, so no
 backtick or line ending in a message breaks the document, and the JSON keeps
 the string as it is.
 
+`fidelity.reach_report(table, programs, subset)` joins a table with the static
+reach of its corpus (`programs` are source records or census rows; their stems
+must be exactly the table's names) into a frozen `ReachReport`: `programs`,
+`in_subset`, `agree` (over all programs), `timed_out`, the in-subset rows by
+outcome and by class, and `in_subset_cq_bug` and `in_subset_by_design` named,
+so the fidelity target is two comparisons beside the reach. An unparsable
+program is a row outside the subset. `tools/cq_corpus.py --corpus
+benchcad|cadrecode` runs a whole corpus under `cq` and on oracle zygotes and
+writes the table, the arris report and the reach report under
+`tests/fixtures/c2/<corpus>/` (rows only, no program text). On the slice with
+C1's verdicts it gives C1's figures: reach 300/300, 200 agree, 100 `arris_bug`.
+
 ## The re-scored table
 
 `arris-gym rescore benchcad [--slice F] [--targets F] [--out DIR] [--workers N]`

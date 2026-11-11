@@ -5,6 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `fidelity.reach_report(table, programs, subset)` returns a frozen
+  `ReachReport` for a corpus: reach, agreement over all programs, timeouts, and
+  the in-subset rows by outcome and class, with `in_subset_cq_bug` and
+  `in_subset_by_design` named. It refuses programs and rows that do not match
+  one to one.
+
 - `census.cadrecode` reads the pinned original CAD-Recode validation split
   with the `[corpus]` extra; `arris-gym census --corpus cadrecode` writes its
   census and reach curve. All derived rows carry CC-BY-NC-4.0. The 968
