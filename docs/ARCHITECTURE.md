@@ -593,8 +593,10 @@ arris 0.10.0, each figure over all programs):
 | in-subset `by_design` | 0 | 0 |
 
 The 717 in-subset `cq_bug` rows are all `unsupported_api` where the oracle
-builds the part: the static rule admits forms that `cq` still refuses
-(§cq, the context `⚠ OPEN`). CAD-Recode's 968 programs all end in `r = …`, which
+builds the part: the static rule admits programs that `cq` still refuses
+(the cause is not established; `Workplane.circle(num)` is in 113 of them and
+in no agreeing program, which points to a kind gap in the subset's form check,
+not to the chain's context). CAD-Recode's 968 programs all end in `r = …`, which
 neither `cq` nor the oracle's worker reads as a result, so its agreement says
 nothing about fidelity. The oracle's timeouts move with the machine's load.
 

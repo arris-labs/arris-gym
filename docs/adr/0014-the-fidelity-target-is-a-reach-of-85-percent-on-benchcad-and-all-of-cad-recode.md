@@ -2,6 +2,7 @@
 
 - Status: Accepted (T approved by the human, 2026-11-12)
 - Date: 2026-11-12
+- Corrected 2026-11-12: the reading of the curves (item shares and bridges) and the cause of the 717 in-subset `cq_bug` rows, against `reach.json`.
 
 ## Context
 
@@ -27,9 +28,12 @@ The baseline, each figure over all programs
 
 **C2's starting gap.** BenchCAD's 717 in-subset `cq_bug` rows are all
 `unsupported_api` where the oracle builds the part: the static rule admits
-forms `cq` still refuses (the context `⚠ OPEN` in ARCHITECTURE §cq). They are
-recorded here as where C2 starts; fixing them is a later C2 plan, not the
-plan that wrote this ADR.
+programs `cq` still refuses. The cause is not established. What the rows show
+points to a gap between the kinds the rule admits and the kinds `cq` runs
+(`_subset.py` `_fits`), not to the chain's context: `Workplane.circle(num)`
+appears in 113 of the 717 programs and in 0 agreeing ones, `extrude(num)` in
+159 against 73. They are recorded here as where C2 starts; diagnosing and
+fixing them is a later C2 plan, not the plan that wrote this ADR.
 
 **CAD-Recode's 968 agreements are vacuous.** Every program ends in `r = …`,
 which neither `cq` nor the oracle's worker reads as a result, so both sides
@@ -49,10 +53,10 @@ The curve (`tests/fixtures/c2/benchcad/reach.json`, 57 items to 100%) has
 three parts:
 
 - **Items 1 to 11**, forms only: 28.0% (5,008). `cylinder(num, num)` alone is
-  1,433 programs (18.5%); then `threePointArc`, `sphere`, `loft`, `polygon`,
+  1,433 programs (8.0%), 3,304 (18.5%) with the corpus's first item; then `threePointArc`, `sphere`, `loft`, `polygon`,
   `slot2D`, `rect`, `workplane(offset=…)`, `extrude(both=…)`,
-  `extrude(taper=…)`, `mirrorY()`. Items 12 to 14 (`cutThruAll`,
-  `faces(str)`, `workplane()`) are bridges that unlock nothing alone.
+  `extrude(taper=…)`, `mirrorY()`. Item 12 (`cutThruAll`) adds 22 programs; items 13 and 14
+  (`faces(str)`, `workplane()`) are bridges that unlock nothing alone.
 - **Items 15 to 35**, the steep part: from 29.5% to 86.5%. Selectors, `hole`,
   `pushPoints`, `rarray`, `center`, `cutBlind`, `chamfer`, `edges(str)`,
   `fillet`, `edges()`, `polarArray` and `hole(…; depth=…)`, the selectors `>Z`,
@@ -65,8 +69,8 @@ three parts:
   and `twistExtrude`. The last 1,324 programs cost 14 items.
 
 **The knee is item 35.** Item 34 reaches 84.2%, item 35 reaches 86.5%, and
-every later item but `radiusArc`, `makeHelix` and `makeTorus` unlocks under 1% of the
-corpus (179 programs). T = 85% is the round figure the knee's 35 items clear:
+every later item but `shell(num)` (+330), `radiusArc`, `makeHelix` and
+`makeTorus` unlocks under 1% of the corpus (179 programs). T = 85% is the round figure the knee's 35 items clear:
 35 items, 25 forms and 10 selectors.
 T below 84.2% would leave a selector or `hole(depth)` out; T above 86.5% buys
 single-form 1% gains, the tail. T moves by a later ADR if C2's measures say so.
@@ -74,9 +78,9 @@ single-form 1% gains, the tail. T moves by a later ADR if C2's measures say so.
 ### CAD-Recode validation split: T = 100% (968 of 968 programs)
 
 The curve (`tests/fixtures/c2/cadrecode/reach.json`) has no tail: 18 items
-reach every program, and every item but the first two bridges unlocks
-programs. 697 programs (72%) are in-subset after item 15; the last three items,
-add 133 and 138 more. No T between 85.7% (item 17,
+reach every program; items 1, 2, 5, 6, 11 and 16 are bridges that unlock
+nothing alone and the other 12 each unlock programs. 697 programs (72%) are
+in-subset after item 15; item 16 adds 0, item 17 adds 133 and item 18 adds 138. No T between 85.7% (item 17,
 830) and 100% costs less than all 18, so T is 100%. The 18 items are the end
 form `r = …`, `cq.Workplane(str; origin=…)`, `workplane(offset=…)`,
 `cylinder`, `finalize()`, `sketch()`, `push(list)`, `circle(…; mode=…)`,

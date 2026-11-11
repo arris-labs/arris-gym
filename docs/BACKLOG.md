@@ -29,6 +29,11 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `test_regression.py`'s strict `xfail(raises=AssertionError)` also covers the `sandbox.executions == REPEATS` assert, so a cache-hit bug would pass as the expected failure; and `fixture_cases.load`'s faces guard has no test
 - Face counts in `tests/fixtures/cq/ok-*` are what arris produces (carried, ADR-0005), while gym.md says expected values never come from arris-gym's output: settle with the rule's author whether `faces` may be recorded for a fixture whose other measures are closed-form
 - `sandbox/_program.py` imports the private `arris_gym.cq._result`; `tests/test_cq_calibration.py` carries literal tolerances (`rel=1e-12`, `abs=1e-9`) and plan history in its docstring; the 2 `lobed_knob` rows refused at the fourth union have only the n-ary rebuild as evidence, not a shrunk fixture
+- Diagnose the 717 in-subset `cq_bug` rows of the BenchCAD baseline: start with `Workplane.circle(num)` (113 of them, 0 agreeing) and `extrude(num)` (159 against 73) and the kinds `_subset.py` `_fits` admits (ADR-0014)
+- Canonical JSON is hand-rolled in `_cli.py` `run_census` and `fidelity/_reach.py` `ReachReport.to_json` though `census._report._canonical` exists: use one
+- `run_census` picks the slice by `if info == benchcad.INFO` instead of a field on the `CORPORA` entry
+- The C2 baseline ran without C1 verdicts, so the slice's 100 C1 `arris_bug` rows (`lobed_knob`) read as `arris_refusal`: re-run the slice with `--verdicts` or say so beside the table
+- ADR-0014's accept line "table digest equal across architectures" is in tension with the oracle timeouts (31 `double_simplex_sprocket` programs, 4 to 30 s) making BenchCAD's table digest load-dependent: decide a timeout-stable digest or amend the line
 
 ## Findings
 
