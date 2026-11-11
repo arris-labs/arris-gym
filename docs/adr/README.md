@@ -30,4 +30,4 @@ training cycle starts from.
 | [0011](0011-a-target-is-the-oracles-step-read-in-a-step-worker-and-committed.md) | A target is the oracle's STEP, read in a step worker and committed | accepted |
 | [0012](0012-reach-is-decided-statically-from-the-subsets-declarations.md) | Reach is decided statically from the subset's declarations | accepted |
 | [0013](0013-an-oracle-zygote-imports-cadquery-once-and-wards-a-child-per-program.md) | An oracle zygote imports CadQuery once and wards a child per program | accepted |
-| [0014](0014-the-fidelity-target-is-a-reach-of-85-percent-on-benchcad-and-all-of-cad-recode.md) | The fidelity target is a reach of 85% on BenchCAD and all of CAD-Recode | proposed |
+| [0014](0014-the-fidelity-target-is-a-reach-of-85-percent-on-benchcad-and-all-of-cad-recode.md) | The fidelity target is a reach of 85% on BenchCAD and all of CAD-Recode | accepted |

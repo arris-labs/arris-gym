@@ -124,9 +124,8 @@ training.
 **Goal.** The `cq` subset grows in census order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified
 and a fidelity target is met. M3 reported agreement (200 of 300) without
-targeting it; this cycle sets the target by ADR from that number, before the
-subset grows. *(Pending approval of ADR-0014, proposed: "from the reach curves
-over both corpora", T = 85% BenchCAD, 100% CAD-Recode; amended on acceptance.)*
+targeting it; this cycle sets the target by ADR from the reach curves over both corpora,
+before the subset grows: T = 85% on BenchCAD, 100% on CAD-Recode (ADR-0014).
 
 **In:**
 - the fidelity target, by ADR;

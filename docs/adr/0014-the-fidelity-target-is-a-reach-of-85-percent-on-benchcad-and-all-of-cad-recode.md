@@ -1,7 +1,6 @@
 # ADR-0014: The fidelity target is a reach of 85% on BenchCAD and all of CAD-Recode
 
-- Status: Proposed (awaits the human's approval of T; nothing below is
-  settled until it is accepted)
+- Status: Accepted (T approved by the human, 2026-11-12)
 - Date: 2026-11-12
 
 ## Context
@@ -99,5 +98,5 @@ the baseline's only vacuous agreements behind it.
 - A declined behaviour leaves the subset and lowers reach; it is never
   `by_design` inside it (plan Q5).
 - ROADMAP §C2's "from that number" is amended to "from the reach curves over
-  both corpora", and SEED.md §9.8's fidelity-target `⚠ OPEN` closes, both when
-  this ADR is accepted (pending, below).
+  both corpora", and SEED.md §9.8's fidelity-target `⚠ OPEN` closes, both by
+  this ADR's acceptance.
