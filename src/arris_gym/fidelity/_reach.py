@@ -34,9 +34,10 @@ class ReachReport(BaseModel):
     """Reach, agreement and the in-subset rows of one corpus, over all its programs.
 
     Guarantees, validated: `in_subset` is at most `programs`, `agree` at most
-    `programs`, `timed_out` at most `programs`; `in_subset_outcomes` and
-    `in_subset_classes` hold every member of their enumeration and add up to
-    `in_subset` (the classes to the in-subset disagreements); and
+    `programs` and at least the in-subset agreements, `timed_out` at most
+    `programs`; `in_subset_outcomes` and `in_subset_classes` hold every member
+    of their enumeration and add up to `in_subset` (the classes to the
+    in-subset disagreements); and
     `in_subset_cq_bug` and `in_subset_by_design` are the classes' own counts,
     named so that the target is two comparisons. `agree` counts the rows that
     agree, in or out of the subset; `timed_out` the rows where either side
@@ -63,6 +64,8 @@ class ReachReport(BaseModel):
             self.in_subset_classes
         ) != sorted(_CLASSES):
             raise ValueError("a count lacks a member of its enumeration")
+        if self.in_subset_outcomes["agree"] > self.agree:
+            raise ValueError("in_subset agreements exceed agree")
         if sum(self.in_subset_outcomes.values()) != self.in_subset:
             raise ValueError("in_subset_outcomes do not add up to in_subset")
         if sum(self.in_subset_classes.values()) != self.in_subset_outcomes["disagree"]:

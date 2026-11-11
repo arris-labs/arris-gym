@@ -99,6 +99,9 @@ def test_a_forged_report_is_refused() -> None:
     forged = {**data, "in_subset_cq_bug": 0}
     with pytest.raises(ValueError, match="cq_bug"):
         ReachReport.model_validate(forged)
+    forged = {**data, "agree": 0}  # one in-subset row agrees, so agree cannot be 0
+    with pytest.raises(ValueError, match="agree"):
+        ReachReport.model_validate(forged)
     forged = {**data, "in_subset": 5}
     with pytest.raises(ValueError, match="programs"):
         ReachReport.model_validate(forged)

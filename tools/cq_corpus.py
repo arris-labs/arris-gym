@@ -27,7 +27,8 @@ import json
 import pathlib
 import sys
 import time
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
+from typing import Any
 
 import arris_gym as ag
 import cq_slice
@@ -47,6 +48,8 @@ from arris_gym.fidelity import (
 C2 = pathlib.Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "c2"
 # The sandbox's own deadline for a program, as `cq_slice.py` has it.
 TIMEOUT = 30.0
+# Programs per saved chunk: a chunk's sandbox and oracle runs finish in one foreground call
+# (under ~110 s at the baseline's rates), and an interrupted run loses at most one chunk.
 CHUNK = 500
 # Exit status of a run that spent its `--budget`: run it again to resume.
 RESUME = 3
@@ -95,18 +98,13 @@ def rows(
     ]
 
 
-def run_chunk(
+def run_programs(
     part: Sequence[CorpusProgram],
-    path: pathlib.Path,
     args: argparse.Namespace,
     pin: tuple[str, str, str],
     verdicts: dict[str, Verdict],
-) -> None:
-    """Run `part` under cq and on the oracle and save its entries and oracle rows at `path`.
-
-    A saved chunk is never rerun, so a corpus run is resumable and its pieces each fit a
-    short foreground call; the rows are the same bytes either way.
-    """
+) -> dict[str, Any]:
+    """Run `part` under cq and on the oracle; its entries and oracle rows, as a chunk's body."""
     source, licence, revision = pin
     texts = [p.text for p in part]
     with ag.Sandbox() as sandbox:
@@ -118,11 +116,48 @@ def run_chunk(
             raise ValueError(f"{program.stem}: the oracle ran another program")
         row = compare(result, report, verdicts.get(program.stem))
         entries.append(TableEntry(name=program.stem, source=source, licence=licence, row=row))
-    body = {
+    return {
         "entries": [e.model_dump(mode="json") for e in entries],
         "oracle": rows(part, reports, licence, revision),
     }
+
+
+def run_chunk(
+    part: Sequence[CorpusProgram],
+    path: pathlib.Path,
+    args: argparse.Namespace,
+    pin: tuple[str, str, str],
+    verdicts: dict[str, Verdict],
+) -> None:
+    """Run `part` under cq and on the oracle and save its entries and oracle rows at `path`.
+
+    A saved chunk is not rerun, so a corpus run is resumable and its pieces each fit a
+    short foreground call; the rows are the same bytes either way. The exception is a
+    program whose saved row timed out on either side: `retry_timeouts` runs it again.
+    """
+    body = run_programs(part, args, pin, verdicts)
     path.write_bytes(gz(json.dumps(body, sort_keys=True)))
+
+
+def retry_timeouts(
+    part: Sequence[CorpusProgram],
+    data: dict[str, Any],
+    rerun: Callable[[Sequence[CorpusProgram]], dict[str, Any]],
+) -> tuple[dict[str, Any], bool]:
+    """`data` (a saved chunk's body) with each timed-out program's entry and oracle row rerun.
+
+    A timeout is the one outcome a slower machine changes, so it is never cached: every
+    other saved row is kept as it is. Returns the body and whether any program was rerun.
+    """
+    again = [i for i, e in enumerate(data["entries"]) if TableEntry.model_validate(e).row.timed_out]
+    if not again:
+        return data, False
+    fresh = rerun([part[i] for i in again])
+    entries = list(data["entries"])
+    oracle = list(data["oracle"])
+    for i, entry, row in zip(again, fresh["entries"], fresh["oracle"], strict=True):
+        entries[i], oracle[i] = entry, row
+    return {"entries": entries, "oracle": oracle}, True
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -158,7 +193,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     start = 0
     while start < len(programs):
         # A saved chunk of any size at `start` is read as it is; a new one has `--chunk` programs.
+        # Two files for one start are a work dir from different `--chunk` sizes: fail, never pick.
         found = sorted(work.glob(f"chunk-{start:06d}-*.json.gz"))
+        if len(found) > 1:
+            raise ValueError(f"{[f.name for f in found]} share a start: remove the work dir")
         if found:
             chunk = found[0]
             size = int(chunk.name.split("-")[2].split(".")[0])
@@ -173,6 +211,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return RESUME
             run_chunk(part, chunk, args, (source, licence, revision), verdicts)
         data = json.loads(gzip.decompress(chunk.read_bytes()))
+        data, rerun = retry_timeouts(
+            part, data, lambda ps: run_programs(ps, args, (source, licence, revision), verdicts)
+        )
+        if rerun:
+            chunk.write_bytes(gz(json.dumps(data, sort_keys=True)))
         saved = [TableEntry.model_validate(e) for e in data["entries"]]
         if [e.name for e in saved] != [p.stem for p in part]:
             raise ValueError(f"{chunk} is not the chunk of these programs: remove the work dir")

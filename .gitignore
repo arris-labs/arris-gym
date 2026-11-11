@@ -12,3 +12,5 @@ dist/
 # idea, an ADR or a design-doc section.
 /docs/notes/
 .claude/settings.local.json
+# `tools/cq_corpus.py` saved chunks: resumable work, not a result.
+/tests/fixtures/c2/*/.work/
