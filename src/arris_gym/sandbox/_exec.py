@@ -207,14 +207,16 @@ def read_spec(fd: int) -> ExecSpec | None:
         return None
 
 
-def execute(spec: ExecSpec, payload_fd: int, result_fd: int) -> None:
-    """Exec the spec's interpreter with the two descriptors; never returns.
+def execute(spec: ExecSpec, payload_fd: int, result_fd: int, *channel: int) -> None:
+    """Exec the spec's interpreter with the job's descriptors; never returns.
 
-    Called inside an isolated program worker. The descriptors are kept
-    across the exec at their numbers, which end the argv. A failed exec
-    raises, so the worker ends with no frame.
+    Called inside an isolated program worker. The payload, the result and
+    the job's channel if it has one (ADR-0013) are kept across the exec at
+    their numbers, which end the argv in that order. A failed exec raises,
+    so the worker ends with no frame.
     """
-    os.set_inheritable(payload_fd, True)
-    os.set_inheritable(result_fd, True)
-    argv = [*spec.argv, str(payload_fd), str(result_fd)]
+    kept = (payload_fd, result_fd, *channel)
+    for fd in kept:
+        os.set_inheritable(fd, True)
+    argv = [*spec.argv, *(str(fd) for fd in kept)]
     os.execve(spec.argv[0], argv, dict(spec.env))

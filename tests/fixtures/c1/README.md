@@ -28,7 +28,8 @@ licence (`CC-BY-4.0`), the corpus revision above and the oracle's report
 `6bbfb7724508505b44e664d1b74d16c2ce70bf777d2c8e70e86de93cd3add68b`
 (three runs equal, at 8 and 16 workers; a fourth, after the worker began
 sending its STEP text back (ADR-0011), equal too: the text is left out of
-the rows).
+the rows). Two more, through oracle zygotes (ADR-0013) at 16 and 4 workers,
+are byte-equal to it, `targets.jsonl.gz` too.
 
 Status counts over all 300 programs:
 

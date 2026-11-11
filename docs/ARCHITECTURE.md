@@ -210,7 +210,9 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   `SCM_RIGHTS`, the write ends of the job's status, result and stderr pipes,
   which the caller creates, and a memfd holding the payload, which the worker
   reads. A program job's payload opens with one byte naming its dialect
-  (ADR-0007), then the program's text. The zygote forks the warden, closes its own copies and reaps it; it
+  (ADR-0007), then the program's text. An exec job may carry a fifth
+  descriptor, its channel, which its worker keeps across the exec
+  (ADR-0013). The zygote forks the warden, closes its own copies and reaps it; it
   never reads a status, a result or a worker's stderr, which run from the
   warden and the worker straight to the caller. The warden and the worker close every descriptor
   they were not given, the job socket among them. The caller reads at most
@@ -496,10 +498,23 @@ interpreter on `tools/oracle/worker.py` and keeps every limit across the exec.
 Its reach is the oracle environment's prefixes and its interpreter's shared
 libraries, its memory limit 1.5 GiB (the import of cadquery and OCP maps
 875 MiB), and Open CASCADE's thread pool is held to one thread so a boolean
-runs within `RLIMIT_NPROC`. Each program pays
-about 1.5 s of start-up. `tools/oracle_run.py` builds the exec spec and sends
-the job; the frame comes back on the result pipe and is trusted no more than
-any worker's.
+runs within `RLIMIT_NPROC`. Started fresh, a program pays about 1.5 s of
+start-up. `tools/oracle_run.py` builds the exec spec and sends the job; the
+frame comes back on the result pipe and is trusted no more than any worker's.
+
+A corpus runs on **oracle zygotes** (ADR-0013). An oracle zygote is an oracle
+worker exec'd with `--zygote` and a **channel**, a fifth descriptor that an
+exec job may carry across the exec. It imports CadQuery once, builds nothing,
+and serves one program at a time. Each job is a deadline and the four
+descriptors of a library job (status, result, stderr, the text's memfd). It
+forks a child that runs the program as a fresh worker would, inheriting every
+limit, and is that child's warden: a `SIGKILL` at the deadline, then a sweep
+of the PID namespace it is PID 1 of (`kill(-1)` and reaping until nothing is
+left). Only then does it write the warden's record. A program starts in about
+18 ms. `OracleZygote` is one zygote's handle, and `run_many` keeps
+`workers` of them, replacing any that dies or nears its 600 s lifetime. Its
+reports are the same bytes as fresh workers': the slice's `oracle.jsonl` is
+unchanged through it.
 
 `fidelity.parse_outcome` turns that outcome into an **oracle report**
 (`OracleReport`: an `OracleStatus` of `ok`, `syntax`, `runtime`, `no_result`,

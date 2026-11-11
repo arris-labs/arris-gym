@@ -99,7 +99,7 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
   and reach curve, committed in `tests/fixtures/c2/cadrecode/` with its
   licence beside it. ARCHITECTURE's end-form `⚠ OPEN` is answered by the
   census's `end_form` counts.
-- [ ] Step 4 **[3]** — ADR-0013, the oracle zygote. The slice's `oracle.jsonl`
+- [x] Step 4 **[3]** — ADR-0013, the oracle zygote. The slice's `oracle.jsonl`
   is byte-equal with and without it. Hostile programs (fork bomb, `os._exit`,
   state left in a module, a write outside reach) each cost one report, and
   the next program on the same zygote sees none of it. Per-program start-up
@@ -145,6 +145,14 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
 - `docs/BACKLOG.md`: drop the oracle-zygote line.
 
 ## Open questions
+- **Settled (step 4):** "forks one child per program under its own warden"
+  is met with the oracle zygote itself as each child's warden, one program
+  at a time, and concurrency from several zygotes. A separate warden process
+  inside the zygote could not sweep a program's leftovers with `kill(-1)`
+  (which only PID 1 can do without killing itself). Short of nesting a user
+  and PID namespace per program, it would also take the one task
+  `RLIMIT_NPROC` 4 leaves a program. ADR-0013 records it, with the guards the
+  zygote keeps against its same-uid child.
 - ⚠ OPEN: a behaviour declined on context, not by form (the backlog's
   "`cq` keeps no CadQuery context along a chain"). The static rule cannot
   exclude it, and Q5 forbids `by_design` inside the subset. So an in-subset

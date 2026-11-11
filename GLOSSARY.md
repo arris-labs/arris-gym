@@ -123,6 +123,14 @@ interpreter on `tools/oracle/worker.py` to run one program on the oracle; it
 keeps every limit of the worker it replaced (ADR-0004).
 _Avoid_: oracle process, oracle sandbox
 
+**Oracle zygote**:
+An oracle worker that imported CadQuery once and serves programs one at a
+time over its channel, forking a child for each and acting as that child's
+warden: it kills the child at its deadline, then every process left in its
+PID namespace, and writes the warden's record. The child keeps every limit it
+inherits (ADR-0013).
+_Avoid_: oracle server, oracle pool
+
 **Oracle report**:
 What one program did on the oracle: an `OracleStatus`, the exception's words,
 Open CASCADE's measures, the STEP hash and, for `ok`, the STEP text with its

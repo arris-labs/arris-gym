@@ -18,7 +18,6 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `Score` does not check that an `ok` score's `reward` equals `combine(terms, config)`; a validator would refuse a forged one
 - `sandbox/_zygote_main.py` imports `reward._job` to register the score handler, an edge `tools/check_layers.py` does not hold: allow only that module or register through a plugin point
 - `fidelity/_oracle.py` imports the private `sandbox._run.ended` and `sandbox._zygote.Outcome`, so the public `parse_outcome` takes a private type: give `sandbox` a public outcome type or move the parse
-- An oracle zygote (import cadquery once, fork per program): each oracle program pays ~1.5 s of start-up, so the slice takes minutes
 - A crash on both sides is `agree` under ADR-0006, so it never reaches the arris report; decide whether `arris_rows` lists every arris `crash` regardless of outcome (gym.md: an arris crash goes to arris as a fixture candidate)
 - `tools/check_layers.py` sees `import`, `from` and literal `importlib.import_module`; a computed name evades it, as it would evade any static check
 - Decide whether the `cq` subset admits the bare `cq.Workplane()` (CadQuery's default plane) and `box(...; centered=False)`: all 19 calibration programs in `tests/fixtures/fidelity/` use one, so none runs under `cq` and `tests/test_cq_calibration.py` holds them to `unsupported_api` (a product question, in census order for C2)

@@ -1,12 +1,15 @@
 """The script `tests/test_exec.py` execs in an exec job, on the main interpreter.
 
-Usage: `exec_echo.py PAYLOAD_FD RESULT_FD`. Reads the text to its end and
-writes one JSON report to the result descriptor: the text, its own pid, and
-what reading a file beside it and executing another program raised.
+Usage: `exec_echo.py PAYLOAD_FD RESULT_FD [CHANNEL_FD]`. Reads the text to
+its end and writes one JSON report to the result descriptor: the text, its
+own pid, and what reading a file beside it and executing another program
+raised. With a channel (ADR-0013), it also reports the message it received
+on it and answers it reversed.
 """
 
 import json
 import os
+import socket
 import sys
 from collections.abc import Callable
 
@@ -37,6 +40,11 @@ def main() -> None:
         "exec": attempt(lambda: os.execv("/usr/bin/true", ["true"])),
         "argv0": sys.argv[0],
     }
+    if len(sys.argv) == 4:
+        channel = socket.socket(fileno=int(sys.argv[3]))
+        message = channel.recv(256)
+        channel.send(message[::-1])
+        report["channel"] = message.decode()
     os.write(result, json.dumps(report).encode())
 
 

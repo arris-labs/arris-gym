@@ -4,7 +4,9 @@
 An oracle worker is a program worker under the sandbox's warden that execs
 the oracle environment's interpreter on `tools/oracle/worker.py` (ADR-0004):
 the same namespaces, rlimits, Landlock domain and seccomp filter as an arris
-program, with the oracle environment's prefixes as its whole reach. Runs in
+program, with the oracle environment's prefixes as its whole reach. A corpus
+runs on **oracle zygotes** (ADR-0013): one such worker that imported CadQuery
+once and forks a child per program, each child under its warding. Runs in
 the main environment; needs `uv sync --project tools/oracle` first.
 """
 
@@ -14,16 +16,23 @@ import argparse
 import gzip
 import hashlib
 import json
+import os
 import pathlib
+import queue
+import socket
+import struct
 import sys
+import threading
 import time
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
 
 from arris_gym.census import CorpusProgram
 from arris_gym.fidelity import OracleReport, parse_outcome
 from arris_gym.sandbox import _exec
-from arris_gym.sandbox._zygote import ENVIRONMENT, JobKind, Outcome, Zygote
+from arris_gym.sandbox._program import write_all
+from arris_gym.sandbox._zygote import BACKSTOP, ENVIRONMENT, JobKind, Outcome, Zygote, _collect
 
 ORACLE = pathlib.Path(__file__).resolve().parent / "oracle"
 # The environment's interpreter as it is called: the path tells it its venv.
@@ -64,33 +73,211 @@ def run_one(zygote: Zygote, oracle: _exec.ExecSpec, program: str, *, timeout: fl
     )
 
 
-# The oracle worker's deadline when none is given. Its start-up is about
-# 1.5 s of the import (ADR-0004), so this leaves a program 28 s of its own.
+# The oracle zygote (ADR-0013), as `worker.py` speaks it: the flag that
+# makes the worker a zygote, its first message, and a job's header (its
+# deadline; the four descriptors follow it).
+ZYGOTE_FLAG = "--zygote"
+_READY = b"ready"
+_ZYGOTE_JOB = struct.Struct("<d")
+# How long an oracle zygote may take to import cadquery and OCP and say it
+# is ready: the import takes about 1.5 s (ADR-0004); the margin covers a
+# loaded machine.
+ZYGOTE_STARTUP_TIMEOUT = 60.0
+# An oracle zygote's own deadline, its warden's: it is replaced before a
+# program whose deadline and backstop would pass it, so a zygote that stopped
+# answering lingers this long at most. A restart costs one import, 1.5 s.
+ZYGOTE_LIFETIME = 600.0
+
+
+class ZygoteUnavailable(RuntimeError):
+    """An oracle zygote did not say it was ready: its import failed or hung.
+
+    Raised before any program is sent to it; the message is what the zygote
+    said, or that it said nothing, and the tail of its stderr if it ended.
+    """
+
+
+class OracleZygote:
+    """One oracle zygote (ADR-0013): an oracle worker, isolated and exec'd as
+    `run_one`'s, that imported CadQuery once and forks a child per program.
+
+    `run` sends one program and returns its `Outcome`, as `run_one` would
+    for the same program: the child's ending in the warden's record, its
+    frame and its stderr tail. One program at a time: a handle is not shared
+    between threads. A zygote that dies or stops answering costs that program
+    its record (`ending` None), and the next program starts a new one. Started
+    lazily, by the first `run`.
+    """
+
+    def __init__(self, zygote: Zygote, oracle: _exec.ExecSpec) -> None:
+        self._zygote = zygote
+        self._spec = replace(oracle, argv=(*oracle.argv, ZYGOTE_FLAG))
+        self._sock: socket.socket | None = None
+        self._thread: threading.Thread | None = None
+        self._lifetime = 0.0
+        self._starts = 0
+
+    @property
+    def starts(self) -> int:
+        """How many zygotes this handle has started: one more each replacement."""
+        return self._starts
+
+    def _start(self) -> None:
+        ours, theirs = socket.socketpair(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+        lifetime = time.monotonic() + ZYGOTE_LIFETIME
+        outcome: list[Outcome] = []
+        channel = theirs.detach()  # `execute` owns and closes it
+
+        def serve() -> None:
+            outcome.append(
+                self._zygote.execute(
+                    JobKind.EXEC,
+                    _exec.payload(self._spec, b""),
+                    deadline=lifetime,
+                    memory=MEMORY,
+                    channel=channel,
+                )
+            )
+
+        thread = threading.Thread(target=serve, name="oracle-zygote", daemon=True)
+        thread.start()
+        ours.settimeout(ZYGOTE_STARTUP_TIMEOUT)
+        try:
+            ready = ours.recv(len(_READY) + 1)
+        except (TimeoutError, OSError):
+            ready = b""
+        if ready != _READY:
+            ours.close()
+            thread.join(timeout=BACKSTOP)
+            tail = outcome[0].stderr.decode("utf-8", "replace") if outcome else ""
+            raise ZygoteUnavailable(
+                f"the oracle zygote said {ready!r}, not {_READY!r}; its stderr ends:\n{tail}"
+            )
+        ours.settimeout(None)
+        self._sock, self._thread, self._lifetime = ours, thread, lifetime
+        self._starts += 1
+
+    def _stop(self) -> None:
+        """Close the channel: a zygote still answering sees its end and exits."""
+        if self._sock is not None:
+            self._sock.close()
+            self._sock = None
+        if self._thread is not None:
+            self._thread.join(timeout=BACKSTOP)
+            self._thread = None
+
+    def _send(self, deadline: float, fds: list[int]) -> bool:
+        assert self._sock is not None
+        try:
+            socket.send_fds(self._sock, [_ZYGOTE_JOB.pack(deadline)], fds)
+        except OSError:  # the zygote is gone: its channel's other end closed
+            return False
+        return True
+
+    def run(self, program: str, *, timeout: float) -> Outcome:
+        """Run `program` in a child of this zygote for at most `timeout` seconds.
+
+        What came back, unread, as `run_one` returns it. Raises
+        `ZygoteUnavailable` only when a new zygote has to start and cannot.
+        """
+        text = program.encode("utf-8", "surrogatepass")
+        for attempt in range(2):
+            if self._sock is None or time.monotonic() + timeout + BACKSTOP > self._lifetime:
+                self._stop()
+                self._start()
+            status_r, status_w = os.pipe()
+            result_r, result_w = os.pipe()
+            stderr_r, stderr_w = os.pipe()
+            payload_fd = os.memfd_create("arris-gym-oracle", os.MFD_CLOEXEC)
+            sent = [status_w, result_w, stderr_w, payload_fd]
+            try:
+                write_all(payload_fd, text)
+                os.lseek(payload_fd, 0, os.SEEK_SET)
+                deadline = time.monotonic() + timeout
+                delivered = self._send(deadline, sent)
+            except BaseException:
+                for fd in (status_r, result_r, stderr_r):
+                    os.close(fd)
+                raise
+            finally:
+                for fd in sent:
+                    os.close(fd)
+            if not delivered:
+                for fd in (status_r, result_r, stderr_r):
+                    os.close(fd)
+                self._stop()
+                if attempt:
+                    break
+                continue
+            try:
+                outcome = _collect(status_r, result_r, stderr_r, deadline + BACKSTOP)
+            finally:
+                os.close(status_r)
+                os.close(stderr_r)
+            if outcome is None or outcome.ending is None:
+                self._stop()  # the next program goes to a new zygote
+            return outcome if outcome is not None else Outcome(None, b"", overflow=False)
+        return Outcome(None, b"", overflow=False)
+
+    def close(self) -> None:
+        """Stop this zygote. A child already forked keeps its deadline."""
+        self._stop()
+
+    def __enter__(self) -> OracleZygote:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.close()
+
+
+# The oracle worker's deadline when none is given. It was set when a
+# program's deadline covered the import, about 1.5 s (ADR-0004); an oracle
+# zygote's child starts after it, and the deadline stays, so that no report
+# moves (ADR-0013).
 DEFAULT_TIMEOUT = 30.0
 # Oracle workers run at once. Each is 1.5 GiB of address space at most and
 # one thread; the report does not depend on the number.
 DEFAULT_WORKERS = 4
 
 
-def run_report(
-    zygote: Zygote, oracle: _exec.ExecSpec, program: str, *, timeout: float
-) -> OracleReport:
-    """The `OracleReport` of `program`: one oracle worker, its frame parsed.
+def run_report(oracle: OracleZygote, program: str, *, timeout: float) -> OracleReport:
+    """The `OracleReport` of `program`: one child of an oracle zygote, its
+    frame parsed.
 
     Never raises on a program; a frame that cannot be believed is a `crash`.
     """
     start = time.monotonic()
-    outcome = run_one(zygote, oracle, program, timeout=timeout)
+    outcome = oracle.run(program, timeout=timeout)
     return parse_outcome(outcome, program, timeout=timeout, seconds=time.monotonic() - start)
 
 
 def run_many(
     programs: Sequence[str], *, timeout: float = DEFAULT_TIMEOUT, workers: int = DEFAULT_WORKERS
 ) -> list[OracleReport]:
-    """The reports of `programs`, in submission order whatever order they finish."""
+    """The reports of `programs`, in submission order whatever order they finish.
+
+    `workers` oracle zygotes, each serving one program at a time.
+    """
     oracle = spec()
-    with Zygote() as zygote, ThreadPoolExecutor(max_workers=workers) as pool:
-        return list(pool.map(lambda p: run_report(zygote, oracle, p, timeout=timeout), programs))
+    with Zygote() as zygote:
+        idle: queue.SimpleQueue[OracleZygote] = queue.SimpleQueue()
+        handles = [OracleZygote(zygote, oracle) for _ in range(workers)]
+        for handle in handles:
+            idle.put(handle)
+
+        def one(program: str) -> OracleReport:
+            handle = idle.get()
+            try:
+                return run_report(handle, program, timeout=timeout)
+            finally:
+                idle.put(handle)
+
+        try:
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                return list(pool.map(one, programs))
+        finally:
+            for handle in handles:
+                handle.close()
 
 
 def read_slice(path: pathlib.Path) -> list[str]:

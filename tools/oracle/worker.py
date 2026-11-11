@@ -10,18 +10,38 @@ program's text from ``PAYLOAD_FD`` to its end and writes one JSON report to
 forked writes nothing). For a trusted program by hand, ``worker.py
 PROGRAM.py`` prints the report on stdout.
 
+As the oracle zygote (ADR-0013): ``worker.py --zygote PAYLOAD_FD RESULT_FD
+CHANNEL_FD``. It has imported CadQuery and built nothing, says ``ready`` on
+the channel, then serves one program at a time: a job message (its
+deadline) with the status, result and stderr pipes' write ends and the
+program's text, as the sandbox's zygote receives a job. It forks a child that
+runs the program as the oracle worker would, and is that child's warden: it
+kills it at the deadline, then kills everything else in its PID namespace,
+of which it is PID 1, reaps it all, and writes the child's ending to the
+status pipe in the warden's record. The child keeps every limit it
+inherits; the zygote's own state it can only copy.
+
 The result is taken as ``docs/ARCHITECTURE.md`` §Outcomes says: the argument
 of the last ``show_object`` call, else the module-level ``result``.
 """
 
 from __future__ import annotations
 
+import contextlib
+import ctypes
+import errno
 import hashlib
 import io
 import json
 import os
 import re
+import resource
+import select
+import signal
+import socket
+import struct
 import sys
+import time
 import traceback
 from typing import Any
 
@@ -203,8 +223,152 @@ def _write_all(fd: int, data: bytes) -> None:
         view = view[os.write(fd, view) :]
 
 
+# The oracle zygote's protocol (ADR-0013). Its first message on the channel.
+ZYGOTE_FLAG = "--zygote"
+_READY = b"ready"
+# A job: its deadline, a `time.monotonic()` instant (CLOCK_MONOTONIC, which
+# the caller shares: no time namespace is entered). Its four descriptors are
+# the status, result and stderr pipes' write ends and the program's text.
+_JOB = struct.Struct("<d")
+_JOB_FDS = 4
+# The warden's status record (`arris_gym.sandbox._isolate`): kind, value,
+# armed. Kinds: exited (the code), signalled (the signal), timed out, and
+# unavailable (the errno of a fork refused). A child is armed from birth: it
+# inherits a complete isolation, so its ending always has it set.
+_STATUS = struct.Struct("<iii")
+_EXITED, _SIGNALLED, _TIMED_OUT, _UNAVAILABLE = 0, 1, 2, 3
+# A child whose own code failed outside the program: Python's exit code for
+# an uncaught exception, as the exec'd worker ended with one.
+_RAISED = 1
+# prctl(2): the zygote is not dumpable, so a child of the same uid can neither
+# ptrace it nor open its memory; the child is made dumpable again, as an
+# exec'd worker is.
+_PR_SET_DUMPABLE = 4
+
+
+def _set_dumpable(value: int) -> None:
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(_PR_SET_DUMPABLE, ctypes.c_ulong(value), 0, 0, 0) != 0:
+        code = ctypes.get_errno()
+        raise OSError(code, f"prctl(PR_SET_DUMPABLE): {os.strerror(code)}")
+
+
+def _close_all_but(keep: tuple[int, ...]) -> None:
+    kept = sorted(set(keep))
+    ceiling = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
+    for low, high in zip(kept, [*kept[1:], ceiling], strict=True):
+        os.closerange(low + 1, high)
+
+
+def _child(result_w: int, stderr_w: int, payload: int) -> None:
+    """Run the program in ``payload`` as an exec'd oracle worker would; never returns."""
+    code = _RAISED
+    try:
+        # As the exec'd worker started: its own session, Python's handler for
+        # SIGINT, dumpable, stderr the job's, nothing but its descriptors.
+        os.setsid()
+        signal.signal(signal.SIGINT, signal.default_int_handler)
+        _set_dumpable(1)
+        os.dup2(stderr_w, 2)
+        _close_all_but((0, 1, 2, result_w, payload))
+        child = os.getpid()
+        text = _read_all(payload).decode("utf-8", "surrogatepass")
+        report = json.dumps(run_program(text), sort_keys=True) + "\n"
+        # A child the program forked returns here too; only the child reports.
+        if os.getpid() == child:
+            _write_all(result_w, report.encode("utf-8", "surrogatepass"))
+        code = 0
+    except BaseException:  # noqa: BLE001 - reported as an uncaught exception would be
+        traceback.print_exc()
+    finally:
+        sys.stderr.flush()
+        os._exit(code)
+
+
+def _sweep() -> None:
+    """Kill and reap every process in this PID namespace but this one.
+
+    ``kill(-1)`` from PID 1 reaches every process of its namespace except
+    itself; what a program left behind is reparented here, so it is reaped
+    here. Repeated until no child is left, so a process forked between a kill
+    and a wait meets the next kill.
+    """
+    while True:
+        with contextlib.suppress(ProcessLookupError):  # none left to kill
+            os.kill(-1, signal.SIGKILL)
+        try:
+            os.waitpid(-1, 0)
+        except ChildProcessError:
+            return
+
+
+def _serve_one(deadline: float, result_w: int, stderr_w: int, payload: int) -> bytes:
+    """Run one program in a child under this zygote's warding; its status record."""
+    sys.stdout.flush()
+    sys.stderr.flush()
+    try:
+        pid = os.fork()
+    except OSError as e:
+        return _STATUS.pack(_UNAVAILABLE, e.errno or errno.EAGAIN, 0)
+    if pid == 0:
+        _child(result_w, stderr_w, payload)
+    for fd in (result_w, stderr_w, payload):
+        os.close(fd)
+    pidfd = os.pidfd_open(pid)
+    try:
+        poller = select.poll()
+        poller.register(pidfd, select.POLLIN)
+        remaining_ms = max(0, int((deadline - time.monotonic()) * 1000) + 1)
+        timed_out = not poller.poll(remaining_ms)
+        if timed_out:
+            signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+        _, status = os.waitpid(pid, 0)
+    finally:
+        os.close(pidfd)
+    _sweep()
+    if timed_out:
+        return _STATUS.pack(_TIMED_OUT, 0, 1)
+    if os.WIFSIGNALED(status):
+        return _STATUS.pack(_SIGNALLED, os.WTERMSIG(status), 1)
+    return _STATUS.pack(_EXITED, os.waitstatus_to_exitcode(status), 1)
+
+
+def serve(channel_fd: int) -> None:
+    """The oracle zygote: say ready on the channel, then serve jobs to its end."""
+    # PID 1 of its namespace receives from inside it only the signals it
+    # handles; Python handles SIGINT, which a child could send, so it is
+    # ignored here and restored in the child.
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    _set_dumpable(0)
+    sock = socket.socket(fileno=channel_fd)
+    sock.send(_READY)
+    while True:
+        message, fds, flags, _ = socket.recv_fds(sock, _JOB.size, _JOB_FDS)
+        if not message and not fds:
+            return  # the caller is gone
+        if len(message) != _JOB.size or len(fds) != _JOB_FDS or flags & socket.MSG_CTRUNC:
+            for fd in fds:  # a caller's bug: no record, and the caller's backstop
+                os.close(fd)
+            continue
+        (deadline,) = _JOB.unpack(message)
+        status_w, result_w, stderr_w, payload = fds
+        try:
+            record = _serve_one(deadline, result_w, stderr_w, payload)
+            with contextlib.suppress(OSError):  # a caller that gave the job up
+                os.write(status_w, record)
+        finally:
+            os.close(status_w)
+
+
 def main() -> None:
     worker = os.getpid()
+    if len(sys.argv) == 5 and sys.argv[1] == ZYGOTE_FLAG:
+        # The payload holds no program and the result carries nothing: the
+        # zygote answers on its channel, its children on their own pipes.
+        os.close(int(sys.argv[2]))
+        os.close(int(sys.argv[3]))
+        serve(int(sys.argv[4]))
+        return
     if len(sys.argv) == 3:  # the oracle worker: payload and result descriptors
         text = _read_all(int(sys.argv[1])).decode("utf-8", "surrogatepass")
         out = int(sys.argv[2])

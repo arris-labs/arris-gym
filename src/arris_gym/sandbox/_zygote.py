@@ -14,7 +14,9 @@ the caller.
 
 An exec job's payload opens with a spec (`sandbox/_exec.py`): its worker
 reaches the spec's paths in place of this interpreter's and, once isolated,
-execs the interpreter the spec names (ADR-0004).
+execs the interpreter the spec names (ADR-0004). An exec job may carry a
+fifth descriptor, a **channel**, which its worker keeps across the exec
+beside the payload and result: the oracle zygote's socket (ADR-0013).
 
 `Zygote` is the caller's handle. It replaces a zygote that died, and holds a
 backstop past each job's deadline after which the job has no `Ending`.
@@ -105,9 +107,11 @@ class JobKind(enum.IntEnum):
 
 # The job message: kind, deadline (a `time.monotonic()` instant: the clock is
 # the machine's, shared by caller and zygote), memory limit in bytes. Its
-# four descriptors are status, result, stderr and payload, in that order.
+# four descriptors are status, result, stderr and payload, in that order;
+# an exec job's may be followed by its channel (ADR-0013).
 _JOB = struct.Struct("<IdQ")
 _JOB_FDS = 4
+_JOB_MAX_FDS = _JOB_FDS + 1
 
 _HANDLERS: dict[int, Callable[[int, int], None]] = {
     JobKind.PROGRAM: _program.execute,
@@ -165,18 +169,24 @@ def _close(fds: list[int]) -> None:
 
 
 def _job(
-    kind: int, payload: int, result_w: int, memory: int, roots: tuple[str, ...]
+    kind: int,
+    payload: int,
+    result_w: int,
+    channel: tuple[int, ...],
+    memory: int,
+    roots: tuple[str, ...],
 ) -> tuple[Callable[[], None], _isolate.Limits] | None:
-    """A job's function and its worker's limits; None for an unknown kind or spec."""
+    """A job's function and its worker's limits; None for an unknown kind or
+    spec, or a channel on a job that is not an exec job."""
     if kind == JobKind.EXEC:
         # Its reach is the spec's, in place of this interpreter's (ADR-0004).
         spec = _exec.read_spec(payload)
         if spec is None:
             return None
         limits = _isolate.Limits(memory=memory, readable=spec.readable, executable=spec.executable)
-        return partial(_exec.execute, spec, payload, result_w), limits
+        return partial(_exec.execute, spec, payload, result_w, *channel), limits
     handler = _HANDLERS.get(kind)
-    if handler is None:
+    if handler is None or channel:
         return None
     return partial(handler, payload, result_w), _isolate.Limits(memory=memory, readable=roots)
 
@@ -190,11 +200,16 @@ def _start_job(
     the job's descriptors are closed, and the caller sees no record.
     """
     try:
-        if len(message) != _JOB.size or len(fds) != _JOB_FDS or flags & socket.MSG_CTRUNC:
+        if (
+            len(message) != _JOB.size
+            or not _JOB_FDS <= len(fds) <= _JOB_MAX_FDS
+            or flags & socket.MSG_CTRUNC
+        ):
             return None
         kind, deadline, memory = _JOB.unpack(message)
-        status_w, result_w, stderr_w, payload = fds
-        job = _job(kind, payload, result_w, memory, roots)
+        status_w, result_w, stderr_w, payload, *rest = fds
+        channel = tuple(rest)
+        job = _job(kind, payload, result_w, channel, memory, roots)
         if job is None:
             return None
         target, limits = job
@@ -204,7 +219,7 @@ def _start_job(
                 deadline=deadline,
                 limits=limits,
                 status_fd=status_w,
-                keep_fds=(result_w, payload),
+                keep_fds=(result_w, payload, *channel),
                 stderr_fd=stderr_w,
             )
         except OSError:  # fork refused: the job ends with no record
@@ -227,7 +242,7 @@ def serve(sock: socket.socket) -> None:
                 poller.unregister(fd)
                 os.close(fd)
                 continue
-            message, fds, flags, _ = socket.recv_fds(sock, _JOB.size, _JOB_FDS)
+            message, fds, flags, _ = socket.recv_fds(sock, _JOB.size, _JOB_MAX_FDS)
             if not message and not fds:
                 return  # the caller is gone; the wardens keep their deadlines
             started = _start_job(message, fds, flags, roots)
@@ -349,7 +364,15 @@ class Zygote:
             if generation == self._generation:
                 self._stop()
 
-    def execute(self, kind: JobKind, payload: bytes, *, deadline: float, memory: int) -> Outcome:
+    def execute(
+        self,
+        kind: JobKind,
+        payload: bytes,
+        *,
+        deadline: float,
+        memory: int,
+        channel: int | None = None,
+    ) -> Outcome:
         """Run one job isolated until `deadline` at most; what came back.
 
         `deadline` is a `time.monotonic()` instant, so that one deadline can
@@ -357,21 +380,30 @@ class Zygote:
         are closed, or the backstop has passed. A zygote that died is replaced before the job
         is sent; one that died with the job in hand costs the job its
         record (`ending` None), and the next job goes to a new zygote.
+
+        `channel`, for an exec job only, is a descriptor its worker keeps
+        across the exec, its number appended to the argv after the result's
+        (ADR-0013). This call owns it: it is closed here once the job is sent,
+        or refused, as the job's other descriptors are. A channel on any other
+        kind of job runs nothing (`ending` None).
         """
         status_r, status_w = os.pipe()
         result_r, result_w = os.pipe()
         stderr_r, stderr_w = os.pipe()
         payload_fd = os.memfd_create("arris-gym-job", os.MFD_CLOEXEC)
+        sent = [status_w, result_w, stderr_w, payload_fd]
+        if channel is not None:
+            sent.append(channel)
         try:
             _program.write_all(payload_fd, payload)
             os.lseek(payload_fd, 0, os.SEEK_SET)
             header = _JOB.pack(kind, deadline, memory)
-            generation = self._send(header, [status_w, result_w, stderr_w, payload_fd])
+            generation = self._send(header, sent)
         except BaseException:
             _close([status_r, result_r, stderr_r])
             raise
         finally:
-            _close([status_w, result_w, stderr_w, payload_fd])
+            _close(sent)
         try:
             outcome = _collect(status_r, result_r, stderr_r, deadline + BACKSTOP)
         finally:

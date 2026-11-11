@@ -36,7 +36,12 @@ one thread per processor hangs under the worker's `RLIMIT_NPROC` (ADR-0004).
 
 As the oracle worker, `worker.py PAYLOAD_FD RESULT_FD` reads the program from
 the payload descriptor and writes one JSON report to the result descriptor;
-`tools/oracle_run.py` builds its exec spec and sends the job. By hand, for a
+`tools/oracle_run.py` builds its exec spec and sends the job. As the oracle
+zygote (ADR-0013), `worker.py --zygote PAYLOAD_FD RESULT_FD CHANNEL_FD`
+imports cadquery once and serves programs from its channel, one child each,
+killing every process the child left before it reports how the child ended;
+`OracleZygote` in `tools/oracle_run.py` is its handle, and `run_many` runs
+on them. By hand, for a
 trusted program only, `worker.py PROGRAM.py` prints the report. The bounds are the tight box (`BRepBndLib.AddOptimal`): the plain
 `Add` boxes a torus by its control net (ADR-0005). STEP is
 written to memory (an oracle worker writes no file), and `step_sha256` hashes
@@ -49,7 +54,11 @@ Neither is in the gate, which runs without this environment:
 - `uv run --project tools/oracle tools/oracle/selftest.py`: trusted programs,
   unisolated, against their closed forms;
 - `uv run pytest -m oracle`: M0's hostile programs on the oracle worker give
-  their outcomes under ADR-0004's limits (`tests/test_oracle_worker.py`).
+  their outcomes under ADR-0004's limits, and on one oracle zygote each costs
+  one report and leaves the next program nothing (ADR-0013). With
+  `--extra corpus`, the slice's rows through oracle zygotes are re-run and
+  held byte-equal to `tests/fixtures/c1/oracle.jsonl`
+  (`tests/test_oracle_worker.py`).
 
 ## The slice
 

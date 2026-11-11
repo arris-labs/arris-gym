@@ -4,13 +4,16 @@ Needs the oracle environment (`uv sync --project tools/oracle`), so it is
 marked `oracle` and left out of the gate: `uv run pytest -m oracle`. Each
 program goes through the zygote as an exec job, as `tools/oracle_run.py`
 sends it, and the test reads the raw outcome: the warden's `Ending` and the
-worker's one JSON frame.
+worker's one JSON frame. The oracle zygote (ADR-0013) is held to the same:
+each hostile program costs one report, the next program on the same zygote
+sees none of it, and a report is the same bytes as a fresh worker's.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import pathlib
 import signal
 import time
 from collections.abc import Iterator
@@ -20,6 +23,7 @@ import pytest
 
 import fixture_cases
 import oracle_run
+from arris_gym.fidelity import parse_outcome
 from arris_gym.sandbox import _exec
 from arris_gym.sandbox._isolate import EndKind
 from arris_gym.sandbox._zygote import Outcome, Zygote
@@ -35,6 +39,9 @@ LOOP_BOUND = 2.0
 # A deadline the oracle's start-up (about 1.5 s: Python, cadquery, OCP)
 # leaves the program well inside.
 REACHED_DEADLINE = 5.0
+# The most a trivial program may take on an oracle zygote, start to report: a
+# tenth of the fresh worker's import (ADR-0013 measured about 20 ms).
+ZYGOTE_START_BOUND = 0.15
 # A box with a through hole and filleted vertical edges, then a boolean on a
 # sphere: cadquery runs each boolean on Open CASCADE's thread pool.
 BOOLEAN = (
@@ -165,11 +172,17 @@ def test_the_loop_itself_is_killed_at_its_deadline(zygote: Zygote, oracle: _exec
     assert outcome.stderr.endswith(b"looping\n")
 
 
-def test_run_report_parses_the_real_frame(zygote: Zygote, oracle: _exec.ExecSpec) -> None:
+@pytest.fixture(scope="module")
+def oracle_zygote(zygote: Zygote, oracle: _exec.ExecSpec) -> Iterator[oracle_run.OracleZygote]:
+    with oracle_run.OracleZygote(zygote, oracle) as z:
+        yield z
+
+
+def test_run_report_parses_the_real_frame(oracle_zygote: oracle_run.OracleZygote) -> None:
     from arris_gym.fidelity import OracleStatus, program_sha256
 
     program = "import cadquery as cq\nresult = cq.Workplane().box(2, 3, 4)\n"
-    report = oracle_run.run_report(zygote, oracle, program, timeout=TIMEOUT)
+    report = oracle_run.run_report(oracle_zygote, program, timeout=TIMEOUT)
     assert report.status is OracleStatus.OK, report.message
     assert report.measures is not None
     assert report.measures.faces == 6
@@ -180,12 +193,14 @@ def test_run_report_parses_the_real_frame(zygote: Zygote, oracle: _exec.ExecSpec
 
 
 def test_the_step_text_is_the_same_bytes_on_every_run_and_holds_its_hash(
-    zygote: Zygote, oracle: _exec.ExecSpec
+    zygote: Zygote, oracle: _exec.ExecSpec, oracle_zygote: oracle_run.OracleZygote
 ) -> None:
-    # Two workers, so two processes' translator counters and two clocks: the
-    # blanked text is equal, and its data section hashes to `step_sha256`.
+    # A fresh worker and a zygote's child, so two processes' translator
+    # counters and two clocks: the blanked text is equal, and its data
+    # section hashes to `step_sha256`.
     program = "import cadquery as cq\nresult = cq.Workplane().box(2, 3, 4)\n"
-    a, b = (oracle_run.run_report(zygote, oracle, program, timeout=TIMEOUT) for _ in range(2))
+    a = parse_outcome(run(zygote, oracle, program), program, timeout=TIMEOUT, seconds=0.0)
+    b = oracle_run.run_report(oracle_zygote, program, timeout=TIMEOUT)
     assert a.step is not None
     assert a.step == b.step
     assert "FILE_NAME('Open CASCADE Shape Model','',(" in a.step
@@ -221,3 +236,174 @@ def test_the_command_writes_one_row_per_program_in_order(tmp_path: Any) -> None:
         (files[0], "syntax"),
         (files[1], "no_result"),
     ]
+
+
+# --- The oracle zygote (ADR-0013) ----------------------------------------------
+
+# Run after each hostile program on the same zygote: it fails with what it
+# saw of an earlier program. A module's state, a planted module, the file a
+# program tried to write, and a task still held (RLIMIT_NPROC 4: warden,
+# zygote and this child leave it one fork, which a leftover would take).
+PLANTED = "/tmp/arris-gym-oracle-planted"
+PROBE = (
+    "import os, sys\n"
+    "import cadquery as cq\n"
+    "seen = []\n"
+    "if hasattr(cq, 'planted') or 'planted' in sys.modules or cq.Workplane.box is None:\n"
+    "    seen.append('state')\n"
+    f"if os.path.exists({PLANTED!r}):\n"
+    "    seen.append('file')\n"
+    "try:\n"
+    "    pid = os.fork()\n"
+    "except BlockingIOError:\n"
+    "    seen.append('tasks')\n"
+    "else:\n"
+    "    if pid == 0:\n"
+    "        os._exit(0)\n"
+    "    os.waitpid(pid, 0)\n"
+    "raise ValueError(f'seen {seen}')\n"
+)
+CLEAN = ("runtime", "ValueError: seen []")
+# A program that leaves a child behind, in its own session, and reports.
+LEAVES_A_CHILD = (
+    "import os, time\n"
+    "if os.fork() == 0:\n"
+    "    os.setsid()\n"
+    "    time.sleep(1000)\n"
+    "raise ValueError('left a child')\n"
+)
+STATE = (
+    "import sys\n"
+    "import cadquery as cq\n"
+    "cq.planted = 1\n"
+    "cq.Workplane.box = None\n"
+    "sys.modules['planted'] = cq\n"
+    "raise ValueError('planted')\n"
+)
+WRITE_OUTSIDE = f"open({PLANTED!r}, 'w').write('x')\n"
+
+
+def zygote_report(outcome: Outcome) -> tuple[str, str]:
+    frame = report(outcome)
+    return frame["status"], frame["message"]
+
+
+def test_the_probe_is_clean_on_a_fresh_zygote(oracle_zygote: oracle_run.OracleZygote) -> None:
+    assert zygote_report(oracle_zygote.run(PROBE, timeout=TIMEOUT)) == CLEAN
+
+
+@pytest.mark.parametrize(
+    ("program", "expected"),
+    [
+        (
+            HOSTILE["hostile-fork-bomb"].program,
+            ("runtime", HOSTILE["hostile-fork-bomb"].expected["message"]),
+        ),
+        (LEAVES_A_CHILD, ("runtime", "ValueError: left a child")),
+        (STATE, ("runtime", "ValueError: planted")),
+        (
+            WRITE_OUTSIDE,
+            ("runtime", f"OSError: [Errno 30] Read-only file system: {PLANTED!r}"),
+        ),
+        (
+            HOSTILE["hostile-memory-1gib"].program,
+            ("runtime", HOSTILE["hostile-memory-1gib"].expected["message"]),
+        ),
+    ],
+    ids=["fork-bomb", "leaves-a-child", "state-in-a-module", "write-outside", "memory-1gib"],
+)
+def test_a_hostile_program_costs_one_report_and_the_next_sees_none_of_it(
+    oracle_zygote: oracle_run.OracleZygote, program: str, expected: tuple[str, str]
+) -> None:
+    starts = oracle_zygote.starts
+    assert zygote_report(oracle_zygote.run(program, timeout=TIMEOUT)) == expected
+    assert zygote_report(oracle_zygote.run(PROBE, timeout=TIMEOUT)) == CLEAN
+    assert oracle_zygote.starts == starts, "the zygote was replaced"
+
+
+@pytest.mark.parametrize(
+    ("slug", "kind", "value"),
+    [
+        ("crash-exit-zero", EndKind.EXITED, 0),
+        ("crash-segfault", EndKind.SIGNALLED, signal.SIGSEGV),
+        ("timeout-infinite-loop", EndKind.TIMED_OUT, 0),
+    ],
+)
+def test_a_child_that_ends_without_a_report_costs_that_report_alone(
+    oracle_zygote: oracle_run.OracleZygote, slug: str, kind: EndKind, value: int
+) -> None:
+    starts = oracle_zygote.starts
+    timeout = LOOP_DEADLINE if kind is EndKind.TIMED_OUT else TIMEOUT
+    start = time.monotonic()
+    outcome = oracle_zygote.run(HOSTILE[slug].program, timeout=timeout)
+    assert time.monotonic() - start < timeout + LOOP_BOUND
+    assert outcome.ending is not None
+    assert (outcome.ending.kind, outcome.ending.value, outcome.ending.armed) == (kind, value, True)
+    assert outcome.data == b""
+    assert zygote_report(oracle_zygote.run(PROBE, timeout=TIMEOUT)) == CLEAN
+    assert oracle_zygote.starts == starts, "the zygote was replaced"
+
+
+@pytest.mark.parametrize("slug", ["hostile-connect", "hostile-read-outside"])
+def test_a_zygotes_child_keeps_the_workers_limits(
+    oracle_zygote: oracle_run.OracleZygote, slug: str
+) -> None:
+    case = HOSTILE[slug]
+    assert zygote_report(oracle_zygote.run(case.program, timeout=TIMEOUT)) == (
+        "runtime",
+        case.expected["message"],
+    )
+
+
+def test_a_zygotes_child_cannot_run_another_executable(
+    oracle_zygote: oracle_run.OracleZygote,
+) -> None:
+    program = "import os\nos.execv('/usr/bin/true', ['true'])\n"
+    assert zygote_report(oracle_zygote.run(program, timeout=TIMEOUT)) == (
+        "runtime",
+        "PermissionError: [Errno 13] Permission denied",
+    )
+
+
+def test_a_zygotes_report_is_a_fresh_workers_bytes(
+    zygote: Zygote, oracle: _exec.ExecSpec, oracle_zygote: oracle_run.OracleZygote
+) -> None:
+    for program in (BOOLEAN, "def (:\n", "raise ValueError('boom')\n", "x = 1\n"):
+        fresh = run(zygote, oracle, program)
+        forked = oracle_zygote.run(program, timeout=TIMEOUT)
+        assert forked.data == fresh.data
+
+
+def test_a_zygote_that_died_is_replaced_for_the_next_program(
+    zygote: Zygote, oracle: _exec.ExecSpec
+) -> None:
+    with oracle_run.OracleZygote(zygote, oracle) as z:
+        assert zygote_report(z.run(PROBE, timeout=TIMEOUT)) == CLEAN
+        z._stop()  # as when its record never came: the channel closed, the zygote gone
+        assert zygote_report(z.run(PROBE, timeout=TIMEOUT)) == CLEAN
+        assert z.starts == 2
+
+
+def test_a_program_in_a_zygotes_child_starts_in_well_under_the_import(
+    oracle_zygote: oracle_run.OracleZygote,
+) -> None:
+    # ADR-0013's measure: a fresh worker spends about 1.5 s importing before
+    # a program's first line; a zygote's child starts in milliseconds. The
+    # bound is a tenth of the import, far above what was measured.
+    oracle_zygote.run("x = 1\n", timeout=TIMEOUT)
+    start = time.monotonic()
+    oracle_zygote.run("x = 1\n", timeout=TIMEOUT)
+    assert time.monotonic() - start < ZYGOTE_START_BOUND
+
+
+def test_the_slices_rows_through_oracle_zygotes_are_c1s_bytes() -> None:
+    # ADR-0013's acceptance: `oracle.jsonl` was written by fresh workers
+    # (ADR-0004); through oracle zygotes it is the same bytes. Reads the
+    # pinned corpus: the `[corpus]` extra and the Hugging Face cache or network.
+    pytest.importorskip("pyarrow")
+    pytest.importorskip("huggingface_hub")
+    c1 = pathlib.Path(__file__).parent / "fixtures" / "c1"
+    stems = oracle_run.read_slice(c1 / "slice.txt")
+    programs, reports = oracle_run.slice_reports(stems)
+    text = oracle_run.rows_text(oracle_run.slice_rows(programs, reports))
+    assert text == (c1 / "oracle.jsonl").read_text(encoding="utf-8")

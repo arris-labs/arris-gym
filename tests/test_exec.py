@@ -11,6 +11,7 @@ import dataclasses
 import json
 import os
 import pathlib
+import socket
 import sys
 import sysconfig
 import time
@@ -108,6 +109,43 @@ def test_the_script_runs_as_pid_1_and_reaches_only_its_spec(zygote: Zygote) -> N
     assert report["argv0"] == str(ECHO)
     assert report["sibling"] == ["PermissionError", 13]
     assert report["exec"] == ["PermissionError", 13]
+
+
+def test_a_channel_reaches_the_exec_d_script_and_answers(zygote: Zygote) -> None:
+    # ADR-0013: an exec job's fifth descriptor is kept across the exec, its
+    # number after the result's, and `execute` owns and closes it.
+    spec = _exec.interpreter_spec(sys.executable, str(ECHO), ENVIRONMENT)
+    ours, theirs = socket.socketpair(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+    channel = theirs.detach()
+    with ours:
+        ours.send(b"ping")
+        outcome = zygote.execute(
+            JobKind.EXEC,
+            _exec.payload(spec, b""),
+            deadline=time.monotonic() + TIMEOUT,
+            memory=MEMORY,
+            channel=channel,
+        )
+        assert outcome.ending is not None
+        assert (outcome.ending.kind, outcome.ending.value) == (EndKind.EXITED, 0), outcome.stderr
+        assert json.loads(outcome.data)["channel"] == "ping"
+        assert ours.recv(256) == b"gnip"
+        # Every copy is closed, the caller's included: the channel is at its end.
+        assert ours.recv(256) == b"", "a copy of the channel outlived the job"
+
+
+def test_a_channel_on_a_job_that_does_not_exec_runs_nothing(zygote: Zygote) -> None:
+    ours, theirs = socket.socketpair(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+    with ours:
+        outcome = zygote.execute(
+            JobKind.PROGRAM,
+            b"result = 1\n",
+            deadline=time.monotonic() + TIMEOUT,
+            memory=MEMORY,
+            channel=theirs.detach(),
+        )
+        assert outcome.ending is None
+        assert outcome.data == b""
 
 
 def test_a_payload_that_is_no_spec_runs_nothing(zygote: Zygote) -> None:
