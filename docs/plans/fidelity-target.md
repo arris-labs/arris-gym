@@ -108,7 +108,7 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
   `tools/cq_corpus.py`. Fixtures by construction: a table of 4 programs with
   their reach, agreement and in-subset classes. On the slice, the report
   equals C1's figures (200 agree, 100 `arris_bug`, reach 300/300).
-- [ ] Step 6 **[2]** — the baseline: `tools/cq_corpus.py` over both full corpora
+- [x] Step 6 **[2]** — the baseline: `tools/cq_corpus.py` over both full corpora
   with the C1 subset, run in the background. Committed under
   `tests/fixtures/c2/`. A gate test re-reads each digest offline. Figures go
   into ARCHITECTURE: reach, agreement, unclassified, timeouts, and in-subset

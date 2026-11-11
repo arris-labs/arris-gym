@@ -578,6 +578,26 @@ writes the table, the arris report and the reach report under
 `tests/fixtures/c2/<corpus>/` (rows only, no program text). On the slice with
 C1's verdicts it gives C1's figures: reach 300/300, 200 agree, 100 `arris_bug`.
 
+**The C2 baseline** (`tests/fixtures/c2/<corpus>/`, the C1 subset, no verdicts,
+arris 0.10.0, each figure over all programs):
+
+| | BenchCAD `code_gen` | CAD-Recode validation |
+|---|---|---|
+| programs | 17,900 | 968 |
+| reach | 1,871 (10.5%) | 0 |
+| agree (all programs) | 980 (5.5%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` (all) | 16,383 / 174 | 0 / 0 |
+| unclassified | 363 | 0 |
+| timeouts | 31 (oracle, `double_simplex_sprocket`) | 0 |
+| in-subset `cq_bug` | 717 | 0 |
+| in-subset `by_design` | 0 | 0 |
+
+The 717 in-subset `cq_bug` rows are all `unsupported_api` where the oracle
+builds the part: the static rule admits forms that `cq` still refuses
+(§cq, the context `⚠ OPEN`). CAD-Recode's 968 programs all end in `r = …`, which
+neither `cq` nor the oracle's worker reads as a result, so its agreement says
+nothing about fidelity. The oracle's timeouts move with the machine's load.
+
 ## The re-scored table
 
 `arris-gym rescore benchcad [--slice F] [--targets F] [--out DIR] [--workers N]`

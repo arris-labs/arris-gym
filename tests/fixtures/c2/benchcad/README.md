@@ -19,3 +19,33 @@ bytes and digests.
 
 These counts and stems are adapted from [BenchCAD](https://huggingface.co/datasets/BenchCAD/BenchCAD)
 and shared under its [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/).
+
+
+## The baseline
+
+`fidelity.json.gz` is the `FidelityTable` of all 17,900 programs under `cq` (arris
+0.10.0) against the oracle (CadQuery 2.3.0,
+`cadquery-ocp` 7.9.3.0), no verdicts applied; `oracle.jsonl.gz` the oracle's rows
+(STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
+report; `reach-report.json` the `ReachReport` under the C1 subset. Written by
+`uv run --extra corpus tools/cq_corpus.py --corpus benchcad` (network, the oracle environment; outside the gate), which saves
+its work in chunks and resumes. No program text is committed. Each figure is
+over all 17,900 programs.
+
+- Reach: 1,871/17,900 in-subset.
+- Agreement: 980 agree; outcomes {'agree': 980, 'disagree': 16557, 'unclassified': 363}.
+- Classes: {'arris_bug': 0, 'arris_refusal': 174, 'by_design': 0, 'cq_bug': 16383, 'occt_wrong': 0}.
+- Arris statuses: {'arris_refusal': 174, 'checker_fail': 0, 'crash': 0, 'ok': 980, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 16746}.
+- Oracle statuses: {'crash': 0, 'invalid': 332, 'no_result': 0, 'ok': 17537, 'runtime': 0, 'syntax': 0, 'timeout': 31}.
+- Timeouts: 31 (all oracle-side, on double_simplex_sprocket programs).
+- In-subset: outcomes {'agree': 980, 'disagree': 891, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 174, 'by_design': 0, 'cq_bug': 717, 'occt_wrong': 0};
+  `in_subset_cq_bug` 717, `in_subset_by_design` 0.
+
+Table digest: `be896a2b1a9c0f686ec794d327fc781c06798a580ecdf612b599966379b40bbc`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`.
+
+The oracle's timeouts depend on the machine's load (a program that takes about
+30 s on the oracle), so a re-run can move them and with them the table digest;
+the rows of every program that does not time out are the same bytes.
+All 717 in-subset `cq_bug` rows are `unsupported_api` on arris's side where the
+oracle builds the part: forms the static rule admits that `cq` still refuses.
+The cause is not worked here (plans/fidelity-target, open question).

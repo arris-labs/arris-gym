@@ -25,3 +25,30 @@ Clouds](https://arxiv.org/abs/2412.14042). They are shared under the source's
 The [pinned source card](https://huggingface.co/datasets/filapro/cad-recode/blob/17d554bbc50a23de6cf6a742a3e0ed867f000153/README.md)
 states `license: cc-by-nc-4.0`. These derived artefacts retain that restriction;
 the library's code licence does not replace it.
+
+
+## The baseline
+
+`fidelity.json.gz` is the `FidelityTable` of all 968 programs under `cq` (arris
+0.10.0) against the oracle (CadQuery 2.3.0,
+`cadquery-ocp` 7.9.3.0), no verdicts applied; `oracle.jsonl.gz` the oracle's rows
+(STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
+report; `reach-report.json` the `ReachReport` under the C1 subset. Written by
+`uv run --extra corpus tools/cq_corpus.py --corpus cadrecode` (network, the oracle environment; outside the gate), which saves
+its work in chunks and resumes. No program text is committed. Each figure is
+over all 968 programs.
+
+- Reach: 0/968 in-subset.
+- Agreement: 968 agree; outcomes {'agree': 968, 'disagree': 0, 'unclassified': 0}.
+- Classes: {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0}.
+- Arris statuses: {'arris_refusal': 0, 'checker_fail': 0, 'crash': 0, 'ok': 0, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 968}.
+- Oracle statuses: {'crash': 0, 'invalid': 0, 'no_result': 968, 'ok': 0, 'runtime': 0, 'syntax': 0, 'timeout': 0}.
+- Timeouts: 0.
+- In-subset: outcomes {'agree': 0, 'disagree': 0, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0};
+  `in_subset_cq_bug` 0, `in_subset_by_design` 0.
+
+Table digest: `7f19ee794233d27fc3c0d7f0a5f885ae3e5ea65d37bb00fef28a8f95408ea440`. Oracle rows SHA-256 (uncompressed): `ae5c6498cb9435ff7c8a43ba26f71372b85b471dae32496172d7a350dfba8def`.
+
+Every row is `agree` only because both sides fail: all 968 programs end in
+`r = …`, which neither `cq` (`unsupported_api`) nor the oracle's worker
+(`no_result`) takes as a result. The agreement is not evidence of fidelity.
