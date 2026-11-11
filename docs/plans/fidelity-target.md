@@ -47,7 +47,8 @@ CadQuery once per oracle zygote, not once per program.
   and stems over all programs, unparsable programs included in the
   denominator. `census.reach_curve(programs, subset) -> ReachCurve` holds reach
   after admitting the next missing API form, one form at a time, in census
-  order: the form whose admission makes the most programs in-subset first,
+  order, using frozen `ReachStep` records and a validated canonical digest:
+  the form whose admission makes the most programs in-subset first,
   ties broken by key, so the curve is deterministic. `arris-gym census`
   writes `programs.jsonl.gz` and `reach.json` beside `census.json`.
 - **`census.cadrecode`**: the CAD-Recode validation split pinned to a
@@ -87,7 +88,7 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
   for each rule clause, and one just outside each. `hypothesis`: a program
   built only from `Subset`'s forms is in-subset. Removing one of its forms
   makes it not. Cross-check: all 300 slice programs are in-subset.
-- [ ] Step 2 **[2]** — `census.reach_curve`. `arris-gym census` writes
+- [x] Step 2 **[2]** — `census.reach_curve`. `arris-gym census` writes
   `programs.jsonl.gz` and `reach.json`. Committed BenchCAD run in
   `tests/fixtures/c2/benchcad/`, with an equal digest on re-run.
   **If the curve is flat** (no 20 forms reach 25%), stop and ask the human:
@@ -154,7 +155,10 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
 - ⚠ OPEN: the census order the curve follows: greedy by programs unlocked
   (proposed), or by programs that write the form. The agent decides in step 2
   and records it in `census.reach_curve`'s docstring and ARCHITECTURE; ADR-0014
-  cites it.
+  cites it. **Settled (step 2):** greedy by programs immediately unlocked,
+  ties by key. Zero-gain forms remain, so multi-form programs have bridges;
+  selectors, end forms and other static blockers remain fixed. BenchCAD
+  reaches 25% after seven forms, so its flat-curve stop does not trigger.
 - ⚠ OPEN: committing derived rows of CC BY-NC data to a public repository.
   Rows carry the licence (gym.md), and no program is committed. The human
   confirms before step 3's commit, since it publishes.

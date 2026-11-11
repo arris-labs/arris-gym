@@ -150,8 +150,22 @@ none of them (ADR-0003).
   in `census/_foreign.py`. Unparsable programs stay in the denominator;
   duplicate stems are refused. The C1 slice has reach 300/300, checked
   offline from `tests/fixtures/c1/reach-programs.jsonl.gz`.
+- **Reach curve.** `census.reach_curve(programs, subset)` returns a frozen
+  `ReachCurve`: initial reach and `ReachStep` records admitting one exact
+  missing census API form at a time. Each step chooses the form unlocking
+  the most programs immediately, ties by form key. Zero-gain admissions stay
+  in the curve, including bridges to programs needing several forms. This
+  greedy order measures programs unlocked, not frequency of calls. Selectors,
+  end forms, unknown receivers and foreign calls stay fixed. Every program
+  remains in the denominator. The initial subset has reach 1,871/17,900 on
+  BenchCAD; seven additional forms reach 4,523/17,900 and twenty 5,030/17,900.
+  Input order cannot move the curve's canonical-JSON digest.
 - **The command.** `arris-gym census --corpus benchcad [--out DIR]` writes
-  `census.json` and `slice.txt` and prints totals and the digest; without the
+  `census.json`, `slice.txt`, `programs.jsonl.gz` and `reach.json`, and prints
+  totals and the census digest. Per-program rows carry the census outcome,
+  family, program SHA-256 and corpus source, revision and licence, never
+  program text. Gzip uses a zero timestamp. The C2 BenchCAD census and reach
+  curve live under `tests/fixtures/c2/benchcad/`. Without the
   extra it exits 2. The committed run is `tests/fixtures/c1/`: 17,900 parsed,
   none unparsable, 106 families, slice `phone_stand`, `venturi_tube`,
   `lobed_knob`.

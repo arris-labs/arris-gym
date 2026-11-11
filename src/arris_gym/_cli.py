@@ -1,12 +1,15 @@
 """The `arris-gym` command line: `arris-gym census --corpus benchcad [--out DIR]` (ADR-0003).
 
 Parses a corpus and never runs a program; the files it writes are the census
-(counts, no program text) and the slice's stems.
+(aggregate and per-program counts, no program text), reach curve and slice stems.
 """
 
 from __future__ import annotations
 
 import argparse
+import gzip
+import hashlib
+import json
 import sys
 from collections.abc import Callable, Sequence
 from importlib.util import find_spec
@@ -18,9 +21,12 @@ from arris_gym.census import (
     CorpusProgram,
     benchcad,
     census,
+    census_program,
+    reach_curve,
     select_slice,
     slice_families,
 )
+from arris_gym.cq import subset
 from arris_gym.rescore import RescoreTable, rescore
 from arris_gym.rescore import benchcad as rescore_benchcad
 
@@ -57,13 +63,36 @@ def slice_text(report: CensusReport, stems: Sequence[str]) -> str:
 
 
 def run_census(reader: Reader, out: Path) -> CensusReport:
-    """Census the programs `reader` returns, write `census.json` and `slice.txt` into `out`."""
+    """Write aggregate and per-program census, reach curve and C1 slice, never source text."""
     programs = reader()
     report = census(programs, benchcad.INFO)
     stems = select_slice(report, programs, SLICE_FAMILIES, PER_FAMILY, PER_FAMILY)
     out.mkdir(parents=True, exist_ok=True)
     (out / "census.json").write_text(report.to_json() + "\n", encoding="utf-8")
     (out / "slice.txt").write_text(slice_text(report, stems), encoding="utf-8")
+    rows = []
+    outcomes = []
+    for program in sorted(programs, key=lambda p: p.stem):
+        outcome = census_program(program)
+        outcomes.append(outcome)
+        rows.append(
+            json.dumps(
+                {
+                    **report.corpus.model_dump(),
+                    "family": program.family,
+                    "program_sha256": hashlib.sha256(program.text.encode("utf-8")).hexdigest(),
+                    "census": outcome.model_dump(mode="json"),
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+            )
+        )
+    data = ("\n".join(rows) + ("\n" if rows else "")).encode("ascii")
+    (out / "programs.jsonl.gz").write_bytes(gzip.compress(data, mtime=0))
+    (out / "reach.json").write_text(
+        reach_curve(outcomes, subset()).to_json() + "\n", encoding="utf-8"
+    )
     return report
 
 

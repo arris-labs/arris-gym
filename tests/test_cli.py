@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
 import json
 from pathlib import Path
 
@@ -10,7 +11,7 @@ import arris.build as b
 import pytest
 
 from arris_gym import _cli
-from arris_gym.census import CensusReport, CorpusProgram, slice_families
+from arris_gym.census import CensusReport, CorpusProgram, ReachCurve, slice_families
 from arris_gym.rescore import RescoreTable
 
 CODE = "import cadquery as cq\nr = cq.Workplane('XY').box(1, 1, 1)\n"
@@ -36,6 +37,25 @@ def test_the_two_files_and_the_digest(tmp_path: Path, capsys: pytest.CaptureFixt
     assert len(stems) == 300
     assert any("CC-BY-4.0" in line for line in header)
     assert any(line.startswith("# families: ") for line in header)
+
+
+def test_per_program_rows_and_curve_repeat_without_source_text(tmp_path: Path) -> None:
+    ps = corpus()
+    _cli.run_census(lambda: ps, tmp_path)
+    first = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    _cli.run_census(lambda: list(reversed(ps)), tmp_path)
+    assert {p.name: p.read_bytes() for p in tmp_path.iterdir()} == first
+    records = [
+        json.loads(line) for line in gzip.decompress(first["programs.jsonl.gz"]).splitlines()
+    ]
+    assert len(records) == len(ps)
+    assert all(r["licence"] == "CC-BY-4.0" and "text" not in r for r in records)
+    assert {r["census"]["stem"]: r["program_sha256"] for r in records} == {
+        p.stem: hashlib.sha256(p.text.encode()).hexdigest() for p in ps
+    }
+    curve = ReachCurve.from_json(first["reach.json"].decode())
+    assert curve.initial.programs == 360
+    assert curve.initial.in_subset == 0  # final r assignment is outside the end forms
 
 
 def test_the_missing_extra_exits_2_with_one_line(

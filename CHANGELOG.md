@@ -5,6 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `census.reach_curve(programs, subset)` returns frozen `ReachCurve` /
+  `ReachStep` records showing how many programs each additional API form
+  admits, with a deterministic digest. `arris-gym census` also writes
+  licensed per-program counts to `programs.jsonl.gz` and the curve to
+  `reach.json`, without program text.
+
 - `cq.subset()` returns frozen `Subset` / `CensusForm` declarations of the
   implemented forms, selectors and end forms; `Subset.admits(form)` checks
   a census API form without running it. `census.reach(programs, subset)`

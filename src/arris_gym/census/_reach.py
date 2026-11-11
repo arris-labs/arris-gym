@@ -63,7 +63,7 @@ def _end_admitted(end_form: str, subset: Subset) -> bool:
     )
 
 
-def _in_subset(program: ProgramCensus | Unparsable, subset: Subset) -> bool:
+def _eligible(program: ProgramCensus | Unparsable, subset: Subset) -> bool:
     if isinstance(program, Unparsable) or program.unknown:
         return False
     if not _end_admitted(program.end_form, subset):
@@ -71,10 +71,23 @@ def _in_subset(program: ProgramCensus | Unparsable, subset: Subset) -> bool:
     if any(selector not in subset.selectors for selector, _ in program.selectors):
         return False
     foreign = dict(program.foreign)
-    if any(not _foreign_admitted(call) for call in foreign):
-        return False
-    return all(
-        form.partition("(")[0] in foreign or subset.admits(form) for form, _ in program.forms
+    return all(_foreign_admitted(call) for call in foreign)
+
+
+def _missing_forms(program: ProgramCensus, subset: Subset) -> frozenset[str]:
+    foreign = dict(program.foreign)
+    return frozenset(
+        form
+        for form, _ in program.forms
+        if form.partition("(")[0] not in foreign and not subset.admits(form)
+    )
+
+
+def _in_subset(program: ProgramCensus | Unparsable, subset: Subset) -> bool:
+    return (
+        isinstance(program, ProgramCensus)
+        and _eligible(program, subset)
+        and not _missing_forms(program, subset)
     )
 
 

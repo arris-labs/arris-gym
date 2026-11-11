@@ -296,6 +296,12 @@ property of a corpus against the subset, not of the subset alone.
 all programs, unparsable ones included (ADR-0012).
 _Avoid_: coverage
 
+**Reach curve**:
+Initial reach followed by the in-subset count after admitting each missing
+API form, chosen greedily by programs immediately unlocked, ties by key.
+Zero-gain forms stay in the curve; selectors, end forms and other static
+blockers stay fixed. Every count uses all corpus programs as its denominator.
+
 **Fidelity target**:
 What C2 must meet on each corpus, set by ADR: a reach of at least T and no
 `cq_bug` row among its in-subset programs. Plain agreement over all programs
