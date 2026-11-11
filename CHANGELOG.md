@@ -5,6 +5,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `cq.subset()` returns frozen `Subset` / `CensusForm` declarations of the
+  implemented forms, selectors and end forms; `Subset.admits(form)` checks
+  a census API form without running it. `census.reach(programs, subset)`
+  returns a frozen `Reach` with the in-subset count and stems over every
+  program, unparsable programs included. It accepts source records or saved
+  census outcomes. Static membership does not promise execution success.
+
 ## 0.1.0 — 2026-11-10
 
 - `arris-gym rescore benchcad` (needs the `[corpus]` extra) runs the 300 slice

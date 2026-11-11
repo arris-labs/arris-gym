@@ -147,6 +147,15 @@ Why the rows look as they do (the `inspect` skill, probed on the pairs):
 
 ## Attribution
 
+`reach-programs.jsonl.gz` adds the census of each of the 300 slice programs,
+with its source, revision, licence and program SHA-256, without program text
+(ADR-0012). It was parsed from the pinned corpus's cached Parquet files,
+ordered by stem, written as canonical JSON lines and gzipped with `mtime=0`.
+The SHA-256 of the uncompressed JSON lines is
+`242c6a43bb55ac6bdcc692b90e5f5c295f54a1d03f3b1e7ad6c6a59d29fc45cb`.
+The initial subset admits all 300. These derived counts share the same
+CC-BY-4.0 attribution below.
+
 BenchCAD (`BenchCAD/BenchCAD` on Hugging Face), licensed CC-BY-4.0. The stems
 and the counts derived from the programs are adapted from it; they are
 shared under the same licence. `oracle.jsonl` adapts the programs' measures

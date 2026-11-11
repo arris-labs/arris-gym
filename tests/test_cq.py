@@ -154,9 +154,9 @@ def test_a_named_plane_but_xy_is_unsupported(plane: str) -> None:
         cq.Workplane(plane)
 
 
-def test_the_module_shows_programs_cadquery_names_alone() -> None:
+def test_the_caller_module_shows_cadquery_names_and_subset_metadata() -> None:
     public = sorted(n for n in vars(cq) if not _workplane.is_python_name(n))
-    assert public == ["UnsupportedApi", "Vector", "Workplane"]
+    assert public == ["CensusForm", "Subset", "UnsupportedApi", "Vector", "Workplane", "subset"]
 
 
 def test_the_docstring_examples_run() -> None:

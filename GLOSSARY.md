@@ -212,8 +212,14 @@ _Avoid_: signature, overload
 
 **Subset**:
 The calls and API forms `cq` implements, grown in census order; a call
-outside it ends `unsupported_api` naming it (ADR-0007).
+outside it ends `unsupported_api` naming it (ADR-0007). `cq.Subset` exposes
+its declarations, selectors and end forms as frozen data (ADR-0012).
 _Avoid_: coverage
+
+**Subset declaration**:
+One `cq.CensusForm`: a call name, the runtime kinds of each positional
+argument, and its optional keywords. The same frozen record supplies the
+runtime decorator and static form matching (ADR-0012).
 
 **Stack**:
 A `cq` `Workplane`'s objects, the ones its call made, newest last; its
@@ -278,12 +284,16 @@ the measure deltas and any verdict. An unclassified row makes a cycle red.
 _Avoid_: fidelity result
 
 **In-subset program**:
-A corpus program whose every API form the census counts lies in the subset;
-decided statically from the census, never by running it.
+A parsable corpus program whose forms, selectors and end form are admitted,
+with no unknown receiver and only admitted foreign calls; decided statically
+from the census, never by running it (ADR-0012). Membership does not promise
+successful execution or a particular argument value or stack context.
 
 **Reach**:
 The share of a corpus's programs that are in-subset, over all its programs: a
 property of a corpus against the subset, not of the subset alone.
+`census.Reach` carries the in-subset count and sorted stems with the count of
+all programs, unparsable ones included (ADR-0012).
 _Avoid_: coverage
 
 **Fidelity target**:

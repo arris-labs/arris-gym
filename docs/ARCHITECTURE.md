@@ -141,6 +141,15 @@ none of them (ADR-0003).
   revision with `huggingface_hub` and reads `stem`, `family` and `code` with
   `pyarrow`; both are the `[corpus]` extra, imported lazily. A row count other
   than 17,900 raises.
+- **Reach** (ADR-0012). `census.reach(programs, cq.subset())` returns a
+  frozen `Reach`: the count of all programs, the in-subset count and its
+  sorted stems. It accepts source records or saved per-program census
+  outcomes. A program must parse, match every non-foreign API form, use only
+  admitted selectors and end forms, and have no unknown receiver. Foreign
+  calls must belong to the fixed Python builtins or standard-library roots
+  in `census/_foreign.py`. Unparsable programs stay in the denominator;
+  duplicate stems are refused. The C1 slice has reach 300/300, checked
+  offline from `tests/fixtures/c1/reach-programs.jsonl.gz`.
 - **The command.** `arris-gym census --corpus benchcad [--out DIR]` writes
   `census.json` and `slice.txt` and prints totals and the digest; without the
   extra it exits 2. The committed run is `tests/fixtures/c1/`: 17,900 parsed,
@@ -289,8 +298,9 @@ kind of argument the census never writes ends `unsupported_api` naming the
 form. A program's result is the last `show_object` argument, else
 module-level `result`, and resolves to the one solid on a `Workplane`'s
 stack: none or a non-`Workplane` is `runtime`, several (a CadQuery compound,
-including a union of disjoint solids) is `unsupported_api`. Inside the worker it is installed as
-`sys.modules["cadquery"]`, so `import cadquery as cq` runs unchanged, and
+including a union of disjoint solids) is `unsupported_api`. Inside the worker
+a module exposing its CadQuery names is installed as `sys.modules["cadquery"]`,
+so `import cadquery as cq` runs, and
 `show_object` is a builtin of the program's namespace; under `arris` neither
 exists. A call outside the subset raises `UnsupportedApi` naming it as the
 census writes it (`cq.Sketch`, `Workplane.sphere`, `cq.occ_impl` for
@@ -298,6 +308,19 @@ census writes it (`cq.Sketch`, `Workplane.sphere`, `cq.occ_impl` for
 name with a leading underscore is Python's and stays `AttributeError`
 (ADR-0007). A `Workplane` is a frozen value: its plane, its **stack** of
 objects and its parent; every call returns a new one.
+
+`cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
+`CensusForm` declarations the decorators themselves enforce, the admitted
+selectors (none yet), and end forms (`result = …` and `show_object(…)`, the
+latter also admitting a named argument). `Subset.admits(form)` matches
+counts, keyword names and literal kinds. A `name`, `expr` or `call` may
+supply any runtime kind; starred arguments are outside. Values and stack
+context are unproved: static membership does not predict successful
+execution. An in-subset context limitation is a `cq_bug` until fixed or its
+whole form leaves the subset, never an in-subset `by_design` row. These
+metadata exports belong to the caller's `arris_gym.cq`; the program-facing
+module keeps `UnsupportedApi`, `Vector` and `Workplane`. The metadata uses
+frozen standard-library dataclasses to keep `cq`'s import boundary.
 
 ⚠ OPEN: how CadQuery's string selectors map onto arris's selection when they
 are ambiguous on curved faces.

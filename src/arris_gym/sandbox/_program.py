@@ -3,7 +3,7 @@
 Called by the zygote's dispatch (`sandbox/_zygote.py`) inside an isolated
 program worker, never in the caller's process. The program's dialect and
 text come from a descriptor the caller filled (`payload`): under `cq` the
-worker installs `arris_gym.cq` as `cadquery` and gives the program
+worker installs `arris_gym.cq`'s CadQuery names and gives the program
 `show_object` (ADR-0007). The worker classifies how it ended, by
 the type of what it raised and never by a message's wording, and writes one
 `ProgramFrame` to the result pipe: a body's bytes, which a body worker
@@ -25,8 +25,8 @@ import arris
 import arris.build
 from pydantic import BaseModel
 
-import arris_gym.cq
 from arris_gym.cq import UnsupportedApi
+from arris_gym.cq._module import program_module
 from arris_gym.cq._result import NotASolid, solid_of
 from arris_gym.sandbox._frame import ProgramFrame
 from arris_gym.sandbox.outcome import ArrisRefusal, Dialect, Status
@@ -179,8 +179,8 @@ class _NoCadquerySubmodule(importlib.abc.MetaPathFinder):
 
 
 def _install_cadquery() -> None:
-    """Make `import cadquery` give `arris_gym.cq`, in this worker only."""
-    sys.modules[CADQUERY] = arris_gym.cq
+    """Install the program-facing `cq` names, in this worker only."""
+    sys.modules[CADQUERY] = program_module()
     sys.meta_path.insert(0, _NoCadquerySubmodule())
 
 

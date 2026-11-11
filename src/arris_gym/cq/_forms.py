@@ -12,6 +12,7 @@ import functools
 from collections.abc import Callable, Mapping, Sequence
 from typing import Concatenate
 
+from arris_gym.cq._subset import CensusForm
 from arris_gym.cq._unsupported import UnsupportedApi
 
 __all__ = ["census_form", "kind_of", "numbers_of", "shape_of"]
@@ -68,16 +69,21 @@ def census_form[**P, R, S](
     them is accepted, in any order. Any other form raises `UnsupportedApi`
     naming it, before the method runs.
     """
-    allowed = dict(keywords or {})
+    declaration = CensusForm(
+        name,
+        tuple(None if kinds is None else tuple(kinds) for kinds in positional),
+        tuple((key, tuple(kinds)) for key, kinds in (keywords or {}).items()),
+    )
+    allowed = dict(declaration.keywords)
 
     def decorate(
         method: Callable[Concatenate[S, P], R],
     ) -> Callable[Concatenate[S, P], R]:
         @functools.wraps(method)
         def checked(self: S, /, *args: P.args, **kwargs: P.kwargs) -> R:
-            fits = len(args) == len(positional) and all(
+            fits = len(args) == len(declaration.positional) and all(
                 kinds is None or kind_of(arg) in kinds
-                for arg, kinds in zip(args, positional, strict=True)
+                for arg, kinds in zip(args, declaration.positional, strict=True)
             )
             fits = fits and all(
                 key in allowed and kind_of(value) in allowed[key] for key, value in kwargs.items()
@@ -86,6 +92,7 @@ def census_form[**P, R, S](
                 raise UnsupportedApi(_form_text(name, args, kwargs))
             return method(self, *args, **kwargs)
 
+        checked.__census_form__ = declaration  # type: ignore[attr-defined]
         return checked
 
     return decorate

@@ -32,12 +32,16 @@ CadQuery once per oracle zygote, not once per program.
   are admitted when the program worker's Python offers them. The ADR fixes
   that list. The rule is static: it never runs a program.
 - **`cq` states its subset as data.** `arris_gym.cq.subset()` returns a frozen
-  `Subset` holding the `census_form` declarations (name, positional kinds,
+  `Subset` holding frozen `CensusForm` declarations (name, positional kinds,
   allowed keywords), the end forms and the admitted selectors, plus
   `Subset.admits(form: str) -> bool`. These are read from the same
   declarations the decorators enforce, so the two cannot drift. `cq` still
   imports only `arris`. `census` and `fidelity` import `cq`, which the layer
-  rule allows.
+  rule allows. The worker installs the existing CadQuery names through a
+  small module facade, so caller metadata does not grow the program-facing
+  API. `CensusForm` and `Subset` are stdlib frozen dataclasses (the `cq`
+  import boundary); `Reach` is frozen pydantic. `reach` accepts source records
+  or precomputed `ProgramCensus | Unparsable` rows.
 - **`census` keeps per-program rows and computes reach.**
   `census.reach(programs, subset) -> Reach` (frozen) holds the in-subset count
   and stems over all programs, unparsable programs included in the
@@ -77,7 +81,7 @@ semantic case to get right within a given design; **[3]** unproven, an
 algorithm, an isolation guarantee or a CadQuery semantic whose correctness
 has to be established here. A step's grade is its tier (`.agents/tiers.md`).
 
-- [ ] Step 1 **[3]** — ADR-0012, the in-subset rule. `cq.subset()` /
+- [x] Step 1 **[3]** — ADR-0012, the in-subset rule. `cq.subset()` /
   `Subset`, read from the decorators' declarations, plus `census.reach`.
   Fixtures by construction under `tests/fixtures/reach/`: an in-subset program
   for each rule clause, and one just outside each. `hypothesis`: a program
@@ -144,7 +148,9 @@ has to be established here. A step's grade is its tier (`.agents/tiers.md`).
   program that fails on context is a `cq_bug` until it is fixed, or until its
   whole form leaves the subset. The agent records this consequence in
   ADR-0012 (step 1). The human hears it if the baseline shows many such rows
-  (step 6).
+  (step 6). **Settled (step 1):** ADR-0012 records this consequence; the
+  static rule also cannot exclude particular argument values hidden by a
+  census kind. Such limitations stay in the denominator, not `by_design`.
 - ⚠ OPEN: the census order the curve follows: greedy by programs unlocked
   (proposed), or by programs that write the form. The agent decides in step 2
   and records it in `census.reach_curve`'s docstring and ARCHITECTURE; ADR-0014
