@@ -103,7 +103,7 @@ def reach_curve(
     >>> text = "import cadquery as cq\\nr = cq.Workplane()"
     >>> p = CorpusProgram(stem="a", family="f", text=text)
     >>> [(s.kind, s.item, s.in_subset) for s in reach_curve([p], subset()).steps]
-    [('end_form', 'r = …', 0), ('form', 'cq.Workplane()', 1)]
+    [('form', 'cq.Workplane()', 1)]
     """
     rows = [census_program(p) if isinstance(p, CorpusProgram) else p for p in programs]
     initial = reach(rows, subset)

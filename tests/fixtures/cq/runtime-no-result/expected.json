@@ -1,5 +1,5 @@
 {
   "dialect": "cq",
   "status": "runtime",
-  "message": "the program ended without calling `show_object` or binding `result`"
+  "message": "the program ended without calling `show_object` or binding `result` or `r`"
 }

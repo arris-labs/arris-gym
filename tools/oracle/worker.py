@@ -22,7 +22,8 @@ status pipe in the warden's record. The child keeps every limit it
 inherits; the zygote's own state it can only copy.
 
 The result is taken as ``docs/ARCHITECTURE.md`` §Outcomes says: the argument
-of the last ``show_object`` call, else the module-level ``result``.
+of the last ``show_object`` call, else the module-level ``result``, else
+module-level ``r`` (ADR-0015), by presence even when the value is invalid.
 """
 
 from __future__ import annotations
@@ -188,7 +189,7 @@ def run_program(text: str) -> dict[str, Any]:
         report.update(status="runtime", message="".join(tb).rstrip("\n"))
         return report
 
-    result = shown[-1] if shown else ns.get("result")
+    result = shown[-1] if shown else ns.get("result", ns.get("r"))
     shape = _as_shape(result) if result is not None else None
     if shape is None:
         what = "nothing" if result is None else type(result).__name__

@@ -31,3 +31,4 @@ training cycle starts from.
 | [0012](0012-reach-is-decided-statically-from-the-subsets-declarations.md) | Reach is decided statically from the subset's declarations | accepted |
 | [0013](0013-an-oracle-zygote-imports-cadquery-once-and-wards-a-child-per-program.md) | An oracle zygote imports CadQuery once and wards a child per program | accepted |
 | [0014](0014-the-fidelity-target-is-a-reach-of-85-percent-on-benchcad-and-all-of-cad-recode.md) | The fidelity target is a reach of 85% on BenchCAD and all of CAD-Recode | accepted |
+| [0015](0015-a-cq-result-is-the-last-shown-value-then-result-then-r.md) | A `cq` result is the last shown value, then `result`, then `r` | accepted |

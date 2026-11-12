@@ -98,7 +98,7 @@ def test_unknown_receiver_cannot_be_admitted_by_a_declaration() -> None:
 
 
 def test_end_forms_are_data_and_show_object_names_are_a_family() -> None:
-    for text in ("result = 1", "show_object(shown)", "show_object(1 + 1)"):
+    for text in ("r = 1", "r: int = 1", "result = 1", "show_object(shown)", "show_object(1 + 1)"):
         assert reach([program(text)], SUBSET).in_subset == 1
         assert reach([program(text)], replace(SUBSET, end_forms=())).in_subset == 0
     # Merely resembling the census's name or expression spellings is insufficient.
@@ -106,6 +106,11 @@ def test_end_forms_are_data_and_show_object_names_are_a_family() -> None:
     assert isinstance(parsed, ProgramCensus)
     for malformed in ("show_object()", "show_object(a.b)", "show_object(x)junk"):
         assert reach([parsed.model_copy(update={"end_form": malformed})], SUBSET).in_subset == 0
+
+
+def test_r_end_form_does_not_admit_bare_annotations_or_trailing_statements() -> None:
+    for text in ("r: int", "r = 1\npass"):
+        assert reach([program(text)], SUBSET).in_subset == 0
 
 
 def test_reach_counts_unparsable_and_refuses_a_duplicate_stem() -> None:

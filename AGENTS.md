@@ -39,7 +39,7 @@ against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **C2 target set** (2026-11-12): ADR-0014 fixes the fidelity target, a reach of
 85% on BenchCAD and 100% on CAD-Recode with no in-subset `cq_bug`; the
 baseline is reach 10.5% and 717 in-subset `cq_bug` rows on BenchCAD, 0 on
-CAD-Recode (its `r = …` end form is not yet read).
+CAD-Recode (neither worker read its `r = …` end form at that baseline).
 **Next:** C2's growth: lift end forms, forms and selectors in reach-curve order
 (`docs/ROADMAP.md`).
 

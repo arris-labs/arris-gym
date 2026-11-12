@@ -102,17 +102,18 @@ does not deliver the `SIGABRT` to PID 1 of a namespace, and glibc falls back
 to its abort instruction, `hlt` on one and `brk` on the other.
 
 **Where a program's result comes from.** In the `cq` dialect, the argument of
-its last `show_object` call, else a module-level `result`: BenchCAD programs
-assign `result` and end in `show_object(result)`. In the `arris` dialect, the
+its last `show_object` call, else module-level `result`, else module-level `r`
+(ADR-0015). A present value wins even if invalid: `result = None` does not
+fall through to `r`. BenchCAD programs assign `result` and end in
+`show_object(result)`. In the `arris` dialect, the
 module-level `result`, a `Solid`. The census counted BenchCAD's end forms:
 all 17,900 programs end in `show_object(result)`. A `cq` result resolves to
 the single solid on its `Workplane`'s stack (ADR-0007): no result, a value
 that is not a `Workplane` or a stack with no solid is `runtime`; several
 solids are a compound the subset lacks, `unsupported_api` naming the count.
 CAD-Recode's original validation split ends in `r = …` on all 968 programs.
-The C1 subset does not admit that end form, so its static reach is 0/968;
-the reach curve admits it as its first item. Lifting it in `cq` is subset
-growth.
+The subset admits that end form (ADR-0015); the C1 reach curve ranked it
+first, a bridge that unlocks no program without further API forms.
 
 ## The census
 
@@ -169,11 +170,11 @@ none of them (ADR-0003).
   items are so bridged in the order they share them, never alphabetically.
   Unknown receivers and foreign calls outside the admitted list stay fixed:
   items only such programs use come last with zero gain. Every program
-  remains in the denominator. On BenchCAD the initial subset has reach
+  remains in the denominator. On BenchCAD the C1 subset has reach
   1,871/17,900; seven forms reach 4,523, the first selector (`>Z`) comes
   fifteenth, and twenty-four items pass half (9,061); all 17,900 after 57. On
-  CAD-Recode the end form `r = …` comes first, and nothing is in-subset
-  until its sketch forms are: 299/968 after 14 items, 697 after 15, all 968
+  CAD-Recode the C1 curve's end form `r = …` comes first: 37/968 after
+  three items, 299 after 14 items, 697 after 15, all 968
   after 18. Input order cannot move the curve's canonical-JSON digest.
 - **The command.** `arris-gym census --corpus benchcad|cadrecode [--out DIR]`
   writes `census.json`, `programs.jsonl.gz` and `reach.json` (`slice.txt` for
@@ -327,8 +328,9 @@ selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
 form. A program's result is the last `show_object` argument, else
-module-level `result`, and resolves to the one solid on a `Workplane`'s
-stack: none or a non-`Workplane` is `runtime`, several (a CadQuery compound,
+module-level `result`, else module-level `r` (ADR-0015), and resolves to
+the one solid on a `Workplane`'s stack: none or a non-`Workplane` is
+`runtime`, several (a CadQuery compound,
 including a union of disjoint solids) is `unsupported_api`. Inside the worker
 a module exposing its CadQuery names is installed as `sys.modules["cadquery"]`,
 so `import cadquery as cq` runs, and
@@ -342,8 +344,8 @@ objects and its parent; every call returns a new one.
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted
-selectors (none yet), and end forms (`result = …` and `show_object(…)`, the
-latter also admitting a named argument). `Subset.admits(form)` matches
+selectors (none yet), and end forms (`r = …`, `result = …` and
+`show_object(…)`, the latter also admitting a named argument). `Subset.admits(form)` matches
 counts, keyword names and literal kinds. A `name`, `expr` or `call` may
 supply any runtime kind; starred arguments are outside. Values and stack
 context are unproved: static membership does not predict successful
@@ -492,6 +494,10 @@ reason it cannot share an environment with the library. It also holds
 BenchCAD's locked `trimesh` and `scipy` for `tools/oracle/benchcad_score.py`,
 which runs BenchCAD's own scorer on the field metrics' pairs (ADR-0010).
 
+The oracle worker selects the last `show_object` argument, else module-level
+`result`, else module-level `r`, by presence even when invalid, exactly as
+the `cq` program worker does (ADR-0015).
+
 A program runs on the oracle in an **oracle worker** (ADR-0004): a program
 worker forked and isolated as any other, which then execs the oracle's
 interpreter on `tools/oracle/worker.py` and keeps every limit across the exec.
@@ -600,9 +606,11 @@ oracle execution) records their messages verbatim in
 (all `torus_link`, after `moveTo`). The first two are admitted string values
 that `cq` refuses; the third is a stack-context gap. These are the first
 failures reached, with a strict-xfail regression for each cause; later calls
-are not proved by the diagnosis. CAD-Recode's 968 programs all end in `r = …`, which
-neither `cq` nor the oracle's worker reads as a result, so its agreement says
-nothing about fidelity. The oracle's timeouts move with the machine's load.
+are not proved by the diagnosis. At the baseline, CAD-Recode's 968 programs
+all ended in `r = …`, which neither worker read as a result, so that
+agreement says nothing about fidelity. Both workers now read `r`
+(ADR-0015); the baseline table awaits the subset-growth rerun. The oracle's
+timeouts move with the machine's load.
 
 ## The re-scored table
 

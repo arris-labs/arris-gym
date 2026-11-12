@@ -1,8 +1,8 @@
 """What a `cq` program's result resolves to: one `arris.build.Solid` (ADR-0007).
 
 Called by the program worker (`sandbox/_program.py`) after the program ran,
-on the last `show_object` argument or, failing one, the module-level
-`result`. Private.
+on the last `show_object` argument, else the module-level `result`, else
+module-level `r` (ADR-0015). Private.
 """
 
 from __future__ import annotations

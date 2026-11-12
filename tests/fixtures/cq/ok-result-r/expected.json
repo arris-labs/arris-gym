@@ -1,0 +1,15 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48.0,
+    "area": 88.0,
+    "centroid": [0.0, 0.0, 0.0],
+    "bounds": [[-1.0, -2.0, -3.0], [1.0, 2.0, 3.0]],
+    "faces": 6,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [["plane", 6]]
+  },
+  "note": "centred box 2 x 4 x 6 bound to r: V = 48, A = 2 (8 + 12 + 24) = 88, half sizes (1, 2, 3); ADR-0015 selects r when neither show_object nor result is present"
+}

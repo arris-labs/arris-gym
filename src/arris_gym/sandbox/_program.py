@@ -194,17 +194,19 @@ def _show_object(shown: list[object]) -> Callable[..., None]:
 
 
 def _cq_result(namespace: dict[str, object], shown: list[object]) -> arris.build.Solid:
-    """A `cq` program's solid: the last `show_object` argument's, else `result`'s.
+    """The last `show_object` argument's solid, else `result`'s, else `r`'s.
 
-    Raises `NotASolid` (`runtime`) or `UnsupportedApi` as `solid_of` does.
+    Selection is by binding presence, never validity (ADR-0015). Raises
+    `NotASolid` (`runtime`) or `UnsupportedApi` as `solid_of` does.
     """
     if shown:
         return solid_of(shown[-1], f"the last `{SHOW_NAME}` argument")
-    if RESULT_NAME not in namespace:
-        raise NotASolid(
-            f"the program ended without calling `{SHOW_NAME}` or binding `{RESULT_NAME}`"
-        )
-    return solid_of(namespace[RESULT_NAME], f"`{RESULT_NAME}`")
+    for name in (RESULT_NAME, "r"):
+        if name in namespace:
+            return solid_of(namespace[name], f"`{name}`")
+    raise NotASolid(
+        f"the program ended without calling `{SHOW_NAME}` or binding `{RESULT_NAME}` or `r`"
+    )
 
 
 def _arris_result(namespace: dict[str, object]) -> arris.build.Solid | ProgramFrame:

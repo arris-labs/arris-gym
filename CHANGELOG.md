@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now accepts a module-level `r` as the result, after the
+  last `show_object` argument and module-level `result`. A present but
+  invalid value keeps that precedence. The oracle reads the same names,
+  and `cq.Subset.end_forms` now admits `r = …`.
+
 - `fidelity.reach_report(table, programs, subset)` returns a frozen
   `ReachReport` for a corpus: reach, agreement over all programs, timeouts, and
   the in-subset rows by outcome and class, with `in_subset_cq_bug` and
@@ -14,8 +19,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `census.cadrecode` reads the pinned original CAD-Recode validation split
   with the `[corpus]` extra; `arris-gym census --corpus cadrecode` writes its
   census and reach curve. All derived rows carry CC-BY-NC-4.0. The 968
-  programs end in `r = …`, outside the current subset's admitted end forms,
-  which the curve admits first.
+  programs end in `r = …`.
 
 - `census.reach_curve(programs, subset)` returns frozen `ReachCurve` /
   `ReachStep` records showing how many programs each additional census item

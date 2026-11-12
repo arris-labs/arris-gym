@@ -200,8 +200,9 @@ def run(
     Under `dialect="arris"` the program binds a module-level `result` to an
     `arris.build.Solid`. Under `dialect="cq"` it imports `cadquery`, which is
     the subset `arris_gym.cq`, and its result is the last `show_object`
-    argument, else `result`: a `Workplane` holding one solid. A call outside
-    the subset ends `unsupported_api` naming it. The program runs on a fresh
+    argument, else module-level `result`, else `r`: a `Workplane` holding
+    one solid. A present value is selected even when it is invalid. A call
+    outside the subset ends `unsupported_api` naming it. The program runs on a fresh
     model in a worker of its own, `timeout` seconds of wall clock and
     `memory` bytes of address space at most.
 

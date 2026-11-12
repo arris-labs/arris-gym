@@ -55,7 +55,7 @@ def test_per_program_rows_and_curve_repeat_without_source_text(tmp_path: Path) -
     }
     curve = ReachCurve.from_json(first["reach.json"].decode())
     assert curve.initial.programs == 360
-    assert curve.initial.in_subset == 0  # final r assignment is outside the end forms
+    assert curve.initial.in_subset == 180  # every parsed r assignment is admitted
 
 
 def test_the_missing_extra_exits_2_with_one_line(

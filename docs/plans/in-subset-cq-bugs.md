@@ -80,7 +80,7 @@ a given design; **[3]** unproven semantics or worker output, established here.
   every row has a message, the histogram's counts sum to 717. Rewrite steps 3
   to 5 to the measured causes (largest first) and record the pick for any
   cause left out (Q2).
-- [ ] Step 2 **[3]** — ADR-0015 and the result's name `r` in the `cq` worker,
+- [x] Step 2 **[3]** — ADR-0015 and the result's name `r` in the `cq` worker,
   the oracle's worker and `Subset.end_forms`: fixtures `cq/ok-result-r` and an
   `r` program on the oracle; a `hypothesis` property that `result = X` and
   `r = X` give equal rows; the slice's `oracle.jsonl` unchanged.
@@ -145,7 +145,7 @@ a given design; **[3]** unproven semantics or worker output, established here.
   succeed; each lift reruns its rows and absorbs any newly exposed cause
   needed to meet the unchanged acceptance. The three shrunk regressions are
   strict xfails until those lifts.
-- ⚠ OPEN Q3 (agent, step 2): whether the result order is `show_object`,
-  `result`, `r` or the last statement's bound name; the plan's pick is the
-  fixed list, which matches ADR-0012's static end form and needs no parse at
-  run time.
+- Q3, settled (agent, step 2, 2026-11-12): the fixed list `show_object`,
+  `result`, `r`, by presence even when invalid (ADR-0015). It preserves
+  existing selection, admits the census's ranked end form and needs no
+  runtime parse; the last statement's arbitrary bound name is not a result.

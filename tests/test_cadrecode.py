@@ -3,6 +3,7 @@
 import gzip
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -64,7 +65,7 @@ def test_cli_uses_cadrecode_metadata_and_does_not_select_a_benchcad_slice(tmp_pa
     ]
     assert records[0]["licence"] == "CC-BY-NC-4.0"
     assert records[0]["revision"] == cadrecode.REVISION
-    assert ReachCurve.from_json((tmp_path / "reach.json").read_text()).initial.in_subset == 0
+    assert ReachCurve.from_json((tmp_path / "reach.json").read_text()).initial.in_subset == 1
 
 
 def test_committed_cadrecode_census_and_curve_recheck_offline() -> None:
@@ -85,7 +86,9 @@ def test_committed_cadrecode_census_and_curve_recheck_offline() -> None:
     assert report.families[0].end_forms == (("r = …", 968),)
     curve = ReachCurve.from_json((root / "reach.json").read_text())
     assert curve.digest == manifest["reach_digest"]
-    assert reach_curve(rows, cq.subset()) == curve
+    # The committed curve measures C1, before ADR-0015 admitted r.
+    initial = replace(cq.subset(), end_forms=("result = …", "show_object(…)"))
+    assert reach_curve(rows, initial) == curve
     assert curve.initial.programs == 968
     assert curve.initial.in_subset == 0
     assert (curve.steps[0].kind, curve.steps[0].item) == ("end_form", "r = …")

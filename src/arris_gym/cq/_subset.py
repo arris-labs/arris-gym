@@ -78,7 +78,7 @@ class Subset:
 
     forms: tuple[CensusForm, ...]
     selectors: tuple[str, ...] = ()
-    end_forms: tuple[str, ...] = ("result = …", "show_object(…)")
+    end_forms: tuple[str, ...] = ("r = …", "result = …", "show_object(…)")
 
     def __post_init__(self) -> None:
         object.__setattr__(

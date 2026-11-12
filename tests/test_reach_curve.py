@@ -4,6 +4,7 @@ import doctest
 import gzip
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -42,7 +43,9 @@ def programs() -> list[CorpusProgram]:
 
 
 def test_greedy_unlocks_then_bridges_by_use_with_fixed_blockers() -> None:
-    curve = reach_curve(programs(), cq.subset())
+    # This construction requires an unadmitted end form, as C1 had (ADR-0015).
+    initial = replace(cq.subset(), end_forms=("result = …", "show_object(…)"))
+    curve = reach_curve(programs(), initial)
     assert curve.initial.programs == 10
     assert curve.initial.stems == ("0",)
     assert [(step.kind, step.item, step.in_subset) for step in curve.steps] == [
@@ -62,7 +65,8 @@ def test_a_corpus_needing_several_items_bridges_by_shared_use_not_key() -> None:
         CorpusProgram(stem=str(i), family="f", text="import cadquery as cq\n" + t)
         for i, t in enumerate(texts)
     ]
-    assert [(s.item, s.in_subset) for s in reach_curve(ps, cq.subset()).steps] == [
+    initial = replace(cq.subset(), end_forms=("result = …", "show_object(…)"))
+    assert [(s.item, s.in_subset) for s in reach_curve(ps, initial).steps] == [
         ("r = …", 0),  # missing from both, as is z, but its kind sorts first
         ("Workplane.z()", 0),
         ("Workplane.x()", 1),

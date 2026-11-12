@@ -18,3 +18,9 @@ is another: a 90° revolve, whose bounds tell a right-handed turn from a
 left-handed one. `ok-revolved-rectangle` and `ok-revolved-rectangle-lines`
 draw one profile by `polyline` and by `moveTo`/`lineTo`; `tests/test_cq.py`
 holds their body digests equal.
+
+`ok-result-r` binds a centred 2 × 4 × 6 box to `r`; its volume is 48,
+area 88 and centroid the origin. ADR-0015 admits this result after the
+last `show_object` argument and `result`. The 300 C1 oracle programs were
+rerun after that change: `tests/fixtures/c1/oracle.jsonl` stayed byte-equal,
+SHA-256 `6bbfb7724508505b44e664d1b74d16c2ce70bf777d2c8e70e86de93cd3add68b`.
