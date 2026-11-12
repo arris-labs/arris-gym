@@ -107,7 +107,7 @@ a given design; **[3]** unproven semantics or worker output, established here.
   *Settled* (agent, step 6, 2026-11-12): CAD-Recode writes the form on `XY`,
   `YZ` and `ZX` (412, 408, 377 calls), and 7 of the 37 programs its curve's
   item 3 reaches name `ZX`; admitting `origin=` without `ZX` would leave them
-  in-subset `cq_bug` against step 8's acceptance, so `ZX` (x +z, y +x,
+  in-subset `cq_bug` against the acceptance, so `ZX` (x +z, y +x,
   normal +y, read on the oracle) is lifted in this step.
 - [x] Step 7 **[3]** — `Workplane.workplane(offset=…)`: fixtures with an
   empty stack and with a solid on it, each agreeing with the oracle.
@@ -119,9 +119,19 @@ a given design; **[3]** unproven semantics or worker output, established here.
   reach stays 1,871 (its `workplane` items need earlier curve items).
   CAD-Recode's reach is 37: run under `cq` and on the oracle, 31 agree and 6
   end `unsupported_api` `Workplane.box on a pending wire` (`moveTo(x, y)`
-  then `box`, all on `XY`), in-subset `cq_bug` against step 8's acceptance:
+  then `box`, all on `XY`), in-subset `cq_bug` against the acceptance:
   a cause step 7 does not lift, reported to the conductor.
-- [ ] Step 8 **[2]** — re-run both corpora with `tools/cq_corpus.py`
+- [ ] Step 8 **[3]** — `box` on a `moveTo` point (6 CAD-Recode programs,
+  `w0.workplane(offset=…).moveTo(x, y).box(…)` on `XY`): lift its placement
+  as step 5 lifted `circle` (one box centred on the point, `eachpoint`), with
+  oracle fixtures; rerun the 37 reached programs, each `ok` and agreeing or
+  classed outside `cq_bug`. A disjoint union (a compound) the oracle builds
+  and `cq` refuses is measured and, if it blocks a program, reported, not
+  worked around.
+  *Settled* (conductor, 2026-11-13): step 7 measured this cause; the
+  acceptance (CAD-Recode `in_subset_cq_bug` 0) is unchanged, so the lift is a
+  step here, not a non-goal, and the corpus re-run follows as step 9.
+- [ ] Step 9 **[2]** — re-run both corpora with `tools/cq_corpus.py`
   (BenchCAD with the C1 verdicts, in the background), commit
   `tests/fixtures/c2/*` with `fixtures:` and the new figures; the plan's
   numbers in ARCHITECTURE §Fidelity follow.
