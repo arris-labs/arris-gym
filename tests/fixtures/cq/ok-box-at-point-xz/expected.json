@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48,
+    "area": 88,
+    "centroid": [
+      3,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        2,
+        -3,
+        -1
+      ],
+      [
+        4,
+        3,
+        3
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "moveTo(3, 1) on XZ is world (3, 0, 1): local (u, v, w) maps to world (u, -w, v). A 2 by 4 by 6 box centred there (CadQuery's centered=True on the point): x 3+-1, z 1+-2, y 0+-3 along the normal. V=2*4*6=48, A=2*(8+12+24)=88."
+}

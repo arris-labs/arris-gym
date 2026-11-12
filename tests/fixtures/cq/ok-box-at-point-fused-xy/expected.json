@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 34,
+    "area": 72,
+    "centroid": [
+      0.058823529411764705,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -2
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "faces": 16,
+    "face_kinds": [
+      [
+        "plane",
+        16
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A centred 4 by 4 by 2 slab, then moveTo(1, 0) and a 1 by 1 by 4 post centred on (1, 0, 0), fused with the slab (combine=True). The post pierces both faces: V=32+2*1=34; A=64-2*1+2*(4+1)=72; faces: the slab's 6 (top and bottom each with a hole) and 5 per protruding end, 16; centroid x=(32*0+2*1)/34=1/17."
+}

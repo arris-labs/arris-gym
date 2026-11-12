@@ -710,8 +710,12 @@ def test_box_with_a_zero_dimension_is_the_kernels_refusal() -> None:
 def test_a_call_that_would_drop_a_pending_wire_is_unsupported(
     form: str, call: Callable[[cq.Workplane], cq.Workplane]
 ) -> None:
+    # `box` on a lone `moveTo` point centres the box there and drops no wire
+    # (`test_cq_box.py`); every other call here would drop that point.
+    at_point = [] if form == "box" else [cq.Workplane("XY").box(1, 1, 1).moveTo(1, 1)]
     pending = [
-        cq.Workplane("XY").box(1, 1, 1).moveTo(1, 1),
+        *at_point,
+        cq.Workplane("XY").box(1, 1, 1).moveTo(1, 1).lineTo(2, 1),
         cq.Workplane("XY").lineTo(1, 1),
         cq.Workplane("XY").polyline(TRIANGLE).close(),
         cq.Workplane("XY").circle(1),

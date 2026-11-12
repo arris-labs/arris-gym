@@ -81,3 +81,13 @@ properties over plane, origin, signed offset, slab and signed extrusion.
 `unsupported-workplane-on-pending-wire`, `-invert` and `-on-two-solids` are
 the contexts and keywords the subset refuses (read on the oracle, CadQuery
 keeps the origin after a `moveTo` point, which the subset does not model).
+
+`ok-box-at-point-*` fix where `box` goes after `moveTo`: centred on its
+point, in the plane's axes (CadQuery's `centered=True`). `-xz` puts a
+2 × 4 × 6 box at local (3, 1) on `XZ`, centroid (3, 0, 1), y from -3 to 3;
+`-offset-yz` does it on `YZ` with `origin=(1, 2, 3)` after
+`workplane(offset=5)`, centroid (6, 5, 4); `-fused-xy` fuses a 1 × 1 × 4 post
+at (1, 0) through a 4 × 4 × 2 slab, centroid x 1/17. All three have recorded
+oracle reports and agreeing rows in `test_cq_box.py`, with a property over
+plane, origin, offset, point and dimensions. `unsupported-box-on-pending-wire`
+now draws a segment after its `moveTo`: a box there is still refused.

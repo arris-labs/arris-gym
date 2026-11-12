@@ -26,6 +26,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   that point; a circle on any other non-empty stack still ends
   `unsupported_api`.
 
+- `dialect="cq"` now runs `box` after `moveTo`, centring the box on that
+  point, and fuses it with a solid already in the chain; a box after a drawn
+  path or a sketch still ends `unsupported_api`.
+
 - `dialect="cq"` now accepts a module-level `r` as the result, after the
   last `show_object` argument and module-level `result`. A present but
   invalid value keeps that precedence. The oracle reads the same names,

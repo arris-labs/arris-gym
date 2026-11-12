@@ -340,24 +340,36 @@ class Workplane:
 
     @census_form("Workplane.box", [("num",)] * 3)
     def box(self, length: float, width: float, height: float) -> Workplane:
-        """A `length` by `width` by `height` box centred on the workplane's origin.
+        """A `length` by `width` by `height` box centred on the origin or a `moveTo` point.
 
         `length` runs along the workplane's x, `width` along its y and
         `height` along its normal; the box is the one solid on the new stack.
-        A box on a workplane whose chain holds a solid is fused with it, as
-        CadQuery's `combine=True` does.
+        On an empty stack, or one holding solids, it is centred on the
+        workplane's origin; on a stack holding only a `moveTo` point, on that
+        point, in the plane's own axes (CadQuery's `eachpoint` over one point,
+        `centered=True`). A box on a workplane whose chain holds a solid is
+        fused with it, as CadQuery's `combine=True` does. Refuses, as
+        `UnsupportedApi`, a stack holding a drawn path or a sketch.
 
         >>> import arris_gym.cq as cq
         >>> round(cq.Workplane("XY").box(2, 3, 4)._solids()[0].measure().volume, 9)
         24.0
+        >>> wp = cq.Workplane("XY").moveTo(3, 1).box(2, 4, 6)
+        >>> [round(c, 9) + 0.0 for c in wp._solids()[0].measure().centroid]
+        [3.0, 1.0, 0.0]
         """
-        self._refuse_pending("Workplane.box")
+        point = self._stack[0] if len(self._stack) == 1 else None
+        if isinstance(point, _Path) and len(point.points) == 1:
+            center = point.points[0]
+        else:
+            self._refuse_pending("Workplane.box")
+            center = (0.0, 0.0)
         if min(length, width, height) < 0:
             raise ValueError(
                 f"Workplane.box({length}, {width}, {height}): a negative dimension "
                 "(CadQuery's Standard_DomainError)"
             )
-        sketch = self._plane.offset(-height / 2).rect(length, width)
+        sketch = self._plane.offset(-height / 2).rect(length, width, center=center)
         return self._combined(sketch.extrude(height))
 
     @census_form("Workplane.circle", [("num",)])

@@ -46,8 +46,11 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   `ZX` with `origin=` by `tests/fixtures/cq/ok-workplane-*`.
 - `Workplane.box` (`cadquery/cq.py`, with `eachpoint` and
   `_combineWithBase`): `length`, `width` and `height` along the plane's x, y
-  and normal, centred on its origin by default, and fused with a solid
-  already in the chain.
+  and normal, centred on its origin by default, and on each point of the
+  stack otherwise, in the plane's own axes (the subset admits one `moveTo`
+  point), and fused with a solid already in the chain. Confirmed on the
+  oracle by `tests/fixtures/cq/ok-box-at-point-*`, after `workplane(offset=…)`
+  and with a solid in the chain.
 - `Workplane.union`, `Workplane.cut` and `_combineWithBase` (`cadquery/cq.py`):
   the solid acted on is the nearest one up the chain (this stack, then the
   parent's); the other is the solid of the Workplane given; the result sits on

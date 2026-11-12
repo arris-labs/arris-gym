@@ -350,6 +350,8 @@ offsets, sketches and extrusion use that directed frame, as CadQuery does.
 there and its axes stay; a `transformed` offset is then local to it. `circle` on an empty stack is centred on
 the plane's origin, and on a stack holding only a `moveTo` point on that
 point, in the plane's axes; any other stack ends `unsupported_api`.
+`box` is centred the same way, on the origin or on a lone `moveTo` point; a
+drawn path or a sketch on the stack ends `unsupported_api`.
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty
 stack its origin is the old one moved `d` along the normal; on a stack
 holding one solid it is the old origin projected onto the plane through
@@ -632,7 +634,12 @@ three regressions now pass.
 At the baseline, CAD-Recode's 968 programs
 all ended in `r = …`, which neither worker read as a result, so that
 agreement says nothing about fidelity. Both workers now read `r`
-(ADR-0015); the baseline table awaits the subset-growth rerun. The oracle's
+(ADR-0015); the baseline table awaits the subset-growth rerun. With
+`origin=`, `workplane(offset=…)` and `box` on a `moveTo` point lifted,
+CAD-Recode reaches 37 programs: run under `cq` and on the oracle, 32 agree
+and 5 end `unsupported_api` "a Workplane holding 2 solids", unions of
+disjoint boxes the oracle builds as a compound (ADR-0007 leaves compounds
+outside the subset; `regression/cq-disjoint-union`). The oracle's
 timeouts move with the machine's load.
 
 ## The re-scored table

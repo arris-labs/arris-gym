@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48,
+    "area": 88,
+    "centroid": [
+      6,
+      5,
+      4
+    ],
+    "bounds": [
+      [
+        3,
+        4,
+        2
+      ],
+      [
+        9,
+        6,
+        6
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "YZ (x +y, y +z, normal +x) with origin (1,2,3); workplane(offset=5) on an empty stack moves the origin to (6,2,3). moveTo(3, 1) is world (6, 5, 4). A 2 by 4 by 6 box centred there: y 5+-1, z 4+-2, x 6+-3. V=48, A=88."
+}
