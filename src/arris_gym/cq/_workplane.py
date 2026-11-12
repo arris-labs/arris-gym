@@ -297,6 +297,47 @@ class Workplane:
         origin = plane.point(offset.x, offset.y, offset.z)
         return self._derive_on(arris.build.Workplane(origin, turned.x, turned.y, turned.z))
 
+    @census_form("Workplane.workplane", keywords={"offset": ("num",)})
+    def workplane(self, offset: float = 0.0) -> Workplane:
+        """A new workplane `offset` along this one's normal, its axes kept, its stack empty.
+
+        On an empty stack it starts from this workplane's origin. On a stack
+        holding one solid it starts from the plane through that solid's
+        centroid: this origin moved along the normal to the centroid's height,
+        not to the centroid itself (CadQuery's `centerOption="ProjectedOrigin"`,
+        read on the oracle: `ok-workplane-*`). The solid stays in the chain
+        for the next call to fuse with. Refuses, as `UnsupportedApi`, a
+        pending wire or several solids on the stack.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).workplane(offset=3)
+        >>> wp._plane.origin
+        (0.0, 0.0, 3.0)
+        """
+        self._refuse_pending("Workplane.workplane")
+        plane = self._plane
+        o, n = plane.origin, plane.z
+        if not self._stack:
+            center = o
+        else:
+            solids = self._solids()
+            if len(solids) != 1 or len(self._stack) != 1:
+                raise UnsupportedApi(
+                    f"Workplane.workplane on a Workplane holding {len(solids)} solids"
+                )
+            center = solids[0].measure().centroid
+        # As CadQuery does it: the origin projected onto the plane through
+        # `center` (`Vector.projectToPlane`), then moved by `offset` along the
+        # unit normal (`Workplane.workplane`, `cq.py`).
+        height = (o[0] - center[0]) * n[0] + (o[1] - center[1]) * n[1] + (o[2] - center[2]) * n[2]
+        projected = (o[0] - n[0] * height, o[1] - n[1] * height, o[2] - n[2] * height)
+        at = (
+            projected[0] + n[0] * offset,
+            projected[1] + n[1] * offset,
+            projected[2] + n[2] * offset,
+        )
+        return self._derive_on(arris.build.Workplane(at, plane.x, plane.y, plane.z))
+
     @census_form("Workplane.box", [("num",)] * 3)
     def box(self, length: float, width: float, height: float) -> Workplane:
         """A `length` by `width` by `height` box centred on the workplane's origin.

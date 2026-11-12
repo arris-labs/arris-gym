@@ -3,11 +3,11 @@
 import gzip
 import hashlib
 import json
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
+import fixture_cases
 from arris_gym import _cli, cq
 from arris_gym.census import (
     CensusReport,
@@ -86,18 +86,13 @@ def test_committed_cadrecode_census_and_curve_recheck_offline() -> None:
     assert report.families[0].end_forms == (("r = …", 968),)
     curve = ReachCurve.from_json((root / "reach.json").read_text())
     assert curve.digest == manifest["reach_digest"]
-    # The committed curve measures C1, before ADR-0015 admitted r and before
-    # cq.Workplane took origin= (plans/in-subset-cq-bugs step 6).
-    c1_constructor = cq.CensusForm("cq.Workplane", (("str",),))
-    initial = replace(
-        cq.subset(),
-        forms=tuple(
-            c1_constructor if form.name == "cq.Workplane" else form for form in cq.subset().forms
-        ),
-        end_forms=("result = …", "show_object(…)"),
-    )
+    # The committed curve measures C1, before ADR-0015 admitted r, before
+    # cq.Workplane took origin= and before Workplane.workplane was declared.
+    initial = fixture_cases.c1_subset()
     assert cq.subset().admits("cq.Workplane(str; origin=tuple)")
     assert not initial.admits("cq.Workplane(str; origin=tuple)")
+    assert cq.subset().admits("Workplane.workplane(offset=expr)")
+    assert not initial.admits("Workplane.workplane(offset=expr)")
     assert reach_curve(rows, initial) == curve
     assert curve.initial.programs == 968
     assert curve.initial.in_subset == 0

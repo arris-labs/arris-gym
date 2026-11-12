@@ -65,3 +65,19 @@ recorded oracle reports and agreeing rows in `test_cq_origin.py`, with a
 property over plane, origin, local offset, triangle and signed extrusion.
 `unsupported-named-plane` moved from `ZX`, now admitted, to `YX`, a
 CadQuery name the subset still refuses.
+
+`ok-workplane-offset-xy`, `-yz`, `-xz` and `-zx` call `workplane(offset=4)`
+on an empty stack of each admitted plane with `origin=(1, 2, 3)` and put a
+2 × 4 × 6 box there: the centroid is the origin moved 4 along the normal.
+`ok-workplane-on-solid-*` call `workplane(offset=1.5)` on a 6 × 2 × 2 slab
+(local u from -1 to 5, origin `(1, 1, 0)`) and put a 1 × 1 × 2 box there:
+its boss spans local w from 2 to 3.5, so the plane passed through the
+slab's centroid height (w = 1), while u and v stayed the origin's, not the
+centroid's (u = 2). `ok-workplane-on-solid-neg-xz` does it below a slab
+extruded by -2 with a negative offset, `ok-workplane-bare-xy` with
+`workplane()` (offset 0), a box crossing the slab both ways. All ten have
+recorded oracle reports and agreeing rows in `test_cq_workplane.py`, with
+properties over plane, origin, signed offset, slab and signed extrusion.
+`unsupported-workplane-on-pending-wire`, `-invert` and `-on-two-solids` are
+the contexts and keywords the subset refuses (read on the oracle, CadQuery
+keeps the origin after a `moveTo` point, which the subset does not model).

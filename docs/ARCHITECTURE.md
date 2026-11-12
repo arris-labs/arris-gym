@@ -321,10 +321,10 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in census order. Today it is the census's 13 API forms:
+the **subset**, grown in census order. Today it is the census's 14 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
-`transformed`, `box`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+`transformed`, `workplane` (with an optional `offset=`), `box`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `polyline`, `close` and `revolve`;
 selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
@@ -350,6 +350,11 @@ offsets, sketches and extrusion use that directed frame, as CadQuery does.
 there and its axes stay; a `transformed` offset is then local to it. `circle` on an empty stack is centred on
 the plane's origin, and on a stack holding only a `moveTo` point on that
 point, in the plane's axes; any other stack ends `unsupported_api`.
+`workplane(offset=d)` keeps the axes and empties the stack: on an empty
+stack its origin is the old one moved `d` along the normal; on a stack
+holding one solid it is the old origin projected onto the plane through
+the solid's centroid, then moved `d` (CadQuery's `ProjectedOrigin`). A
+pending wire or several solids on the stack end `unsupported_api`.
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted

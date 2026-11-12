@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48,
+    "area": 88,
+    "centroid": [
+      1,
+      6,
+      3
+    ],
+    "bounds": [
+      [
+        -1,
+        3,
+        2
+      ],
+      [
+        3,
+        9,
+        4
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "An empty stack on ZX (x +z, y +x, normal +y) with origin (1,2,3): workplane(offset=4) moves the origin 4 along the normal, local (0,0,4). The 2 by 4 by 6 box centred there: V=48, A=2*(8+12+24)=88, centroid that point; bounds fix the axis order."
+}

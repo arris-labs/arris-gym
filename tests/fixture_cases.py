@@ -9,10 +9,10 @@ from __future__ import annotations
 import json
 import pathlib
 import platform
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import arris_gym
-from arris_gym import ExecResult, Status
+from arris_gym import ExecResult, Status, cq
 
 ROOT = pathlib.Path(__file__).resolve().parent / "fixtures"
 # Relative to the larger of 1 and the expected magnitude. The kernel pads a
@@ -29,6 +29,25 @@ TIMEOUT_DEADLINE = 1.0
 # message differs by machine: `platform.machine()` -> message. Its fixture
 # directory holds a README.md saying why (tools/check-fixtures.sh).
 BY_MACHINE = "message_by_machine"
+
+
+def c1_subset() -> cq.Subset:
+    """The subset the committed `c2/` census curves and baseline were measured under.
+
+    Today's subset less what C2 has lifted since: ADR-0015's `r = …`
+    (plans/in-subset-cq-bugs step 2), `cq.Workplane`'s `origin=` (step 6)
+    and `Workplane.workplane` (step 7).
+    """
+    constructor = cq.CensusForm("cq.Workplane", (("str",),))
+    return replace(
+        cq.subset(),
+        forms=tuple(
+            constructor if form.name == "cq.Workplane" else form
+            for form in cq.subset().forms
+            if form.name != "Workplane.workplane"
+        ),
+        end_forms=("result = …", "show_object(…)"),
+    )
 
 
 @dataclass(frozen=True)

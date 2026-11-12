@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 25.5,
+    "area": 62,
+    "centroid": [
+      1,
+      2.1029411764705883,
+      1.8823529411764706
+    ],
+    "bounds": [
+      [
+        0,
+        1,
+        -1
+      ],
+      [
+        2,
+        4.5,
+        5
+      ]
+    ],
+    "faces": 11,
+    "face_kinds": [
+      [
+        "plane",
+        11
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "On ZX (x +z, y +x, normal +y) with origin (1,1,0), local coordinates: a 6 by 2 by 2 slab u in [-1,5], v in [-1,1], w in [0,2], centroid (2,0,1). workplane(offset=1.5) on the slab starts from the plane through its centroid, keeping the origin's u and v: local (0,0,2.5), not (2,0,2.5) nor (0,0,1.5). box(1,1,2) there spans w in [1.5,3.5]: a 1 by 1 by 1.5 boss above the slab. V=24+1.5, A=56+4*1.5=62, 6+5 planar faces, centroid ((24*2+1.5*0)/25.5, 0, (24*1+1.5*2.75)/25.5)."
+}

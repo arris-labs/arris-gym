@@ -36,6 +36,14 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   (`cadquery/occ_impl/geom.py`): the new origin is `offset` in the old
   plane's coordinates; the axes turn by the product Rx·Ry·Rz of rotations in
   degrees about the old plane's own x, y and z axes, so the z angle acts first.
+- `Workplane.workplane` (`cadquery/cq.py`, with `Vector.projectToPlane` in
+  `cadquery/occ_impl/geom.py`): the new plane keeps the old axes; its
+  centre is the old origin on an empty stack and the one object's `Center()`
+  (a solid's centre of mass) otherwise; with the default
+  `centerOption="ProjectedOrigin"` the old origin is projected onto the
+  plane through that centre, then moved `offset` along the unit normal, and
+  the new stack is empty. Confirmed on the oracle on `XY`, `YZ`, `XZ` and
+  `ZX` with `origin=` by `tests/fixtures/cq/ok-workplane-*`.
 - `Workplane.box` (`cadquery/cq.py`, with `eachpoint` and
   `_combineWithBase`): `length`, `width` and `height` along the plane's x, y
   and normal, centred on its origin by default, and fused with a solid

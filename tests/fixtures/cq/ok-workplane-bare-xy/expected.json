@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 26,
+    "area": 64,
+    "centroid": [
+      2.8461538461538463,
+      1,
+      1
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        -1
+      ],
+      [
+        6,
+        2,
+        3
+      ]
+    ],
+    "faces": 16,
+    "face_kinds": [
+      [
+        "plane",
+        16
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "On XY with origin (1,1,0): the slab u in [-1,5], v in [-1,1], w in [0,2], centroid (2,0,1). workplane() is offset 0: local (0,0,1). box(1,1,4) spans w in [-1,3]: a 1 by 1 by 1 boss below and one above. V=24+2, A=56+2*4=64, 6+5+5 planar faces, centroid ((24*2)/26, 0, (24*1-0.5+2.5)/26)."
+}

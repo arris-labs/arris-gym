@@ -109,8 +109,18 @@ a given design; **[3]** unproven semantics or worker output, established here.
   item 3 reaches name `ZX`; admitting `origin=` without `ZX` would leave them
   in-subset `cq_bug` against step 8's acceptance, so `ZX` (x +z, y +x,
   normal +y, read on the oracle) is lifted in this step.
-- [ ] Step 7 **[3]** — `Workplane.workplane(offset=…)`: fixtures with an
+- [x] Step 7 **[3]** — `Workplane.workplane(offset=…)`: fixtures with an
   empty stack and with a solid on it, each agreeing with the oracle.
+  *Measured* (agent, step 7, 2026-11-13): read on the oracle on `XY`, `YZ`,
+  `XZ` and `ZX` with `origin=`, an empty stack moves the origin `offset`
+  along the normal; one solid on the stack puts the plane through its
+  centroid's height, the origin's u and v kept (`ProjectedOrigin`). The
+  declaration (`offset=num`, optional) also admits `workplane()`. BenchCAD's
+  reach stays 1,871 (its `workplane` items need earlier curve items).
+  CAD-Recode's reach is 37: run under `cq` and on the oracle, 31 agree and 6
+  end `unsupported_api` `Workplane.box on a pending wire` (`moveTo(x, y)`
+  then `box`, all on `XY`), in-subset `cq_bug` against step 8's acceptance:
+  a cause step 7 does not lift, reported to the conductor.
 - [ ] Step 8 **[2]** — re-run both corpora with `tools/cq_corpus.py`
   (BenchCAD with the C1 verdicts, in the background), commit
   `tests/fixtures/c2/*` with `fixtures:` and the new figures; the plan's

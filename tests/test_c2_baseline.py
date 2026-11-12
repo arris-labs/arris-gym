@@ -16,8 +16,8 @@ from pathlib import Path
 
 import pytest
 
+import fixture_cases
 from arris_gym.census import ProgramCensus, Unparsable
-from arris_gym.cq import subset
 from arris_gym.fidelity import FidelityTable, OracleReport, ReachReport, reach_report
 
 C2 = Path(__file__).parent / "fixtures" / "c2"
@@ -55,7 +55,7 @@ def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -
         gzip.decompress((C2 / corpus / "fidelity.json.gz").read_bytes()).decode("utf-8")
     )
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), subset()) == committed
+    assert reach_report(table, census_rows(corpus), fixture_cases.c1_subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
 
 

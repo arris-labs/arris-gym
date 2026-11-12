@@ -25,7 +25,7 @@ Pre-alpha, Linux only (x86-64 and AArch64, with user namespaces, Landlock,
   `arris-gym rescore benchcad` re-scores a 300-program BenchCAD slice against
   CadQuery's own output (both need the `arris-gym[corpus]` extra).
 
-The `cq` subset is still small (13 API forms: no selectors, `hole`,
+The `cq` subset is still small (14 API forms: no selectors, `hole`,
 `chamfer` or export yet), and nothing for training exists yet.
 [`SEED.md`](SEED.md) is the charter, [`docs/ROADMAP.md`](docs/ROADMAP.md) says
 what comes next and [`CHANGELOG.md`](CHANGELOG.md) what each change gives.

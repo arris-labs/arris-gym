@@ -16,6 +16,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   origin=(x, y, z))` on each plane it runs, the plane moved to that world
   point with its axes kept. Any other `origin` ends `unsupported_api`.
 
+- `dialect="cq"` now runs `workplane()` and `workplane(offset=d)`: a new
+  plane `d` along the normal, from the current origin on an empty stack and
+  from the height of the solid's centroid when the stack holds one solid,
+  its axes kept. Other keywords, a pending wire or several solids on the
+  stack end `unsupported_api`.
+
 - `dialect="cq"` now runs `circle` after `moveTo`, centring the circle on
   that point; a circle on any other non-empty stack still ends
   `unsupported_api`.
