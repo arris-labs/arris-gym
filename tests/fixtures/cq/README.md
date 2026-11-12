@@ -54,3 +54,14 @@ BenchCAD programs whose diagnosed first failure was `circle` on a non-empty
 stack were rerun against their baseline oracle reports on 2026-11-12: 70
 `ok` and agree, 43 `arris_refusal` (a box touching the torus at its seam
 vertex, BACKLOG `torus-box-point-contact`), no `cq_bug` or timeout.
+
+`ok-origin-box-xy`, `-yz`, `-xz` and `-zx` put a 2 × 4 × 6 box on each
+admitted plane with `origin=(3, -5, 7)`: the centroid is that world point
+on every plane, and the bounds fix each plane's axis order (`ZX`: x +z,
+y +x, normal +y). `ok-origin-prism-zx` adds a local `transformed` offset
+on `ZX`: origin (1, 2, 3) plus local (3, -2, 5), world (-2, 5, 3), puts the
+triangle's plane at (-1, 7, 6), centroid (7/3, 10.5, 8). All five have
+recorded oracle reports and agreeing rows in `test_cq_origin.py`, with a
+property over plane, origin, local offset, triangle and signed extrusion.
+`unsupported-named-plane` moved from `ZX`, now admitted, to `YX`, a
+CadQuery name the subset still refuses.

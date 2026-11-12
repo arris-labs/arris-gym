@@ -1,4 +1,4 @@
 import cadquery as cq
 
-result = cq.Workplane("ZX")
+result = cq.Workplane("YX")
 show_object(result)

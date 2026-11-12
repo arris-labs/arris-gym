@@ -49,6 +49,10 @@ def test_a_reach_fixture_decides_the_static_rule(case: fixture_cases.Case) -> No
     ("form", "admitted"),
     [
         ("cq.Workplane(str)", True),
+        ("cq.Workplane(str; origin=tuple)", True),
+        ("cq.Workplane(str; origin=list)", False),
+        ("cq.Workplane(str; origin=num)", False),
+        ("cq.Workplane(origin=tuple)", False),
         ("cq.Workplane()", False),
         ("cq.Workplane(num)", False),
         ("Workplane.extrude(name)", True),

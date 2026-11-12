@@ -86,8 +86,18 @@ def test_committed_cadrecode_census_and_curve_recheck_offline() -> None:
     assert report.families[0].end_forms == (("r = …", 968),)
     curve = ReachCurve.from_json((root / "reach.json").read_text())
     assert curve.digest == manifest["reach_digest"]
-    # The committed curve measures C1, before ADR-0015 admitted r.
-    initial = replace(cq.subset(), end_forms=("result = …", "show_object(…)"))
+    # The committed curve measures C1, before ADR-0015 admitted r and before
+    # cq.Workplane took origin= (plans/in-subset-cq-bugs step 6).
+    c1_constructor = cq.CensusForm("cq.Workplane", (("str",),))
+    initial = replace(
+        cq.subset(),
+        forms=tuple(
+            c1_constructor if form.name == "cq.Workplane" else form for form in cq.subset().forms
+        ),
+        end_forms=("result = …", "show_object(…)"),
+    )
+    assert cq.subset().admits("cq.Workplane(str; origin=tuple)")
+    assert not initial.admits("cq.Workplane(str; origin=tuple)")
     assert reach_curve(rows, initial) == curve
     assert curve.initial.programs == 968
     assert curve.initial.in_subset == 0

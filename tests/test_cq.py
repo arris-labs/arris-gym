@@ -148,7 +148,7 @@ def test_a_copy_of_a_workplane_is_itself() -> None:
     assert copy.deepcopy(plane) is plane
 
 
-@pytest.mark.parametrize("plane", ["XZ ", "front", "xy", "xz", ""])
+@pytest.mark.parametrize("plane", ["XZ ", "front", "xy", "xz", "zx", "YX", ""])
 def test_a_named_plane_outside_the_admitted_values_is_unsupported(plane: str) -> None:
     with pytest.raises(cq.UnsupportedApi, match=r"^cq\.Workplane\("):
         cq.Workplane(plane)
@@ -605,6 +605,15 @@ RING = cq.Workplane("XY").polyline([(1, 0), (2, 0), (2, 1), (1, 1)]).close()
 OUTSIDE_FORMS: list[tuple[str, Callable[[], object]]] = [
     ("cq.Workplane()", lambda: cq.Workplane()),
     ("cq.Workplane(num)", lambda: cq.Workplane(5)),  # type: ignore[arg-type]
+    ("cq.Workplane(origin=tuple)", lambda: cq.Workplane(origin=(0, 0, 0))),
+    ("cq.Workplane(str; origin=list)", lambda: cq.Workplane("XY", origin=[0, 0, 0])),  # type: ignore[arg-type]
+    ("cq.Workplane(str; origin=call)", lambda: cq.Workplane("XY", origin=cq.Vector(0, 0, 0))),  # type: ignore[arg-type]
+    ("cq.Workplane(str; origin=tuple of 2 numbers)", lambda: cq.Workplane("XY", origin=(1, 2))),  # type: ignore[arg-type]
+    (
+        "cq.Workplane(str; origin=tuple of non-numbers)",
+        lambda: cq.Workplane("XY", origin=(1, 2, "3")),  # type: ignore[arg-type]
+    ),
+    ("cq.Workplane(str, tuple)", lambda: cq.Workplane("XY", (0, 0, 0))),
     ("cq.Vector(num, num)", lambda: cq.Vector(1, 2)),  # type: ignore[call-arg]
     ("cq.Vector(num, num, str)", lambda: cq.Vector(1, 2, "3")),  # type: ignore[arg-type]
     ("cq.Vector(num, num, num; w=num)", lambda: cq.Vector(1, 2, 3, w=4)),  # type: ignore[call-arg]

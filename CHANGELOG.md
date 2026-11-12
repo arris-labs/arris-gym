@@ -11,6 +11,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `dialect="cq"` now runs `cq.Workplane("XZ")`, with sketch axes along
   world +x and +z and extrusion along -y.
 
+- `dialect="cq"` now runs `cq.Workplane("ZX")`, with sketch axes along
+  world +z and +x and extrusion along +y, and `cq.Workplane(name,
+  origin=(x, y, z))` on each plane it runs, the plane moved to that world
+  point with its axes kept. Any other `origin` ends `unsupported_api`.
+
 - `dialect="cq"` now runs `circle` after `moveTo`, centring the circle on
   that point; a circle on any other non-empty stack still ends
   `unsupported_api`.

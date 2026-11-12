@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48,
+    "area": 88,
+    "centroid": [
+      3,
+      -5,
+      7
+    ],
+    "bounds": [
+      [
+        2,
+        -8,
+        5
+      ],
+      [
+        4,
+        -2,
+        9
+      ]
+    ],
+    "shells": 1,
+    "genus": 0,
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "A 2 by 4 by 6 box on XZ with origin (3,-5,7), a world point: V=2*4*6, A=2*(2*4+2*6+4*6), centroid the origin; XZ has x +x, y +z, normal -y: length 2 along x, width 4 along z, height 6 along y. Faces are carried, not judged (ADR-0005)."
+}

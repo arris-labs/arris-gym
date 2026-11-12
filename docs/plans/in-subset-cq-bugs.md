@@ -100,8 +100,15 @@ a given design; **[3]** unproven semantics or worker output, established here.
   lift `regression/cq-circle-at-point`; its rows agree or have another class:
   70 `ok` and agree, 43 `arris_refusal` (a box touching the torus at its
   seam vertex, BACKLOG Findings `torus-box-point-contact`), no `cq_bug`.
-- [ ] Step 6 **[3]** — `cq.Workplane(str; origin=tuple)`: fixture by
-  construction (a box on an offset plane, its centroid by construction).
+- [x] Step 6 **[3]** — `cq.Workplane(str; origin=tuple)`: fixture by
+  construction (a box on an offset plane, its centroid by construction), on
+  each admitted plane, `ZX` lifted with it; oracle fixtures `ok-origin-*` and
+  a property over plane, origin, local offset and signed extrusion pass.
+  *Settled* (agent, step 6, 2026-11-12): CAD-Recode writes the form on `XY`,
+  `YZ` and `ZX` (412, 408, 377 calls), and 7 of the 37 programs its curve's
+  item 3 reaches name `ZX`; admitting `origin=` without `ZX` would leave them
+  in-subset `cq_bug` against step 8's acceptance, so `ZX` (x +z, y +x,
+  normal +y, read on the oracle) is lifted in this step.
 - [ ] Step 7 **[3]** — `Workplane.workplane(offset=…)`: fixtures with an
   empty stack and with a solid on it, each agreeing with the oracle.
 - [ ] Step 8 **[2]** — re-run both corpora with `tools/cq_corpus.py`

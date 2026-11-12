@@ -322,7 +322,8 @@ Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
 the **subset**, grown in census order. Today it is the census's 13 API forms:
-`Workplane("XY")`, `Workplane("YZ")` and `Workplane("XZ")`, `Vector`,
+`Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
+`Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `box`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `polyline`, `close` and `revolve`;
 selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
@@ -343,8 +344,10 @@ name with a leading underscore is Python's and stays `AttributeError`
 (ADR-0007). A `Workplane` is a frozen value: its plane, its **stack** of
 objects and its parent; every call returns a new one.
 The `YZ` plane maps local x, y and normal to world +y, +z and +x, the `XZ`
-plane to world +x, +z and -y; offsets, sketches and extrusion use that
-directed frame, as CadQuery does. `circle` on an empty stack is centred on
+plane to world +x, +z and -y, the `ZX` plane to world +z, +x and +y;
+offsets, sketches and extrusion use that directed frame, as CadQuery does.
+`origin=`, three numbers, is a world point: the named plane's origin moves
+there and its axes stay; a `transformed` offset is then local to it. `circle` on an empty stack is centred on
 the plane's origin, and on a stack holding only a `moveTo` point on that
 point, in the plane's axes; any other stack ends `unsupported_api`.
 

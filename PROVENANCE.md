@@ -26,7 +26,12 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   x along world +y, local y along world +z and normal along world +x.
   `arris.build.Workplane.YZ()` provides that same frame. The `XZ` plane has
   its local x along world +x, local y along world +z and normal along world
-  -y; `arris.build.Workplane.XZ()` provides that same frame.
+  -y; `arris.build.Workplane.XZ()` provides that same frame. The `ZX` plane
+  has its local x along world +z, local y along world +x and normal along
+  world +y, built as an `arris.build.Workplane` with those axes. `origin` is
+  a point in world coordinates: the plane's origin moves there and its axes
+  stay (`Plane(origin, xDir, normal)`), confirmed on the oracle by
+  `tests/fixtures/cq/ok-origin-*`.
 - `Workplane.transformed` (`cadquery/cq.py`) and `Plane.rotated`
   (`cadquery/occ_impl/geom.py`): the new origin is `offset` in the old
   plane's coordinates; the axes turn by the product Rx·Ry·Rz of rotations in

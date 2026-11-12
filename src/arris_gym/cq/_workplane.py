@@ -21,12 +21,20 @@ __all__ = ["Workplane", "is_python_name"]
 
 # The default named plane; the constructor admits the measured corpus planes.
 _XY = "XY"
-# CadQuery 2.3.0's named planes the subset admits, each the `arris.build`
-# constructor with the same frame (`Plane.named`, PROVENANCE.md).
+
+
+def _zx() -> arris.build.Workplane:
+    """CadQuery's `ZX` plane: local x along world +z, y along +x, normal +y."""
+    return arris.build.Workplane((0.0, 0.0, 0.0), (0.0, 0.0, 1.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0))
+
+
+# CadQuery 2.3.0's named planes the subset admits, each an `arris.build`
+# workplane with the same frame (`Plane.named`, PROVENANCE.md).
 _NAMED_PLANES: dict[str, Callable[[], arris.build.Workplane]] = {
     _XY: arris.build.Workplane.XY,
     "YZ": arris.build.Workplane.YZ,
     "XZ": arris.build.Workplane.XZ,
+    "ZX": _zx,
 }
 # CadQuery's degrees-to-radians factor, applied as it applies it (one
 # multiplication by pi / 180): not a tolerance.
@@ -132,8 +140,11 @@ class Workplane:
     `UnsupportedApi` naming it (`Workplane.sphere`), never `AttributeError`;
     setting an attribute raises `UnsupportedApi` too, and a copy is the
     workplane itself. Admits `"XY"` (x +x, y +y, normal +z), `"YZ"`
-    (x +y, y +z, normal +x) and `"XZ"` (x +x, y +z, normal -y), at the
-    origin; refuses other named planes.
+    (x +y, y +z, normal +x), `"XZ"` (x +x, y +z, normal -y) and `"ZX"`
+    (x +z, y +x, normal +y); refuses other named planes. `origin`, three
+    numbers in world coordinates, moves the plane's origin there and keeps
+    its axes, as CadQuery's `Plane.named` does; any other `origin` is
+    outside the subset.
 
     >>> import arris_gym.cq as cq
     >>> wp = cq.Workplane("XY")
@@ -150,11 +161,19 @@ class Workplane:
     _stack: tuple[object, ...]
     _parent: Workplane | None
 
-    @census_form("cq.Workplane", [("str",)])
-    def __init__(self, inPlane: str = _XY) -> None:
+    @census_form("cq.Workplane", [("str",)], keywords={"origin": ("tuple",)})
+    def __init__(self, inPlane: str = _XY, origin: tuple[float, float, float] = (0, 0, 0)) -> None:
         if type(inPlane) is not str or inPlane not in _NAMED_PLANES:
             raise UnsupportedApi(f"cq.Workplane({inPlane!r})")
-        object.__setattr__(self, "_plane", _NAMED_PLANES[inPlane]())
+        at = numbers_of(origin, (3,))
+        if at is None:
+            # CadQuery also takes two numbers (z = 0); the corpora write three.
+            shape = shape_of(origin)
+            of = f"tuple of {shape}" if shape.endswith(" numbers") else shape
+            raise UnsupportedApi(f"cq.Workplane(str; origin={of})")
+        named = _NAMED_PLANES[inPlane]()
+        plane = arris.build.Workplane((at[0], at[1], at[2]), named.x, named.y, named.z)
+        object.__setattr__(self, "_plane", plane)
         object.__setattr__(self, "_stack", ())
         object.__setattr__(self, "_parent", None)
 

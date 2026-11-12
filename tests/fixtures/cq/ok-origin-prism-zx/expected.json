@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 42,
+    "area": 96,
+    "centroid": [
+      2.3333333333333335,
+      10.5,
+      8
+    ],
+    "bounds": [
+      [
+        1,
+        7,
+        7
+      ],
+      [
+        5,
+        14,
+        10
+      ]
+    ],
+    "faces": 5,
+    "face_kinds": [
+      [
+        "plane",
+        5
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "On ZX local (u, v, w) maps to world (v, w, u). origin (1,2,3) is a world point; the local offset (3,-2,5) adds world (-2,5,3), so the plane origin is (-1,7,6). The 3 by 4 right triangle has area 6 and perimeter 12; extrusion by +7 along world +y gives V=42, A=2*6+7*12=96, five planar faces, centroid (-1+10/3, 7+7/2, 6+2)."
+}
