@@ -5,6 +5,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `cq.Workplane("YZ")`, with sketch axes along
+  world +y and +z and extrusion along +x.
+
 - `dialect="cq"` now accepts a module-level `r` as the result, after the
   last `show_object` argument and module-level `result`. A present but
   invalid value keeps that precedence. The oracle reads the same names,

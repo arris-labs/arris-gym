@@ -22,6 +22,9 @@ arris-gym is written from scratch under MIT OR Apache-2.0.
 
 Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
 
+- `Plane.named` (`cadquery/occ_impl/geom.py`): the `YZ` plane has its local
+  x along world +y, local y along world +z and normal along world +x.
+  `arris.build.Workplane.YZ()` provides that same frame.
 - `Workplane.transformed` (`cadquery/cq.py`) and `Plane.rotated`
   (`cadquery/occ_impl/geom.py`): the new origin is `offset` in the old
   plane's coordinates; the axes turn by the product Rx·Ry·Rz of rotations in

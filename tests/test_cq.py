@@ -148,8 +148,8 @@ def test_a_copy_of_a_workplane_is_itself() -> None:
     assert copy.deepcopy(plane) is plane
 
 
-@pytest.mark.parametrize("plane", ["XZ", "YZ", "front", "xy", ""])
-def test_a_named_plane_but_xy_is_unsupported(plane: str) -> None:
+@pytest.mark.parametrize("plane", ["XZ", "front", "xy", ""])
+def test_a_named_plane_outside_the_admitted_values_is_unsupported(plane: str) -> None:
     with pytest.raises(cq.UnsupportedApi, match=r"^cq\.Workplane\("):
         cq.Workplane(plane)
 

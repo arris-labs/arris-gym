@@ -19,8 +19,7 @@ from arris_gym.cq._vector import Vector
 
 __all__ = ["Workplane", "is_python_name"]
 
-# The one named plane the subset has: CadQuery's "XY", origin at 0, x along
-# +x and the normal along +z, which is `arris.build.Workplane.XY()`.
+# The default named plane; the constructor admits the measured corpus planes.
 _XY = "XY"
 # CadQuery's degrees-to-radians factor, applied as it applies it (one
 # multiplication by pi / 180): not a tolerance.
@@ -125,7 +124,8 @@ class Workplane:
     call changes a `Workplane`; a name the subset lacks raises
     `UnsupportedApi` naming it (`Workplane.sphere`), never `AttributeError`;
     setting an attribute raises `UnsupportedApi` too, and a copy is the
-    workplane itself. Refuses every named plane but `"XY"`.
+    workplane itself. Admits `"XY"` (x +x, y +y, normal +z) and `"YZ"`
+    (x +y, y +z, normal +x), at the origin; refuses other named planes.
 
     >>> import arris_gym.cq as cq
     >>> wp = cq.Workplane("XY")
@@ -144,9 +144,10 @@ class Workplane:
 
     @census_form("cq.Workplane", [("str",)])
     def __init__(self, inPlane: str = _XY) -> None:
-        if type(inPlane) is not str or inPlane != _XY:
+        if type(inPlane) is not str or inPlane not in (_XY, "YZ"):
             raise UnsupportedApi(f"cq.Workplane({inPlane!r})")
-        object.__setattr__(self, "_plane", arris.build.Workplane.XY())
+        plane = arris.build.Workplane.XY() if inPlane == _XY else arris.build.Workplane.YZ()
+        object.__setattr__(self, "_plane", plane)
         object.__setattr__(self, "_stack", ())
         object.__setattr__(self, "_parent", None)
 

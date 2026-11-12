@@ -24,3 +24,12 @@ area 88 and centroid the origin. ADR-0015 admits this result after the
 last `show_object` argument and `result`. The 300 C1 oracle programs were
 rerun after that change: `tests/fixtures/c1/oracle.jsonl` stayed byte-equal,
 SHA-256 `6bbfb7724508505b44e664d1b74d16c2ce70bf777d2c8e70e86de93cd3add68b`.
+
+`ok-plane-yz-box` fixes the `YZ` axis order with unequal dimensions.
+`ok-plane-yz-prism` fixes its axis signs and local offset: a 3 × 4 right
+triangle extruded by +7 along world +x, volume 42, area 96, centroid
+(8.5, 5, 4/3). Both have recorded oracle reports and agreeing fidelity rows
+in `test_cq_planes.py`. Its property varies the triangle, local offset and
+signed extrusion against the closed form. All 319 BenchCAD programs whose
+diagnosed first failure was `cq.Workplane('YZ')` were rerun against their
+baseline oracle reports on 2026-11-12: 319 `ok`, 319 agree, no other outcome.

@@ -84,9 +84,11 @@ a given design; **[3]** unproven semantics or worker output, established here.
   the oracle's worker and `Subset.end_forms`: fixtures `cq/ok-result-r` and an
   `r` program on the oracle; a `hypothesis` property that `result = X` and
   `r = X` give equal rows; the slice's `oracle.jsonl` unchanged.
-- [ ] Step 3 **[3]** — `cq.Workplane('YZ')` (319 rows): lift the named plane,
+- [x] Step 3 **[3]** — `cq.Workplane('YZ')` (319 rows): lift the named plane,
   its oracle fidelity fixtures and `regression/cq-plane-yz`; rerun its rows
-  to expose any later cause, each agreeing or classed outside `cq_bug`.
+  to expose any later cause: all 319 `ok` and agree with the baseline oracle,
+  no further cause or timeout. Box and directed prism fixtures, plus a property
+  over triangle dimensions, local offsets and signed extrusion, pass.
 - [ ] Step 4 **[3]** — `cq.Workplane('XZ')` (285 rows): lift the named plane,
   its oracle fidelity fixtures and `regression/cq-plane-xz`; rerun its rows
   to expose any later cause, each agreeing or classed outside `cq_bug`.
