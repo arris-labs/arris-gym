@@ -353,7 +353,8 @@ there and its axes stay; a `transformed` offset is then local to it. `circle` on
 the plane's origin, and on a stack holding only a `moveTo` point on that
 point, in the plane's axes; any other stack ends `unsupported_api`.
 `box` is centred the same way, on the origin or on a lone `moveTo` point; a
-drawn path or a sketch on the stack ends `unsupported_api`.
+drawn path, a sketch or a solid on the stack ends `unsupported_api` (on a
+solid CadQuery centres the box on its centre of mass, not modelled).
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty
 stack its origin is the old one moved `d` along the normal; on a stack
 holding one solid it is the old origin projected onto the plane through

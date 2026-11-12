@@ -91,6 +91,12 @@ at (1, 0) through a 4 × 4 × 2 slab, centroid x 1/17. All three have recorded
 oracle reports and agreeing rows in `test_cq_box.py`, with a property over
 plane, origin, offset, point and dimensions. `unsupported-box-on-pending-wire`
 now draws a segment after its `moveTo`: a box there is still refused.
+`unsupported-box-on-solid` calls `box` on the stack an extrusion left: read
+on the oracle, CadQuery centres the box on the solid's centre of mass
+(`eachpoint` over the solid's `Center()`), so a unit box after
+`moveTo(5, 0).circle(1).extrude(2)` lies inside the cylinder (V = 2π) and a
+1 × 1 × 10 one spans z from -4 to 6; the subset refuses the context. No
+BenchCAD or CAD-Recode row the C2 tables hold as `ok` or a refusal reaches it.
 
 `ok-compound-two-boxes`, `ok-compound-three-boxes`, `ok-cut-into-pieces` and
 `ok-workplane-on-compound` are compounds (ADR-0016): solids that do not meet,

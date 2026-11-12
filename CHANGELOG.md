@@ -39,6 +39,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   point, and fuses it with a solid already in the chain; a box after a drawn
   path or a sketch still ends `unsupported_api`.
 
+- `dialect="cq"` now ends `unsupported_api` "Workplane.box on a stack
+  holding a solid" for a `box` called straight on a solid (after `extrude`,
+  `revolve`, `box`, `union` or `cut`), where it ended `ok` with the box on
+  the plane's origin: CadQuery centres it on the solid's centre of mass.
+
 - `dialect="cq"` now accepts a module-level `r` as the result, after the
   last `show_object` argument and module-level `result`. A present but
   invalid value keeps that precedence. The oracle reads the same names,

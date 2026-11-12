@@ -300,12 +300,14 @@ class Workplane:
 
         `length` runs along the workplane's x, `width` along its y and
         `height` along its normal; the box is the one solid on the new stack.
-        On an empty stack, or one holding solids, it is centred on the
-        workplane's origin; on a stack holding only a `moveTo` point, on that
-        point, in the plane's own axes (CadQuery's `eachpoint` over one point,
-        `centered=True`). A box on a workplane whose chain holds a solid is
-        fused with it, as CadQuery's `combine=True` does. Refuses, as
-        `UnsupportedApi`, a stack holding a drawn path or a sketch.
+        On an empty stack it is centred on the workplane's origin; on a stack
+        holding only a `moveTo` point, on that point, in the plane's own axes
+        (CadQuery's `eachpoint` over one point, `centered=True`). A box on a
+        workplane whose chain holds a solid further up is fused with it, as
+        CadQuery's `combine=True` does. Refuses, as `UnsupportedApi`, a stack
+        holding a drawn path or a sketch, and one holding a solid: there
+        CadQuery centres the box on the solid's centre of mass (read on the
+        oracle: `unsupported-box-on-solid`), which the subset does not model.
 
         >>> import arris_gym.cq as cq
         >>> round(cq.Workplane("XY").box(2, 3, 4)._solids()[0].measure().volume, 9)
@@ -319,6 +321,10 @@ class Workplane:
             center = point.points[0]
         else:
             self._refuse_pending("Workplane.box")
+            if self._solids():
+                # CadQuery centres the box on the solid's `Center()` (its
+                # centre of mass, `eachpoint`), which the subset does not model.
+                raise UnsupportedApi("Workplane.box on a stack holding a solid")
             center = (0.0, 0.0)
         if min(length, width, height) < 0:
             raise ValueError(

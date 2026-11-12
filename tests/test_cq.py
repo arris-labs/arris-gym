@@ -212,8 +212,11 @@ def test_transformed_and_box_change_no_workplane() -> None:
 
 
 def test_a_box_onto_a_solid_in_the_chain_is_fused_with_it() -> None:
+    # The solid is further up the chain: `transformed` empties the stack and
+    # `moveTo` leaves a point on it. A box on the solid's own stack is
+    # refused (`test_cq_box.py`).
     boxed = cq.Workplane("XY").box(2, 2, 2)
-    for wp in (boxed, boxed.transformed(offset=cq.Vector(0, 0, 1.5))):
+    for wp in (boxed.transformed(offset=cq.Vector(0, 0, 1.5)), boxed.moveTo(1, 0)):
         fused = wp.box(2, 2, 2)
         assert len(fused._stack) == 1
         assert fused._parent is wp

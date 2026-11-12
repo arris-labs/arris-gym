@@ -99,3 +99,24 @@ def test_a_box_on_a_moveto_point_is_centred_on_it(
 def test_a_box_on_a_drawn_path_or_sketch_is_unsupported(drawn: cq.Workplane) -> None:
     with pytest.raises(cq.UnsupportedApi, match=r"^Workplane\.box on a pending wire$"):
         drawn.box(1, 1, 1)
+
+
+@pytest.mark.parametrize(
+    "solid",
+    [
+        cq.Workplane("XY").moveTo(5, 0).circle(1).extrude(2),
+        cq.Workplane("XY").circle(1).extrude(2),
+        cq.Workplane("YZ").box(4, 2, 2),
+        cq.Workplane("XZ", origin=(1, 2, 3)).box(2, 2, 2),
+        cq.Workplane("ZX").box(1, 1, 1).union(cq.Workplane("ZX").box(2, 1, 1)),
+        cq.Workplane("XY").box(4, 4, 4).cut(cq.Workplane("XY").box(1, 1, 6)),
+    ],
+)
+def test_a_box_on_a_stack_holding_a_solid_is_unsupported(solid: cq.Workplane) -> None:
+    # Read on the oracle (CadQuery 2.3.0): `eachpoint` centres the box on the
+    # solid's `Center()`, its centre of mass, not on the plane's origin: after
+    # `moveTo(5, 0).circle(1).extrude(2)` a unit box lands inside the cylinder
+    # at (5, 0, 1), V = 2π, and a 1 x 1 x 10 one spans z from -4 to 6. The
+    # subset does not model that placement.
+    with pytest.raises(cq.UnsupportedApi, match=r"^Workplane\.box on a stack holding a solid$"):
+        solid.box(1, 1, 1)
