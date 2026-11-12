@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "cq.Workplane refuses the admitted YZ plane value",
+  "measures": {
+    "volume": 48,
+    "area": 88,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -3,
+        -1,
+        -2
+      ],
+      [
+        3,
+        1,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A centred 2 by 4 by 6 box in the YZ plane: V=2*4*6, A=2*(2*4+2*6+4*6); bounds follow the named plane axes. Faces are carried, not judged (ADR-0005)."
+}

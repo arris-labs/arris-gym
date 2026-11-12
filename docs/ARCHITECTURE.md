@@ -593,10 +593,14 @@ arris 0.10.0, each figure over all programs):
 | in-subset `by_design` | 0 | 0 |
 
 The 717 in-subset `cq_bug` rows are all `unsupported_api` where the oracle
-builds the part: the static rule admits programs that `cq` still refuses
-(the cause is not established; `Workplane.circle(num)` is in 113 of them and
-in no agreeing program, which points to a kind gap in the subset's form check,
-not to the chain's context). CAD-Recode's 968 programs all end in `r = …`, which
+builds the part. Rerunning those rows under `cq` (`tools/cq_diagnose.py`, no
+oracle execution) records their messages verbatim in
+`tests/fixtures/c2/benchcad/cq-bugs.json`: 319 refuse `cq.Workplane('YZ')`,
+285 refuse `cq.Workplane('XZ')`, and 113 refuse `circle` on a non-empty stack
+(all `torus_link`, after `moveTo`). The first two are admitted string values
+that `cq` refuses; the third is a stack-context gap. These are the first
+failures reached, with a strict-xfail regression for each cause; later calls
+are not proved by the diagnosis. CAD-Recode's 968 programs all end in `r = …`, which
 neither `cq` nor the oracle's worker reads as a result, so its agreement says
 nothing about fidelity. The oracle's timeouts move with the machine's load.
 

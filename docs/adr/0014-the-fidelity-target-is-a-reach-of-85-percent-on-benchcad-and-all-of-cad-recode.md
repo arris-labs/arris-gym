@@ -104,3 +104,15 @@ the baseline's only vacuous agreements behind it.
 - ROADMAP §C2's "from that number" is amended to "from the reach curves over
   both corpora", and SEED.md §9.8's fidelity-target `⚠ OPEN` closes, both by
   this ADR's acceptance.
+
+## Measurement correction (2026-11-12): the 717's first failures
+
+`tools/cq_diagnose.py` reruns every baseline in-subset `cq_bug` program under
+`cq`, without importing or running the oracle. The attributed rows and messages
+are archived in `tests/fixtures/c2/benchcad/cq-bugs.json`: 319 refuse the `YZ`
+named plane, 285 the `XZ` named plane, and 113 refuse `circle` after `moveTo`
+puts a point on the stack (all `torus_link`). These are first failures; later
+calls may expose further causes after a lift. The kind-gap hypothesis above
+was not confirmed: the constructor's string values and the circle's stack
+context account for every measured first failure. The target and static
+membership rule are unchanged.

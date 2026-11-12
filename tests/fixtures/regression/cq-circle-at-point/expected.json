@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "cq.circle refuses a moveTo point on its stack",
+  "measures": {
+    "volume": 3.141592653589793,
+    "area": 12.566370614359172,
+    "centroid": [
+      2,
+      0,
+      0.5
+    ],
+    "bounds": [
+      [
+        1,
+        -1,
+        0
+      ],
+      [
+        3,
+        1,
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "Unit cylinder of height 1 centred at (2,0), grown from z=0: V=pi, A=2*pi+2*pi=4*pi, centroid=(2,0,1/2). Faces are carried, not judged (ADR-0005)."
+}

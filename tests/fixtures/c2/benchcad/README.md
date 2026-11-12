@@ -48,4 +48,28 @@ The oracle's timeouts depend on the machine's load (a program that takes about
 the rows of every program that does not time out are the same bytes.
 All 717 in-subset `cq_bug` rows are `unsupported_api` on arris's side where the
 oracle builds the part: forms the static rule admits that `cq` still refuses.
-The cause is not worked here (plans/fidelity-target, open question).
+
+## The 717's diagnosis
+
+`cq-bugs.json` archives a rerun of the baseline's 717 statically in-subset
+`cq_bug` programs, from `uv run --extra corpus tools/cq_diagnose.py`.
+The tool does not import or run the oracle. Every selected row retains its
+stem, family, program SHA-256, status, message verbatim, versions, source and
+CC-BY-4.0 licence; no program text or wall-clock value is stored. The
+histogram counts every row, and names its families:
+
+- `cq.Workplane('YZ')`: 319 programs.
+- `cq.Workplane('XZ')`: 285 programs.
+- `Workplane.circle on a non-empty stack`: 113 programs, all `torus_link`.
+
+The constructor's string form admits plane values the implementation refuses;
+the circles are drawn after `moveTo` puts a point on the stack. These are first
+failures; later calls have not yet run. Shrunk strict-xfail regressions live in
+`regression/cq-plane-yz`, `regression/cq-plane-xz` and
+`regression/cq-circle-at-point`. No declaration is removed, so diagnosing the
+failures does not change reach or the baseline table's digest above.
+
+Two independent diagnosis runs give identical JSON bytes. The archive pins the
+baseline table's digest; it remains that baseline's diagnosis when the current
+fidelity table is regenerated after the fixes. Attribution and licence are the
+same BenchCAD CC-BY-4.0 attribution linked above.
