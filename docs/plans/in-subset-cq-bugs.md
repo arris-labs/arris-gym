@@ -157,10 +157,27 @@ a given design; **[3]** unproven semantics or worker output, established here.
   closed form; BACKLOG Findings). No committed row and no reward moves:
   reward version 1 stays; a target from a STEP stays one solid (ADR-0011,
   BACKLOG).
-- [ ] Step 10 **[2]** — re-run both corpora with `tools/cq_corpus.py`
+- [x] Step 10 **[2]** — re-run both corpora with `tools/cq_corpus.py`
   (BenchCAD with the C1 verdicts, in the background), commit
   `tests/fixtures/c2/*` with `fixtures:` and the new figures; the plan's
   numbers in ARCHITECTURE §Fidelity follow.
+  *Measured* (agent, step 10, 2026-11-13): CAD-Recode reach 37/968, 37
+  agree, in-subset `cq_bug` 0, oracle `ok` 968 (every oracle row changed,
+  ADR-0015's `r`); BenchCAD reach 1,871/17,900, 1,654 agree, in-subset
+  `cq_bug` 0 and `by_design` 0, 100 `arris_bug` (`lobed_knob`), 363
+  unclassified (all outside the subset), 31 oracle timeouts; the 717 all in
+  the subset, 674 agree and 43 `arris_refusal`.
+  *Settled* (conductor, step 10, 2026-11-13): the oracle is not repeatable
+  run to run on 8 BenchCAD families: 214 re-run rows differed from the
+  baseline's in `report` only (STEP SHA-256, last digits of centroid, volume,
+  area, at most 4e-13 relative), because Open CASCADE's build order follows
+  memory addresses, and the same program returns the baseline's bytes on
+  some runs. Their fidelity rows equal the baseline's, so the baseline
+  BenchCAD `oracle.jsonl.gz` is kept and the re-run's other outputs are
+  consistent with it; the acceptance's "same bytes" holds literally. Recorded
+  as BACKLOG Findings `oracle-nondeterministic-step`; no regression fixture,
+  since the oracle runs outside the gate and an intermittent difference
+  cannot be a strict xfail.
 
 ## Acceptance
 

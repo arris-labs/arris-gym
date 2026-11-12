@@ -32,7 +32,7 @@ BY_MACHINE = "message_by_machine"
 
 
 def c1_subset() -> cq.Subset:
-    """The subset the committed `c2/` census curves and baseline were measured under.
+    """The subset the committed `c2/` census curves were measured under, and the C2 baseline.
 
     Today's subset less what C2 has lifted since: ADR-0015's `r = …`
     (plans/in-subset-cq-bugs step 2), `cq.Workplane`'s `origin=` (step 6)

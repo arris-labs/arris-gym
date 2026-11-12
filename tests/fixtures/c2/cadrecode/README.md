@@ -27,28 +27,38 @@ states `license: cc-by-nc-4.0`. These derived artefacts retain that restriction;
 the library's code licence does not replace it.
 
 
-## The baseline
+## The table
 
 `fidelity.json.gz` is the `FidelityTable` of all 968 programs under `cq` (arris
 0.10.0) against the oracle (CadQuery 2.3.0,
 `cadquery-ocp` 7.9.3.0), no verdicts applied; `oracle.jsonl.gz` the oracle's rows
 (STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
-report; `reach-report.json` the `ReachReport` under the C1 subset. Written by
+report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
 `uv run --extra corpus tools/cq_corpus.py --corpus cadrecode` (network, the oracle environment; outside the gate), which saves
 its work in chunks and resumes. No program text is committed. Each figure is
-over all 968 programs.
+over all 968 programs. Re-run by plans/in-subset-cq-bugs step 10
+(2026-11-13), after both workers read `r` (ADR-0015) and `origin=`,
+`workplane(offset=…)`, `box` on a `moveTo` point and a compound result
+(ADR-0016) were lifted.
 
-- Reach: 0/968 in-subset.
-- Agreement: 968 agree; outcomes {'agree': 968, 'disagree': 0, 'unclassified': 0}.
-- Classes: {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0}.
-- Arris statuses: {'arris_refusal': 0, 'checker_fail': 0, 'crash': 0, 'ok': 0, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 968}.
-- Oracle statuses: {'crash': 0, 'invalid': 0, 'no_result': 968, 'ok': 0, 'runtime': 0, 'syntax': 0, 'timeout': 0}.
+- Reach: 37/968 in-subset (the curve's item 3; C1's subset reaches 0).
+- Agreement: 37 agree; outcomes {'agree': 37, 'disagree': 931, 'unclassified': 0}.
+- Classes: {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 931, 'occt_wrong': 0}.
+- Arris statuses: {'arris_refusal': 0, 'checker_fail': 0, 'crash': 0, 'ok': 37, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 931}.
+- Oracle statuses: {'crash': 0, 'invalid': 0, 'no_result': 0, 'ok': 968, 'runtime': 0, 'syntax': 0, 'timeout': 0}.
 - Timeouts: 0.
-- In-subset: outcomes {'agree': 0, 'disagree': 0, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0};
+- In-subset: outcomes {'agree': 37, 'disagree': 0, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0};
   `in_subset_cq_bug` 0, `in_subset_by_design` 0.
 
-Table digest: `7f19ee794233d27fc3c0d7f0a5f885ae3e5ea65d37bb00fef28a8f95408ea440`. Oracle rows SHA-256 (uncompressed): `ae5c6498cb9435ff7c8a43ba26f71372b85b471dae32496172d7a350dfba8def`.
+Table digest: `2aa87494c795c2321de08d8bee2d5effa8ba426c5fe50067eca163b70ce588f4`. Oracle rows SHA-256 (uncompressed): `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
 
-Every row is `agree` only because both sides fail: all 968 programs end in
-`r = …`, which neither `cq` (`unsupported_api`) nor the oracle's worker
-(`no_result`) takes as a result. The agreement is not evidence of fidelity.
+Every agreement is two `ok` builds: the oracle now builds all 968 programs,
+and the 931 `cq_bug` rows are `unsupported_api` on forms outside the subset
+(`cylinder`, `sketch()` and its calls, the curve's items 4 to 18). Five of the
+37 are unions of disjoint boxes that both sides build as a compound (ADR-0016).
+
+The baseline (plans/fidelity-target step 6, table digest
+`7f19ee794233d27fc3c0d7f0a5f885ae3e5ea65d37bb00fef28a8f95408ea440`) had
+reach 0 and 968 vacuous agreements: neither worker read `r = …` as a result
+(`unsupported_api` against `no_result`), so every oracle row changed with
+ADR-0015, as intended.

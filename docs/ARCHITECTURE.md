@@ -604,50 +604,56 @@ writes the table, the arris report and the reach report under
 `tests/fixtures/c2/<corpus>/` (rows only, no program text). On the slice with
 C1's verdicts it gives C1's figures: reach 300/300, 200 agree, 100 `arris_bug`.
 
-**The C2 baseline** (`tests/fixtures/c2/<corpus>/`, the C1 subset, no verdicts,
-arris 0.10.0, each figure over all programs):
+**The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset, arris 0.10.0,
+each figure over all programs; BenchCAD with C1's verdicts), beside the baseline
+ADR-0014 set the target from (the C1 subset, no verdicts):
 
-| | BenchCAD `code_gen` | CAD-Recode validation |
-|---|---|---|
-| programs | 17,900 | 968 |
-| reach | 1,871 (10.5%) | 0 |
-| agree (all programs) | 980 (5.5%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` (all) | 16,383 / 174 | 0 / 0 |
-| unclassified | 363 | 0 |
-| timeouts | 31 (oracle, `double_simplex_sprocket`) | 0 |
-| in-subset `cq_bug` | 717 | 0 |
-| in-subset `by_design` | 0 | 0 |
+| | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
+|---|---|---|---|---|
+| programs | 17,900 | 17,900 | 968 | 968 |
+| reach | 1,871 (10.5%) | 1,871 | 37 (3.8%) | 0 |
+| agree (all programs) | 1,654 (9.2%) | 980 | 37 (3.8%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 15,629 / 154 / 100 | 16,383 / 174 / 0 | 931 / 0 / 0 | 0 / 0 / 0 |
+| unclassified (all outside the subset) | 363 | 363 | 0 | 0 |
+| timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
+| in-subset `cq_bug` | 0 | 717 | 0 | 0 |
+| in-subset `by_design` | 0 | 0 | 0 | 0 |
 
-The baseline's 717 in-subset `cq_bug` rows are all `unsupported_api` where the oracle
-builds the part. Rerunning those rows under `cq` (`tools/cq_diagnose.py`, no
-oracle execution) records their messages verbatim in
-`tests/fixtures/c2/benchcad/cq-bugs.json`: 319 refuse `cq.Workplane('YZ')`,
-285 refuse `cq.Workplane('XZ')`, and 113 refuse `circle` on a non-empty stack
-(all `torus_link`, after `moveTo`). The first two are admitted string values
-that `cq` refused; the third is a stack-context gap. These are the first
-failures reached, each shrunk to a regression; later calls are not proved by
-the diagnosis. The `YZ` lift reran all 319 of its diagnosed programs against
-their baseline oracle reports: all 319 agree, all `ok`, no timeout or further
-cause. The `XZ` lift did the same for its 285: all agree, all `ok`, no
-timeout or further cause. The `circle` lift reran its 113: 70 agree, all
-`ok`; 43 end `arris_refusal` ("no closed form for +f6 (plane surface)
-against +v0 (point)"), a box whose face touches the torus at its seam vertex,
-where the oracle builds two solids meeting at a point (BACKLOG Findings,
-`torus-box-point-contact`). No timeout or `cq_bug` remains among them. All
-three regressions now pass.
-At the baseline, CAD-Recode's 968 programs
-all ended in `r = …`, which neither worker read as a result, so that
-agreement says nothing about fidelity. Both workers now read `r`
-(ADR-0015); the baseline table awaits the subset-growth rerun. With
-`origin=`, `workplane(offset=…)` and `box` on a `moveTo` point lifted,
-CAD-Recode reaches 37 programs: run under `cq` and on the oracle, all 37
-agree, 5 of them unions of disjoint boxes that both sides build as a
-compound (2 solids, 3 for `730`; ADR-0016, `regression/cq-disjoint-union`).
-Open CASCADE's centroid of a compound can be wrong (`BRepGProp` with
-`OnlyClosed = false`, one solid order of `cq/ok-compound-occt-centroid`):
-such a row is `unclassified` until a closed-form verdict classes it
-`occt_wrong`. The oracle's
-timeouts move with the machine's load.
+The baseline's 717 in-subset `cq_bug` rows were all `unsupported_api` where the
+oracle builds the part. Rerunning them under `cq` (`tools/cq_diagnose.py`, no
+oracle execution) recorded their messages verbatim in
+`tests/fixtures/c2/benchcad/cq-bugs.json`: 319 refused `cq.Workplane('YZ')`,
+285 `cq.Workplane('XZ')`, and 113 `circle` on a non-empty stack (all
+`torus_link`, after `moveTo`). All three causes are lifted: in the re-run
+table the 604 named-plane rows and 70 of the 113 agree, and 43 end
+`arris_refusal` ("no closed form for +f6 (plane surface) against +v0
+(point)"), a box whose face touches the torus at its seam vertex, where the
+oracle builds two solids meeting at a point (BACKLOG Findings,
+`torus-box-point-contact`). BenchCAD's 117 in-subset refusals are those 43,
+68 `lobed_knob` programs outside the C1 slice (the coplanar-union refusal its
+100 verdicts class `arris_bug`) and 6 `bucket` programs.
+
+CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
+read it as a result, so its agreement said nothing about fidelity. Both
+workers now read `r` (ADR-0015): the oracle builds all 968, and with
+`origin=`, `workplane(offset=…)` and `box` on a `moveTo` point lifted, the 37
+programs the subset reaches all agree, 5 of them unions of disjoint boxes
+that both sides build as a compound (2 solids, 3 for `730`; ADR-0016,
+`regression/cq-disjoint-union`). Open CASCADE's centroid of a compound can be
+wrong (`BRepGProp` with `OnlyClosed = false`, one solid order of
+`cq/ok-compound-occt-centroid`): such a row is `unclassified` until a
+closed-form verdict classes it `occt_wrong`.
+
+The oracle's timeouts move with the machine's load, and its bytes are not
+repeatable run to run for some programs: on the BenchCAD re-run 214 rows of 8
+families (`sheet_metal_tray`, `washer`, `spacer_ring`, `snap_clip`,
+`ratchet_sector`, `hollow_tube`, `spline_hub`, `parallel_key`) differed from
+the baseline's in the STEP's SHA-256 and the last digits of centroid, volume
+and area (at most 4e-13 relative), with the same status, solids and faces,
+because Open CASCADE's boolean, chamfer and shell order depends on memory
+addresses; the same program on the same code returns the baseline's bytes on
+some runs. No fidelity row moved, so the committed BenchCAD oracle rows are the
+baseline's (BACKLOG Findings `oracle-nondeterministic-step`).
 
 ## The re-scored table
 

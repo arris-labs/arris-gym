@@ -21,33 +21,57 @@ These counts and stems are adapted from [BenchCAD](https://huggingface.co/datase
 and shared under its [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/).
 
 
-## The baseline
+## The table
 
 `fidelity.json.gz` is the `FidelityTable` of all 17,900 programs under `cq` (arris
 0.10.0) against the oracle (CadQuery 2.3.0,
-`cadquery-ocp` 7.9.3.0), no verdicts applied; `oracle.jsonl.gz` the oracle's rows
+`cadquery-ocp` 7.9.3.0), with C1's verdicts (`tests/fixtures/c1/verdicts.json`:
+the 100 `lobed_knob` rows `arris_bug`); `oracle.jsonl.gz` the oracle's rows
 (STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
-report; `reach-report.json` the `ReachReport` under the C1 subset. Written by
-`uv run --extra corpus tools/cq_corpus.py --corpus benchcad` (network, the oracle environment; outside the gate), which saves
-its work in chunks and resumes. No program text is committed. Each figure is
-over all 17,900 programs.
+report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
+`uv run --extra corpus tools/cq_corpus.py --corpus benchcad --verdicts
+tests/fixtures/c1/verdicts.json` (network, the oracle environment; outside the
+gate), which saves its work in chunks and resumes. No program text is
+committed. Each figure is over all 17,900 programs. Re-run by
+plans/in-subset-cq-bugs step 10 (2026-11-13), after the `YZ`, `XZ`, `ZX`,
+`origin=`, `workplane(offset=…)`, `circle` and `box` on a `moveTo` point and
+compound lifts.
 
-- Reach: 1,871/17,900 in-subset.
-- Agreement: 980 agree; outcomes {'agree': 980, 'disagree': 16557, 'unclassified': 363}.
-- Classes: {'arris_bug': 0, 'arris_refusal': 174, 'by_design': 0, 'cq_bug': 16383, 'occt_wrong': 0}.
-- Arris statuses: {'arris_refusal': 174, 'checker_fail': 0, 'crash': 0, 'ok': 980, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 16746}.
+- Reach: 1,871/17,900 in-subset (C1's subset reaches the same 1,871).
+- Agreement: 1,654 agree; outcomes {'agree': 1654, 'disagree': 15883, 'unclassified': 363}.
+- Classes: {'arris_bug': 100, 'arris_refusal': 154, 'by_design': 0, 'cq_bug': 15629, 'occt_wrong': 0}.
+- Arris statuses: {'arris_refusal': 254, 'checker_fail': 0, 'crash': 0, 'ok': 1654, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 15992}.
 - Oracle statuses: {'crash': 0, 'invalid': 332, 'no_result': 0, 'ok': 17537, 'runtime': 0, 'syntax': 0, 'timeout': 31}.
 - Timeouts: 31 (all oracle-side, on double_simplex_sprocket programs).
-- In-subset: outcomes {'agree': 980, 'disagree': 891, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 174, 'by_design': 0, 'cq_bug': 717, 'occt_wrong': 0};
-  `in_subset_cq_bug` 717, `in_subset_by_design` 0.
+- In-subset: outcomes {'agree': 1654, 'disagree': 217, 'unclassified': 0}, classes {'arris_bug': 100, 'arris_refusal': 117, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0};
+  `in_subset_cq_bug` 0, `in_subset_by_design` 0. The 117 in-subset refusals are 68
+  `lobed_knob` programs outside the C1 slice (no verdict), 6 `bucket` and 43
+  `torus_link` point contacts (BACKLOG Findings `torus-box-point-contact`);
+  37 more `torus_link` refusals are outside the subset. The 363 unclassified
+  rows are all outside the subset.
 
-Table digest: `be896a2b1a9c0f686ec794d327fc781c06798a580ecdf612b599966379b40bbc`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`.
+Table digest: `560fac11013cd4aada98cb648eeefef78630262b04471772058575cdebeb9a1b`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, the baseline's.
 
-The oracle's timeouts depend on the machine's load (a program that takes about
-30 s on the oracle), so a re-run can move them and with them the table digest;
-the rows of every program that does not time out are the same bytes.
-All 717 in-subset `cq_bug` rows are `unsupported_api` on arris's side where the
-oracle builds the part: forms the static rule admits that `cq` still refuses.
+**The oracle rows are the baseline's bytes**, and not the re-run's. The re-run's
+oracle gave the same status, solids and faces for every program, but 214 rows
+of 8 families (`sheet_metal_tray` 101, `washer` 49, `spacer_ring` 32,
+`snap_clip` 13, `ratchet_sector` 11, `hollow_tube` 3, `spline_hub` 3,
+`parallel_key` 2) differed from the baseline in their report only: the STEP's
+SHA-256 and the last digits of centroid, volume and area (at most 4e-13
+relative). The same program on the same code returns the baseline's bytes on
+some runs and not on others: Open CASCADE's boolean, chamfer and shell order
+depends on memory addresses (address-space layout and a job's position on its
+zygote). No fidelity row moved (all 214 are the same as the baseline's, so the
+table's digest does not depend on which oracle bytes are kept), so the baseline
+rows stay committed (BACKLOG Findings `oracle-nondeterministic-step`).
+
+The baseline (plans/fidelity-target step 6, the C1 subset, no verdicts) had
+reach 1,871, 980 agree, 717 in-subset `cq_bug`, 174 in-subset
+`arris_refusal`, table digest
+`be896a2b1a9c0f686ec794d327fc781c06798a580ecdf612b599966379b40bbc`
+(`docs/adr/0014`). The oracle's timeouts depend on the machine's load (a
+program that takes about 30 s on the oracle), so a re-run can move them and
+with them the table digest.
 
 ## The 717's diagnosis
 
@@ -70,6 +94,7 @@ failures; later calls have not yet run. Shrunk strict-xfail regressions live in
 failures does not change reach or the baseline table's digest above.
 
 Two independent diagnosis runs give identical JSON bytes. The archive pins the
-baseline table's digest; it remains that baseline's diagnosis when the current
-fidelity table is regenerated after the fixes. Attribution and licence are the
+baseline table's digest (above); it remains that baseline's diagnosis now the
+table is regenerated after the fixes: all 717 are in the subset and none is a
+`cq_bug` row (604 agree, 70 `torus_link` agree, 43 `arris_refusal`). Attribution and licence are the
 same BenchCAD CC-BY-4.0 attribution linked above.

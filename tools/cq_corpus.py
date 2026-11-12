@@ -12,7 +12,7 @@ counted unclassified, never worked here). Written under `--out-dir` (default
 - `fidelity.json.gz`: the `FidelityTable` (names, SHA-256s, measures, licence);
 - `oracle.jsonl.gz`: the oracle's rows without STEP text or wall-clock time;
 - `arris-report.json` / `.md`: what arris's maintainers act on (ADR-0006);
-- `reach-report.json`: the `ReachReport` under the C1 subset (ADR-0012).
+- `reach-report.json`: the `ReachReport` under today's `cq.subset()` (ADR-0012).
 
 No program text is written. Work is saved in chunks under `--work-dir` and a
 run with `--budget` stops between chunks (exit 3); run it again to resume.

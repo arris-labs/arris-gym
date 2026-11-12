@@ -32,7 +32,6 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `sandbox/_program.py` imports the private `arris_gym.cq._result`; `tests/test_cq_calibration.py` carries literal tolerances (`rel=1e-12`, `abs=1e-9`) and plan history in its docstring; the 2 `lobed_knob` rows refused at the fourth union have only the n-ary rebuild as evidence, not a shrunk fixture
 - Canonical JSON is hand-rolled in `_cli.py` `run_census` and `fidelity/_reach.py` `ReachReport.to_json` though `census._report._canonical` exists: use one
 - `run_census` picks the slice by `if info == benchcad.INFO` instead of a field on the `CORPORA` entry
-- The C2 baseline ran without C1 verdicts, so the slice's 100 C1 `arris_bug` rows (`lobed_knob`) read as `arris_refusal`: re-run the slice with `--verdicts` or say so beside the table
 - ADR-0014's accept line "table digest equal across architectures" is in tension with the oracle timeouts (31 `double_simplex_sprocket` programs, 4 to 30 s) making BenchCAD's table digest load-dependent: decide a timeout-stable digest or amend the line
 
 ## Findings
@@ -80,6 +79,14 @@ A defect a run measured, one block each:
 - Reproduce: `uv run pytest tests/test_cq_compound.py -k occt`; the recorded report is `tests/fixtures/cq/ok-compound-occt-centroid/oracle.json`
 - Measured: 1 of 7 two-box compounds probed; the 5 CAD-Recode compound programs and the other compound fixtures give the closed form
 - State: a recorded `occt_wrong` verdict by its closed form (`verdict.json`); the worker is unchanged, since re-measuring could change committed oracle bytes for compound rows: a change of the oracle for its own plan
+
+### oracle-nondeterministic-step
+- What: the oracle's report of one program is not the same bytes run to run: the STEP's SHA-256 and the last digits of centroid, volume and area move, status, solids and faces do not; the same program on the same code returns the baseline's bytes on some runs and not on others
+- Where: `tools/oracle/worker.py` on an oracle zygote (ADR-0013), CadQuery 2.3.0 / OCP 7.9.3.0: Open CASCADE's boolean, chamfer and shell build order follows memory addresses (address-space layout, and a job's position on its zygote)
+- Seen: plans/in-subset-cq-bugs step 10, `tools/cq_corpus.py --corpus benchcad` re-run against the committed baseline rows, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
+- Reproduce: rerun one stem (e.g. `hollow_tube_000907_s20260505`) N times with `oracle_run.run_many` and compare `step_sha256`; or re-run the corpus and diff `oracle.jsonl.gz` against `tests/fixtures/c2/benchcad/`
+- Measured: 214 of 17,900 rows differ, all in 8 families (`sheet_metal_tray` 101, `washer` 49, `spacer_ring` 32, `snap_clip` 13, `ratchet_sector` 11, `hollow_tube` 3, `spline_hub` 3, `parallel_key` 2), measures at most 4e-13 relative; none of their fidelity rows moved, so the table digest does not depend on it; the committed rows are the baseline's. Turning address-space randomisation off and starting a fresh zygote per program would make one machine repeat its bytes, not two machines agree
+- State: measured; no regression fixture: the oracle runs outside the gate (`-m oracle`), and a run-to-run difference that some runs do not show cannot be a strict xfail; decide whether the oracle's committed bytes keep the STEP hash and full-precision measures, or a fidelity-row digest is the claim (ADR-0014's cross-machine accept line)
 
 ## Rejected
 

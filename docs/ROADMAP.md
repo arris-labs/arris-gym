@@ -121,9 +121,10 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status: target set 2026-11-12** (ADR-0014; the reach baseline is in
-`docs/ARCHITECTURE.md` §Fidelity). Next: lifting forms, selectors and end forms
-in reach-curve order.
+**Status: in-subset `cq_bug` rows cleared 2026-11-13** (target set 2026-11-12,
+ADR-0014; the tables are in `docs/ARCHITECTURE.md` §Fidelity): BenchCAD reach
+1,871/17,900 and CAD-Recode 37/968, in-subset `cq_bug` 0 on both. Next:
+lifting forms, selectors and end forms in reach-curve order.
 
 **Goal.** The `cq` subset grows in census order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified
