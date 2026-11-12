@@ -97,6 +97,11 @@ on the oracle, CadQuery centres the box on the solid's centre of mass
 `moveTo(5, 0).circle(1).extrude(2)` lies inside the cylinder (V = 2π) and a
 1 × 1 × 10 one spans z from -4 to 6; the subset refuses the context. No
 BenchCAD or CAD-Recode row the C2 tables hold as `ok` or a refusal reaches it.
+`unsupported-polyline-one-point-box`, `-circle` and `-line` follow
+`polyline([(3, 1)])` with a box, a circle and two `lineTo`s: read on the
+oracle, CadQuery centres the box and the circle on the plane's origin and
+starts the first segment there, not at (3, 1) as after `moveTo(3, 1)`. The
+subset refuses a polyline of fewer than two points; no C2 row reaches one.
 
 `ok-compound-two-boxes`, `ok-compound-three-boxes`, `ok-cut-into-pieces` and
 `ok-workplane-on-compound` are compounds (ADR-0016): solids that do not meet,

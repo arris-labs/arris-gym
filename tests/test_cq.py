@@ -420,8 +420,21 @@ def test_close_needs_a_drawn_segment() -> None:
     for wp in (cq.Workplane("XY"), cq.Workplane("XY").moveTo(1, 1), boxed):
         with pytest.raises(ValueError, match=r"^No start point specified - cannot close$"):
             wp.close()
-    with pytest.raises(ValueError, match=r"^No start point specified - cannot close$"):
-        cq.Workplane("XY").polyline([(1, 1)]).close()
+
+
+@pytest.mark.parametrize(
+    ("points", "message"), [([], "list of 0 points"), ([(3, 1)], "list of 1 point")]
+)
+def test_a_polyline_of_fewer_than_two_points_is_unsupported(
+    points: list[tuple[int, int]], message: str
+) -> None:
+    # Read on the oracle (CadQuery 2.3.0): after `polyline([(3, 1)])` a box
+    # and a circle are centred on the plane's origin and a `lineTo` starts
+    # there, not at (3, 1) as after `moveTo(3, 1)`. The subset does not model
+    # what such a polyline leaves on the stack.
+    for plane in ("XY", "YZ", "XZ", "ZX"):
+        with pytest.raises(cq.UnsupportedApi, match=rf"^Workplane\.polyline\({message}\)$"):
+            cq.Workplane(plane).polyline(points)
 
 
 def test_line_to_goes_on_from_a_point_or_a_path_only() -> None:

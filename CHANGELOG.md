@@ -44,6 +44,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   `revolve`, `box`, `union` or `cut`), where it ended `ok` with the box on
   the plane's origin: CadQuery centres it on the solid's centre of mass.
 
+- `dialect="cq"` now ends `unsupported_api` "Workplane.polyline(list of 1
+  point)" (or "0 points") for a polyline of fewer than two points, where a
+  `box`, `circle` or `lineTo` after it went on from that point as after
+  `moveTo`; CadQuery goes on from the plane's origin.
+
 - `dialect="cq"` now accepts a module-level `r` as the result, after the
   last `show_object` argument and module-level `result`. A present but
   invalid value keeps that precedence. The oracle reads the same names,

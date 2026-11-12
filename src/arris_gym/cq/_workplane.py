@@ -54,7 +54,8 @@ _ZERO = Vector(0, 0, 0)
 class _Path:
     """A pending path in plane coordinates: its points in order, the first its start.
 
-    One point is a `moveTo` with nothing drawn yet; each further point ends a
+    One point is a `moveTo` with nothing drawn yet (`polyline` refuses a
+    list of one, so only `moveTo` makes it); each further point ends a
     straight segment. `close` turns it into an `arris.build.Sketch`.
     """
 
@@ -413,7 +414,9 @@ class Workplane:
 
         It starts at the first point, not at the current one, as CadQuery's
         `includeCurrent=False` does. Refuses, as `UnsupportedApi`, a stack
-        that holds a pending wire already.
+        that holds a pending wire already and a list of fewer than two
+        points: CadQuery's one-point polyline is no `moveTo` point (read on
+        the oracle: `unsupported-polyline-one-point-*`).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").polyline([(0, 0), (3, 0), (0, 4)]).close()
@@ -421,7 +424,14 @@ class Workplane:
         6.0
         """
         self._refuse_pending("Workplane.polyline")
-        return self._derive(_Path(tuple(_uv(p) for p in listOfXYTuple)))
+        points = tuple(_uv(p) for p in listOfXYTuple)
+        if len(points) < 2:
+            # CadQuery leaves no `moveTo` point here: a box or a circle after
+            # it is centred on the origin and a `lineTo` starts there (read on
+            # the oracle). A one-point `_Path` stays a `moveTo` point only.
+            count = f"{len(points)} point" + ("" if len(points) == 1 else "s")
+            raise UnsupportedApi(f"Workplane.polyline(list of {count})")
+        return self._derive(_Path(points))
 
     @census_form("Workplane.close")
     def close(self) -> Workplane:
