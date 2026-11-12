@@ -42,3 +42,15 @@ property like `YZ`'s. `unsupported-named-plane` moved from `XZ` to `ZX`,
 a CadQuery name the subset still refuses. All 285 BenchCAD programs whose
 diagnosed first failure was `cq.Workplane('XZ')` were rerun against their
 baseline oracle reports on 2026-11-12: 285 `ok`, 285 agree, no other outcome.
+
+`ok-circle-at-point-prism` and `ok-circle-at-point-half-torus` fix where
+`circle` goes after `moveTo`: on its point, in the plane's axes. The prism
+draws a radius-2 circle at local (3, 1) on `XZ` and extrudes it 5 toward
+world -y, centroid (3, -2.5, 1). The half torus turns a unit circle at
+(3, 2) by 180° about +y, so it lies in z ≤ 0, centroid z -37/(6π). Both
+have recorded oracle reports and agreeing rows in `test_cq_circle.py`, with
+a property over the plane, point, radius and signed extrusion. All 113
+BenchCAD programs whose diagnosed first failure was `circle` on a non-empty
+stack were rerun against their baseline oracle reports on 2026-11-12: 70
+`ok` and agree, 43 `arris_refusal` (a box touching the torus at its seam
+vertex, BACKLOG `torus-box-point-contact`), no `cq_bug` or timeout.

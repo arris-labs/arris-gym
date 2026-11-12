@@ -302,20 +302,29 @@ class Workplane:
 
     @census_form("Workplane.circle", [("num",)])
     def circle(self, radius: float) -> Workplane:
-        """A pending circle of `radius` centred on the workplane's origin.
+        """A pending circle of `radius`, centred on the workplane's origin or a `moveTo` point.
 
-        The circle is the one sketch on the new stack, waiting for `extrude`.
-        Refuses, as `UnsupportedApi`, a workplane whose stack is not empty:
-        CadQuery centres the circle on each object there, which the subset
-        does not model (`transformed` leaves a stack empty).
+        The circle is the one sketch on the new stack, waiting for `extrude`
+        or `revolve`. On an empty stack it is centred on the origin; on a
+        stack holding only a `moveTo` point, on that point, in the plane's
+        own axes (CadQuery's `eachpoint` over one point). Refuses, as
+        `UnsupportedApi`, any other stack: CadQuery centres a circle on each
+        object there, which the subset does not model (`transformed` leaves
+        a stack empty).
 
         >>> import arris_gym.cq as cq
         >>> round(cq.Workplane("XY").circle(1).extrude(2)._solids()[0].measure().volume, 9)
         6.283185307
+        >>> wp = cq.Workplane("XY").moveTo(2, 0).circle(1).extrude(1)
+        >>> [round(c, 9) + 0.0 for c in wp._solids()[0].measure().centroid]
+        [2.0, 0.0, 0.5]
         """
-        if self._stack:
+        if not self._stack:
+            return self._derive(self._plane.circle(radius))
+        point = self._stack[0] if len(self._stack) == 1 else None
+        if not isinstance(point, _Path) or len(point.points) != 1:
             raise UnsupportedApi("Workplane.circle on a non-empty stack")
-        return self._derive(self._plane.circle(radius))
+        return self._derive(self._plane.circle(radius, center=point.points[0]))
 
     @census_form("Workplane.extrude", [("num",)])
     def extrude(self, distance: float) -> Workplane:

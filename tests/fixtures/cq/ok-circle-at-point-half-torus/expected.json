@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 29.608813203268074,
+    "area": 65.50081171371573,
+    "centroid": [
+      0,
+      2,
+      -1.9629109648000425
+    ],
+    "bounds": [
+      [
+        -4,
+        1,
+        -4
+      ],
+      [
+        4,
+        3,
+        0
+      ]
+    ],
+    "faces": 3,
+    "face_kinds": [
+      [
+        "plane",
+        2
+      ],
+      [
+        "torus",
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A unit disc centred on the moveTo point (3, 2), turned 180 degrees right-handed about +y, so +x turns towards -z: half a torus R=3, r=1 about the line x=z=0, lying in z<=0. V=pi*(2*pi*3)/2=3*pi^2; A=half the torus's 4*pi^2*3 plus two unit end discs, 6*pi^2+2*pi; int r^2 dA = pi*(9+1/4) = 37*pi/4, so zbar = -(37*pi/4)(1-cos 180)/V = -37/(6*pi), xbar = (37*pi/4) sin 180 / V = 0; ybar = 2."
+}

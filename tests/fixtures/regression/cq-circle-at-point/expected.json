@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "cq.circle refuses a moveTo point on its stack",
   "measures": {
     "volume": 3.141592653589793,
     "area": 12.566370614359172,

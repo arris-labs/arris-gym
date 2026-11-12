@@ -11,6 +11,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `dialect="cq"` now runs `cq.Workplane("XZ")`, with sketch axes along
   world +x and +z and extrusion along -y.
 
+- `dialect="cq"` now runs `circle` after `moveTo`, centring the circle on
+  that point; a circle on any other non-empty stack still ends
+  `unsupported_api`.
+
 - `dialect="cq"` now accepts a module-level `r` as the result, after the
   last `show_object` argument and module-level `result`. A present but
   invalid value keeps that precedence. The oracle reads the same names,

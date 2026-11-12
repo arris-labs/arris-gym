@@ -95,9 +95,11 @@ a given design; **[3]** unproven semantics or worker output, established here.
   no further cause or timeout. Box and directed prism fixtures (normal -y),
   plus a property over triangle dimensions, local offsets and signed
   extrusion, pass.
-- [ ] Step 5 **[3]** — `circle` on a `moveTo` point (113 `torus_link` rows):
+- [x] Step 5 **[3]** — `circle` on a `moveTo` point (113 `torus_link` rows):
   lift its placement, with oracle fidelity fixtures for extrusion and revolve,
-  lift `regression/cq-circle-at-point`; its rows agree or have another class.
+  lift `regression/cq-circle-at-point`; its rows agree or have another class:
+  70 `ok` and agree, 43 `arris_refusal` (a box touching the torus at its
+  seam vertex, BACKLOG Findings `torus-box-point-contact`), no `cq_bug`.
 - [ ] Step 6 **[3]** — `cq.Workplane(str; origin=tuple)`: fixture by
   construction (a box on an offset plane, its centroid by construction).
 - [ ] Step 7 **[3]** — `Workplane.workplane(offset=…)`: fixtures with an

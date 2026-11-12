@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 62.83185307179586,
+    "area": 87.96459430051421,
+    "centroid": [
+      3,
+      -2.5,
+      1
+    ],
+    "bounds": [
+      [
+        1,
+        -5,
+        -1
+      ],
+      [
+        5,
+        0,
+        3
+      ]
+    ],
+    "faces": 3,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "moveTo(3, 1) on XZ is world (3, 0, 1): local (u, v, w) maps to world (u, -w, v). A radius-2 circle centred there, extruded 5 along the normal (world -y): V=pi*4*5=20*pi, A=2*4*pi+4*pi*5=28*pi, centroid (3,-2.5,1), y from -5 to 0."
+}

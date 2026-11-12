@@ -344,7 +344,9 @@ name with a leading underscore is Python's and stays `AttributeError`
 objects and its parent; every call returns a new one.
 The `YZ` plane maps local x, y and normal to world +y, +z and +x, the `XZ`
 plane to world +x, +z and -y; offsets, sketches and extrusion use that
-directed frame, as CadQuery does.
+directed frame, as CadQuery does. `circle` on an empty stack is centred on
+the plane's origin, and on a stack holding only a `moveTo` point on that
+point, in the plane's axes; any other stack ends `unsupported_api`.
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted
@@ -613,8 +615,12 @@ failures reached, each shrunk to a regression; later calls are not proved by
 the diagnosis. The `YZ` lift reran all 319 of its diagnosed programs against
 their baseline oracle reports: all 319 agree, all `ok`, no timeout or further
 cause. The `XZ` lift did the same for its 285: all agree, all `ok`, no
-timeout or further cause. Both regressions now pass; `circle` remains a
-strict xfail.
+timeout or further cause. The `circle` lift reran its 113: 70 agree, all
+`ok`; 43 end `arris_refusal` ("no closed form for +f6 (plane surface)
+against +v0 (point)"), a box whose face touches the torus at its seam vertex,
+where the oracle builds two solids meeting at a point (BACKLOG Findings,
+`torus-box-point-contact`). No timeout or `cq_bug` remains among them. All
+three regressions now pass.
 At the baseline, CAD-Recode's 968 programs
 all ended in `r = …`, which neither worker read as a result, so that
 agreement says nothing about fidelity. Both workers now read `r`
