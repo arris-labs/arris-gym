@@ -89,9 +89,12 @@ a given design; **[3]** unproven semantics or worker output, established here.
   to expose any later cause: all 319 `ok` and agree with the baseline oracle,
   no further cause or timeout. Box and directed prism fixtures, plus a property
   over triangle dimensions, local offsets and signed extrusion, pass.
-- [ ] Step 4 **[3]** — `cq.Workplane('XZ')` (285 rows): lift the named plane,
+- [x] Step 4 **[3]** — `cq.Workplane('XZ')` (285 rows): lift the named plane,
   its oracle fidelity fixtures and `regression/cq-plane-xz`; rerun its rows
-  to expose any later cause, each agreeing or classed outside `cq_bug`.
+  to expose any later cause: all 285 `ok` and agree with the baseline oracle,
+  no further cause or timeout. Box and directed prism fixtures (normal -y),
+  plus a property over triangle dimensions, local offsets and signed
+  extrusion, pass.
 - [ ] Step 5 **[3]** — `circle` on a `moveTo` point (113 `torus_link` rows):
   lift its placement, with oracle fidelity fixtures for extrusion and revolve,
   lift `regression/cq-circle-at-point`; its rows agree or have another class.

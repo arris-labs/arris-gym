@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "cq.Workplane refuses the admitted XZ plane value",
   "measures": {
     "volume": 48,
     "area": 88,

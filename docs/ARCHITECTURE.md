@@ -322,8 +322,9 @@ Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
 the **subset**, grown in census order. Today it is the census's 13 API forms:
-`Workplane("XY")` and `Workplane("YZ")`, `Vector`, `transformed`, `box`, `circle`, `extrude`,
-`union`, `cut`, `moveTo`, `lineTo`, `polyline`, `close` and `revolve`;
+`Workplane("XY")`, `Workplane("YZ")` and `Workplane("XZ")`, `Vector`,
+`transformed`, `box`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+`polyline`, `close` and `revolve`;
 selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
@@ -341,8 +342,9 @@ census writes it (`cq.Sketch`, `Workplane.sphere`, `cq.occ_impl` for
 name with a leading underscore is Python's and stays `AttributeError`
 (ADR-0007). A `Workplane` is a frozen value: its plane, its **stack** of
 objects and its parent; every call returns a new one.
-The `YZ` plane maps local x, y and normal to world +y, +z and +x; offsets,
-sketches and extrusion use that directed frame, as CadQuery does.
+The `YZ` plane maps local x, y and normal to world +y, +z and +x, the `XZ`
+plane to world +x, +z and -y; offsets, sketches and extrusion use that
+directed frame, as CadQuery does.
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted
@@ -610,7 +612,9 @@ that `cq` refused; the third is a stack-context gap. These are the first
 failures reached, each shrunk to a regression; later calls are not proved by
 the diagnosis. The `YZ` lift reran all 319 of its diagnosed programs against
 their baseline oracle reports: all 319 agree, all `ok`, no timeout or further
-cause. Its regression now passes; `XZ` and `circle` remain strict xfails.
+cause. The `XZ` lift did the same for its 285: all agree, all `ok`, no
+timeout or further cause. Both regressions now pass; `circle` remains a
+strict xfail.
 At the baseline, CAD-Recode's 968 programs
 all ended in `r = …`, which neither worker read as a result, so that
 agreement says nothing about fidelity. Both workers now read `r`

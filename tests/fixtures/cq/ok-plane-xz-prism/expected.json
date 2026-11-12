@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 42,
+    "area": 96,
+    "centroid": [
+      5,
+      -8.5,
+      1.3333333333333333
+    ],
+    "bounds": [
+      [
+        4,
+        -12,
+        0
+      ],
+      [
+        7,
+        -5,
+        4
+      ]
+    ],
+    "faces": 5,
+    "face_kinds": [
+      [
+        "plane",
+        5
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "Local (u, v, w) on XZ maps to world (u, -w, v). The 3 by 4 right triangle has area 6 and perimeter 12; extrusion by +7 along the normal (world -y) gives V=42, A=2*6+7*12=96, five planar faces. Offset (3,-2,5) gives the stated negative-y bounds and centroid (3+2,-(5+7/2),-2+10/3)."
+}

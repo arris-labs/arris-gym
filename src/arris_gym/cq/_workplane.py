@@ -7,7 +7,7 @@ Private: `arris_gym.cq` exports `Workplane`.
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import NoReturn
 
@@ -21,6 +21,13 @@ __all__ = ["Workplane", "is_python_name"]
 
 # The default named plane; the constructor admits the measured corpus planes.
 _XY = "XY"
+# CadQuery 2.3.0's named planes the subset admits, each the `arris.build`
+# constructor with the same frame (`Plane.named`, PROVENANCE.md).
+_NAMED_PLANES: dict[str, Callable[[], arris.build.Workplane]] = {
+    _XY: arris.build.Workplane.XY,
+    "YZ": arris.build.Workplane.YZ,
+    "XZ": arris.build.Workplane.XZ,
+}
 # CadQuery's degrees-to-radians factor, applied as it applies it (one
 # multiplication by pi / 180): not a tolerance.
 _RADIANS_PER_DEGREE = math.pi / 180.0
@@ -124,8 +131,9 @@ class Workplane:
     call changes a `Workplane`; a name the subset lacks raises
     `UnsupportedApi` naming it (`Workplane.sphere`), never `AttributeError`;
     setting an attribute raises `UnsupportedApi` too, and a copy is the
-    workplane itself. Admits `"XY"` (x +x, y +y, normal +z) and `"YZ"`
-    (x +y, y +z, normal +x), at the origin; refuses other named planes.
+    workplane itself. Admits `"XY"` (x +x, y +y, normal +z), `"YZ"`
+    (x +y, y +z, normal +x) and `"XZ"` (x +x, y +z, normal -y), at the
+    origin; refuses other named planes.
 
     >>> import arris_gym.cq as cq
     >>> wp = cq.Workplane("XY")
@@ -144,10 +152,9 @@ class Workplane:
 
     @census_form("cq.Workplane", [("str",)])
     def __init__(self, inPlane: str = _XY) -> None:
-        if type(inPlane) is not str or inPlane not in (_XY, "YZ"):
+        if type(inPlane) is not str or inPlane not in _NAMED_PLANES:
             raise UnsupportedApi(f"cq.Workplane({inPlane!r})")
-        plane = arris.build.Workplane.XY() if inPlane == _XY else arris.build.Workplane.YZ()
-        object.__setattr__(self, "_plane", plane)
+        object.__setattr__(self, "_plane", _NAMED_PLANES[inPlane]())
         object.__setattr__(self, "_stack", ())
         object.__setattr__(self, "_parent", None)
 

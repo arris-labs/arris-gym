@@ -33,3 +33,12 @@ in `test_cq_planes.py`. Its property varies the triangle, local offset and
 signed extrusion against the closed form. All 319 BenchCAD programs whose
 diagnosed first failure was `cq.Workplane('YZ')` were rerun against their
 baseline oracle reports on 2026-11-12: 319 `ok`, 319 agree, no other outcome.
+
+`ok-plane-xz-box` and `ok-plane-xz-prism` do the same for `XZ`, whose normal
+is world -y: the prism's local (u, v, w) maps to world (u, -w, v), so the
++7 extrusion spans y from -12 to -5, centroid (5, -8.5, 4/3). Both have
+recorded oracle reports and agreeing rows in `test_cq_planes.py`, with a
+property like `YZ`'s. `unsupported-named-plane` moved from `XZ` to `ZX`,
+a CadQuery name the subset still refuses. All 285 BenchCAD programs whose
+diagnosed first failure was `cq.Workplane('XZ')` were rerun against their
+baseline oracle reports on 2026-11-12: 285 `ok`, 285 agree, no other outcome.

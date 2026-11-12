@@ -7,5 +7,7 @@ Shrunk from BenchCAD `code_gen` program `chair_001537_s20260505` at revision
 transforms are removed and the dimensions reduced; the named-plane refusal
 remains. `cq-bugs.json` records the original program's message and hash.
 
-Desired: the centred box's closed form in `expected.json`; strict `xfail`
-until `cq` runs the `XZ` plane. No face counts are inferred from arris.
+The `XZ` lift removes the strict `xfail`: the centred box now holds the
+closed form in `expected.json`. No face counts are inferred from arris.
+`cq/ok-plane-xz-prism` additionally checks the axis signs with an asymmetric
+triangle extruded toward -y and placed with a local offset.

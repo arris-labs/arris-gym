@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48,
+    "area": 88,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -1,
+        -3,
+        -2
+      ],
+      [
+        1,
+        3,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0,
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "A centred 2 by 4 by 6 box in the XZ plane: V=2*4*6, A=2*(2*4+2*6+4*6); bounds follow the named plane axes. Faces are carried, not judged (ADR-0005)."
+}

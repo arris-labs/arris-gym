@@ -9,6 +9,9 @@ with no plane is not one of them: the census writes `cq.Workplane(str)` only,
 and step 6 refuses the bare form on purpose. So every program here that names
 no plane ends at its first line, and `agree-cylinder` and `agree-hexagon-prism`,
 which would otherwise match, are open for the conductor (plans/m3-cq-subset).
+The `XZ` revolves run since `cq.Workplane('XZ')` was lifted
+(plans/in-subset-cq-bugs step 4): the frustum and the washer match their
+closed forms, the sphere and the torus name their next call outside.
 """
 
 from __future__ import annotations
@@ -42,16 +45,17 @@ FIRST_OUTSIDE: dict[str, str | None] = {
     "agree-fillet-vertical-edges": "cq.Workplane()",
     "agree-hexagon-prism": "cq.Workplane()",
     "agree-l-prism-fuse": "cq.Workplane()",
-    "agree-revolve-frustum": "cq.Workplane('XZ')",
-    "agree-revolve-sphere": "cq.Workplane('XZ')",
-    "agree-revolve-torus": "cq.Workplane('XZ')",
-    "agree-revolve-washer": "cq.Workplane('XZ')",
+    "agree-revolve-frustum": None,
+    "agree-revolve-sphere": "Workplane.threePointArc",
+    "agree-revolve-torus": "Workplane.center",
+    "agree-revolve-washer": None,
     "agree-tube": "cq.Workplane()",
 }
 
 
 def flat(corners: object) -> list[float]:
-    assert isinstance(corners, list)
+    # `expected.json` gives lists; `Measures.bounds` gives tuples.
+    assert isinstance(corners, list | tuple)
     return [float(x) for corner in corners for x in corner]
 
 
