@@ -19,8 +19,17 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `dialect="cq"` now runs `workplane()` and `workplane(offset=d)`: a new
   plane `d` along the normal, from the current origin on an empty stack and
   from the height of the solid's centroid when the stack holds one solid,
-  its axes kept. Other keywords, a pending wire or several solids on the
-  stack end `unsupported_api`.
+  its axes kept. Other keywords or a pending wire on the stack end
+  `unsupported_api`.
+
+- `dialect="cq"` now builds a compound: a `union` of solids that do not
+  meet, or a `cut` that splits its base, ends `ok` with one body holding a
+  shell per piece, where it ended `unsupported_api` "a Workplane holding
+  `n` solids". Its measures are the sums over the pieces (the centroid
+  volume-weighted, the bounds their union, `shells` one per piece), later
+  calls act on every piece, and it scores as any body (reward version 1
+  unchanged). A fidelity row agrees with an oracle compound of as many
+  solids as the body has shells.
 
 - `dialect="cq"` now runs `circle` after `moveTo`, centring the circle on
   that point; a circle on any other non-empty stack still ends

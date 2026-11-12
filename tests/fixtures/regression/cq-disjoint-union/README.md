@@ -17,7 +17,8 @@ an in-subset `cq_bug` row. Measured in plans/in-subset-cq-bugs step 8, once
 `box` on a `moveTo` point was lifted, 2026-11-13.
 
 Desired: `ok`, the two boxes' closed form in `expected.json` (shells 2, from
-the construction; face counts carried, never judged, ADR-0005). The desired
-result of a compound is not yet decided: this expectation is the oracle's
-part, and a decision that models a compound otherwise rewrites it. Marked
-strict `xfail` until `cq` holds a compound.
+the construction; face counts carried, never judged, ADR-0005). ADR-0016
+admits a compound as a result: one solid whose body holds a shell per piece,
+measured and scored as any body. The lift (plans/in-subset-cq-bugs step 9,
+2026-11-13) removes the strict `xfail`; the oracle's report of this program
+gives the same volume, area, centroid and bounds with solids 2.

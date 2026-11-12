@@ -54,7 +54,13 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
 - `Workplane.union`, `Workplane.cut` and `_combineWithBase` (`cadquery/cq.py`):
   the solid acted on is the nearest one up the chain (this stack, then the
   parent's); the other is the solid of the Workplane given; the result sits on
-  the same plane. Disjoint solids make a compound in CadQuery.
+  the same plane. Disjoint solids make a compound in CadQuery: one
+  `Compound` on the stack, which `_findType((Solid, Compound))` finds for the
+  next `union`, `cut` or combining call, and on which `workplane()` takes
+  `Shape.Center()`, the centre of mass of all its pieces. A `cut` that splits
+  its base returns a compound too. Confirmed on the oracle by
+  `tests/fixtures/cq/ok-compound-*`, `ok-cut-into-pieces` and
+  `ok-workplane-on-compound` (ADR-0016).
 - `Workplane.circle` and `Workplane.extrude` (`cadquery/cq.py`, with
   `eachpoint` and `_getFaces`): a circle is centred on the plane's origin
   where the stack is empty, and on each point of the stack otherwise, in the

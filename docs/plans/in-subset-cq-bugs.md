@@ -140,11 +140,23 @@ a given design; **[3]** unproven semantics or worker output, established here.
   the oracle builds as a compound (2 solids, 3 for `730`), in-subset
   `cq_bug`: `regression/cq-disjoint-union`, strict xfail, not worked around
   (Q4).
-- [ ] Step 9 **[3]** — a compound result in `cq` (Q4, option a): ADR-0016
+- [x] Step 9 **[3]** — a compound result in `cq` (Q4, option a): ADR-0016
   amending ADR-0007 on what a multi-solid result measures and scores; lift
   `regression/cq-disjoint-union`; rerun the 5 programs (466, 494, 730, 786,
   936), each `ok` and agreeing with the oracle or classed outside `cq_bug`.
   Fixtures by construction (two disjoint boxes: volume, area, shells).
+  *Measured* (agent, step 9, 2026-11-13): on the oracle a compound's volume,
+  area, faces are the sums, its bounds the union, one solid per piece (one
+  shell each); no shells or genus in the report. A compound is one arris
+  solid of a shell per piece (`fuse`/`cut` as returned), so `cut` into
+  pieces and `workplane()` on a compound lift with it (CadQuery's
+  `Shape.Center()`); a row agrees when the oracle's solids are 1 or the
+  body's shells (ADR-0006 amended). The 5 rerun: all `ok` and agree (shells
+  2, 2, 3, 2, 2 = solids). Open CASCADE's compound centroid is wrong in one
+  construction (`cq/ok-compound-occt-centroid`, an `occt_wrong` verdict by
+  closed form; BACKLOG Findings). No committed row and no reward moves:
+  reward version 1 stays; a target from a STEP stays one solid (ADR-0011,
+  BACKLOG).
 - [ ] Step 10 **[2]** — re-run both corpora with `tools/cq_corpus.py`
   (BenchCAD with the C1 verdicts, in the background), commit
   `tests/fixtures/c2/*` with `fixtures:` and the new figures; the plan's

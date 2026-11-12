@@ -231,7 +231,12 @@ runtime decorator and static form matching (ADR-0012).
 
 **Stack**:
 A `cq` `Workplane`'s objects, the ones its call made, newest last; its
-result is the single solid on it (ADR-0007).
+result is the one solid on it (ADR-0007), never more than one.
+
+**Compound**:
+CadQuery's several solids that do not meet, held as one value. In `cq` it
+is one solid whose body holds a shell per piece, measured and scored as any
+body; its oracle report counts one solid per piece (ADR-0016).
 
 **Selector string**:
 The string a program passes to `faces`, `edges` and the other selector

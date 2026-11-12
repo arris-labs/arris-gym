@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 40,
+    "area": 88,
+    "centroid": [
+      4.2,
+      0,
+      0.8
+    ],
+    "bounds": [
+      [
+        0,
+        -2,
+        -1
+      ],
+      [
+        6,
+        2,
+        3
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "Two disjoint boxes, unioned: a 2 by 2 by 2 box centred on (1, 0, 0) and a 2 by 4 by 4 box centred on (5, 0, 1) (x 0..2 and 4..6). A compound of two solids, one body of two shells (ADR-0016): V=8+32=40; A=24+2*(8+8+16)=88; centroid x=(8*1+32*5)/40=4.2, z=(8*0+32*1)/40=0.8; 6 faces per box."
+}

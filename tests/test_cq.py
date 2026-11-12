@@ -1,6 +1,7 @@
 """The `cq` dialect: `cadquery` is the subset, a result resolves to one solid.
 
-ADR-0007. Fixtures under `tests/fixtures/cq/` hold one program per outcome,
+ADR-0007; a compound is one solid whose body holds a shell per piece
+(ADR-0016). Fixtures under `tests/fixtures/cq/` hold one program per outcome,
 expectations from the program's text (tests/fixture_cases.py).
 """
 
@@ -24,7 +25,14 @@ from arris_gym.cq import _forms, _result, _vector, _workplane
 from arris_gym.fidelity import OracleReport, OracleStatus, program_sha256
 
 CASES = fixture_cases.load("cq")
-RECORDED = [c for c in CASES if (fixture_cases.ROOT / "cq" / c.slug / "oracle.json").is_file()]
+# A recorded report beside a `verdict.json` is one the oracle got wrong: its
+# closed form is held to the oracle in `test_cq_compound.py` instead.
+RECORDED = [
+    c
+    for c in CASES
+    if (fixture_cases.ROOT / "cq" / c.slug / "oracle.json").is_file()
+    and not (fixture_cases.ROOT / "cq" / c.slug / "verdict.json").is_file()
+]
 
 
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c.slug)
@@ -52,9 +60,10 @@ def test_the_oracle_holds_a_recorded_fixtures_closed_form(case: fixture_cases.Ca
     assert report.status is OracleStatus.OK
     assert report.program_sha256 == program_sha256(case.program)
     assert report.measures is not None
-    assert report.measures.solids == 1
     want = case.expected["measures"]
     assert isinstance(want, dict)
+    # One solid per shell of the closed form: none of these parts has a cavity.
+    assert report.measures.solids == want["shells"]
     got = report.measures
     pairs = [(got.volume, want["volume"]), (got.area, want["area"])]
     pairs += list(zip(got.centroid, want["centroid"], strict=True))
@@ -83,10 +92,15 @@ def test_a_workplane_resolves_to_the_single_solid_on_its_stack() -> None:
     assert _result.solid_of(shown, "it") is solid
 
 
-def test_a_workplane_holding_several_solids_is_outside_the_subset() -> None:
-    shown = cq.Workplane("XY")._derive(box(0), box(5), box(10))
-    with pytest.raises(cq.UnsupportedApi, match=r"^a Workplane holding 3 solids$"):
-        _result.solid_of(shown, "it")
+def test_a_compound_resolves_to_its_one_solid_of_several_shells() -> None:
+    a = cq.Workplane("XY").box(1, 1, 1)
+    b = cq.Workplane("XY").transformed(offset=cq.Vector(5, 0, 0)).box(1, 1, 1)
+    c = cq.Workplane("XY").transformed(offset=cq.Vector(10, 0, 0)).box(1, 1, 1)
+    shown = a.union(b).union(c)
+    solid = _result.solid_of(shown, "it")
+    assert shown._stack == (solid,)
+    assert len(solid.model.shells(solid.body)) == 3
+    assert fixture_cases.close(solid.measure().volume, 3.0)
 
 
 @pytest.mark.parametrize(
@@ -221,13 +235,16 @@ def test_arris_fuse_of_disjoint_solids_is_one_solid_of_two_shells() -> None:
     assert len(fused.model.shells(fused.body)) == 2
 
 
-def test_a_disjoint_union_keeps_both_solids_and_cannot_be_shown() -> None:
+def test_a_disjoint_union_is_one_solid_of_both_shells_and_combines_on() -> None:
+    # A compound (ADR-0016): one solid on the stack, a shell per box, and a
+    # later call acts on both pieces, as CadQuery's does on its compound.
     a = cq.Workplane("XY").box(1, 1, 1)
     b = cq.Workplane("XY").transformed(offset=cq.Vector(5, 0, 0)).box(1, 1, 1)
     both = a.union(b)
-    assert len(both._stack) == 2
-    with pytest.raises(cq.UnsupportedApi, match=r"^a Workplane holding 2 solids$"):
-        both.cut(a)
+    (solid,) = both._stack
+    assert isinstance(solid, arris.build.Solid)
+    assert len(solid.model.shells(solid.body)) == 2
+    assert fixture_cases.close(solid_volume(both.cut(a)), 1.0)
 
 
 def test_a_cut_that_leaves_a_cavity_is_one_solid() -> None:
@@ -238,15 +255,20 @@ def test_a_cut_that_leaves_a_cavity_is_one_solid() -> None:
     assert fixture_cases.close(solid_volume(hollow), 26.0)
 
 
-def test_a_cut_that_splits_its_base_keeps_the_pieces_and_cannot_be_shown() -> None:
+def test_a_cut_that_splits_its_base_is_one_solid_of_both_pieces() -> None:
     # 4 x 1 x 1 bar less a 1 x 2 x 2 slab across its middle: two 1.5 x 1 x 1
-    # pieces, V = 4 - 1 = 3. CadQuery returns a compound (ADR-0007).
+    # pieces, V = 4 - 1 = 3. CadQuery returns a compound (ADR-0016).
     bar = cq.Workplane("XY").box(4, 1, 1)
     slab = cq.Workplane("XY").box(1, 2, 2)
     pieces = bar.cut(slab)
-    assert len(pieces._stack) == 2
-    with pytest.raises(cq.UnsupportedApi, match=r"^a Workplane holding 2 solids$"):
-        pieces.cut(slab)
+    (solid,) = pieces._stack
+    assert isinstance(solid, arris.build.Solid)
+    assert len(solid.model.shells(solid.body)) == 2
+    assert fixture_cases.close(solid_volume(pieces), 3.0)
+    # A further cut acts on both pieces: a 3-wide box across the middle
+    # leaves the outer 0.5 of each, V = 2 * 0.5.
+    ends = cq.Workplane("XY").box(3, 2, 2)
+    assert fixture_cases.close(solid_volume(pieces.cut(ends)), 1.0)
 
 
 def test_union_and_cut_return_new_workplanes_and_change_none() -> None:
@@ -776,11 +798,6 @@ def test_chains_of_census_forms_run_or_end_in_a_kernel_refusal(
         _result.solid_of(wp, "the part")
     except arris.ArrisError:
         pass
-    except cq.UnsupportedApi as error:
-        # A compound is the only subset gap a census form reaches.
-        compound = str(error).startswith("a Workplane holding ")
-        if not compound:
-            raise AssertionError(str(error)) from error
 
 
 # One call or keyword outside the census, on any receiver.

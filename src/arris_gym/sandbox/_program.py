@@ -197,7 +197,8 @@ def _cq_result(namespace: dict[str, object], shown: list[object]) -> arris.build
     """The last `show_object` argument's solid, else `result`'s, else `r`'s.
 
     Selection is by binding presence, never validity (ADR-0015). Raises
-    `NotASolid` (`runtime`) or `UnsupportedApi` as `solid_of` does.
+    `NotASolid` (`runtime`) as `solid_of` does; a compound is one solid
+    (ADR-0016).
     """
     if shown:
         return solid_of(shown[-1], f"the last `{SHOW_NAME}` argument")
@@ -229,7 +230,7 @@ def classify(text: str, dialect: Dialect) -> ProgramFrame:
     from `compile`, `UnsupportedApi`, an `arris.ArrisError`, any other
     exception, or a result that is not a solid: under `arris` a `result`
     missing or not a `Solid`, under `cq` one that does not resolve to a
-    single solid (ADR-0007).
+    solid (ADR-0007; a compound is one, ADR-0016).
     """
     try:
         code = compile(text, _SOURCE_NAME, "exec")

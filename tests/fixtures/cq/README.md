@@ -78,9 +78,9 @@ extruded by -2 with a negative offset, `ok-workplane-bare-xy` with
 `workplane()` (offset 0), a box crossing the slab both ways. All ten have
 recorded oracle reports and agreeing rows in `test_cq_workplane.py`, with
 properties over plane, origin, signed offset, slab and signed extrusion.
-`unsupported-workplane-on-pending-wire`, `-invert` and `-on-two-solids` are
-the contexts and keywords the subset refuses (read on the oracle, CadQuery
-keeps the origin after a `moveTo` point, which the subset does not model).
+`unsupported-workplane-on-pending-wire` and `-invert` are the context and
+keyword the subset refuses (read on the oracle, CadQuery keeps the origin
+after a `moveTo` point, which the subset does not model).
 
 `ok-box-at-point-*` fix where `box` goes after `moveTo`: centred on its
 point, in the plane's axes (CadQuery's `centered=True`). `-xz` puts a
@@ -91,3 +91,22 @@ at (1, 0) through a 4 × 4 × 2 slab, centroid x 1/17. All three have recorded
 oracle reports and agreeing rows in `test_cq_box.py`, with a property over
 plane, origin, offset, point and dimensions. `unsupported-box-on-pending-wire`
 now draws a segment after its `moveTo`: a box there is still refused.
+
+`ok-compound-two-boxes`, `ok-compound-three-boxes`, `ok-cut-into-pieces` and
+`ok-workplane-on-compound` are compounds (ADR-0016): solids that do not meet,
+one arris body with a shell per piece, its measures the sums over the pieces,
+the centroid volume-weighted. Two unequal boxes give centroid (4.2, 0, 0.8);
+three, chained, (32/15, 2, 0); a bar cut across its middle two pieces of
+volume 3 in all; `workplane(offset=1)` on two boxes at heights 0 and 2 puts
+its plane through the compound's centroid height 1, so the box there is a
+third piece. `ok-compound-bridged` unites a bar with a two-box compound into
+one solid. They replace `unsupported-union-disjoint`,
+`unsupported-cut-into-pieces` and `unsupported-workplane-on-two-solids`.
+Each has a recorded oracle report of as many solids as the closed form has
+shells, and an agreeing row in `test_cq_compound.py`, with a property over
+two to four disjoint boxes. `ok-compound-occt-centroid` is the one recorded
+report the oracle gets wrong: its centroid is (4.725, 0, 0.975) against the
+closed form's (4, 0, 0.8), and `verdict.json` classes the row `occt_wrong`
+by that closed form (BACKLOG Findings `occt-compound-centroid`);
+`test_cq.py` leaves a fixture with a `verdict.json` out of the oracle's
+closed-form check.

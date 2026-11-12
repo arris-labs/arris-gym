@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "cq refuses a union of disjoint solids, unsupported_api \"a Workplane holding 2 solids\" (a CadQuery compound, outside the subset by ADR-0007), where CadQuery 2.3.0 builds the two solids",
   "measures": {
     "volume": 24,
     "area": 64,
@@ -25,5 +24,5 @@
     "shells": 2,
     "genus": 0
   },
-  "note": "Two disjoint boxes, unioned: a 2 by 2 by 2 box centred on (-3, 0, 1) (workplane(offset=1), moveTo(-3, 0)) and a 2 by 2 by 4 box centred on (3, 0, 2). V=8+16=24; A=24+40=64; centroid x=(8*-3+16*3)/24=1, z=(8*1+16*2)/24=5/3; two genus-0 shells. The oracle gives the same with solids 2. Faces carried, not judged (ADR-0005)."
+  "note": "Two disjoint boxes, unioned: a 2 by 2 by 2 box centred on (-3, 0, 1) (workplane(offset=1), moveTo(-3, 0)) and a 2 by 2 by 4 box centred on (3, 0, 2). V=8+16=24; A=24+40=64; centroid x=(8*-3+16*3)/24=1, z=(8*1+16*2)/24=5/3; a compound, one body of two genus-0 shells (ADR-0016). The oracle gives the same with solids 2. Faces carried, not judged (ADR-0005)."
 }

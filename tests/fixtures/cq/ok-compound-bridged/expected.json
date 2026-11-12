@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 19,
+    "area": 58,
+    "centroid": [
+      2.5,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1
+      ],
+      [
+        6,
+        1,
+        1
+      ]
+    ],
+    "faces": 16,
+    "face_kinds": [
+      [
+        "plane",
+        16
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "Two disjoint 2 by 2 by 2 boxes centred on (0, 0, 0) and (5, 0, 0), then a 5 by 1 by 1 bar centred on (2.5, 0, 0) unioned with the compound: it enters both boxes, one solid. V=8+8+1*1*3 (the bar outside the boxes, x 1..4)=19; A=2*(24-1)+3*4=58; symmetric about x=2.5; faces: each box's 6 (the inner face holed) and the bar's 4 sides, 16."
+}

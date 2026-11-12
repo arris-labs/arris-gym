@@ -49,10 +49,6 @@ _REVOLVE_RADIANS_PER_DEGREE = 2 * math.pi / 360.0
 _CLOSE_GAP = 1e-6
 _ZERO = Vector(0, 0, 0)
 
-# Chord tolerance for tessellating a shell only to read the sign of its volume:
-# a plane or a closed form needs none, so any positive value gives the sign.
-_SHELL_CHORD = 0.1
-
 
 @dataclass(frozen=True)
 class _Path:
@@ -89,45 +85,6 @@ def _axis_point(point: object) -> tuple[float, ...]:
         of = f"tuple of {shape}" if shape.endswith(" numbers") else shape
         raise UnsupportedApi(f"Workplane.revolve(num, {of})")
     return numbers
-
-
-def _shell_count(solid: arris.build.Solid) -> int:
-    """The shells of `solid`'s body, cavities included."""
-    return len(solid.model.shells(solid.body))
-
-
-def _outer_shell_count(solid: arris.build.Solid) -> int:
-    """The separate pieces of `solid`'s body: its shells that enclose volume.
-
-    A cavity's shell is a closed surface facing inward, so its tessellation
-    has a negative signed volume; each piece's outer shell has a positive
-    one. Shells are the face groups joined by shared edges.
-    """
-    model, body = solid.model, solid.body
-    faces = model.faces(body)
-    parent = {face.index: face.index for face in faces}
-
-    def find(index: int) -> int:
-        while parent[index] != index:
-            index = parent[index]
-        return index
-
-    by_edge: dict[int, list[int]] = {}
-    for face in faces:
-        for edge in model.edges_of(face):
-            by_edge.setdefault(edge.index, []).append(face.index)
-    for joined in by_edge.values():
-        for other in joined[1:]:
-            parent[find(other)] = find(joined[0])
-    groups: dict[int, list[arris.Face]] = {}
-    for face in faces:
-        groups.setdefault(find(face.index), []).append(face)
-    count = 0
-    for group in groups.values():
-        volume = model.tessellate_faces(body, group, _SHELL_CHORD).signed_volume()
-        if volume is not None and volume > 0:
-            count += 1
-    return count
 
 
 class Workplane:
@@ -192,20 +149,23 @@ class Workplane:
         return child
 
     def _solids(self) -> tuple[arris.build.Solid, ...]:
-        """The solids on the stack, in stack order."""
+        """The solids on the stack, in stack order: no call puts more than one there.
+
+        A CadQuery compound, several solids that do not meet, is one solid
+        whose body holds a shell per piece (ADR-0016): `fuse` and `cut`
+        return it so.
+        """
         return tuple(o for o in self._stack if isinstance(o, arris.build.Solid))
 
     def _base_solid(self) -> arris.build.Solid | None:
         """The solid a combining call acts on: the nearest in this chain, else `None`.
 
         CadQuery looks at this workplane's stack, then its parent's, and so
-        on. A stack holding several solids is a compound, outside the subset.
+        on, and fuses with a compound as with a solid.
         """
         node: Workplane | None = self
         while node is not None:
             solids = node._solids()
-            if len(solids) > 1:
-                raise UnsupportedApi(f"a Workplane holding {len(solids)} solids")
             if solids:
                 return solids[0]
             node = node._parent
@@ -215,16 +175,12 @@ class Workplane:
         """A workplane on this plane with `new` fused into the chain's solid, if any.
 
         Where the two are disjoint, `fuse` returns one solid with the shells
-        of both; CadQuery's compound of two solids is modelled as both on the
-        stack, so the result resolves to `unsupported_api` (ADR-0007).
+        of both: CadQuery's compound of two solids (ADR-0016).
         """
         base = self._base_solid()
         if base is None:
             return self._derive(new)
-        fused = base.fuse(new)
-        if _shell_count(fused) >= _shell_count(base) + _shell_count(new):
-            return self._derive(base, new)
-        return self._derive(fused)
+        return self._derive(base.fuse(new))
 
     def _pending_sketch(self) -> arris.build.Sketch:
         """The one sketch the stack holds, which `extrude` and `revolve` consume.
@@ -306,8 +262,10 @@ class Workplane:
         centroid: this origin moved along the normal to the centroid's height,
         not to the centroid itself (CadQuery's `centerOption="ProjectedOrigin"`,
         read on the oracle: `ok-workplane-*`). The solid stays in the chain
-        for the next call to fuse with. Refuses, as `UnsupportedApi`, a
-        pending wire or several solids on the stack.
+        for the next call to fuse with. A compound counts as one solid, its
+        centroid that of all its pieces (CadQuery's `Shape.Center`, read on the
+        oracle: `ok-workplane-on-compound`). Refuses, as `UnsupportedApi`, a
+        pending wire on the stack.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).workplane(offset=3)
@@ -320,12 +278,10 @@ class Workplane:
         if not self._stack:
             center = o
         else:
-            solids = self._solids()
-            if len(solids) != 1 or len(self._stack) != 1:
-                raise UnsupportedApi(
-                    f"Workplane.workplane on a Workplane holding {len(solids)} solids"
-                )
-            center = solids[0].measure().centroid
+            # Past `_refuse_pending`, a stack that is not empty holds one solid.
+            (solid,) = self._stack
+            assert isinstance(solid, arris.build.Solid)
+            center = solid.measure().centroid
         # As CadQuery does it: the origin projected onto the plane through
         # `center` (`Vector.projectToPlane`), then moved by `offset` along the
         # unit normal (`Workplane.workplane`, `cq.py`).
@@ -529,9 +485,8 @@ class Workplane:
         """The chain's solid fused with the solid of `toUnion`, on this plane.
 
         Raises `ValueError` (a CadQuery error, `runtime`) when the chain holds
-        no solid or `toUnion` holds none. Disjoint solids make a compound,
-        which the subset lacks: the result then holds both and ends
-        `unsupported_api` when it resolves (ADR-0007).
+        no solid or `toUnion` holds none. Disjoint solids make a compound:
+        one solid whose body holds a shell per piece (ADR-0016).
 
         >>> import arris_gym.cq as cq
         >>> a = cq.Workplane("XY").box(2, 2, 2)
@@ -554,7 +509,8 @@ class Workplane:
         """The chain's solid less the solid of `toCut`, on this plane.
 
         Raises `ValueError` (`runtime`) when the chain holds no solid or
-        `toCut` holds none.
+        `toCut` holds none. A cut that splits its base leaves a compound, one
+        solid with a shell per piece (ADR-0016).
 
         >>> import arris_gym.cq as cq
         >>> a = cq.Workplane("XY").box(4, 4, 4)
@@ -567,13 +523,9 @@ class Workplane:
         base = self._base_solid()
         if base is None:
             raise ValueError("Cannot find a solid on the stack or in the parent chain")
-        cut = base.cut(*tools)
-        pieces = _outer_shell_count(cut)
-        if pieces > 1:
-            # A cut that splits its base is CadQuery's compound (ADR-0007):
-            # one stack entry per piece, so resolving it is `unsupported_api`.
-            return self._derive(*([cut] * pieces))
-        return self._derive(cut)
+        # A cut that splits its base is CadQuery's compound: one solid with a
+        # shell per piece (ADR-0016).
+        return self._derive(base.cut(*tools))
 
     def __copy__(self) -> Workplane:
         return self

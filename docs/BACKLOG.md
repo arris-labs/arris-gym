@@ -23,7 +23,8 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `tools/check_layers.py` sees `import`, `from` and literal `importlib.import_module`; a computed name evades it, as it would evade any static check
 - Decide whether the `cq` subset admits the bare `cq.Workplane()` (CadQuery's default plane) and `box(...; centered=False)`: all 19 calibration programs in `tests/fixtures/fidelity/` use one, so none runs under `cq` and `tests/test_cq_calibration.py` holds them to `unsupported_api` (a product question, in census order for C2)
 - `cq` keeps no CadQuery context along a chain: a `circle` on a stack other than one `moveTo` point, a `moveTo` on a pending wire, and `transformed`, `union`, `cut` on a pending wire and `box` on a drawn path or sketch, end `unsupported_api`; lift them in census order when a program writes them
-- `union` reads a fuse as disjoint when its shells are at least its operands' together, so a union enclosing a void is misread as a compound (`unsupported_api`); `cut` already tells pieces from a cavity by each shell's tessellated signed volume (`Shell.reversed` is False for both), so move `union` to it and measure whether a tessellation on a status's path is deterministic across machines, or ask arris for a disjointness test
+- A target read from a STEP is exactly one solid (ADR-0011), so a re-scored corpus whose oracle builds a compound (827 BenchCAD oracle `ok` reports hold 2 to 9 solids) gets a `runtime` target; decide how a compound target is read before BenchCAD is re-scored beyond the slice (ADR-0016)
+- A compound whose pieces hold cavities has more shells than oracle solids, so its row is `unclassified` under ADR-0016; count outer shells (the sign of each shell's tessellated volume) if a corpus shows one
 - `show_object(x, color=...)` ends `runtime` (a `TypeError` from the builtin's signature) where the goal says an out-of-subset form is `unsupported_api`: route the builtin's form through `cq/_forms.py`
 - `cq/_forms.py` `kind_of` decides the "call" kind by class name, so a program's own `class Vector` passes the form check, and `transformed(rotate=cq.Workplane("XY"))` ends `unsupported_api` as `Workplane.z`: decide by type
 - `test_regression.py`'s strict `xfail(raises=AssertionError)` also covers the `sandbox.executions == REPEATS` assert, so a cache-hit bug would pass as the expected failure; and `fixture_cases.load`'s faces guard has no test
@@ -72,13 +73,13 @@ A defect a run measured, one block each:
 - Measured: 43 of 113 refused with that message, the other 70 agree. With the box moved 0.5 into the torus, `cq` builds it (volume 66.13564505370971) but the row is `unclassified`: the oracle's volume is 66.13565097373274, and a quadrature of the overlap gives 66.135645049 and converging, so Open CASCADE is the one off (about 9e-8 relative); a classing case for the oracle, not seen in the corpus
 - State: measured; the desired `cq` outcome for a point contact (two solids, so a compound) is undecided, so no regression fixture yet
 
-### cadrecode-disjoint-union
-- What: a `union` of two boxes that do not meet ends `unsupported_api` "a Workplane holding 2 solids" under `cq`, where CadQuery builds a compound (2 solids, 3 for `730`); ADR-0007 leaves compounds outside the subset, so each is an in-subset `cq_bug` row
-- Where: `cq/_workplane.py` `Workplane._combined` and `_base_solid`, reached by `Workplane.union`
-- Seen: plans/in-subset-cq-bugs step 8, the 37 programs CAD-Recode's subset reaches, `filapro/cad-recode` `17d554bbc50a23de6cf6a742a3e0ed867f000153` val, stems `466`, `494`, `730`, `786`, `936`, 2026-11-13
-- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k cq-disjoint-union`
-- Measured: 5 of the 37 under `cq` and on the oracle; the other 32 agree; the shrunk pair's oracle part is the closed form (volume 24, area 64, solids 2)
-- State: regression/cq-disjoint-union; blocks the plan's CAD-Recode acceptance (`in_subset_cq_bug` 0); the desired result of a compound is undecided (the regression's expectation is the oracle's part)
+### occt-compound-centroid
+- What: Open CASCADE's centroid of a compound of two disjoint boxes is wrong in one solid order: a 2 × 2 × 2 box at the origin united with a 2 × 4 × 4 box centred on (5, 0, 1) reports (4.725, 0, 0.975), where the closed form and arris give (4, 0, 0.8); volume, area and bounds are right
+- Where: `tools/oracle/worker.py` `_measures`, `BRepGProp.VolumeProperties_s` with its default `OnlyClosed = false`, OCP 7.9.3.0; with the solids reversed, `OnlyClosed = true` or `GProp_GProps.Add` over the solids it is right
+- Seen: plans/in-subset-cq-bugs step 9, probing compounds for ADR-0016, 2026-11-13
+- Reproduce: `uv run pytest tests/test_cq_compound.py -k occt`; the recorded report is `tests/fixtures/cq/ok-compound-occt-centroid/oracle.json`
+- Measured: 1 of 7 two-box compounds probed; the 5 CAD-Recode compound programs and the other compound fixtures give the closed form
+- State: a recorded `occt_wrong` verdict by its closed form (`verdict.json`); the worker is unchanged, since re-measuring could change committed oracle bytes for compound rows: a change of the oracle for its own plan
 
 ## Rejected
 

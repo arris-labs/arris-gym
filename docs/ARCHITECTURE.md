@@ -108,9 +108,10 @@ fall through to `r`. BenchCAD programs assign `result` and end in
 `show_object(result)`. In the `arris` dialect, the
 module-level `result`, a `Solid`. The census counted BenchCAD's end forms:
 all 17,900 programs end in `show_object(result)`. A `cq` result resolves to
-the single solid on its `Workplane`'s stack (ADR-0007): no result, a value
-that is not a `Workplane` or a stack with no solid is `runtime`; several
-solids are a compound the subset lacks, `unsupported_api` naming the count.
+the solid on its `Workplane`'s stack (ADR-0007): no result, a value
+that is not a `Workplane` or a stack with no solid is `runtime`. A CadQuery
+**compound** (solids that do not meet) is that one solid, its body holding a
+shell per piece, measured and scored as any body (ADR-0016).
 CAD-Recode's original validation split ends in `r = …` on all 968 programs.
 The subset admits that end form (ADR-0015); the C1 reach curve ranked it
 first, a bridge that unlocks no program without further API forms.
@@ -332,8 +333,9 @@ kind of argument the census never writes ends `unsupported_api` naming the
 form. A program's result is the last `show_object` argument, else
 module-level `result`, else module-level `r` (ADR-0015), and resolves to
 the one solid on a `Workplane`'s stack: none or a non-`Workplane` is
-`runtime`, several (a CadQuery compound,
-including a union of disjoint solids) is `unsupported_api`. Inside the worker
+`runtime`. A `union` of disjoint solids, or a `cut` that splits its base,
+leaves a compound: the one solid `fuse` or `cut` returns, a shell per piece,
+on which later calls act as on any solid (ADR-0016). Inside the worker
 a module exposing its CadQuery names is installed as `sys.modules["cadquery"]`,
 so `import cadquery as cq` runs, and
 `show_object` is a builtin of the program's namespace; under `arris` neither
@@ -355,8 +357,9 @@ drawn path or a sketch on the stack ends `unsupported_api`.
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty
 stack its origin is the old one moved `d` along the normal; on a stack
 holding one solid it is the old origin projected onto the plane through
-the solid's centroid, then moved `d` (CadQuery's `ProjectedOrigin`). A
-pending wire or several solids on the stack end `unsupported_api`.
+the solid's centroid (a compound's: all its pieces'), then moved `d`
+(CadQuery's `ProjectedOrigin`). A pending wire on the stack ends
+`unsupported_api`.
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted
@@ -568,7 +571,8 @@ report, verdict=None)` gives a **fidelity row** (`FidelityRow`): `agree`,
 (ADR-0006) classes what the two statuses settle. An arris refusal, crash or
 checker failure, or a `runtime` where the oracle builds the part, has a
 class. Two ordinary failures agree. Two `ok` sides agree inside the agreement
-tolerance. A measure gap, the oracle failing alone and a timeout on either
+tolerance when the oracle holds one solid, or as many solids as arris's body
+has shells (a compound, ADR-0016). A measure gap, the oracle failing alone and a timeout on either
 side are `unclassified` until a **verdict** (a class and its evidence: a
 closed form, which `compare` checks, a second oracle's record, a doc anchor
 for `by_design`, or a regression fixture) classes them. A verdict may also
@@ -636,10 +640,13 @@ all ended in `r = …`, which neither worker read as a result, so that
 agreement says nothing about fidelity. Both workers now read `r`
 (ADR-0015); the baseline table awaits the subset-growth rerun. With
 `origin=`, `workplane(offset=…)` and `box` on a `moveTo` point lifted,
-CAD-Recode reaches 37 programs: run under `cq` and on the oracle, 32 agree
-and 5 end `unsupported_api` "a Workplane holding 2 solids", unions of
-disjoint boxes the oracle builds as a compound (ADR-0007 leaves compounds
-outside the subset; `regression/cq-disjoint-union`). The oracle's
+CAD-Recode reaches 37 programs: run under `cq` and on the oracle, all 37
+agree, 5 of them unions of disjoint boxes that both sides build as a
+compound (2 solids, 3 for `730`; ADR-0016, `regression/cq-disjoint-union`).
+Open CASCADE's centroid of a compound can be wrong (`BRepGProp` with
+`OnlyClosed = false`, one solid order of `cq/ok-compound-occt-centroid`):
+such a row is `unclassified` until a closed-form verdict classes it
+`occt_wrong`. The oracle's
 timeouts move with the machine's load.
 
 ## The re-scored table

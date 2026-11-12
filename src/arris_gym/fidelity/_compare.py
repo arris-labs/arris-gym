@@ -270,13 +270,27 @@ def _check_closed_form(
         raise ValueError("the verdict's closed form contradicts the measures")
 
 
+def _pieces_agree(result: ExecResult, report: OracleReport) -> bool:
+    """Whether the oracle's solids are one, or as many as the result's shells.
+
+    A compound's solids are its pieces, and a piece without a cavity is one
+    shell of arris's body (ADR-0016). One solid with a cavity has more
+    shells than solids, so a single solid is judged by its measures alone,
+    as before; a compound whose pieces hold cavities is not judged to agree.
+    """
+    if result.measures is None or report.measures is None:
+        return False
+    return report.measures.solids in (1, result.measures.shells)
+
+
 def compare(
     result: ExecResult, report: OracleReport, verdict: Verdict | None = None
 ) -> FidelityRow:
     """The fidelity row of one program: its arris result against its oracle report.
 
     The rule (ADR-0006) classes what the two statuses settle; two `ok`
-    sides agree when the oracle has one solid and every judged measure is
+    sides agree when the oracle has one solid, or a compound of as many
+    solids as the result has shells (ADR-0016), and every judged measure is
     inside the agreement tolerance (ADR-0005), and are `unclassified`
     otherwise, as are a timeout on either side and the oracle failing
     alone. A `verdict` classes such a row, or replaces the rule's class.
@@ -303,8 +317,7 @@ def compare(
     if result.measures is not None and report.measures is not None:
         deltas = measure_deltas(result.measures, report.measures)
     if ruling is _Rule.MEASURE:
-        one_solid = report.measures is not None and report.measures.solids == 1
-        agrees = one_solid and deltas is not None and within_tolerance(deltas)
+        agrees = deltas is not None and _pieces_agree(result, report) and within_tolerance(deltas)
         ruling = _Rule.AGREE if agrees else _Rule.UNCLASSIFIED
     if ruling is _Rule.AGREE and verdict is not None:
         raise ValueError("a verdict on a row that agrees")

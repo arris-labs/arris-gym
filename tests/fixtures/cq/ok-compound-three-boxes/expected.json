@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 15,
+    "area": 52,
+    "centroid": [
+      2.1333333333333333,
+      2,
+      0
+    ],
+    "bounds": [
+      [
+        -0.5,
+        -1,
+        -1.5
+      ],
+      [
+        5,
+        6,
+        1.5
+      ]
+    ],
+    "faces": 18,
+    "face_kinds": [
+      [
+        "plane",
+        18
+      ]
+    ],
+    "shells": 3,
+    "genus": 0
+  },
+  "note": "Three disjoint boxes unioned in a chain: a unit box at the origin, a 2 by 2 by 2 box centred on (4, 0, 0) and a 1 by 2 by 3 box centred on (0, 5, 0). A compound of three solids, one body of three shells (ADR-0016): V=1+8+6=15; A=6+24+2*(2+3+6)=52; centroid x=(8*4)/15=32/15, y=(6*5)/15=2, z=0; 6 faces per box."
+}

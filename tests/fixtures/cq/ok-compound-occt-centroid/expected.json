@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 40,
+    "area": 88,
+    "centroid": [
+      4,
+      0,
+      0.8
+    ],
+    "bounds": [
+      [
+        -1,
+        -2,
+        -1
+      ],
+      [
+        6,
+        2,
+        3
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "Two disjoint boxes, unioned: a 2 by 2 by 2 box centred on the origin and a 2 by 4 by 4 box centred on (5, 0, 1). V=8+32=40; A=24+64=88; centroid x=(8*0+32*5)/40=4, z=(8*0+32*1)/40=0.8; one body of two shells. The oracle's centroid is (4.725, 0, 0.975): Open CASCADE wrong, settled by this closed form (verdict.json, ADR-0016)."
+}

@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 17,
+    "area": 54,
+    "centroid": [
+      2.3529411764705883,
+      0,
+      1.0588235294117647
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1
+      ],
+      [
+        6,
+        1,
+        3
+      ]
+    ],
+    "faces": 18,
+    "face_kinds": [
+      [
+        "plane",
+        18
+      ]
+    ],
+    "shells": 3,
+    "genus": 0
+  },
+  "note": "Two disjoint 2 by 2 by 2 boxes centred on (0, 0, 0) and (5, 0, 2): a compound, its centroid at z=(8*0+8*2)/16=1. workplane(offset=1) puts the plane through that height, moved 1: z=2, the origin's x and y kept (ProjectedOrigin); a unit box centred on (0, 0, 2) spans z 1.5..2.5, above the first box (top z=1), a third piece. V=8+8+1=17; A=24+24+6=54; centroid x=(8*5)/17=40/17, z=(8*2+1*2)/17=18/17; 6 faces per box."
+}
