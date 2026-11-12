@@ -130,7 +130,7 @@ a given design; **[3]** unproven semantics or worker output, established here.
   worked around.
   *Settled* (conductor, 2026-11-13): step 7 measured this cause; the
   acceptance (CAD-Recode `in_subset_cq_bug` 0) is unchanged, so the lift is a
-  step here, not a non-goal, and the corpus re-run follows as step 9.
+  step here, not a non-goal, and the corpus re-run follows as step 10.
   *Measured* (agent, step 8, 2026-11-13): on the oracle a box after
   `moveTo(x, y)` is centred on the point in the plane's axes, after
   `workplane(offset=…)` on the moved plane, and fused with a solid in the
@@ -140,7 +140,12 @@ a given design; **[3]** unproven semantics or worker output, established here.
   the oracle builds as a compound (2 solids, 3 for `730`), in-subset
   `cq_bug`: `regression/cq-disjoint-union`, strict xfail, not worked around
   (Q4).
-- [ ] Step 9 **[2]** — re-run both corpora with `tools/cq_corpus.py`
+- [ ] Step 9 **[3]** — a compound result in `cq` (Q4, option a): ADR-0016
+  amending ADR-0007 on what a multi-solid result measures and scores; lift
+  `regression/cq-disjoint-union`; rerun the 5 programs (466, 494, 730, 786,
+  936), each `ok` and agreeing with the oracle or classed outside `cq_bug`.
+  Fixtures by construction (two disjoint boxes: volume, area, shells).
+- [ ] Step 10 **[2]** — re-run both corpora with `tools/cq_corpus.py`
   (BenchCAD with the C1 verdicts, in the background), commit
   `tests/fixtures/c2/*` with `fixtures:` and the new figures; the plan's
   numbers in ARCHITECTURE §Fidelity follow.
@@ -192,7 +197,7 @@ a given design; **[3]** unproven semantics or worker output, established here.
   `result`, `r`, by presence even when invalid (ADR-0015). It preserves
   existing selection, admits the census's ranked end form and needs no
   runtime parse; the last statement's arbitrary bound name is not a result.
-- Q4, ⚠ OPEN (step 8, 2026-11-13; an acceptance question for the human): 5
+- Q4, settled (human, 2026-11-13: option a; step 9 lifts it; was an acceptance question): 5
   of CAD-Recode's 37 reached programs are unions of disjoint boxes, a
   CadQuery compound that ADR-0007 keeps outside the subset, so CAD-Recode's
   `in_subset_cq_bug` is 5, not 0. A compound is a result, not a census form,
@@ -200,5 +205,5 @@ a given design; **[3]** unproven semantics or worker output, established here.
   in `cq` (an ADR amending ADR-0007: what a multi-solid result measures and
   scores), lifted in this plan; (b) keep ADR-0007 and amend the acceptance to
   name the 5 (BACKLOG Findings `cadrecode-disjoint-union`). Recommended: (a)
-  in its own step before step 9, since the oracle's part is unambiguous and
+  in its own step as step 9, since the oracle's part is unambiguous and
   arris's `fuse` already returns one solid with both shells.
