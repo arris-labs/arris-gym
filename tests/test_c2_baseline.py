@@ -73,7 +73,7 @@ FIGURES = {
 # Reach under the C1 subset, before C2 lifted `r = …`, `origin=` and `workplane`.
 C1_REACH = {"benchcad": 1_871, "cadrecode": 0}
 # The SHA-256 of BenchCAD's uncompressed oracle rows at the C2 baseline
-# (plans/fidelity-target step 6): the re-run keeps every row the same bytes.
+# (plans/fidelity-target step 6), pinned so the committed file stays them.
 BENCHCAD_BASELINE_ORACLE_ROWS = "e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157"
 
 
@@ -147,7 +147,13 @@ def test_cadrecodes_agreements_are_not_two_failures() -> None:
     assert all(e.row.status is Status.OK and e.row.oracle_status is OracleStatus.OK for e in agree)
 
 
-def test_benchcads_oracle_rows_are_the_baselines_bytes() -> None:
+def test_benchcads_committed_oracle_rows_are_the_pinned_baseline_file() -> None:
+    """The committed `oracle.jsonl.gz` is the C2 baseline's, by its pinned hash.
+
+    It does not show that a re-run reproduces the baseline: the step-10 re-run
+    differed in `report` on 214 rows (Open CASCADE's build order, BACKLOG
+    `oracle-nondeterministic-step`) and its rows were not committed.
+    """
     data = gzip.decompress((C2 / "benchcad" / "oracle.jsonl.gz").read_bytes())
     assert hashlib.sha256(data).hexdigest() == BENCHCAD_BASELINE_ORACLE_ROWS
 
