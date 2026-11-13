@@ -87,7 +87,7 @@ a given design; **[3]** unproven semantics, established here.
   drawn path, a pending circle. Also run `nSides` as 6.0, 2, 0 and -6, and a
   diameter of 0 and of -d. Each case is lifted when it agrees and refused
   otherwise, with an `ok-`, `runtime-` or `unsupported-` fixture. Settle Q1.
-- [ ] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows` on
+- [x] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows` on
   both corpora into a scratch out-dir, then `cq_diagnose.py` over the new
   BenchCAD table, to get the in-subset rows by class and the `cq_bug` rows by
   message. Any cause other than agreement becomes a step before step 4,
@@ -142,5 +142,15 @@ a given design; **[3]** unproven semantics, established here.
   on both sides and agrees (`ok-polygon-negative-diameter`). The five other
   contexts are built by CadQuery on the object's `Center()` and stay
   refused (`unsupported-polygon-*`).
-- ⚠ OPEN: Q2 — any cause step 3 finds that this plan leaves for later. The
-  agent decides in step 3 and records the reach it costs.
+- *Settled* (step 3): Q2 — none. The re-run (oracle rows reused) gives
+  BenchCAD reach 4,103/17,900 (4,011 + 92), CAD-Recode 104/968. Against the
+  committed table exactly 92 rows change, all `grease_nipple`, from `cq_bug`
+  (`unsupported_api`) to agree: 2,826 agree, in-subset classes unchanged
+  (`arris_bug` 100, `arris_refusal` 852, `occt_wrong` 325, `cq_bug` 0,
+  `by_design` 0), in-subset unclassified 0. The 204 unclassified rows are the
+  same ones, all outside the subset. `cq_diagnose.py` diagnoses 0 in-subset
+  `cq_bug` programs. The 100 `lobed_knob` rows are still `arris_bug`. The
+  BenchCAD oracle digest `e9925835…73157` is the committed one (the 31
+  `double_simplex_sprocket` timeouts timed out again); the table digest is
+  `db6adfc4…de2cee`. CAD-Recode's table digest `24c2f92a…3448` and oracle
+  digest `8d28ce11…195f` are the committed ones. Step 4 needs no cause step.
