@@ -34,6 +34,10 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - Canonical JSON is hand-rolled in `_cli.py` `run_census` and `fidelity/_reach.py` `ReachReport.to_json` though `census._report._canonical` exists: use one
 - `run_census` picks the slice by `if info == benchcad.INFO` instead of a field on the `CORPORA` entry
 - ADR-0014's accept line "table digest equal across architectures" is in tension with the oracle timeouts (31 `double_simplex_sprocket` programs, 4 to 30 s) making BenchCAD's table digest load-dependent: decide a timeout-stable digest or amend the line
+- `cylinder` on a solid, a path or a sketch ends `unsupported_api` before its height and radius are checked, so `box(1,1,1).cylinder(-1, 1)` is `unsupported_api` where CadQuery ends `runtime`; check the dimensions first if a corpus program reaches it
+- The `occt_wrong` verdicts for the tee and hook families rest on a closed form checked only against arris and its quadrature; add a limiting case with an elementary answer (branch radius equal to the main radius, a hook with no cylinder overlap) so the check is independent of both kernels
+- 176 `pull_handle` rows end `OpInternalError` ("kernel bug: the face arrangement is not a subdivision…") and are `arris_refusal` by ADR-0006's rule, though the kernel calls it a bug and C1's `lobed_knob` rows were raised to `arris_bug` by verdict; decide whether these get `arris_bug` verdicts
+- Three BenchCAD programs outside the subset (`bearing_retainer_cap_014254`, `_015325`, `_016792`) end `OpInternalError` "a section edge of f38 ends at a node nothing else reaches"; shrink each to a `regression/` fixture and report it to arris
 
 ## Findings
 

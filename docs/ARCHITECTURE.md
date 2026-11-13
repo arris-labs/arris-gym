@@ -622,16 +622,17 @@ alone and keeps the oracle's committed draw. On the slice with
 C1's verdicts it gives C1's figures: reach 300/300, 200 agree, 100 `arris_bug`.
 
 **The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset, arris 0.10.0,
-each figure over all programs; BenchCAD with C1's verdicts), beside the baseline
-ADR-0014 set the target from (the C1 subset, no verdicts):
+each figure over all programs; BenchCAD with C1's verdicts and its own), beside
+the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 1,871 (10.5%) | 1,871 | 37 (3.8%) | 0 |
-| agree (all programs) | 1,654 (9.2%) | 980 | 37 (3.8%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 15,629 / 154 / 100 | 16,383 / 174 / 0 | 931 / 0 / 0 | 0 / 0 / 0 |
-| unclassified (all outside the subset) | 363 | 363 | 0 | 0 |
+| reach | 3,304 (18.5%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 2,248 (12.6%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 14,387 / 636 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 325 | 0 | 1 | 0 |
+| unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
 | in-subset `cq_bug` | 0 | 717 | 0 | 0 |
 | in-subset `by_design` | 0 | 0 | 0 | 0 |
@@ -650,11 +651,23 @@ oracle builds two solids meeting at a point (BACKLOG Findings,
 68 `lobed_knob` programs outside the C1 slice (the coplanar-union refusal its
 100 verdicts class `arris_bug`) and 6 `bucket` programs.
 
+`cylinder` and `union` on a chain holding no solid took BenchCAD from 1,871 to
+3,304 reached. Of the 1,433 newly reached programs the in-subset
+`cq_bug` rows were the 64 `t_pipe_fitting` programs (`union` first on an empty
+chain, lifted); all ended up `occt_wrong` with the 136 `u_bolt` and 125
+`j_hook` programs, each by a closed form from how the part is built, arris
+within 1e-10 of it and Open CASCADE 1e-9 to 1.5e-4 off. The 159 `cotter_pin`
+programs are `arris_refusal` (two cylinders tangent along a line,
+`regression/cq-tangent-cylinders`); BenchCAD's 631 in-subset refusals are
+those, `pull_handle` 176, `wall_anchor` 81, `torus_link` 80, 68 `lobed_knob`,
+`hinge` 61 and `bucket` 6. CAD-Recode went from 37 to 104 reached, 103 agreeing;
+its crossing-cylinder stem `550` is `occt_wrong` by closed form.
+
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
 workers now read `r` (ADR-0015): the oracle builds all 968, and with
 `origin=`, `workplane(offset=…)` and `box` on a `moveTo` point lifted, the 37
-programs the subset reaches all agree, 5 of them unions of disjoint boxes
+programs the subset then reached all agreed, 5 of them unions of disjoint boxes
 that both sides build as a compound (2 solids, 3 for `730`; ADR-0016,
 `regression/cq-disjoint-union`). Open CASCADE's centroid of a compound can be
 wrong (`BRepGProp` with `OnlyClosed = false`, one solid order of
