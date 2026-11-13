@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 1,
+    "area": 7.82842712474619,
+    "centroid": [
+      0.6666666666666666,
+      0.3333333333333333,
+      0
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        -1
+      ],
+      [
+        1,
+        1,
+        1
+      ]
+    ],
+    "faces": 5,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        5
+      ]
+    ]
+  },
+  "note": "The right triangle (0, 0), (1, 0), (1, 1) drawn by lineTo and closed, extruded 1 to each side of XY: area 1/2, height 2. V = 1, A = 2 (1/2) + (2 + sqrt2) 2 = 5 + 2 sqrt2, centroid (2/3, 1/3, 0), 5 planar faces."
+}

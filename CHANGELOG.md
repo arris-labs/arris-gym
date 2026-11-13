@@ -10,7 +10,8 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   `2 * |distance|`, fused with or cut from the chain's solid as `extrude`'s
   is. `both=False` is plain `extrude`; the other keywords (`combine`,
   `clean`, `taper`, `until`) and `extrude(distance, True)`, whose second
-  argument is CadQuery's `combine`, still end `unsupported_api`.
+  argument is CadQuery's `combine`, still end `unsupported_api`. A zero
+  distance, with or without `both`, ends `runtime`, as CadQuery's does.
 
 - `dialect="cq"` now runs `polygon(nSides, diameter)`: a regular polygon
   inscribed in the circle of `diameter`, centred on the workplane's origin

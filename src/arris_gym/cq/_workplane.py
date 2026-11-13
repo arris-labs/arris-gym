@@ -578,7 +578,9 @@ class Workplane:
         `both`, it grows `distance` to each side of the plane: CadQuery fuses
         the two sweeps and cleans away the seam, which is the one prism of
         height `2|distance|` that arris sweeps in one go. Raises `ValueError`
-        (`runtime`) when the stack holds no pending sketch.
+        (`runtime`) when the stack holds no pending sketch, and for a zero
+        `distance` with or without `both` (CadQuery's
+        `Standard_ConstructionError` from the zero-length sweep).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").circle(1).extrude(2)
@@ -588,7 +590,13 @@ class Workplane:
         >>> round(wp._solids()[0].measure().centroid[2], 9)
         0.0
         """
-        return self._combined(self._pending_sketch().extrude(distance, both=both))
+        sketch = self._pending_sketch()
+        if distance == 0:
+            raise ValueError(
+                f"Workplane.extrude({distance}, both={both}): a zero distance "
+                "(CadQuery's Standard_ConstructionError)"
+            )
+        return self._combined(sketch.extrude(distance, both=both))
 
     @census_form("Workplane.moveTo", [("num",)] * 2)
     def moveTo(self, x: float = 0, y: float = 0) -> Workplane:

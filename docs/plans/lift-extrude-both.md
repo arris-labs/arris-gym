@@ -81,7 +81,7 @@ a given design; **[3]** unproven semantics, established here.
   `ok-extrude-both-hex-key-organizer`, a corpus program as written. Add a
   `hypothesis` property over the profile, distance, sign and plane. Declare
   the form and move the three unsupported-example hits.
-- [ ] Step 2 **[2]** — the arguments and contexts. Run `d = 0` with and
+- [x] Step 2 **[2]** — the arguments and contexts. Run `d = 0` with and
   without `both` on both sides, and `both` on each stack `extrude` refuses
   today (empty, a solid, a drawn path, two sketches). Each case is lifted
   when it agrees and refused otherwise, with an `ok-`, `runtime-` or
@@ -146,11 +146,17 @@ a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
-- ⚠ OPEN: Q1 — `extrude(0)` and `extrude(0, both=True)`. The agent decides
-  by step 2, by `cylinder`'s rule: read on the oracle, and `cq` ends
+- Settled: Q1 (step 2) — `extrude(0)` and `extrude(0, both=True)`. Decided
+  by `cylinder`'s rule: read on the oracle, and `cq` ends
   `runtime` where the oracle raises or answers `invalid`. If the oracle
   answers `ok`, the row is a counted `cq_bug` with a strict `xfail`
-  regression fixture (ADR-0012), as `polygon(2, d)` is.
+  regression fixture (ADR-0012), as `polygon(2, d)` is. Read on the oracle
+  (2026-11-14): both raise `Standard_ConstructionError`, so `cq` raises
+  `ValueError` (`runtime`) for a zero distance, `both` or not, after the
+  pending-sketch check (`runtime-extrude-zero*`). `both` on an empty stack,
+  a solid, an open path or a point is `No pending wires present` on both
+  sides (`runtime-extrude-both-on-*`); two sketches are unreachable, as
+  `circle` after `circle` is refused first (`unsupported-extrude-both-two-sketches`).
 - ⚠ OPEN: Q2 — what the re-run finds. The agent records it by step 3: the
   in-subset rows by class, which rows step 4 must class, and any other
   cause with the reach it costs.

@@ -1,0 +1,14 @@
+{
+  "status": "runtime",
+  "message": "ValueError: No pending wires present",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "eb8f0a6bc9dfcf90fda6d427dc3bdfc568c9febdb01d40c7aad1eccfe8729b1a",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  },
+  "step": null,
+  "seconds": 0.0
+}

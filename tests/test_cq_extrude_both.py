@@ -18,7 +18,13 @@ import arris_gym as ag
 import arris_gym.cq as cq
 import fixture_cases
 from arris_gym.census import CorpusProgram, reach
-from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+from arris_gym.fidelity import (
+    FidelityOutcome,
+    OracleReport,
+    OracleStatus,
+    compare,
+    program_sha256,
+)
 
 PLANES = ["XY", "YZ", "XZ", "ZX"]
 FIXTURES = [
@@ -160,3 +166,104 @@ def test_reach_reads_the_declared_keyword_only() -> None:
     )
     assert refused.status is ag.Status.UNSUPPORTED_API
     assert refused.message == "Workplane.extrude(num, bool)"
+
+
+# Read on the oracle (2026-11-14, `oracle.json` beside each; Q1 of
+# plans/lift-extrude-both): a zero distance, with or without `both`, fails in
+# the sweep (`Standard_ConstructionError`), and `both` on a stack holding no
+# pending wire fails as `extrude` does (`No pending wires present`). `cq` ends
+# each `runtime` and the rows agree.
+FAILING = [
+    "runtime-extrude-zero",
+    "runtime-extrude-zero-both",
+    "runtime-extrude-both-on-empty-stack",
+    "runtime-extrude-both-on-solid",
+    "runtime-extrude-both-on-open-path",
+    "runtime-extrude-both-on-point",
+]
+
+
+def _recorded(slug: str) -> tuple[fixture_cases.Case, OracleReport]:
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    path = fixture_cases.ROOT / "cq" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text())
+    assert report.program_sha256 == program_sha256(case.program)
+    return case, report
+
+
+@pytest.mark.parametrize("slug", FAILING)
+def test_an_extrusion_cadquery_fails_on_fails_on_both_sides(slug: str) -> None:
+    case, report = _recorded(slug)
+    assert report.status is OracleStatus.RUNTIME
+    result = fixture_cases.run(case)
+    assert fixture_cases.check(result, case.expected) == []
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
+def test_the_closed_path_agrees_with_the_recorded_oracle() -> None:
+    case, report = _recorded("ok-extrude-both-closed-path")
+    result = fixture_cases.run(case)
+    assert fixture_cases.check(result, case.expected) == []
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
+def test_two_sketches_are_refused_where_the_second_is_drawn() -> None:
+    # CadQuery extrudes both circles (a pending wire each, the oracle answers
+    # `ok`, V = 10 pi); the subset holds one sketch on a stack, so `circle`
+    # after `circle` is refused before `extrude` is reached.
+    case = next(
+        c for c in fixture_cases.load("cq") if c.slug == "unsupported-extrude-both-two-sketches"
+    )
+    result = fixture_cases.run(case)
+    assert result.status is ag.Status.UNSUPPORTED_API
+    assert result.message == "Workplane.circle on a non-empty stack"
+
+
+@settings(max_examples=30, deadline=None)
+@given(
+    plane=st.sampled_from(PLANES),
+    stack=st.sampled_from(
+        [
+            "",
+            ".box(1, 1, 1)",
+            ".moveTo(1, 2)",
+            ".moveTo(1, 2).lineTo(3, 4)",
+            ".circle(1).extrude(1)",
+        ]
+    ),
+    distance=st.integers(-8, 8),
+    both=st.booleans(),
+)
+def test_an_extrusion_with_no_pending_sketch_or_no_distance_ends_runtime(
+    plane: str, stack: str, distance: int, both: bool
+) -> None:
+    program = (
+        f"import cadquery as cq\nr = cq.Workplane('{plane}'){stack}"
+        f".extrude({distance}, both={both})\n"
+    )
+    result = ag.run(program, dialect="cq")
+    assert result.status is ag.Status.RUNTIME, result.message
+    assert result.message == "ValueError: No pending wires present"
+
+
+@settings(max_examples=30, deadline=None)
+@given(
+    plane=st.sampled_from(PLANES),
+    profile=st.sampled_from([".circle(1)", ".polygon(6, 2)", ".moveTo(1, 1).circle(2)"]),
+    on_slab=st.booleans(),
+    both=st.booleans(),
+)
+def test_a_zero_distance_ends_runtime_in_every_admitted_context(
+    plane: str, profile: str, on_slab: bool, both: bool
+) -> None:
+    chain = ".box(4, 4, 2).workplane(offset=1)" if on_slab else ""
+    program = (
+        f"import cadquery as cq\nr = cq.Workplane('{plane}'){chain}{profile}"
+        f".extrude(0, both={both})\n"
+    )
+    result = ag.run(program, dialect="cq")
+    assert result.status is ag.Status.RUNTIME, result.message
+    assert result.message == (
+        f"ValueError: Workplane.extrude(0, both={both}): a zero distance "
+        "(CadQuery's Standard_ConstructionError)"
+    )

@@ -1,0 +1,14 @@
+{
+  "status": "runtime",
+  "message": "OCP.OCP.Standard.Standard_ConstructionError: BRepSweep_Translation::Constructor",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "cca1e89ff5449f48f22c40f4b312eeb206b42c90c7fb83a44c2830aae92c53e2",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  },
+  "step": null,
+  "seconds": 0.0
+}

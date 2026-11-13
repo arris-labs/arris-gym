@@ -284,3 +284,16 @@ a recorded oracle report that meets its closed form and an agreeing row in
 offset, signed distance and `both`. The oracle keeps a circle's cylinder
 as two faces (4 in all, `-circle-xy`) where `cq` builds one: the fidelity
 table carries face counts and never judges them (ADR-0005).
+
+`ok-extrude-both-closed-path` is a lineTo-drawn right triangle extruded by 1
+with `both` (V = 1). `runtime-extrude-zero` and `-zero-both` extrude a
+circle by 0: read on the oracle (2026-11-14) the sweep fails with
+`Standard_ConstructionError`, and `cq` ends `runtime` in its own words, as
+`cylinder` does for a zero height. `runtime-extrude-both-on-empty-stack`,
+`-on-solid`, `-on-open-path` and `-on-point` are `both` where no pending
+wire is: CadQuery and `cq` both raise `No pending wires present`.
+`unsupported-extrude-both-two-sketches` draws a second circle before the
+extrusion: the oracle extrudes both (`ok`), the subset refuses `circle` on
+a pending wire before `extrude` is reached. `test_cq_extrude_both.py` holds
+the failing rows as agreeing, with properties over stacks, planes and
+distances.
