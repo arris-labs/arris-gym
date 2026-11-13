@@ -1,14 +1,15 @@
 # arris report
 
-Over 17900 programs: 636 arris refusals, 100 arris bugs.
+Over 17900 programs: 942 arris refusals, 100 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 
-### ` "OpDegenerateError" ` (372)
+### ` "OpDegenerateError" ` (653)
 
+- 281x ` "degenerate result: an arc's circle crosses the revolve axis: a spindle torus" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f81, +f82)" `
 - 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f83, +f84)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f83, +f93)" `
@@ -53,10 +54,11 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f99, +f80, +f81)" `
 - 3x ` "degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold (+v1)" `
 
-### ` "OpInternalError" ` (182)
+### ` "OpInternalError" ` (207)
 
 - 176x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f8's arrangement does not turn once" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a hole of f9 lies inside no region" `
+- 25x ` "kernel bug: the face arrangement is not a subdivision: a section edge of f0 ends at a node nothing else reaches" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a section edge of f38 ends at a node nothing else reaches" `
 
 ### ` "OpUnsupportedError" ` (82)

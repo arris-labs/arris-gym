@@ -16,7 +16,6 @@ import gzip
 import hashlib
 import json
 from collections import Counter
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -39,16 +38,16 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 3_304,
-        "agree": 2_248,
+        "in_subset": 3_667,
+        "agree": 2_543,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
             "arris_bug": 100,
-            "arris_refusal": 636,
+            "arris_refusal": 942,
             "by_design": 0,
-            "cq_bug": 14_387,
+            "cq_bug": 13_786,
             "occt_wrong": 325,
         },
         "unclassified": 204,
@@ -79,16 +78,14 @@ BENCHCAD_BASELINE_ORACLE_ROWS = "e992583501c771e2f52f07939a61b5b44ec5e8989f3f820
 
 
 def tables_subset() -> cq.Subset:
-    """The subset the committed tables were run under: today's less the forms lifted since.
+    """The subset the committed tables were run under: today's `cq.subset()`.
 
-    plans/lift-cylinder step 6 re-ran both tables after `Workplane.cylinder` was
-    lifted. `Workplane.threePointArc` (plans/lift-three-point-arc step 1) is
-    declared before its re-run lands (step 7), which returns this to
+    plans/lift-three-point-arc step 5 re-ran both tables after
+    `Workplane.threePointArc` was lifted. A later lift that lands before its
+    re-run subtracts its forms here, and its re-run returns this to
     `cq.subset()`.
     """
-    lifted = ("Workplane.threePointArc",)
-    forms = tuple(f for f in cq.subset().forms if f.name not in lifted)
-    return replace(cq.subset(), forms=forms)
+    return cq.subset()
 
 
 def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:

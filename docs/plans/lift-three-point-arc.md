@@ -100,7 +100,7 @@ a given design; **[3]** unproven semantics, established here.
   `../arris/docs/ideas/`. A disagreement with the oracle that a closed form
   settles gets its verdict (`tools/cq_closed_forms.py`). No in-subset row
   may be unclassified.
-- [ ] Step 5 **[2]** — commit the re-run. Run both corpora with
+- [x] Step 5 **[2]** — commit the re-run. Run both corpora with
   `--oracle-rows`, and BenchCAD with the C1 verdicts and its own, in the
   background. Commit `tests/fixtures/c2/*` as `fixtures:` with the new
   figures. The oracle rows must be the committed bytes (none re-run but
