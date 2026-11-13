@@ -348,8 +348,13 @@ class Workplane:
         point). A cylinder on a workplane whose chain holds a solid further
         up is fused with it, as CadQuery's `combine=True` does. Refuses, as
         `UnsupportedApi`, a stack holding a drawn path or a sketch, and one
-        holding a solid: there CadQuery centres the cylinder on the solid's
-        centre of mass, as it does a box, which the subset does not model.
+        holding a solid or a compound: there CadQuery centres the cylinder on
+        the object's `Center()`, as it does a box, which the subset does not
+        model (read on the oracle: `unsupported-cylinder-*`). Raises
+        `ValueError` (`runtime`) for a height not positive or a negative
+        radius, where CadQuery raises `Standard_ConstructionError`, and for a
+        zero radius, where CadQuery builds a shape its checker rejects
+        (`runtime-cylinder-zero-radius`, a `by_design` row).
 
         >>> import math
         >>> import arris_gym.cq as cq
@@ -369,6 +374,15 @@ class Workplane:
                 # As with `box`: CadQuery centres it on the solid's `Center()`.
                 raise UnsupportedApi("Workplane.cylinder on a stack holding a solid")
             center = (0.0, 0.0)
+        named = f"Workplane.cylinder({height}, {radius})"
+        if height <= 0:
+            raise ValueError(
+                f"{named}: a height not positive (CadQuery's Standard_ConstructionError)"
+            )
+        if radius < 0:
+            raise ValueError(f"{named}: a negative radius (CadQuery's Standard_ConstructionError)")
+        if radius == 0:
+            raise ValueError(f"{named}: a zero radius (CadQuery builds an invalid shape)")
         sketch = self._plane.offset(-height / 2).circle(radius, center=center)
         return self._combined(sketch.extrude(height))
 

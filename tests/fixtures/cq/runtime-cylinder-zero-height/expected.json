@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.cylinder(0, 1): a height not positive (CadQuery's Standard_ConstructionError)"
+}

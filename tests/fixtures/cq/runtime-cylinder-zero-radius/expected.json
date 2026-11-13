@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.cylinder(2, 0): a zero radius (CadQuery builds an invalid shape)"
+}

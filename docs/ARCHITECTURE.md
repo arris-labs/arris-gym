@@ -357,7 +357,13 @@ drawn path, a sketch or a solid on the stack ends `unsupported_api` (on a
 solid CadQuery centres the box on its centre of mass, not modelled).
 `cylinder(height, radius)` is placed as `box` is, its axis the plane's
 normal, `height / 2` either side of the plane (CadQuery's `centered=True`),
-and fused with a solid further up the chain.
+and fused with a solid further up the chain. A drawn path, a sketch, a
+pending circle, a solid or a compound on the stack ends `unsupported_api`
+(CadQuery centres it on the object's `Center()`, not modelled). A height
+not positive or a negative radius ends `runtime`, as CadQuery raises
+`Standard_ConstructionError`. `cylinder(h, 0)` ends `runtime` by design:
+CadQuery builds a zero-volume shape its own checker rejects (`invalid`),
+and `cq` builds nothing, so the row is `by_design` on this anchor.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty

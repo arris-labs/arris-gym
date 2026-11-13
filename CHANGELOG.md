@@ -8,8 +8,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `dialect="cq"` now runs `cylinder(height, radius)`: its axis along the
   plane's normal, centred on the plane's origin or a `moveTo` point in all
   three axes, and fused with a solid already in the chain. Its other
-  keywords, and a drawn path, a sketch or a solid on the stack, end
-  `unsupported_api`.
+  keywords, and a drawn path, a sketch, a solid or a compound on the
+  stack, end `unsupported_api`; a height not above 0 or a radius not above
+  0 ends `runtime`.
 
 - `dialect="cq"` now runs `cq.Workplane("YZ")`, with sketch axes along
   world +y and +z and extrusion along +x.

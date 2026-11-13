@@ -72,12 +72,15 @@ a given design; **[3]** unproven semantics, established here.
   step 2 reads them on the oracle; the dimension checks are step 2's.
   `test_c2_baseline` holds the committed reach reports to `tables_subset()`
   (today's less `cylinder`) until step 7 re-runs the tables.
-- [ ] Step 2 **[3]** — the refusals and the degenerate dimensions. Run
+- [x] Step 2 **[3]** — the refusals and the degenerate dimensions. Run
   `cylinder` on every other stack context on both sides (the work skill's
   new-context rule): a pending path, a pending circle, a sketch, a solid,
   a compound. Each one that disagrees is refused, with an `unsupported-*`
   fixture. Also add `runtime` fixtures for height ≤ 0 and radius < 0, and
   settle radius 0 (Q1).
+  *Settled*: the oracle builds all five contexts, each centred on the
+  object's `Center()`; step 1's refusals already end them
+  `unsupported_api`, now with fixtures. Q1 as below.
 - [ ] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows`
   on both corpora into a scratch out-dir, then `cq_diagnose.py` over the new
   BenchCAD table, to get the in-subset rows by class and the `cq_bug` rows
@@ -127,11 +130,13 @@ a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
-- ⚠ OPEN: Q1 — how `cq` ends `cylinder(h, 0)`, where the oracle builds an
-  `invalid` zero-volume shape. Refusing it as `runtime` leaves a disagreement
-  whose class must be named; the alternative is to build nothing and match
-  `invalid`. The agent decides at step 2 against ADR-0006's classes. No
-  corpus program writes a literal 0, so reach does not move either way.
+- *Settled* (step 2): Q1 — `cq` ends `cylinder(h, 0)` `runtime`, and its
+  row against the oracle's `invalid` is `by_design` on ARCHITECTURE
+  §Dialects (`runtime-cylinder-zero-radius/verdict.json`). Matching
+  `invalid` would need arris's checker to reject a body `cq` built on
+  purpose (`checker_fail`), which `cq` cannot produce honestly; the
+  kernel's own refusal (`arris_refusal`) leaves the row unclassified too.
+  No corpus program writes a literal 0, so reach does not move.
 - ⚠ OPEN: Q2 — a `cq_bug` cause step 3 measures that steps 4 and 5 cannot
   lift. The agent decides at step 3, by its reach cost: lift it as a step
   here, or remove its form and name the reach it costs (ADR-0012). The

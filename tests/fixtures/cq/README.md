@@ -136,3 +136,21 @@ axis world -x (unturned, the bounds would differ); on `ZX` with
 All six have recorded oracle reports and agreeing rows in
 `test_cq_cylinder.py`, with a property over plane, origin, offset, point,
 height and radius.
+
+`unsupported-cylinder-on-pending-wire`, `-on-closed-wire`,
+`-on-pending-circle`, `-on-solid` and `-on-compound` call `cylinder` on
+each stack context the subset does not model. Read on the oracle
+(2026-11-13), CadQuery builds every one, centring the cylinder on the
+object's `Center()`: the segment (1, 1)-(2, 1) puts it at (1.5, 1); the
+closed triangle at its edges' centre (1.293, 0.707); the circle at (3, 1),
+leaving the circle unused (V = 2π); the extruded post at its centre of
+mass (5, 0, 1), so a 10 × 0.5 cylinder spans z from -4 to 6 (V = 4π); the
+two-box compound at (2.5, 0, 0), a third piece. `runtime-cylinder-zero-height`,
+`-negative-height` and `-negative-radius` raise `Standard_ConstructionError`
+on the oracle and end `runtime` under `cq`: both fail, the row agrees.
+`runtime-cylinder-zero-radius` is the one the oracle answers `invalid`: a
+zero-volume shape its checker rejects (`oracle.json`, V = 0, bounds the
+segment z ±1); `cq` ends it `runtime`, and `verdict.json` classes the row
+`by_design` on `docs/ARCHITECTURE.md` §Dialects. `test_cq_cylinder.py`
+holds that row, and a property over plane, point, slab and the degenerate
+dimensions.
