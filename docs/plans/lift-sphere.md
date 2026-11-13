@@ -83,23 +83,29 @@ a given design; **[3]** unproven semantics, established here.
   compound, a closed sketch, a drawn path, a pending circle. Also run a zero
   and a negative radius. Each is lifted when it agrees and refused otherwise,
   with an `ok-`, `runtime-` or `unsupported-` fixture. Settle Q1.
-- [ ] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows` on
+- [x] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows` on
   both corpora into a scratch out-dir, then `cq_diagnose.py` over the new
   BenchCAD table, to get the in-subset rows by class and the `cq_bug` rows by
   message. Rewrite steps 4 and 5 to the causes, largest first, and record any
   cause left for a later plan as Q2, with the reach it costs.
-- [ ] Step 4 **[2]** — classify what is left. Shrink each in-subset
-  `arris_bug` or `arris_refusal` cause to a strict-xfail `regression/`
-  fixture, its expectation from a closed form (expected: the sphere's pole on
-  a disc, two solids touching at a point, as ADR-0016's compound). Cite the
-  existing `fuse-contact-refusals` arris idea, or file a new one in
-  `../arris/docs/ideas/`. A disagreement that a closed form settles gets its
-  verdict. No in-subset row may be unclassified.
-- [ ] Step 5 **[2]** — commit the re-run. Run both corpora with
-  `--oracle-rows` in the background, BenchCAD with the C1 verdicts and its
-  own. Commit `tests/fixtures/c2/*` as `fixtures:` with the new figures. The
-  oracle rows must be the committed bytes (only timeouts re-run); state their
-  digest beside the table digest. Return `tables_subset()` to `cq.subset()`.
+- [ ] Step 4 **[2]** — classify what is left. Measured at step 3: the one
+  cause is `ball_knob`'s stem touching the sphere at its pole (the end disc
+  of a cylinder meeting the sphere at one point), 153 in-subset
+  `arris_refusal` rows (231 `ball_knob` rows refuse, 78 of them outside the
+  subset), in four messages by operand order and by how the floating-point
+  pole falls ("plane surface against sphere surface" 53 and 66, "plane
+  surface against point" 61 and 51). Shrink them to four strict-xfail
+  `regression/cq-sphere-pole-on-disc*` fixtures, each with its closed form
+  (ADR-0016's compound) checked against the oracle; add item 7 to the arris
+  idea `fuse-contact-refusals` and a BACKLOG Finding.
+- [ ] Step 5 **[2]** — commit the re-run. The step 3 run (BenchCAD and
+  CAD-Recode, `--oracle-rows`, the C1 verdicts and BenchCAD's own) is the
+  re-run: copy its outputs from the scratch out-dir into
+  `tests/fixtures/c2/*` as `fixtures:` with the new figures (reach 4,011;
+  BenchCAD table digest `651fe2c1…c1f5a`, oracle digest `e9925835…73157`
+  unchanged; CAD-Recode's table digest unchanged), update both READMEs and
+  `tests/test_c2_baseline.py`'s figures, and return `tables_subset()` to
+  `cq.subset()`.
 
 ## Acceptance
 
@@ -138,5 +144,10 @@ a given design; **[3]** unproven semantics, established here.
   `runtime` (`ValueError`), the second a `by_design` row
   (`runtime-sphere-zero-radius`). Before this, `cq` built a body from a
   negative radius and the kernel refused a zero one.
-- ⚠ OPEN: Q2 — any `cq_bug` cause that step 3 finds and this plan does not
-  lift, with the reach it costs. The agent decides at step 3.
+- *Settled* (step 3): Q2 — none. Both tables have 0 in-subset `cq_bug` and 0
+  unclassified rows. All 153 new in-subset non-agreeing BenchCAD rows are
+  `ball_knob` `arris_refusal`s (the pole contact of Known risk); `capsule`'s
+  191 all agree. BenchCAD reach 4,011/17,900 (3,667 + 344); CAD-Recode
+  104/968. The 100 `lobed_knob` rows are still `arris_bug`. The BenchCAD oracle
+  digest is the committed one (the 31 `double_simplex_sprocket` timeouts
+  timed out again).
