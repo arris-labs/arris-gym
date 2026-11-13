@@ -86,7 +86,7 @@ A defect a run measured, one block each:
 - Where: arris 0.10.0 `Solid.fuse`, reached by `cq`'s `Workplane.union` after `sphere`
 - Seen: plans/lift-sphere step 3, the re-run of both corpora after `sphere` was lifted, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, `ball_knob_000027_s20260506`, 2026-11-13
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k sphere-pole`
-- Measured: 231 `ball_knob` rows refused, 153 of them in the subset (the rest still miss another form); messages 53 (stem first), 66 (sphere first), 61 and 51 (a point); the oracle's volume and area equal each shrunk fixture's closed form to 1e-9. The 191 `capsule` rows (tangent sphere and cylinder along a rim) all agree
+- Measured: 231 `ball_knob` rows refused, 153 of them in the subset (the rest still miss another form); messages 53 (stem first), 66 (sphere first), 61 and 51 (a point); the oracle's volume and area equal the closed form to 1e-9 for three of the four shrunk fixtures (`-sphere-first`'s is the base fixture's two solids, the oracle not run on that operand order). The 191 `capsule` rows (tangent sphere and cylinder along a rim) all agree
 - State: regression/cq-sphere-pole-on-disc, -sphere-first, -corpus, -cylinder (the desired compound of ADR-0016, strict `xfail`); reported in `../arris/docs/ideas/fuse-contact-refusals.md`
 
 ### occt-compound-centroid
