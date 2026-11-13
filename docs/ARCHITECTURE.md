@@ -645,9 +645,9 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 3,304 (18.5%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 2,248 (12.6%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 14,387 / 636 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| reach | 3,667 (20.5%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 2,543 (14.2%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,786 / 942 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
 | `occt_wrong` (all, in the subset) | 325 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
@@ -679,6 +679,16 @@ programs are `arris_refusal` (two cylinders tangent along a line,
 those, `pull_handle` 176, `wall_anchor` 81, `torus_link` 80, 68 `lobed_knob`,
 `hinge` 61 and `bucket` 6. CAD-Recode went from 37 to 104 reached, 103 agreeing;
 its crossing-cylinder stem `550` is `occt_wrong` by closed form.
+
+`threePointArc` took BenchCAD from 3,304 to 3,667 reached and CAD-Recode not at
+all (it writes none). Of the 363 newly reached programs, 295 agree
+(`spline_hub` 177, `ratchet_sector` 61, `dog_bone` 57) and 68 are
+`arris_refusal`: `rivet` 32 and `dome_cap` 36 revolve an arc whose circle
+crosses the axis (`OpDegenerateError`, a spindle torus;
+`regression/cq-spindle-torus-arc-from-axis` and `-to-axis`). The oracle rows
+were the committed bytes, the digest unchanged; none of the 17,900 programs
+writes a point of three numbers. BenchCAD's 699 in-subset refusals are the
+earlier 631 and these 68.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

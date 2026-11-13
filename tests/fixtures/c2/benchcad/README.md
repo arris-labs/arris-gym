@@ -68,7 +68,8 @@ zygote). No fidelity row moved (all 214 are the same as the baseline's, so the
 table's digest does not depend on which oracle bytes are kept), so the baseline
 rows stay committed (BACKLOG Findings `oracle-nondeterministic-step`).
 
-The table before this re-run (plans/in-subset-cq-bugs step 10) had reach 1,871, 1,654
+The table before this re-run (plans/lift-cylinder step 6, reach 3,304, 2,248 agree, no in-subset `cq_bug`) had digest `c4cf3348abcdbf63028a32431a67913c3f92248274a29986590a1ea712dde4b8`.
+The one before it (plans/in-subset-cq-bugs step 10) had reach 1,871, 1,654
 agree, no in-subset `cq_bug`, digest `560fac11013cd4aada98cb648eeefef78630262b04471772058575cdebeb9a1b`.
 The baseline (plans/fidelity-target step 6, the C1 subset, no verdicts) had
 reach 1,871, 980 agree, 717 in-subset `cq_bug`, 174 in-subset
