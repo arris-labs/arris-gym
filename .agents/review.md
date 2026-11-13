@@ -73,6 +73,9 @@ every failure a fixture. Beside it:
 - A fixture's expected values come from a closed form or the part's
   construction, never from arris-gym's own output.
 - A changed expectation says in its commit why the behaviour changed.
+- A README, note or finding that says a value was "checked against the
+  oracle" (or any run) names the run, and the run covers that exact program:
+  a closed form shared with a sibling fixture is not a check of this one.
 - A test asserts through the public API, not a private helper, wherever the
   API reaches the case.
 - A test does not touch the network, and does not import CadQuery or OCP.
