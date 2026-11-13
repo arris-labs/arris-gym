@@ -98,3 +98,7 @@ baseline table's digest (above); it remains that baseline's diagnosis now the
 table is regenerated after the fixes: all 717 are in the subset and none is a
 `cq_bug` row (604 agree, 70 `torus_link` agree, 43 `arris_refusal`). Attribution and licence are the
 same BenchCAD CC-BY-4.0 attribution linked above.
+
+## Verdicts
+
+`verdicts.json` holds the verdicts of the rows no rule classes (ADR-0006), by stem: C1's 100 `lobed_knob` verdicts are in `tests/fixtures/c1/verdicts.json` and are not repeated. Written by `uv run --extra corpus tools/cq_closed_forms.py --table fidelity.json.gz --oracle-rows oracle.jsonl.gz --out verdicts.json --refusal cotter_pin=tests/fixtures/regression/cq-tangent-cylinders` (plans/lift-cylinder step 5), which checks each verdict with `compare` against both sides before writing it: 325 `occt_wrong` rows by their closed forms (64 `t_pipe_fitting` tees, 136 `u_bolt` and 125 `j_hook` half-torus hooks), where arris is within the ADR-0005 constants of the closed form and Open CASCADE is not; and 159 `cotter_pin` rows `arris_refusal` by `regression/cq-tangent-cylinders`. The table is run with `--verdicts tests/fixtures/c1/verdicts.json tests/fixtures/c2/benchcad/verdicts.json`.

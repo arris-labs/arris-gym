@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses a revolve of a circle that touches the axis, OpDegenerateError \"an arc's circle crosses the revolve axis: a spindle torus\"; CadQuery 2.3.0 builds the half horn torus",
+  "measures": {
+    "volume": 9.869604401089358,
+    "area": 26.022394109358302,
+    "centroid": [
+      0,
+      0,
+      0.7957747154594768
+    ],
+    "bounds": [
+      [
+        -2,
+        -1,
+        0
+      ],
+      [
+        2,
+        1,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "a unit disc centred on (1, 0), turned 180 degrees right-handed about -y, so +x turns towards +z: half a torus with R = r = 1, in z >= 0. V = pi (2 pi 1)/2 = pi^2; A = half the torus 4 pi^2 R r, 2 pi^2, plus two end discs 2 pi; zbar = 2 pi r^2 (R^2 + r^2/4) / V = 5/(2 pi) (the integral of rho^2 over the disc is pi r^2 (R^2 + r^2/4), times 2 for the integral of sin over the half turn); the inner rim collapses to one point on the axis, so the body is a ball: genus 0, one shell"
+}

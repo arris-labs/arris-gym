@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union, OpUnsupportedError \"no closed form for +f6 (plane surface) against +v0 (point)\", of a torus and a box whose face touches the torus at one point; CadQuery 2.3.0 builds a compound of the two solids",
+  "measures": {
+    "volume": 67.21762640653614,
+    "area": 142.43525281307228,
+    "centroid": [
+      0.5950820065867494,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -4,
+        -1,
+        -4
+      ],
+      [
+        6,
+        1,
+        4
+      ]
+    ],
+    "shells": 2,
+    "genus": 1
+  },
+  "note": "a torus R = 3, r = 1 about the y axis and a 2 x 2 x 2 box centred on (5, 0, 0), whose face x = 4 touches the torus's outer equator at (4, 0, 0) and nowhere else: a compound of two solids (ADR-0016), V = 2 pi^2 R r^2 + 8 = 6 pi^2 + 8, A = 4 pi^2 R r + 24 = 12 pi^2 + 24, xbar = 8 5 / V, bounds x -4..6, y -1..1, z -4..4; genus 1 (the torus) and 2 shells from the construction"
+}

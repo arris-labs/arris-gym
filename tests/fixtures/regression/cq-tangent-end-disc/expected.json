@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a cycle of f5's arrangement does not turn once\", of a vertical cylinder and a horizontal one whose end disc is tangent to the vertical one's side; CadQuery 2.3.0 builds it (lengthen the horizontal one by 2 and arris builds it)",
+  "measures": {
+    "volume": 44.45722313718023,
+    "area": 95.67255756846318,
+    "centroid": [
+      0.7600689851061351,
+      0,
+      2.7085047427260465
+    ],
+    "bounds": [
+      [
+        -6,
+        -1,
+        0
+      ],
+      [
+        6,
+        1,
+        4
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "a vertical cylinder (radius 1, z 0..3, on x = 5) and a horizontal one (radius 1, axis the line y = 0, z = 3, x -6..6) whose end disc on x = 6 touches the vertical cylinder along the segment x = 6, y = 0, z 2..3. The part of the vertical one under z = 3 inside the horizontal is half a Steinmetz solid, 8/3, centred on x = 5; V = 3 pi + 12 pi - 8/3. A = (2 pi 3 - 4) + pi (the vertical one's side less its half of the crossing 8 r^2 / 2, and its foot) + (2 pi 12 - 4) + 2 pi (the horizontal one's side less the same, and its two ends) = 33 pi - 8. Moments: x, 5 (3 pi - 8/3); z, 3 pi 3/2 + 12 pi 3 - (3 8/3 - 3 pi/8), the crossing's offset below z = 3 being the integral over y of (1 - y^2)^(3/2), 3 pi / 8"
+}

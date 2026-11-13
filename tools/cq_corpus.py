@@ -16,6 +16,7 @@ counted unclassified, never worked here). Written under `--out-dir` (default
 
 No program text is written. Work is saved in chunks under `--work-dir` and a
 run with `--budget` stops between chunks (exit 3); run it again to resume.
+`--verdicts FILE...` classes rows by stem (C1's and a corpus's own).
 `--slice FILE` restricts BenchCAD to a slice's stems. `--oracle-rows FILE` (a
 committed `oracle.jsonl.gz`) reuses each row whose program SHA-256 matches and
 whose versions are those of the oracle this run probes, and runs the oracle only
@@ -131,6 +132,20 @@ def oracle_versions(args: argparse.Namespace) -> OracleVersions:
     return report.versions
 
 
+def read_verdict_files(paths: Sequence[pathlib.Path], stems: Sequence[str]) -> dict[str, Verdict]:
+    """The verdicts of several `verdicts.json` files by stem.
+
+    Raises `ValueError` for a stem two files both class: one row has one verdict.
+    """
+    verdicts: dict[str, Verdict] = {}
+    for path in paths:
+        for stem, verdict in cq_slice.read_verdicts(path, stems).items():
+            if stem in verdicts:
+                raise ValueError(f"{stem} has a verdict in two files")
+            verdicts[stem] = verdict
+    return verdicts
+
+
 def merge_reports(
     texts: Sequence[str],
     shas: Sequence[str],
@@ -221,7 +236,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run a whole corpus under cq and on the oracle.")
     parser.add_argument("--corpus", choices=("benchcad", "cadrecode"), required=True)
     parser.add_argument("--slice", type=pathlib.Path, help="BenchCAD stems to run, one per line")
-    parser.add_argument("--verdicts", type=pathlib.Path, help="stem -> Verdict, as cq_slice.py")
+    parser.add_argument(
+        "--verdicts",
+        type=pathlib.Path,
+        nargs="+",
+        default=[],
+        help="stem -> Verdict files, as cq_slice.py; a stem in two files is an error",
+    )
     parser.add_argument("--out-dir", type=pathlib.Path)
     parser.add_argument("--timeout", type=float, default=TIMEOUT)
     parser.add_argument("--oracle-timeout", type=float, default=oracle_run.DEFAULT_TIMEOUT)
@@ -241,9 +262,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if len(programs) != len(wanted):
             raise ValueError("stems the corpus lacks")
     out_dir = args.out_dir or C2 / args.corpus
-    verdicts = (
-        cq_slice.read_verdicts(args.verdicts, [p.stem for p in programs]) if args.verdicts else {}
-    )
+    verdicts = read_verdict_files(args.verdicts, [p.stem for p in programs])
     known: dict[str, OracleReport] = {}
     if args.oracle_rows is not None:
         known = reusable(read_oracle(args.oracle_rows), oracle_versions(args))

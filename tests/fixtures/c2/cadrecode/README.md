@@ -62,3 +62,7 @@ The baseline (plans/fidelity-target step 6, table digest
 reach 0 and 968 vacuous agreements: neither worker read `r = …` as a result
 (`unsupported_api` against `no_result`), so every oracle row changed with
 ADR-0015, as intended.
+
+## Verdicts
+
+`verdicts.json` holds the verdict of the one row no rule classes: stem `550`, two crossing cylinders, `occt_wrong` by its closed form (`tools/cq_closed_forms.py`, `--corpus cadrecode`): arris is within 1e-11 of it on volume, area and centroid, and Open CASCADE's volume is 2.6e-9 off, past ADR-0005's 1e-9. The table is run with `--verdicts tests/fixtures/c2/cadrecode/verdicts.json`.

@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the third cut, OpDegenerateError \"degenerate result: the faces touch along a curve interior to both result faces\", of three slots 60 degrees apart that cross on the cylinder's axis; CadQuery 2.3.0 builds it (two slots build)",
+  "measures": {
+    "volume": 374.61916569093717,
+    "area": 581.8298273092935,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -4,
+        -4,
+        -5
+      ],
+      [
+        4,
+        4,
+        5
+      ]
+    ],
+    "shells": 1,
+    "genus": 5
+  },
+  "note": "a cylinder of radius 4 and height 10, cut by three boxes 9 x 1 x 6 on its axis at 0, 60 and 120 degrees, each slot open through the side. With a = 1/2 and rho = 4, one slot strip meets the disc in S = 2 a sqrt(rho^2 - a^2) + 2 rho^2 asin(a/rho); two strips 60 degrees apart meet in a rhombus 8 a^2 / sqrt(3), and the three in a regular hexagon 2 sqrt(3) a^2, so the slots cover U = 3 S - 3 (8 a^2 / sqrt(3)) + 2 sqrt(3) a^2. V = pi rho^2 10 - 6 U. A = 2 pi rho^2 (the ends) + 2 U (the slots' ceiling and floor) + (2 pi rho 10 - 6 rho 12 asin(a/rho)) (the side less six openings of angle 2 asin(a/rho)) + 6 P (the slots' walls: twelve sides of sqrt(rho^2 - a^2) - sqrt(3) a, six high). Six wedge columns join the two end plates: genus 5"
+}

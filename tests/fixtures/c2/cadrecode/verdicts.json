@@ -1,0 +1,28 @@
+{
+ "550": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6847.910521823738,
+   "bounds": [
+    [
+     -50.0,
+     -37.0,
+     -8.0
+    ],
+    [
+     50.0,
+     38.0,
+     8.0
+    ]
+   ],
+   "centroid": [
+    -26.79295175226836,
+    -9.116897352971964,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "two cylinders crossing: A (r 8, along y from -37 to 38 at x = -42) and B (r 5, along x from -35 to 50 at y = -31) overlap only where B's first end sits inside A's width; volume, moments and the surface patches inside the other cylinder are one-dimensional integrals (tools/cq_closed_forms.py, crossing_measures): {'a': 8.0, 'xa': -42.0, 'ya0': -37.0, 'ya1': 38.0, 'b': 5.0, 'yb': -31.0, 'xb0': -35.0, 'xb1': 50.0}",
+   "volume": 21706.648133247596
+  }
+ }
+}

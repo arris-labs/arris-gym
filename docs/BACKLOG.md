@@ -71,7 +71,7 @@ A defect a run measured, one block each:
 - Seen: plans/in-subset-cq-bugs step 5, rerun of the 113 `circle`-cause rows of `tests/fixtures/c2/benchcad/cq-bugs.json`, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 43 `torus_link` programs (e.g. `torus_link_000353_s20260507`), 2026-11-12
 - Reproduce: `cq.Workplane("XY").moveTo(3, 0).circle(1).revolve(360, (0, 0, 0), (0, 1, 0)).union(cq.Workplane("XY").transformed(offset=cq.Vector(5, 0, 0)).box(2, 2, 2))` under `dialect="cq"`; the oracle gives 2 solids, volume 6π² + 8
 - Measured: 43 of 113 refused with that message, the other 70 agree. With the box moved 0.5 into the torus, `cq` builds it (volume 66.13564505370971) but the row is `unclassified`: the oracle's volume is 66.13565097373274, and a quadrature of the overlap gives 66.135645049 and converging, so Open CASCADE is the one off (about 9e-8 relative); a classing case for the oracle, not seen in the corpus
-- State: measured; ADR-0016 decides a result of two solids meeting is a compound, so the desired outcome is now known: arris's `fuse` should accept a point contact, or `cq` needs a regression fixture (strict `xfail`) for it; the arris ask is not yet filed in `../arris/docs/ideas/`
+- State: regression/cq-torus-box-point-contact (the desired compound of ADR-0016, strict `xfail`); reported in `../arris/docs/ideas/fuse-contact-refusals.md`; 80 in-subset `torus_link` rows are refused so (plans/lift-cylinder step 5)
 
 ### occt-compound-centroid
 - What: Open CASCADE's centroid of a compound of two disjoint boxes is wrong in one solid order: a 2 × 2 × 2 box at the origin united with a 2 × 4 × 4 box centred on (5, 0, 1) reports (4.725, 0, 0.975), where the closed form and arris give (4, 0, 0.8); volume, area and bounds are right
@@ -88,6 +88,38 @@ A defect a run measured, one block each:
 - Reproduce: rerun one stem (e.g. `hollow_tube_000907_s20260505`) N times with `oracle_run.run_many` and compare `step_sha256`; or re-run the corpus and diff `oracle.jsonl.gz` against `tests/fixtures/c2/benchcad/`
 - Measured: 214 of 17,900 rows differ, all in 8 families (`sheet_metal_tray` 101, `washer` 49, `spacer_ring` 32, `snap_clip` 13, `ratchet_sector` 11, `hollow_tube` 3, `spline_hub` 3, `parallel_key` 2), measures at most 4e-13 relative; none of their fidelity rows moved, so the table digest does not depend on it; the committed rows are the baseline's. Turning address-space randomisation off and starting a fresh zygote per program would make one machine repeat its bytes, not two machines agree
 - State: measured; no regression fixture: the oracle runs outside the gate (`-m oracle`), and a run-to-run difference that some runs do not show cannot be a strict xfail; decide whether the oracle's committed bytes keep the STEP hash and full-precision measures, or a fidelity-row digest is the claim (ADR-0014's cross-machine accept line)
+
+### fuse-tangent-and-point-contacts
+- What: arris refuses a `fuse` whose operands touch along a line (two parallel cylinders, a box and a cylinder tangent to its face, a horizontal cylinder's end disc tangent to a vertical one) or at a point (a cone frustum's rim and a box), and for two of the shapes the refusal is an internal error (`OpInternalError`, "kernel bug: the face arrangement is not a subdivision"); Open CASCADE builds each as a compound of two solids or one solid, matching a closed form
+- Where: arris 0.10.0 `Solid.fuse`, reached by `cq`'s `Workplane.union`
+- Seen: plans/lift-cylinder step 5, the in-subset rows no rule could class once `cylinder` was lifted, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k "tangent or rim-point"`
+- Measured: `cotter_pin` 159 of 159 (tangent cylinders, the first union; their oracle report is `invalid`), `hinge` 61 of 61, `pull_handle` 176 of 176 (`OpInternalError`), `bucket` 3 at +x (`OpDegenerateError`, "shells would touch along an edge or at a vertex") and 3 at -x (`OpInternalError`, "a hole of f9 lies inside no region"); the oracle's volume and area equal each shrunk fixture's closed form to 1e-9 or better
+- State: regression/cq-tangent-cylinders, cq-tangent-cylinder-and-box, cq-tangent-end-disc, cq-cone-box-rim-point, cq-cone-box-rim-point-far-side; reported in `../arris/docs/ideas/fuse-contact-refusals.md`; the 159 `cotter_pin` rows are `arris_refusal` by cq-tangent-cylinders (verdict in `tests/fixtures/c2/benchcad/verdicts.json`)
+
+### horn-torus-revolve
+- What: arris refuses a revolve of a circle that touches the axis (a half horn torus, R = r), `OpDegenerateError` "an arc's circle crosses the revolve axis: a spindle torus"; Open CASCADE builds it, volume pi^2 r^2 R
+- Where: arris 0.10.0 `revolve`, reached by `cq`'s `Workplane.revolve` after `circle`
+- Seen: plans/lift-cylinder step 5, the `cotter_pin` programs' last union (radius 4 at x = 4), BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k horn-torus`
+- Measured: not reached by any corpus row (the tangent cylinders before it are refused first); the oracle's 631.65 for R = r = 4 is the closed form
+- State: regression/cq-horn-torus; reported in `../arris/docs/ideas/fuse-contact-refusals.md`
+
+### slots-through-a-cylinder
+- What: arris refuses the third of three slots cut 60 degrees apart through a cylinder's axis (`OpDegenerateError`, "the faces touch along a curve interior to both result faces"); two slots build, and Open CASCADE builds all three
+- Where: arris 0.10.0 `Solid.cut`, reached by `cq`'s `Workplane.cut`
+- Seen: plans/lift-cylinder step 5, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 81 `wall_anchor` programs, 2026-11-13
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k three-slots`
+- Measured: 81 of 81 `wall_anchor` rows refused at the third slot; the oracle's volume and area equal the closed form to 1e-15
+- State: regression/cq-three-slots-through-cylinder; reported in `../arris/docs/ideas/slots-through-a-cylinder.md`
+
+### occt-wrong-tee-and-hook
+- What: Open CASCADE's volume, area and centroid are off the closed form on three `cylinder` part families: `t_pipe_fitting` tees by 1e-8 to 1.5e-4 relative, `u_bolt` and `j_hook` (a half torus joined to cylinders) by up to 1e-5; arris is within 1e-10 of the closed form on all of them
+- Where: CadQuery 2.3.0 / OCP 7.9.3.0 boolean and `GProp`, the oracle's rows
+- Seen: plans/lift-cylinder steps 4 and 5, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
+- Reproduce: `uv run --extra corpus tools/cq_closed_forms.py --table T --oracle-rows tests/fixtures/c2/benchcad/oracle.jsonl.gz --out V.json` (each verdict is checked by `compare`)
+- Measured: 64 `t_pipe_fitting`, 136 `u_bolt`, 125 `j_hook` rows and CAD-Recode `550` (two crossing cylinders, volume 2.6e-9) are `occt_wrong` by their closed forms (`tools/cq_closed_forms.py`); arris agrees with each to the ADR-0005 constants
+- State: measured; classed `occt_wrong` by verdicts (`tests/fixtures/c2/*/verdicts.json`); no regression fixture, since the oracle is not under test here
 
 ## Rejected
 

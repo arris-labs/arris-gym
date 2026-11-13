@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a hole of f7 lies inside no region\", of a cone frustum and a box that touches its top rim at one point opposite the revolve's seam (-x); CadQuery 2.3.0 builds a compound of the two solids",
+  "measures": {
+    "volume": 40.79350694547071,
+    "area": 81.96477815187095,
+    "centroid": [
+      -0.08579796791382761,
+      1.140610312411982,
+      0
+    ],
+    "bounds": [
+      [
+        -4,
+        0,
+        -3
+      ],
+      [
+        3,
+        2,
+        3
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "a cone frustum (radius 2 at y = 0 to 3 at y = 2, a revolve of the polygon (0,0), (2,0), (3,2), (0,2)) and a unit cube centred on (-3.5, 1.5, 0), whose edge y = 2 on the face x = -3 touches the frustum's top rim at (-3, 2, 0) and nowhere else: a compound of two solids (ADR-0016). Frustum V = pi 2 (3^2 + 3 2 + 2^2)/3 = 38 pi/3, plus 1; A = pi (2^2 + 3^2) + pi (2 + 3) sqrt(5) + 6; the frustum's y moment is pi times the integral of (2 + y/2)^2 y over 0..2, 43 pi/3, the cube's 1.5; bounds as measured by construction; genus 0 and 2 shells"
+}

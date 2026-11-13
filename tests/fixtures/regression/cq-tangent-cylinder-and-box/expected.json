@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union, OpDegenerateError \"degenerate result: the faces touch along a curve interior to both result faces\", of a box and a cylinder tangent to one of its faces; CadQuery 2.3.0 builds a compound of the two solids",
+  "measures": {
+    "volume": 22.283185307179586,
+    "area": 66.84955592153875,
+    "centroid": [
+      0.8459094003703985,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -1
+      ],
+      [
+        4,
+        2,
+        1
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "a 4 x 4 x 1 box centred on the origin and a cylinder of radius 1 and height 2 on x = 3, tangent to the face x = 2 along the segment y = 0, z -0.5..0.5: a compound of two solids (ADR-0016), V = 16 + 2 pi, A = 2 (16 + 4 + 4) + (2 pi 2 + 2 pi) = 48 + 6 pi, xbar = 2 pi 3 / V, bounds x -2..4, y -2..2, z -1..1; genus 0 and 2 shells from the construction"
+}

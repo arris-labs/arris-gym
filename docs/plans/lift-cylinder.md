@@ -120,7 +120,7 @@ a given design; **[3]** unproven semantics, established here.
   ∫ 2√(a²−x²)√(b²−x²) dx by quadrature) puts `cq` within 1.6e-10 of it on
   all 64 and the oracle 1.3e-8 to 1.5e-4 off: they are `occt_wrong`, and
   step 5 classes them so.
-- [ ] Step 5 **[2]** — classify what is left. The 420 unclassified
+- [x] Step 5 **[2]** — classify what is left. The 420 unclassified
   in-subset BenchCAD rows, the 64 `t_pipe_fitting` rows step 4 moved there
   (`occt_wrong` by the tee's closed form, step 4's note), the one
   CAD-Recode row, and the in-subset
@@ -133,8 +133,29 @@ a given design; **[3]** unproven semantics, established here.
   are refusals already classed. Each cause is shrunk to a strict-xfail
   `regression/` fixture and listed in `arris-report`. A new kernel ask goes
   to `../arris/docs/ideas/`. No in-subset row may be unclassified.
+  *Settled*: re-run under `--oracle-rows` (BenchCAD table `5375e153…c8339`,
+  CAD-Recode `1ded5914…06e15`), 484 BenchCAD in-subset rows and CAD-Recode's
+  `550` were unclassified, and each is now a verdict that `compare` accepts
+  (`tools/cq_closed_forms.py`, `tests/fixtures/c2/*/verdicts.json`). Every
+  `occt_wrong` verdict is a closed form from how the part is built (the tee's
+  surface patches; for the hooks Pappus plus the overlap of a cylinder with the
+  torus's first r/2, which is a cross-section integral; two crossing cylinders
+  for `550`): arris is within 1e-10 of it on volume, area and centroid for all
+  64 tees, 261 hooks and `550`, and Open CASCADE is not (1e-9 to 1.5e-4). So
+  `u_bolt`/`j_hook` are `occt_wrong`, as are the tees and `550`. The 159
+  `cotter_pin` rows are not a half-torus matter: all 159 refuse at their first
+  union, two cylinders of radius 4 tangent along a line, `arris_refusal` by
+  `cq-tangent-cylinders`. The refusal causes behind the 80 `torus_link`, 61
+  `hinge`, 176 `pull_handle`, 81 `wall_anchor`, 6 `bucket` (two kinds) and 159
+  `cotter_pin` rows are shrunk to eight strict-xfail fixtures, each closed form
+  checked against the oracle (Findings and two arris ideas, `fuse-contact-
+  refusals` and `slots-through-a-cylinder`); the 68 out-of-slice `lobed_knob`
+  rows are `cq-union-three-coplanar-cylinders`'s cause and stay classed
+  `arris_refusal` by the rule. The acceptance's `--verdicts` takes two files
+  now, C1's and the corpus's own (`cq_corpus.py`'s flag is repeatable): one row
+  has one verdict, and C1's file is not edited.
 - [ ] Step 6 **[2]** — the re-run committed. Run both corpora with
-  `--oracle-rows` and BenchCAD with the C1 verdicts, and
+  `--oracle-rows` and each with its verdicts (BenchCAD's two files), and
   commit `tests/fixtures/c2/*` as `fixtures:` with the new figures. A
   BenchCAD chunk holding oracle timeouts takes minutes, so run it with
   `--chunk 100` and resume. The oracle rows must be the committed bytes
@@ -144,13 +165,15 @@ a given design; **[3]** unproven semantics, established here.
 ## Acceptance
 
 - `uv run --extra corpus tools/cq_corpus.py --corpus benchcad --verdicts
-  tests/fixtures/c1/verdicts.json --oracle-rows
+  tests/fixtures/c1/verdicts.json tests/fixtures/c2/benchcad/verdicts.json
+  --oracle-rows
   tests/fixtures/c2/benchcad/oracle.jsonl.gz` reports:
   - reach 3,304/17,900, less any form step 3 removes (named);
   - `in_subset_cq_bug` 0 and 0 unclassified in the subset;
   - the 100 `lobed_knob` rows still `arris_bug`;
   - the oracle digest unchanged, unless a timeout re-ran (named).
-- `… --corpus cadrecode --oracle-rows …/cadrecode/oracle.jsonl.gz`: reach
+- `… --corpus cadrecode --verdicts tests/fixtures/c2/cadrecode/verdicts.json
+  --oracle-rows …/cadrecode/oracle.jsonl.gz`: reach
   104/968, `in_subset_cq_bug` 0, 0 unclassified in the subset.
 - The `cq/ok-cylinder-*` and `unsupported-cylinder-*` fixtures and the
   closed-form property pass; every `regression/` fixture step 5 adds is
