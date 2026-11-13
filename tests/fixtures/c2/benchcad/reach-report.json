@@ -1,1 +1,1 @@
-{"agree":1654,"in_subset":1871,"in_subset_by_design":0,"in_subset_classes":{"arris_bug":100,"arris_refusal":117,"by_design":0,"cq_bug":0,"occt_wrong":0},"in_subset_cq_bug":0,"in_subset_outcomes":{"agree":1654,"disagree":217,"unclassified":0},"programs":17900,"timed_out":31}
+{"agree":2248,"in_subset":3304,"in_subset_by_design":0,"in_subset_classes":{"arris_bug":100,"arris_refusal":631,"by_design":0,"cq_bug":0,"occt_wrong":325},"in_subset_cq_bug":0,"in_subset_outcomes":{"agree":2248,"disagree":1056,"unclassified":0},"programs":17900,"timed_out":31}

@@ -1,24 +1,67 @@
 # arris report
 
-Over 17900 programs: 154 arris refusals, 100 arris bugs.
+Over 17900 programs: 636 arris refusals, 100 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 
-### ` "OpDegenerateError" ` (71)
+### ` "OpDegenerateError" ` (372)
 
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f81, +f82)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f83, +f84)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f83, +f93)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f107, +f89, +f90)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f107, +f89, +f99)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f108, +f89, +f90)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f108, +f90, +f100)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f109, +f91, +f101)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f109, +f91, +f92)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f109, +f92, +f93)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f110, +f92, +f102)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f110, +f92, +f93)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f110, +f93, +f94)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f122, +f103, +f113)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f122, +f105, +f106)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f129, +f110, +f111)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f129, +f110, +f120)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f130, +f111, +f112)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f130, +f111, +f121)" `
 - 3x ` "degenerate result: the faces touch along a curve interior to both result faces (+f15, +f6, +f11)" `
 - 65x ` "degenerate result: the faces touch along a curve interior to both result faces (+f15, +f6, +f7)" `
+- 159x ` "degenerate result: the faces touch along a curve interior to both result faces (+f2, +f5)" `
+- 61x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f8)" `
+- 11x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f27)" `
+- 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f36)" `
+- 6x ` "degenerate result: the faces touch along a curve interior to both result faces (+f47, +f30, +f31)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f47, +f30, +f40)" `
+- 10x ` "degenerate result: the faces touch along a curve interior to both result faces (+f48, +f31, +f32)" `
+- 6x ` "degenerate result: the faces touch along a curve interior to both result faces (+f48, +f31, +f41)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f49, +f32, +f33)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f82, +f65, +f66)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f84, +f66, +f67)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f84, +f67, +f68)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f85, +f67, +f77)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f85, +f68, +f69)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f88, +f70, +f71)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f89, +f71, +f72)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f89, +f71, +f81)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f90, +f72, +f82)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f96, +f79, +f80)" `
+- 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f96, +f79, +f89)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f99, +f80, +f81)" `
 - 3x ` "degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold (+v1)" `
 
-### ` "OpInternalError" ` (3)
+### ` "OpInternalError" ` (182)
 
+- 176x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f8's arrangement does not turn once" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a hole of f9 lies inside no region" `
+- 3x ` "kernel bug: the face arrangement is not a subdivision: a section edge of f38 ends at a node nothing else reaches" `
 
-### ` "OpUnsupportedError" ` (80)
+### ` "OpUnsupportedError" ` (82)
 
+- 2x ` "no closed form for +f22 (plane surface) against +e64 (circle curve)" `
 - 80x ` "no closed form for +f6 (plane surface) against +v0 (point)" `
 
 ## Bugs

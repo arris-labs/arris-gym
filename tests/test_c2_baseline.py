@@ -16,7 +16,6 @@ import gzip
 import hashlib
 import json
 from collections import Counter
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -39,24 +38,24 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 1_871,
-        "agree": 1_654,
+        "in_subset": 3_304,
+        "agree": 2_248,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
             "arris_bug": 100,
-            "arris_refusal": 154,
+            "arris_refusal": 636,
             "by_design": 0,
-            "cq_bug": 15_629,
-            "occt_wrong": 0,
+            "cq_bug": 14_387,
+            "occt_wrong": 325,
         },
-        "unclassified": 363,
+        "unclassified": 204,
         "oracle_ok": 17_537,
     },
     "cadrecode": {
-        "in_subset": 37,
-        "agree": 37,
+        "in_subset": 104,
+        "agree": 103,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 0,
@@ -64,14 +63,14 @@ FIGURES = {
             "arris_bug": 0,
             "arris_refusal": 0,
             "by_design": 0,
-            "cq_bug": 931,
-            "occt_wrong": 0,
+            "cq_bug": 864,
+            "occt_wrong": 1,
         },
         "unclassified": 0,
         "oracle_ok": 968,
     },
 }
-# Reach under the C1 subset, before C2 lifted `r = …`, `origin=` and `workplane`.
+# Reach under the C1 subset, before C2 lifted `r = …`, `origin=`, `workplane` and `cylinder`.
 C1_REACH = {"benchcad": 1_871, "cadrecode": 0}
 # The SHA-256 of BenchCAD's uncompressed oracle rows at the C2 baseline
 # (plans/fidelity-target step 6), pinned so the committed file stays them.
@@ -79,14 +78,12 @@ BENCHCAD_BASELINE_ORACLE_ROWS = "e992583501c771e2f52f07939a61b5b44ec5e8989f3f820
 
 
 def tables_subset() -> cq.Subset:
-    """The subset the committed tables were run under: today's less the forms lifted since.
+    """The subset the committed tables were run under: today's `cq.subset()`.
 
-    `Workplane.cylinder` (plans/lift-cylinder step 1) is declared before its
-    re-run lands (step 7), which returns this to `cq.subset()`.
+    plans/lift-cylinder step 6 re-ran both tables after `Workplane.cylinder` was
+    lifted; a change to the subset that a re-run has not followed moves this file.
     """
-    lifted = ("Workplane.cylinder",)
-    forms = tuple(f for f in cq.subset().forms if f.name not in lifted)
-    return replace(cq.subset(), forms=forms)
+    return cq.subset()
 
 
 def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
@@ -155,7 +152,7 @@ def test_cadrecodes_agreements_are_not_two_failures() -> None:
     table = table_of("cadrecode")
     assert table.oracle_statuses["no_result"] == 0
     agree = [e for e in table.entries if e.row.outcome is FidelityOutcome.AGREE]
-    assert len(agree) == 37
+    assert len(agree) == 103
     assert all(e.row.status is Status.OK and e.row.oracle_status is OracleStatus.OK for e in agree)
 
 

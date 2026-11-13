@@ -26,31 +26,33 @@ and shared under its [CC-BY-4.0 licence](https://creativecommons.org/licenses/by
 `fidelity.json.gz` is the `FidelityTable` of all 17,900 programs under `cq` (arris
 0.10.0) against the oracle (CadQuery 2.3.0,
 `cadquery-ocp` 7.9.3.0), with C1's verdicts (`tests/fixtures/c1/verdicts.json`:
-the 100 `lobed_knob` rows `arris_bug`); `oracle.jsonl.gz` the oracle's rows
+the 100 `lobed_knob` rows `arris_bug`) and its own (`verdicts.json`, below); `oracle.jsonl.gz` the oracle's rows
 (STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
 report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
 `uv run --extra corpus tools/cq_corpus.py --corpus benchcad --verdicts
-tests/fixtures/c1/verdicts.json` (network, the oracle environment; outside the
-gate), which saves its work in chunks and resumes. No program text is
-committed. Each figure is over all 17,900 programs. Re-run by
-plans/in-subset-cq-bugs step 10 (2026-11-13), after the `YZ`, `XZ`, `ZX`,
-`origin=`, `workplane(offset=…)`, `circle` and `box` on a `moveTo` point and
-compound lifts.
+tests/fixtures/c1/verdicts.json tests/fixtures/c2/benchcad/verdicts.json
+--oracle-rows tests/fixtures/c2/benchcad/oracle.jsonl.gz --chunk 100` (network, the
+oracle environment; outside the gate), which saves its work in chunks and resumes.
+No program text is committed. Each figure is over all 17,900 programs. Re-run by
+plans/lift-cylinder step 6 (2026-11-13), after `Workplane.cylinder`, and `union` on
+a chain holding no solid, were lifted (before that, by plans/in-subset-cq-bugs
+step 10, after the `YZ`, `XZ`, `ZX`, `origin=`, `workplane(offset=…)`, `circle` and
+`box` on a `moveTo` point and compound lifts).
 
-- Reach: 1,871/17,900 in-subset (C1's subset reaches the same 1,871).
-- Agreement: 1,654 agree; outcomes {'agree': 1654, 'disagree': 15883, 'unclassified': 363}.
-- Classes: {'arris_bug': 100, 'arris_refusal': 154, 'by_design': 0, 'cq_bug': 15629, 'occt_wrong': 0}.
-- Arris statuses: {'arris_refusal': 254, 'checker_fail': 0, 'crash': 0, 'ok': 1654, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 15992}.
+- Reach: 3,304/17,900 in-subset (1,871 before `cylinder`, the curve's item 1; C1's subset reaches 1,871).
+- Agreement: 2,248 agree; outcomes {'agree': 2248, 'disagree': 15448, 'unclassified': 204}.
+- Classes: {'arris_bug': 100, 'arris_refusal': 636, 'by_design': 0, 'cq_bug': 14387, 'occt_wrong': 325}.
+- Arris statuses: {'arris_refusal': 736, 'checker_fail': 0, 'crash': 0, 'ok': 2573, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 14591}.
 - Oracle statuses: {'crash': 0, 'invalid': 332, 'no_result': 0, 'ok': 17537, 'runtime': 0, 'syntax': 0, 'timeout': 31}.
-- Timeouts: 31 (all oracle-side, on double_simplex_sprocket programs).
-- In-subset: outcomes {'agree': 1654, 'disagree': 217, 'unclassified': 0}, classes {'arris_bug': 100, 'arris_refusal': 117, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0};
-  `in_subset_cq_bug` 0, `in_subset_by_design` 0. The 117 in-subset refusals are 68
-  `lobed_knob` programs outside the C1 slice (no verdict), 6 `bucket` and 43
-  `torus_link` point contacts (BACKLOG Findings `torus-box-point-contact`);
-  37 more `torus_link` refusals are outside the subset. The 363 unclassified
-  rows are all outside the subset.
+- Timeouts: 31 (all oracle-side, on double_simplex_sprocket programs; each ran again and timed out again).
+- In-subset: outcomes {'agree': 2248, 'disagree': 1056, 'unclassified': 0}, classes {'arris_bug': 100, 'arris_refusal': 631, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 325};
+  `in_subset_cq_bug` 0, `in_subset_by_design` 0, no in-subset row unclassified. The 631 in-subset
+  refusals are `pull_handle` 176, `cotter_pin` 159, `wall_anchor` 81, `torus_link` 80, 68
+  `lobed_knob` programs outside the C1 slice (no verdict), `hinge` 61 and `bucket` 6, each
+  a regression fixture (BACKLOG Findings); the 325 `occt_wrong` are 64 `t_pipe_fitting`, 136
+  `u_bolt` and 125 `j_hook`. The 204 unclassified rows are all outside the subset.
 
-Table digest: `560fac11013cd4aada98cb648eeefef78630262b04471772058575cdebeb9a1b`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, the baseline's.
+Table digest: `c4cf3348abcdbf63028a32431a67913c3f92248274a29986590a1ea712dde4b8`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, the baseline's: this re-run read every oracle row from the committed file, none run again but the 31 timeouts (which timed out again, their rows the same bytes).
 
 **The oracle rows are the baseline's bytes**, and not the re-run's. The re-run's
 oracle gave the same status, solids and faces for every program, but 214 rows
@@ -65,6 +67,8 @@ zygote). No fidelity row moved (all 214 are the same as the baseline's, so the
 table's digest does not depend on which oracle bytes are kept), so the baseline
 rows stay committed (BACKLOG Findings `oracle-nondeterministic-step`).
 
+The table before this re-run (plans/in-subset-cq-bugs step 10) had reach 1,871, 1,654
+agree, no in-subset `cq_bug`, digest `560fac11013cd4aada98cb648eeefef78630262b04471772058575cdebeb9a1b`.
 The baseline (plans/fidelity-target step 6, the C1 subset, no verdicts) had
 reach 1,871, 980 agree, 717 in-subset `cq_bug`, 174 in-subset
 `arris_refusal`, table digest

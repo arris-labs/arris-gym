@@ -154,13 +154,23 @@ a given design; **[3]** unproven semantics, established here.
   `arris_refusal` by the rule. The acceptance's `--verdicts` takes two files
   now, C1's and the corpus's own (`cq_corpus.py`'s flag is repeatable): one row
   has one verdict, and C1's file is not edited.
-- [ ] Step 6 **[2]** — the re-run committed. Run both corpora with
+- [x] Step 6 **[2]** — the re-run committed. Run both corpora with
   `--oracle-rows` and each with its verdicts (BenchCAD's two files), and
   commit `tests/fixtures/c2/*` as `fixtures:` with the new figures. A
   BenchCAD chunk holding oracle timeouts takes minutes, so run it with
   `--chunk 100` and resume. The oracle rows must be the committed bytes
   (none re-run but timeouts); state their digest beside the table digest.
   `test_c2_baseline`'s `tables_subset()` returns to `cq.subset()`.
+  *Settled*: both corpora re-run with the committed oracle rows and each
+  corpus's verdicts, BenchCAD in `--chunk 100` pieces. BenchCAD: reach
+  3,304/17,900, 2,248 agree, `in_subset_cq_bug` 0, 0 unclassified in the
+  subset (325 `occt_wrong`, 631 `arris_refusal`, 100 `arris_bug`), table digest
+  `c4cf3348…b4`; CAD-Recode: reach 104/968, 103 agree, 1 `occt_wrong`, table
+  digest `24c2f92a…3448`. The oracle rows are the committed bytes for both
+  (SHA-256 `e9925835…3157` and `8d28ce11…195f`); BenchCAD's 31 timeouts ran
+  again and timed out again, their rows the same bytes, so the oracle digest
+  is unchanged. The docs' figures (ARCHITECTURE, ROADMAP, AGENTS) are the
+  retirement's.
 
 ## Acceptance
 

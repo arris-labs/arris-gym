@@ -31,31 +31,37 @@ the library's code licence does not replace it.
 
 `fidelity.json.gz` is the `FidelityTable` of all 968 programs under `cq` (arris
 0.10.0) against the oracle (CadQuery 2.3.0,
-`cadquery-ocp` 7.9.3.0), no verdicts applied; `oracle.jsonl.gz` the oracle's rows
+`cadquery-ocp` 7.9.3.0), with its one verdict (`verdicts.json`); `oracle.jsonl.gz` the oracle's rows
 (STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
 report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
-`uv run --extra corpus tools/cq_corpus.py --corpus cadrecode` (network, the oracle environment; outside the gate), which saves
+`uv run --extra corpus tools/cq_corpus.py --corpus cadrecode --verdicts tests/fixtures/c2/cadrecode/verdicts.json --oracle-rows tests/fixtures/c2/cadrecode/oracle.jsonl.gz` (network, the oracle environment; outside the gate), which saves
 its work in chunks and resumes. No program text is committed. Each figure is
-over all 968 programs. Re-run by plans/in-subset-cq-bugs step 10
-(2026-11-13), after both workers read `r` (ADR-0015) and `origin=`,
-`workplane(offset=…)`, `box` on a `moveTo` point and a compound result
-(ADR-0016) were lifted.
+over all 968 programs. Re-run by plans/lift-cylinder step 6
+(2026-11-13), after `Workplane.cylinder`, and `union` on a chain holding no solid,
+were lifted (before that, by plans/in-subset-cq-bugs step 10: both workers read `r`
+(ADR-0015), and `origin=`, `workplane(offset=…)`, `box` on a `moveTo` point and a
+compound result (ADR-0016) were lifted).
 
-- Reach: 37/968 in-subset (the curve's item 3; C1's subset reaches 0).
-- Agreement: 37 agree; outcomes {'agree': 37, 'disagree': 931, 'unclassified': 0}.
-- Classes: {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 931, 'occt_wrong': 0}.
-- Arris statuses: {'arris_refusal': 0, 'checker_fail': 0, 'crash': 0, 'ok': 37, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 931}.
+- Reach: 104/968 in-subset (37 before `cylinder`, the curve's item 1; C1's subset reaches 0).
+- Agreement: 103 agree; outcomes {'agree': 103, 'disagree': 865, 'unclassified': 0}.
+- Classes: {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 864, 'occt_wrong': 1}.
+- Arris statuses: {'arris_refusal': 0, 'checker_fail': 0, 'crash': 0, 'ok': 104, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 864}.
 - Oracle statuses: {'crash': 0, 'invalid': 0, 'no_result': 0, 'ok': 968, 'runtime': 0, 'syntax': 0, 'timeout': 0}.
 - Timeouts: 0.
-- In-subset: outcomes {'agree': 37, 'disagree': 0, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 0};
-  `in_subset_cq_bug` 0, `in_subset_by_design` 0.
+- In-subset: outcomes {'agree': 103, 'disagree': 1, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 1};
+  `in_subset_cq_bug` 0, `in_subset_by_design` 0. The one disagreement is stem `550`
+  (two crossing cylinders), `occt_wrong` by its closed form (Verdicts, below).
 
-Table digest: `2aa87494c795c2321de08d8bee2d5effa8ba426c5fe50067eca163b70ce588f4`. Oracle rows SHA-256 (uncompressed): `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
+Table digest: `24c2f92a7cee01073348e62949c92f0a1caecc795a13bf288c1b4a38ea923448`. Oracle rows SHA-256 (uncompressed): `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
 
-Every agreement is two `ok` builds: the oracle now builds all 968 programs,
-and the 931 `cq_bug` rows are `unsupported_api` on forms outside the subset
-(`cylinder`, `sketch()` and its calls, the curve's items 4 to 18). Five of the
-37 are unions of disjoint boxes that both sides build as a compound (ADR-0016).
+Every agreement is two `ok` builds: the oracle builds all 968 programs, and the 864
+`cq_bug` rows are `unsupported_api` on forms outside the subset (`sketch()` and its
+calls, `finalize`, `push`, the curve's later items). Five of the 103 are unions of
+disjoint boxes that both sides build as a compound (ADR-0016). The oracle rows are
+the committed bytes, none re-run (their digest above is unchanged); the 67 programs
+`cylinder` reached are all new `cq` runs against them. The table digest before this
+re-run, with the 37 reached programs and no verdict, was
+`2aa87494c795c2321de08d8bee2d5effa8ba426c5fe50067eca163b70ce588f4`.
 
 The baseline (plans/fidelity-target step 6, table digest
 `7f19ee794233d27fc3c0d7f0a5f885ae3e5ea65d37bb00fef28a8f95408ea440`) had
