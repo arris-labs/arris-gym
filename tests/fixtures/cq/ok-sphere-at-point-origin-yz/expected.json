@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 65.44984694978736,
+    "area": 78.53981633974483,
+    "centroid": [
+      1,
+      0,
+      7
+    ],
+    "bounds": [
+      [
+        -1.5,
+        -2.5,
+        4.5
+      ],
+      [
+        3.5,
+        2.5,
+        9.5
+      ]
+    ],
+    "faces": 1,
+    "face_kinds": [
+      [
+        "sphere",
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "YZ (x +y, y +z, normal +x) with origin (1, 2, 3): moveTo(-2, 4) is world (1, 2 - 2, 3 + 4) = (1, 0, 7). r = 2.5: V = 4/3 pi 15.625 = 62.5 pi/3; A = 25 pi."
+}

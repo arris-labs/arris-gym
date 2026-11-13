@@ -16,6 +16,7 @@ import gzip
 import hashlib
 import json
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -78,14 +79,16 @@ BENCHCAD_BASELINE_ORACLE_ROWS = "e992583501c771e2f52f07939a61b5b44ec5e8989f3f820
 
 
 def tables_subset() -> cq.Subset:
-    """The subset the committed tables were run under: today's `cq.subset()`.
+    """The subset the committed tables were run under: today's less the forms lifted since.
 
     plans/lift-three-point-arc step 5 re-ran both tables after
-    `Workplane.threePointArc` was lifted. A later lift that lands before its
-    re-run subtracts its forms here, and its re-run returns this to
-    `cq.subset()`.
+    `Workplane.threePointArc` was lifted. `Workplane.sphere`
+    (plans/lift-sphere step 1) is declared before its re-run lands (step 5),
+    which returns this to `cq.subset()`.
     """
-    return cq.subset()
+    lifted = ("Workplane.sphere",)
+    forms = tuple(f for f in cq.subset().forms if f.name not in lifted)
+    return replace(cq.subset(), forms=forms)
 
 
 def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:

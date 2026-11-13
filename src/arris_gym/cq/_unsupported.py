@@ -4,7 +4,7 @@
 class UnsupportedApi(Exception):
     """A program called something outside the `cq` subset.
 
-    The message names the call as the census writes it (`Workplane.sphere`,
+    The message names the call as the census writes it (`Workplane.text`,
     `cq.Sketch`). The sandbox decides the status `unsupported_api` from this
     type alone, never from its text.
     """

@@ -139,7 +139,7 @@ def test_a_call_returns_a_new_workplane_and_changes_none() -> None:
         del second._parent
 
 
-@pytest.mark.parametrize("name", ["sphere", "faces", "val", "objects", "plane"])
+@pytest.mark.parametrize("name", ["text", "faces", "val", "objects", "plane"])
 def test_a_workplane_name_outside_the_subset_is_unsupported_never_attribute_error(
     name: str,
 ) -> None:
@@ -876,7 +876,7 @@ def test_chains_of_census_forms_run_or_end_in_a_kernel_refusal(
 
 # One call or keyword outside the census, on any receiver.
 BAD_CALLS: list[Callable[[cq.Workplane], object]] = [
-    lambda wp: wp.sphere(1),
+    lambda wp: wp.text("a", 5, 1),
     lambda wp: wp.faces(">Z"),
     lambda wp: wp.hole(1),
     lambda wp: wp.box(1, 2, 3, centered=False),  # type: ignore[call-arg]

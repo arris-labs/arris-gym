@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 82.47197551196598,
+    "area": 132.56637061435916,
+    "centroid": [
+      0.12697616914058985,
+      0,
+      0.22855710445306174
+    ],
+    "bounds": [
+      [
+        -3,
+        -3,
+        -1
+      ],
+      [
+        3,
+        3,
+        3
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ],
+      [
+        "sphere",
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A centred 6 by 6 by 2 slab (z -1..1); workplane(offset=1.5) starts from its centroid height 0, so the plane is z = 1.5; moveTo(1, 0) and a sphere of radius 1.5 centred on (1, 0, 1.5), z 0..3, fused with the slab (combine=True). Its cap below z = 1 (height h = 1) lies in the slab: Vcap = pi h^2 (3r - h)/3 = 7 pi/6, V = 72 + 4.5 pi - 7 pi/6 = 72 + 10 pi/3; A = 120 - pi (r^2 - (r - h)^2) + 4 pi r^2 - 2 pi r h = 120 + 4 pi; the cap's centroid 3 (2r - h)^2 / (4 (3r - h)) = 6/7 below the centre, so centroid x = (10 pi/3) 1 / V, z = (4.5 pi 1.5 - (7 pi/6)(1.5 - 6/7)) / V; faces: the slab's 6 (the top holed) and the sphere's, 7."
+}

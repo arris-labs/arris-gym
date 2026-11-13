@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 83971.95878662322,
+    "area": 12171.420895683417,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -19.22,
+        -19.22,
+        -56.545
+      ],
+      [
+        19.22,
+        19.22,
+        56.545
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        2
+      ],
+      [
+        "sphere",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "BenchCAD capsule_000247_s20260505 (CC BY 4.0) as written, less its comments: a cylinder of radius r = 16.02 and height h = 81.05 centred on the origin, a sphere of radius r on each end disc's centre (z +-40.525, so each sphere meets the cylinder along the rim, tangent there, and its inner half lies inside), and a centred belt of radius R = 19.22 and thickness t = 3.96. V = pi r^2 h + 4/3 pi r^3 + pi (R^2 - r^2) t; A = 2 pi r (h - t) + 4 pi r^2 + 2 pi R t + 2 pi (R^2 - r^2); symmetric, centroid the origin; bounds x, y +-R, z +-(h/2 + r); faces: two hemispheres, the cylinder's side either side of the belt and the belt's side, the belt's two annuli, 7."
+}

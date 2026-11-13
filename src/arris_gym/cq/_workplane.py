@@ -44,6 +44,9 @@ _RADIANS_PER_DEGREE = math.pi / 180.0
 # `2 * pi / 360.0` (`occ_impl/shapes.py`), kept apart from `transformed`'s
 # so each call rounds as CadQuery's does: not a tolerance.
 _REVOLVE_RADIANS_PER_DEGREE = 2 * math.pi / 360.0
+# One whole turn in radians, the angle `sphere`'s half disc is revolved by:
+# not a tolerance.
+_FULL_TURN = 2 * math.pi
 # CadQuery's `close` adds a segment back to the path's first point only when
 # the gap is wider than this, its numerical-error threshold (`cq.py`); a
 # narrower gap is no segment. In plane units.
@@ -129,7 +132,7 @@ class Workplane:
     objects its call made, newest last) and its parent (the workplane it was
     called on, `None` for one made by `cq.Workplane(...)`). Guarantees: no
     call changes a `Workplane`; a name the subset lacks raises
-    `UnsupportedApi` naming it (`Workplane.sphere`), never `AttributeError`;
+    `UnsupportedApi` naming it (`Workplane.text`), never `AttributeError`;
     setting an attribute raises `UnsupportedApi` too, and a copy is the
     workplane itself. Admits `"XY"` (x +x, y +y, normal +z), `"YZ"`
     (x +y, y +z, normal +x), `"XZ"` (x +x, y +z, normal -y) and `"ZX"`
@@ -141,10 +144,10 @@ class Workplane:
     >>> import arris_gym.cq as cq
     >>> wp = cq.Workplane("XY")
     >>> try:
-    ...     wp.sphere(1.0)
+    ...     wp.text("arris", 5, 1)
     ... except cq.UnsupportedApi as error:
     ...     print(error)
-    Workplane.sphere
+    Workplane.text
     """
 
     __slots__ = ("_parent", "_plane", "_stack")
@@ -419,6 +422,54 @@ class Workplane:
             raise ValueError(f"{named}: a zero radius (CadQuery builds an invalid shape)")
         sketch = self._plane.offset(-height / 2).circle(radius, center=center)
         return self._combined(sketch.extrude(height))
+
+    @census_form("Workplane.sphere", [("num",)])
+    def sphere(self, radius: float) -> Workplane:
+        """A sphere of `radius` centred on the origin or a `moveTo` point.
+
+        Its poles lie on the workplane's normal through the centre, as
+        CadQuery's `direct=(0, 0, 1)` in the plane's own axes places them.
+        On an empty stack it is centred on the workplane's origin; on a stack
+        holding only a `moveTo` point, on that point, in the plane's own axes
+        (CadQuery's `eachpoint` over one point). A sphere on a workplane whose
+        chain holds a solid further up is fused with it, as CadQuery's
+        `combine=True` does. arris has no sphere primitive: the sphere is a
+        half disc, an arc from pole to pole closed by the diameter, revolved
+        a full turn about the normal, one spherical face (read on the
+        oracle: `ok-sphere-*`). Refuses, as `UnsupportedApi`, a stack
+        holding a drawn path or a sketch, and one holding a solid: there
+        CadQuery centres the sphere on the object's `Center()`, as it does a
+        box, which the subset does not model.
+
+        >>> import math
+        >>> import arris_gym.cq as cq
+        >>> (solid,) = cq.Workplane("XY").sphere(3)._solids()
+        >>> round(solid.measure().volume / math.pi, 9)
+        36.0
+        >>> wp = cq.Workplane("XZ").moveTo(3, 1).sphere(2)
+        >>> [round(c, 9) + 0.0 for c in wp._solids()[0].measure().centroid]
+        [3.0, 0.0, 1.0]
+        """
+        point = self._stack[0] if len(self._stack) == 1 else None
+        if isinstance(point, _Path) and not point.segments:
+            center = point.start
+        else:
+            self._refuse_pending("Workplane.sphere")
+            if self._solids():
+                # As with `box`: CadQuery centres it on the solid's `Center()`.
+                raise UnsupportedApi("Workplane.sphere on a stack holding a solid")
+            center = (0.0, 0.0)
+        plane = self._plane
+        # The half disc's plane: through the centre, its x the workplane's x
+        # and its y the workplane's normal, so `revolve("y", …)` turns it
+        # about the axis through the poles.
+        down = (-plane.y[0], -plane.y[1], -plane.y[2])
+        meridian = arris.build.Workplane.of(plane.point(*center), down, plane.x)
+        r = float(radius)
+        loop = arris.Loop.path(
+            (0.0, -r), [arris.Segment.arc((0.0, r), (r, 0.0)), arris.Segment.line((0.0, -r))]
+        )
+        return self._combined(arris.build.Sketch(meridian, loop).revolve("y", _FULL_TURN))
 
     @census_form("Workplane.circle", [("num",)])
     def circle(self, radius: float) -> Workplane:

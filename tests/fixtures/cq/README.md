@@ -198,3 +198,19 @@ property draws three points on one line in every admitted plane and gets
 the kernel's refusal each time. `unsupported-three-point-arc-point-of-three-numbers`
 writes `(1, 1, 0)`: the oracle builds it (the third number is 0, on the
 plane), and the subset refuses a point of three numbers as `polyline`'s.
+
+`ok-sphere-*` call `sphere(radius)`, each closed form in its `note`.
+`-centred-xy` is a radius-2 sphere on an empty stack (V = 32π/3, A = 16π).
+`-at-point-xz` and `-at-point-origin-yz` centre it on a `moveTo` point,
+the second with `origin=(1, 2, 3)`: world (3, 0, 1) and (1, 0, 7).
+`-transformed-zx` centres it on a `transformed` offset, world (2, 3, 1),
+its turn moving only the poles. `-fused-at-point-xy` fuses a radius-1.5
+sphere with a 6 × 6 × 2 slab, a cap of height 1 inside it
+(V = 72 + 10π/3, A = 120 + 4π). `-capsule` is BenchCAD's
+`capsule_000247_s20260505` (BenchCAD/BenchCAD, CC BY 4.0) less its
+comments: a cylinder with a sphere of its radius on each end disc, tangent
+along the rims, and a belt (V = πr²h + 4πr³/3 + π(R² − r²)t, 7 faces). All
+six have recorded oracle reports that meet their closed forms and agreeing
+rows in `test_cq_sphere.py`, with a property over plane, origin, offset,
+point and radius. `unsupported-workplane-call` moved from `sphere`, now
+admitted, to `text`, a CadQuery name the subset still refuses.

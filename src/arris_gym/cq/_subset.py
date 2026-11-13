@@ -137,7 +137,7 @@ def subset() -> Subset:
 
     >>> from arris_gym.cq import subset
     >>> len(subset().forms), subset().selectors
-    (16, ())
+    (17, ())
     """
     from arris_gym.cq._vector import Vector
     from arris_gym.cq._workplane import Workplane

@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 4.1887902047863905,
+    "area": 12.566370614359172,
+    "centroid": [
+      2,
+      3,
+      1
+    ],
+    "bounds": [
+      [
+        1,
+        2,
+        0
+      ],
+      [
+        3,
+        4,
+        2
+      ]
+    ],
+    "faces": 1,
+    "face_kinds": [
+      [
+        "sphere",
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "ZX (x +z, y +x, normal +y): transformed offset local (1, 2, 3) is world (2, 3, 1), the centre; the turn moves only the poles (the normal +y to -x). r = 1: V = 4 pi/3; A = 4 pi."
+}

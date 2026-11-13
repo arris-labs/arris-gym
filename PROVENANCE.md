@@ -59,6 +59,15 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   by `tests/fixtures/cq/ok-cylinder-*` whose programs call `cylinder`: on each
   named plane, with `origin=`, after `transformed` and `workplane(offset=…)`,
   on a `moveTo` point and with a solid in the chain.
+- `Workplane.sphere` and `Solid.makeSphere` (`cadquery/cq.py`,
+  `cadquery/occ_impl/shapes.py`): one sphere at each point of the stack
+  (`eachpoint`, in the plane's own axes, the origin on an empty stack),
+  `direct=(0, 0, 1)` local so its poles lie on the plane's normal,
+  `centered=True` placing its centre on the point, and fused with the
+  solid in the chain (`combine=True`). Confirmed on the oracle by
+  `tests/fixtures/cq/ok-sphere-*`: on an empty stack, on a `moveTo`
+  point, after `transformed` and an `origin=`, on each named plane, fused
+  with a slab and three times into BenchCAD's capsule.
 - `Workplane.union`, `Workplane.cut` and `_combineWithBase` (`cadquery/cq.py`):
   the solid acted on is the nearest one up the chain (this stack, then the
   parent's); the other is the solid of the Workplane given; the result sits on

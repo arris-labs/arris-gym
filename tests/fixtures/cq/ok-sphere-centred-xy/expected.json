@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 33.510321638291124,
+    "area": 50.26548245743669,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -2
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "faces": 1,
+    "face_kinds": [
+      [
+        "sphere",
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A sphere of radius 2 on an empty XY stack, centred on the origin: V = 4/3 pi 8 = 32 pi/3; A = 4 pi 4 = 16 pi; bounds +-2; one spherical face."
+}

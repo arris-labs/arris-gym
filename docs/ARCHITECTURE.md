@@ -322,10 +322,10 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in census order. Today it is the census's 16 API forms:
+the **subset**, grown in census order. Today it is the census's 17 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
-`transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+`transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `sphere`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close` and `revolve`;
 selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
@@ -342,7 +342,7 @@ a module exposing its CadQuery names is installed as `sys.modules["cadquery"]`,
 so `import cadquery as cq` runs, and
 `show_object` is a builtin of the program's namespace; under `arris` neither
 exists. A call outside the subset raises `UnsupportedApi` naming it as the
-census writes it (`cq.Sketch`, `Workplane.sphere`, `cq.occ_impl` for
+census writes it (`cq.Sketch`, `Workplane.text`, `cq.occ_impl` for
 `import cadquery.occ_impl`), via `__getattr__`, never `AttributeError`; a
 name with a leading underscore is Python's and stays `AttributeError`
 (ADR-0007). A `Workplane` is a frozen value: its plane, its **stack** of
@@ -366,6 +366,12 @@ not positive or a negative radius ends `runtime`, as CadQuery raises
 `Standard_ConstructionError`. `cylinder(h, 0)` ends `runtime` by design:
 CadQuery builds a zero-volume shape its own checker rejects (`invalid`),
 and `cq` builds nothing, so the row is `by_design` on this anchor.
+`sphere(radius)` is centred as `cylinder` is, its poles on the plane's
+normal through the centre (CadQuery's `direct=(0, 0, 1)` in plane axes),
+and fused with a solid further up the chain. arris has no sphere
+primitive: `cq` revolves a half disc, an arc from pole to pole closed by
+the diameter, a full turn about that normal, one spherical face. A drawn
+path, a sketch or a solid on the stack ends `unsupported_api`.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 A pending path is its start and its segments, each a line to a point or a

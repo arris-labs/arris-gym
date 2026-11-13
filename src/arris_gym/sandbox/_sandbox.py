@@ -214,10 +214,10 @@ def run(
     6.0
     >>> ag.run("result = (").status is ag.Status.SYNTAX
     True
-    >>> cq = "import cadquery as cq\\nshow_object(cq.Workplane('XY').sphere(1))"
-    >>> sphere = ag.run(cq, dialect="cq")
-    >>> sphere.status.value, sphere.message
-    ('unsupported_api', 'Workplane.sphere')
+    >>> cq = "import cadquery as cq\\nshow_object(cq.Workplane('XY').text('a', 5, 1))"
+    >>> text = ag.run(cq, dialect="cq")
+    >>> text.status.value, text.message
+    ('unsupported_api', 'Workplane.text')
     """
     return default_sandbox().run(program, dialect=dialect, timeout=timeout, memory=memory)
 
