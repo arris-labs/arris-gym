@@ -121,3 +121,18 @@ closed form's (4, 0, 0.8), and `verdict.json` classes the row `occt_wrong`
 by that closed form (BACKLOG Findings `occt-compound-centroid`);
 `test_cq.py` leaves a fixture with a `verdict.json` out of the oracle's
 closed-form check.
+
+`ok-cylinder-centred-xy`, `-at-point-xz`, `-at-point-offset-yz`,
+`-transformed-zx`, `-origin-zx` and `-fused-at-point-xy` call
+`Workplane.cylinder(height, radius)` (`ok-cylinder` and
+`ok-cylinder-transformed` extrude a circle instead). Each is centred on its
+point in all three axes, its axis the plane's normal, `height / 2` either
+side: on `XY` at the origin, z ±2; on `XZ` at `moveTo(3, 1)`, world
+(3, 0, 1); on `YZ` with `origin=(1, 2, 3)` after `workplane(offset=5)`,
+(6, 5, 4); on `ZX` after `transformed` with a 90° turn about local x, its
+axis world -x (unturned, the bounds would differ); on `ZX` with
+`origin=(3, -5, 7)`; and a radius-0.5 post fused into a 4 × 4 × 2 slab from
+`workplane(offset=1)` on it, its lower half inside the slab, V = 32 + π/4.
+All six have recorded oracle reports and agreeing rows in
+`test_cq_cylinder.py`, with a property over plane, origin, offset, point,
+height and radius.

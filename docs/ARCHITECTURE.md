@@ -322,10 +322,10 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in census order. Today it is the census's 14 API forms:
+the **subset**, grown in census order. Today it is the census's 15 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
-`transformed`, `workplane` (with an optional `offset=`), `box`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+`transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `polyline`, `close` and `revolve`;
 selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
@@ -355,6 +355,9 @@ point, in the plane's axes; any other stack ends `unsupported_api`.
 `box` is centred the same way, on the origin or on a lone `moveTo` point; a
 drawn path, a sketch or a solid on the stack ends `unsupported_api` (on a
 solid CadQuery centres the box on its centre of mass, not modelled).
+`cylinder(height, radius)` is placed as `box` is, its axis the plane's
+normal, `height / 2` either side of the plane (CadQuery's `centered=True`),
+and fused with a solid further up the chain.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty

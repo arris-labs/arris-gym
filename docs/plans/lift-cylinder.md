@@ -59,7 +59,7 @@ committed rows reused (`tools/cq_corpus.py --oracle-rows`) and committed.
 Grades are tiers (`.agents/tiers.md`): **[1]** routine; **[2]** careful within
 a given design; **[3]** unproven semantics, established here.
 
-- [ ] Step 1 **[3]** — the lift. `cylinder` on an empty stack and on a
+- [x] Step 1 **[3]** — the lift. `cylinder` on an empty stack and on a
   `moveTo` point, on `XY`, `YZ`, `XZ`, `ZX` and with `origin=`, after
   `transformed` and after `workplane(offset=)`, and fused with a chain
   solid. Fixtures `cq/ok-cylinder-*` have closed-form expectations
@@ -67,6 +67,11 @@ a given design; **[3]** unproven semantics, established here.
   plane's axes), and each is checked against the oracle. A `hypothesis`
   property ranges over plane, origin, point, height and radius against the
   closed form. The form is declared, and reach reads it.
+  *Settled*: the contexts `box` refuses (a pending path or sketch, a solid
+  on the stack) are refused here too, so no wrong part is built before
+  step 2 reads them on the oracle; the dimension checks are step 2's.
+  `test_c2_baseline` holds the committed reach reports to `tables_subset()`
+  (today's less `cylinder`) until step 7 re-runs the tables.
 - [ ] Step 2 **[3]** — the refusals and the degenerate dimensions. Run
   `cylinder` on every other stack context on both sides (the work skill's
   new-context rule): a pending path, a pending circle, a sketch, a solid,
@@ -90,7 +95,8 @@ a given design; **[3]** unproven semantics, established here.
   `--oracle-rows` and BenchCAD with the C1 verdicts, in the background, and
   commit `tests/fixtures/c2/*` as `fixtures:` with the new figures. The
   oracle rows must be the committed bytes (none re-run but timeouts); state
-  their digest beside the table digest.
+  their digest beside the table digest. `test_c2_baseline`'s
+  `tables_subset()` returns to `cq.subset()`.
 
 ## Acceptance
 

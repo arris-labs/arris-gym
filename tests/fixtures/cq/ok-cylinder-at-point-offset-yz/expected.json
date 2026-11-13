@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 18.84955592153876,
+    "area": 43.982297150257104,
+    "centroid": [
+      6,
+      5,
+      4
+    ],
+    "bounds": [
+      [
+        3,
+        4,
+        3
+      ],
+      [
+        9,
+        6,
+        5
+      ]
+    ],
+    "faces": 3,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "YZ (x +y, y +z, normal +x) with origin (1, 2, 3); workplane(offset=5) moves the origin to (6, 2, 3); moveTo(3, 1) is world (6, 5, 4). Height 6 along x, 6+-3; radius 1, y 5+-1, z 4+-1. V = 6 pi; A = 2 pi 1 (1 + 6) = 14 pi."
+}

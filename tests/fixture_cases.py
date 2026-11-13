@@ -35,8 +35,8 @@ def c1_subset() -> cq.Subset:
     """The subset the committed `c2/` census curves were measured under, and the C2 baseline.
 
     Today's subset less what C2 has lifted since: ADR-0015's `r = …`
-    (plans/in-subset-cq-bugs step 2), `cq.Workplane`'s `origin=` (step 6)
-    and `Workplane.workplane` (step 7).
+    (plans/in-subset-cq-bugs step 2), `cq.Workplane`'s `origin=` (step 6),
+    `Workplane.workplane` (step 7) and `Workplane.cylinder` (plans/lift-cylinder).
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
     return replace(
@@ -44,7 +44,7 @@ def c1_subset() -> cq.Subset:
         forms=tuple(
             constructor if form.name == "cq.Workplane" else form
             for form in cq.subset().forms
-            if form.name != "Workplane.workplane"
+            if form.name not in ("Workplane.workplane", "Workplane.cylinder")
         ),
         end_forms=("result = …", "show_object(…)"),
     )

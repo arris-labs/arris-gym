@@ -51,6 +51,14 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   point), and fused with a solid already in the chain. Confirmed on the
   oracle by `tests/fixtures/cq/ok-box-at-point-*`, after `workplane(offset=…)`
   and with a solid in the chain.
+- `Workplane.cylinder` (`cadquery/cq.py`, with `eachpoint` and
+  `_combineWithBase`, its default `centered=True`): a cylinder of `height`
+  along the plane's normal and `radius`, centred on the origin or on each
+  point of the stack in all three axes, `height / 2` either side of the
+  plane, and fused with a solid already in the chain. Confirmed on the oracle
+  by `tests/fixtures/cq/ok-cylinder-*` whose programs call `cylinder`: on each
+  named plane, with `origin=`, after `transformed` and `workplane(offset=…)`,
+  on a `moveTo` point and with a solid in the chain.
 - `Workplane.union`, `Workplane.cut` and `_combineWithBase` (`cadquery/cq.py`):
   the solid acted on is the nearest one up the chain (this stack, then the
   parent's); the other is the solid of the Workplane given; the result sits on

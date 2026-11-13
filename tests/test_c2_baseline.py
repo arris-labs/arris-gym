@@ -4,8 +4,8 @@
 environment, outside the gate). This reads the committed rows only: the table
 validates its own digest and counts, has one row per census row of the corpus,
 carries the corpus's licence, and the committed reach report is the one the
-table and the census rows give under today's `cq` subset. The README states each
-digest, so a changed row is a changed README. The figures the docs publish
+table and the census rows give under the `cq` subset it was run under. The
+README states each digest, so a changed row is a changed README. The figures the docs publish
 (reach, agreement, the two target comparisons, each over all programs) are
 asserted here, so a re-run that moves one moves this file.
 """
@@ -16,6 +16,7 @@ import gzip
 import hashlib
 import json
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -77,6 +78,17 @@ C1_REACH = {"benchcad": 1_871, "cadrecode": 0}
 BENCHCAD_BASELINE_ORACLE_ROWS = "e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157"
 
 
+def tables_subset() -> cq.Subset:
+    """The subset the committed tables were run under: today's less the forms lifted since.
+
+    `Workplane.cylinder` (plans/lift-cylinder step 1) is declared before its
+    re-run lands (step 7), which returns this to `cq.subset()`.
+    """
+    lifted = ("Workplane.cylinder",)
+    forms = tuple(f for f in cq.subset().forms if f.name not in lifted)
+    return replace(cq.subset(), forms=forms)
+
+
 def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
     data = gzip.decompress((C2 / corpus / "programs.jsonl.gz").read_bytes())
     rows: list[ProgramCensus | Unparsable] = []
@@ -110,7 +122,7 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), cq.subset()) == committed
+    assert reach_report(table, census_rows(corpus), tables_subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, census_rows(corpus), fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]

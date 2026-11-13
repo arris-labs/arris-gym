@@ -113,9 +113,11 @@ def test_committed_benchcad_curve_repeats_offline() -> None:
     assert all(r["licence"] == "CC-BY-4.0" for r in rows)
     outcomes = [ProgramCensus.model_validate(r["census"]) for r in rows]
     expected = ReachCurve.from_json((root / "reach.json").read_text())
-    # The committed curve measures C1, before Workplane.workplane was declared.
+    # The committed curve measures C1, before Workplane.workplane and
+    # Workplane.cylinder were declared.
     assert reach_curve(outcomes, fixture_cases.c1_subset()) == expected
     assert cq.subset().admits("Workplane.workplane(offset=num)")
+    assert cq.subset().admits("Workplane.cylinder(num, num)")
     assert expected.digest == manifest["reach_digest"]
     report = CensusReport.from_json((root / "census.json").read_text())
     assert report.digest == manifest["census_digest"]
@@ -131,19 +133,19 @@ def test_admission_is_one_exact_census_form_not_a_generalized_declaration() -> N
         CorpusProgram(
             stem="a",
             family="f",
-            text="import cadquery as cq\nresult = cq.Workplane().cylinder(1, 2)",
+            text="import cadquery as cq\nresult = cq.Workplane().sphere(1, 2)",
         ),
         CorpusProgram(
             stem="b",
             family="f",
-            text="import cadquery as cq\nresult = cq.Workplane().cylinder(height, 2)",
+            text="import cadquery as cq\nresult = cq.Workplane().sphere(height, 2)",
         ),
     ]
     steps = reach_curve(ps, cq.subset()).steps
     assert [(s.item, s.in_subset) for s in steps] == [
         ("cq.Workplane()", 0),  # no gain, missing from both
-        ("Workplane.cylinder(name, num)", 1),
-        ("Workplane.cylinder(num, num)", 2),
+        ("Workplane.sphere(name, num)", 1),
+        ("Workplane.sphere(num, num)", 2),
     ]
 
 

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 75.39822368615503,
+    "area": 100.53096491487338,
+    "centroid": [
+      3,
+      -5,
+      7
+    ],
+    "bounds": [
+      [
+        1,
+        -8,
+        5
+      ],
+      [
+        5,
+        -2,
+        9
+      ]
+    ],
+    "faces": 3,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "ZX (x +z, y +x, normal +y) with origin (3, -5, 7): height 6 along y, -5+-3; radius 2, x 3+-2, z 7+-2. V = 24 pi; A = 2 pi 2 (2 + 6) = 32 pi."
+}

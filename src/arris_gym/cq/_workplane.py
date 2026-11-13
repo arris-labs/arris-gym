@@ -335,6 +335,43 @@ class Workplane:
         sketch = self._plane.offset(-height / 2).rect(length, width, center=center)
         return self._combined(sketch.extrude(height))
 
+    @census_form("Workplane.cylinder", [("num",)] * 2)
+    def cylinder(self, height: float, radius: float) -> Workplane:
+        """A cylinder of `height` and `radius` centred on the origin or a `moveTo` point.
+
+        Its axis runs along the workplane's normal, and it is centred on the
+        point in all three axes: `height / 2` either side of the plane, as
+        CadQuery's `centered=True` places it (read on the oracle:
+        `test_cq_cylinder.py`). On an empty stack it is centred on the
+        workplane's origin; on a stack holding only a `moveTo` point, on that
+        point, in the plane's own axes (CadQuery's `eachpoint` over one
+        point). A cylinder on a workplane whose chain holds a solid further
+        up is fused with it, as CadQuery's `combine=True` does. Refuses, as
+        `UnsupportedApi`, a stack holding a drawn path or a sketch, and one
+        holding a solid: there CadQuery centres the cylinder on the solid's
+        centre of mass, as it does a box, which the subset does not model.
+
+        >>> import math
+        >>> import arris_gym.cq as cq
+        >>> (solid,) = cq.Workplane("XY").cylinder(4, 1)._solids()
+        >>> round(solid.measure().volume / math.pi, 9)
+        4.0
+        >>> wp = cq.Workplane("XY").moveTo(3, 1).cylinder(2, 1)
+        >>> [round(c, 9) + 0.0 for c in wp._solids()[0].measure().centroid]
+        [3.0, 1.0, 0.0]
+        """
+        point = self._stack[0] if len(self._stack) == 1 else None
+        if isinstance(point, _Path) and len(point.points) == 1:
+            center = point.points[0]
+        else:
+            self._refuse_pending("Workplane.cylinder")
+            if self._solids():
+                # As with `box`: CadQuery centres it on the solid's `Center()`.
+                raise UnsupportedApi("Workplane.cylinder on a stack holding a solid")
+            center = (0.0, 0.0)
+        sketch = self._plane.offset(-height / 2).circle(radius, center=center)
+        return self._combined(sketch.extrude(height))
+
     @census_form("Workplane.circle", [("num",)])
     def circle(self, radius: float) -> Workplane:
         """A pending circle of `radius`, centred on the workplane's origin or a `moveTo` point.
