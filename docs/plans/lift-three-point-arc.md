@@ -87,21 +87,20 @@ a given design; **[3]** unproven semantics, established here.
   collinear, coincident and full-circle points. Each one is lifted when it
   agrees and refused otherwise, with an `ok-`, `runtime-` or
   `unsupported-` fixture. Settle Q1.
-- [ ] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows`
+- [x] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows`
   on both corpora into a scratch out-dir, then `cq_diagnose.py` over the new
   BenchCAD table, to get the in-subset rows by class and the `cq_bug` rows
   by message. Rewrite steps 4 and 5 to the causes (largest first), and
   record any cause left for a later plan as Q2, with the reach it costs.
-- [ ] Step 4 **[3]** — cause 1 from step 3 (placeholder).
-- [ ] Step 5 **[3]** — cause 2 from step 3 (placeholder). If step 3 finds
-  no `cq_bug`, steps 4 and 5 are deleted.
-- [ ] Step 6 **[2]** — classify what is left. Shrink the cause of each
+  Measured: no `cq_bug`, so the two cause steps were deleted and the last
+  two renumbered (below, Q2).
+- [ ] Step 4 **[2]** — classify what is left. Shrink the cause of each
   in-subset `arris_bug` or `arris_refusal` row to a strict-xfail
   `regression/` fixture, listed in `arris-report`. A new kernel ask goes to
   `../arris/docs/ideas/`. A disagreement with the oracle that a closed form
   settles gets its verdict (`tools/cq_closed_forms.py`). No in-subset row
   may be unclassified.
-- [ ] Step 7 **[2]** — commit the re-run. Run both corpora with
+- [ ] Step 5 **[2]** — commit the re-run. Run both corpora with
   `--oracle-rows`, and BenchCAD with the C1 verdicts and its own, in the
   background. Commit `tests/fixtures/c2/*` as `fixtures:` with the new
   figures. The oracle rows must be the committed bytes (none re-run but
@@ -137,7 +136,7 @@ a given design; **[3]** unproven semantics, established here.
 - `tests/fixtures/c2/{benchcad,cadrecode}/README.md` — the re-run's figures.
 - `CHANGELOG.md` §Unreleased — `threePointArc` under `dialect="cq"`.
 - `PROVENANCE.md` — CadQuery's `threePointArc` and the pen it starts from.
-- `docs/BACKLOG.md` §Findings — any arris finding step 6 files.
+- `docs/BACKLOG.md` §Findings — any arris finding step 4 files.
 
 ## Open questions
 
@@ -154,12 +153,23 @@ a given design; **[3]** unproven semantics, established here.
   `arris-refusal-*`, not `runtime-*`, since that is the status `cq` gives.
   Differs only where a program draws a degenerate arc and never builds it:
   CadQuery raises at the call, `cq` does not; no corpus program writes one.
-- Note for step 3: a point of three numbers ends `unsupported_api`
+- Note (step 3 counted it: 0 programs): a point of three numbers ends `unsupported_api`
   (step 1, as `polyline`'s), yet the census form `(tuple, tuple)` admits
   it and the oracle builds `(1, 1, 0)` on the plane
   (`unsupported-three-point-arc-point-of-three-numbers`). A corpus program
   that writes one is an in-subset `cq_bug`; step 3 counts them.
-- ⚠ OPEN: Q2 — a `cq_bug` cause step 3 measures that steps 4 and 5 cannot
-  lift. The agent decides at step 3, by its reach cost: lift it as a step
-  here, or remove its form and name the reach it costs (ADR-0012). The
-  acceptance's 0 `cq_bug` holds either way.
+- *Settled* (step 3): Q2 — no `cq_bug` cause to lift or remove. The re-run
+  of both corpora with the committed oracle rows (BenchCAD's rows are the
+  committed bytes, SHA-256 `e9925835...3157`; CAD-Recode's `8d28ce11...195f`)
+  gives BenchCAD reach 3,667/17,900, `in_subset_cq_bug` 0, 2,543 agree, table
+  digest `bb3f58f3f7bcb3c8003f860bcf3a80389cadaf4287009e4680511f7b2286bf6c`
+  (scratch run; step 5 commits it), and CAD-Recode reach 104/968 with its
+  table digest unchanged (`24c2f92a...3448`). Of the 363 newly reached
+  programs 295 agree (`spline_hub` 177, `ratchet_sector` 61, `dog_bone` 57)
+  and 68 are `arris_refusal` (`dome_cap` 36, `rivet` 32), all one message,
+  `OpDegenerateError`: "an arc's circle crosses the revolve axis: a spindle
+  torus" (the known backlog finding on a revolve whose circle touches the
+  axis); step 4 shrinks it to a regression fixture or cites the one
+  filed. No corpus program writes a point of three numbers to
+  `threePointArc` (0 of 17,900), so that note costs no reach. The
+  cause steps are gone; the plan's steps are now 1 to 5.
