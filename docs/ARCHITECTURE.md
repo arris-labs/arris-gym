@@ -371,7 +371,12 @@ normal through the centre (CadQuery's `direct=(0, 0, 1)` in plane axes),
 and fused with a solid further up the chain. arris has no sphere
 primitive: `cq` revolves a half disc, an arc from pole to pole closed by
 the diameter, a full turn about that normal, one spherical face. A drawn
-path, a sketch or a solid on the stack ends `unsupported_api`.
+path, a closed outline, a pending circle, a solid or a compound on the
+stack ends `unsupported_api` (CadQuery centres it on the object's
+`Center()`, not modelled). A negative radius ends `runtime`, as CadQuery
+raises `Standard_ConstructionError`; `sphere(0)` ends `runtime` by design,
+as `cylinder(h, 0)` does: CadQuery builds a zero-volume shape its checker
+rejects, and the row is `by_design` on this anchor.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 A pending path is its start and its segments, each a line to a point or a

@@ -10,6 +10,8 @@ Open CASCADE's `makeSphere` has.
 """
 
 import math
+import pathlib
+import re
 
 import pytest
 from hypothesis import given, settings
@@ -19,7 +21,16 @@ import arris_gym as ag
 import arris_gym.cq as cq
 import fixture_cases
 from arris_gym.census import CorpusProgram, reach
-from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+from arris_gym.fidelity import (
+    DisagreementClass,
+    DocAnchor,
+    FidelityOutcome,
+    OracleReport,
+    OracleStatus,
+    Verdict,
+    compare,
+    program_sha256,
+)
 
 PLANES = ["XY", "YZ", "XZ", "ZX"]
 FIXTURES = [
@@ -30,6 +41,16 @@ FIXTURES = [
     "ok-sphere-fused-at-point-xy",
     "ok-sphere-capsule",
 ]
+# The other last objects the subset puts on a stack, read on the oracle
+# (2026-11-13): CadQuery builds a sphere on each, centred on the object's
+# `Center()`, which the subset does not model; `cq` refuses each.
+CONTEXTS = {
+    "unsupported-sphere-on-solid": "Workplane.sphere on a stack holding a solid",
+    "unsupported-sphere-on-compound": "Workplane.sphere on a stack holding a solid",
+    "unsupported-sphere-on-closed-wire": "Workplane.sphere on a pending wire",
+    "unsupported-sphere-on-pending-wire": "Workplane.sphere on a pending wire",
+    "unsupported-sphere-on-pending-circle": "Workplane.sphere on a pending wire",
+}
 
 
 @pytest.mark.parametrize("slug", FIXTURES)
@@ -128,3 +149,75 @@ def test_reach_reads_the_declared_form_only() -> None:
     )
     assert refused.status is ag.Status.UNSUPPORTED_API
     assert refused.message == "Workplane.sphere(num; centered=bool)"
+
+
+@pytest.mark.parametrize("slug", sorted(CONTEXTS))
+def test_a_sphere_on_any_other_last_object_is_refused(slug: str) -> None:
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    result = fixture_cases.run(case)
+    assert result.status is ag.Status.UNSUPPORTED_API
+    assert result.message == CONTEXTS[slug]
+
+
+def _recorded(slug: str) -> tuple[fixture_cases.Case, OracleReport]:
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    path = fixture_cases.ROOT / "cq" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text())
+    assert report.program_sha256 == program_sha256(case.program)
+    return case, report
+
+
+def test_a_negative_radius_fails_on_both_sides() -> None:
+    # Q1 of plans/lift-sphere: CadQuery raises Standard_ConstructionError.
+    case, report = _recorded("runtime-sphere-negative-radius")
+    assert report.status is OracleStatus.RUNTIME
+    result = fixture_cases.run(case)
+    assert fixture_cases.check(result, case.expected) == []
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
+def test_a_zero_radius_is_a_by_design_row_against_the_oracles_invalid_shape() -> None:
+    # Q1 of plans/lift-sphere: CadQuery builds a zero-volume shape its own
+    # checker rejects; `cq` builds nothing and ends `runtime`, by design.
+    slug = "runtime-sphere-zero-radius"
+    case, report = _recorded(slug)
+    directory = fixture_cases.ROOT / "cq" / slug
+    verdict = Verdict.model_validate_json((directory / "verdict.json").read_text())
+    assert report.status is OracleStatus.INVALID
+    assert report.measures is not None
+    assert report.measures.volume == 0.0
+    result = fixture_cases.run(case)
+    assert compare(result, report).outcome is FidelityOutcome.UNCLASSIFIED
+    row = compare(result, report, verdict)
+    assert (row.outcome, row.disagreement) == (
+        FidelityOutcome.DISAGREE,
+        DisagreementClass.BY_DESIGN,
+    )
+    assert isinstance(verdict.evidence, DocAnchor)
+    path, anchor = verdict.evidence.anchor.split("#")
+    text = (pathlib.Path(__file__).resolve().parent.parent / path).read_text()
+    headings = re.findall(r"^#+ (.+)$", text, re.MULTILINE)
+    assert anchor in [h.lower().replace(" ", "-") for h in headings]
+    assert "sphere(0)" in text
+
+
+@settings(max_examples=30, deadline=None)
+@given(
+    plane=st.sampled_from(PLANES),
+    point=st.none() | st.tuples(st.integers(-6, 6), st.integers(-6, 6)),
+    on_slab=st.booleans(),
+    radius=st.integers(-20, 0).map(lambda n: n / 4),
+)
+def test_a_degenerate_sphere_ends_runtime_in_every_admitted_context(
+    plane: str, point: tuple[int, int] | None, on_slab: bool, radius: float
+) -> None:
+    # Read on the oracle (`runtime-sphere-*`): a negative radius raises
+    # Standard_ConstructionError and a zero radius builds an invalid shape;
+    # `cq` ends each `runtime`, never a body.
+    chain = (".box(4, 4, 2).workplane(offset=1)" if on_slab else "") + (
+        "" if point is None else f".moveTo{point}"
+    )
+    program = f"import cadquery as cq\nr = cq.Workplane('{plane}'){chain}.sphere({radius})\n"
+    result = ag.run(program, dialect="cq")
+    assert result.status is ag.Status.RUNTIME, result.message
+    assert result.message.startswith(f"ValueError: Workplane.sphere({radius}): ")

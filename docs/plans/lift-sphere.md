@@ -78,7 +78,7 @@ a given design; **[3]** unproven semantics, established here.
   over centre, radius and plane against the closed form. Declare the form;
   `tables_subset()` holds the committed reports to today's subset less
   `sphere`.
-- [ ] Step 2 **[3]** — the contexts and refusals. Run `sphere` on each other
+- [x] Step 2 **[3]** — the contexts and refusals. Run `sphere` on each other
   last object, on both sides (the work skill's new-context rule): a solid, a
   compound, a closed sketch, a drawn path, a pending circle. Also run a zero
   and a negative radius. Each is lifted when it agrees and refused otherwise,
@@ -132,9 +132,11 @@ a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
-- ⚠ OPEN: Q1 — how `cq` ends a zero or negative radius. Read on the oracle
-  at step 2; the agent decides. The default is `cylinder`'s rule: `runtime`
-  where CadQuery raises, and `runtime` with a `by_design` row where it builds
-  an invalid shape.
+- *Settled* (step 2): Q1 — `cylinder`'s rule. On the oracle a negative
+  radius raises `Standard_ConstructionError` and `sphere(0)` builds a
+  zero-volume shape its checker rejects (`invalid`). `cq` ends both
+  `runtime` (`ValueError`), the second a `by_design` row
+  (`runtime-sphere-zero-radius`). Before this, `cq` built a body from a
+  negative radius and the kernel refused a zero one.
 - ⚠ OPEN: Q2 — any `cq_bug` cause that step 3 finds and this plan does not
   lift, with the reach it costs. The agent decides at step 3.

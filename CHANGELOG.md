@@ -10,7 +10,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   normal, fused with a solid further up the chain. Its other arguments
   (`direct`, `angle1` to `angle3`, `centered`, `combine`, `clean`) end
   `unsupported_api`, and so does a sphere on a stack holding a drawn
-  outline or a solid.
+  outline, a circle or a solid. A radius not positive ends `runtime`.
 
 - `dialect="cq"` now runs `threePointArc(point1, point2)`: a circular arc
   from where `lineTo` would start, through `point1`, ending at `point2`,

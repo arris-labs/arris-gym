@@ -437,9 +437,14 @@ class Workplane:
         half disc, an arc from pole to pole closed by the diameter, revolved
         a full turn about the normal, one spherical face (read on the
         oracle: `ok-sphere-*`). Refuses, as `UnsupportedApi`, a stack
-        holding a drawn path or a sketch, and one holding a solid: there
-        CadQuery centres the sphere on the object's `Center()`, as it does a
-        box, which the subset does not model.
+        holding a drawn path or a sketch, and one holding a solid or a
+        compound: there CadQuery centres the sphere on the object's
+        `Center()`, as it does a box, which the subset does not model (read
+        on the oracle: `unsupported-sphere-*`). Raises `ValueError`
+        (`runtime`) for a negative radius, where CadQuery raises
+        `Standard_ConstructionError`, and for a zero radius, where CadQuery
+        builds a shape its checker rejects (`runtime-sphere-zero-radius`, a
+        `by_design` row).
 
         >>> import math
         >>> import arris_gym.cq as cq
@@ -459,6 +464,11 @@ class Workplane:
                 # As with `box`: CadQuery centres it on the solid's `Center()`.
                 raise UnsupportedApi("Workplane.sphere on a stack holding a solid")
             center = (0.0, 0.0)
+        named = f"Workplane.sphere({radius})"
+        if radius < 0:
+            raise ValueError(f"{named}: a negative radius (CadQuery's Standard_ConstructionError)")
+        if radius == 0:
+            raise ValueError(f"{named}: a zero radius (CadQuery builds an invalid shape)")
         plane = self._plane
         # The half disc's plane: through the centre, its x the workplane's x
         # and its y the workplane's normal, so `revolve("y", …)` turns it

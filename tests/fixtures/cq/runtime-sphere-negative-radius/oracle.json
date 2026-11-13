@@ -1,0 +1,12 @@
+{
+  "status": "runtime",
+  "message": "OCP.OCP.Standard.Standard_ConstructionError",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "76760b021f7948c354e16d09a3147ebfecdd2fb80770935ac2d0e0107a2cc731",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

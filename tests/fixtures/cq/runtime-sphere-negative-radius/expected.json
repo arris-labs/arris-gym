@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.sphere(-1): a negative radius (CadQuery's Standard_ConstructionError)"
+}

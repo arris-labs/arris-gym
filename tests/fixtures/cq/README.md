@@ -214,3 +214,20 @@ six have recorded oracle reports that meet their closed forms and agreeing
 rows in `test_cq_sphere.py`, with a property over plane, origin, offset,
 point and radius. `unsupported-workplane-call` moved from `sphere`, now
 admitted, to `text`, a CadQuery name the subset still refuses.
+
+`unsupported-sphere-on-solid`, `-on-compound`, `-on-closed-wire`,
+`-on-pending-wire` and `-on-pending-circle` call `sphere` on each other
+last object the subset puts on a stack, as `unsupported-cylinder-*` do.
+Read on the oracle (2026-11-13), CadQuery builds every one, centring the
+sphere on the object's `Center()`: the radius-0.5 sphere at the post's
+centre of mass (5, 0, 1) lies inside it and leaves the post (V = 2π); on
+the two-box compound, a third piece at (2.5, 0, 0); the radius-1 sphere at
+the triangle's edge centre (1.293, 0.707), at the segment's (1.5, 1) and at
+the circle's centre (3, 1), the circle left unused (V = 4π/3 each).
+`runtime-sphere-negative-radius` raises `Standard_ConstructionError` on the
+oracle and ends `runtime` under `cq`: the row agrees.
+`runtime-sphere-zero-radius` is answered `invalid` by the oracle, a
+zero-volume shape at the origin (`oracle.json`); `cq` ends it `runtime`,
+and `verdict.json` classes the row `by_design` on `docs/ARCHITECTURE.md`
+§Dialects. `test_cq_sphere.py` holds every one, with a property over
+plane, point, slab and a radius not positive.
