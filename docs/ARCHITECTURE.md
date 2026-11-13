@@ -656,9 +656,9 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 3,667 (20.5%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 2,543 (14.2%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,786 / 942 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| reach | 4,011 (22.4%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 2,734 (15.3%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,364 / 1,173 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
 | `occt_wrong` (all, in the subset) | 325 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
@@ -700,6 +700,17 @@ crosses the axis (`OpDegenerateError`, a spindle torus;
 were the committed bytes, the digest unchanged; none of the 17,900 programs
 writes a point of three numbers. BenchCAD's 699 in-subset refusals are the
 earlier 631 and these 68.
+
+`sphere` took BenchCAD from 3,667 to 4,011 reached and CAD-Recode not at all
+(it writes none). Of the 344 newly reached programs, the 191 `capsule`
+programs (a cylinder with a sphere of its radius on each end, tangent along
+the rims) agree, and 153 `ball_knob` programs are `arris_refusal`: the stem's
+end disc touches the sphere at its pole, which arris's `fuse` does not build
+where Open CASCADE builds two solids meeting at a point (ADR-0016;
+`regression/cq-sphere-pole-on-disc` and its three variants, by operand order
+and by whether floating point puts the pole on the disc). The oracle rows
+were the committed bytes, the digest unchanged. BenchCAD's 852 in-subset
+refusals are the earlier 699 and these 153.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

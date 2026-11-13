@@ -1,6 +1,6 @@
 # arris report
 
-Over 17900 programs: 942 arris refusals, 100 arris bugs.
+Over 17900 programs: 1173 arris refusals, 100 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
@@ -61,8 +61,12 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 25x ` "kernel bug: the face arrangement is not a subdivision: a section edge of f0 ends at a node nothing else reaches" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a section edge of f38 ends at a node nothing else reaches" `
 
-### ` "OpUnsupportedError" ` (82)
+### ` "OpUnsupportedError" ` (313)
 
+- 53x ` "no closed form for +f1 (plane surface) against +f3 (sphere surface)" `
+- 51x ` "no closed form for +f1 (plane surface) against +v2 (point)" `
+- 66x ` "no closed form for +f2 (plane surface) against +f0 (sphere surface)" `
+- 61x ` "no closed form for +f2 (plane surface) against +v0 (point)" `
 - 2x ` "no closed form for +f22 (plane surface) against +e64 (circle curve)" `
 - 80x ` "no closed form for +f6 (plane surface) against +v0 (point)" `
 

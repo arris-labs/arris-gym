@@ -98,7 +98,7 @@ a given design; **[3]** unproven semantics, established here.
   `regression/cq-sphere-pole-on-disc*` fixtures, each with its closed form
   (ADR-0016's compound) checked against the oracle; add item 7 to the arris
   idea `fuse-contact-refusals` and a BACKLOG Finding.
-- [ ] Step 5 **[2]** — commit the re-run. The step 3 run (BenchCAD and
+- [x] Step 5 **[2]** — commit the re-run. The step 3 run (BenchCAD and
   CAD-Recode, `--oracle-rows`, the C1 verdicts and BenchCAD's own) is the
   re-run: copy its outputs from the scratch out-dir into
   `tests/fixtures/c2/*` as `fixtures:` with the new figures (reach 4,011;
