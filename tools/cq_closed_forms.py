@@ -44,6 +44,10 @@ import re
 import sys
 from collections.abc import Callable, Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from arris_gym.sandbox.outcome import ArrisRefusal
 
 # Quadrature: the step of the tanh-sinh sum and its half-width. At 1/32 and 3.5 a
 # square-root endpoint is integrated to full double precision (the weights past 3.5
@@ -57,6 +61,26 @@ GAUSS_NODES = 48
 # this: the programs' decimal literals do not add up exactly (a cylinder's `h / 2` below
 # its centre), and the kernels' own tolerance, 1e-7, is far above it.
 FOOT_TOL = 1e-9
+
+# A part's placements (a tee's branch start, a hook cylinder's x offset and top height) are
+# the shape a closed form assumes when they match to this: the programs' decimal literals
+# (`h / 2`, sums of them) are not exact, and the kernels' own tolerance, 1e-7, is far above.
+PLACEMENT_TOL = 1e-9
+
+# Newton's iteration for a Gauss-Legendre node stops when its step is under this: a node
+# lies in [-1, 1], so a step this small is below the last bits a double keeps there.
+NEWTON_STEP_TOL = 1e-16
+
+# What a `--refusal` fixture stands for: the kernel's refusal that a row must show on its
+# re-run, (exception class, message prefix, number of entities), so a row refused for another
+# reason is never classed by that fixture's name.
+REFUSAL_CAUSES: dict[str, tuple[str, str, int]] = {
+    "cq-tangent-cylinders": (
+        "OpDegenerateError",
+        "degenerate result: the faces touch along a curve interior to both result faces",
+        2,
+    ),
+}
 
 # Programs run at once when the verdicts are checked.
 WORKERS = 16
@@ -100,7 +124,7 @@ def _legendre(n: int) -> tuple[list[float], list[float]]:
             dp = n * (x * p1 - p0) / (x * x - 1)
             step = p1 / dp
             x -= step
-            if abs(step) < 1e-16:
+            if abs(step) < NEWTON_STEP_TOL:
                 break
         p0, p1 = 1.0, x
         for k in range(2, n + 1):
@@ -161,7 +185,7 @@ def _tee(text: str) -> dict[str, float]:
         or cyl[3][0] != (0.0, 0.0, 0.0)
     ):
         raise ValueError("tee offsets are not along the plane's y alone")
-    if abs(ob[1] - hb / 2) > 1e-9 or abs(od[1] - hd / 2) > 1e-9:
+    if abs(ob[1] - hb / 2) > PLACEMENT_TOL or abs(od[1] - hd / 2) > PLACEMENT_TOL:
         raise ValueError("a tee's branch or bore does not start at y = 0")
     if not (s < q < big_r and s < r < big_r and hc >= h and hd >= hb > big_r and r < h / 2):
         raise ValueError("a tee outside the ordering the closed form assumes")
@@ -290,7 +314,7 @@ def _hook(text: str) -> dict[str, object]:
         raise ValueError("a hook whose minor radius is not under its major")
     cylinders: list[tuple[float, float, float]] = []  # x, bottom z, top z
     for offset, height, radius in cyl:
-        if radius != r or abs(abs(offset[0]) - big_r) > 1e-9 or offset[1] != 0:
+        if radius != r or abs(abs(offset[0]) - big_r) > PLACEMENT_TOL or offset[1] != 0:
             raise ValueError("a hook cylinder off the torus's end")
         cylinders.append((offset[0], offset[2] - height / 2, offset[2] + height / 2))
     if len(cylinders) == 2 and cylinders[0][0] != -cylinders[1][0]:
@@ -357,7 +381,7 @@ def hook_measures(p: dict[str, object]) -> tuple[float, float, Vec, Box]:
     cylinders: list[tuple[float, float, float]] = p["cylinders"]  # type: ignore[assignment]
     box: tuple[float, float, float, float, float] | None = p["box"]  # type: ignore[assignment]
     ht = cylinders[0][2] - z0
-    if any(abs(top - z0 - ht) > 1e-9 for _, _, top in cylinders):
+    if any(abs(top - z0 - ht) > PLACEMENT_TOL for _, _, top in cylinders):
         raise ValueError("cylinders of different height above the torus")
     nc = len(cylinders)
     # The overlap of one cylinder with the torus: volume and moments over h in [0, ht].
@@ -601,6 +625,29 @@ def verdicts_for(
     return dict(sorted(out.items()))
 
 
+def check_refusal_cause(refusal: ArrisRefusal | None, fixture: str) -> None:
+    """Raise `ValueError` unless `refusal` is the kernel's refusal that `fixture` names.
+
+    `fixture` is a `--refusal` path; its last component keys `REFUSAL_CAUSES`. The kind, the
+    message's start and the number of entities must all match, and a fixture with no
+    registered cause is itself an error.
+    """
+    name = Path(fixture).name
+    if name not in REFUSAL_CAUSES:
+        raise ValueError(f"no refusal cause is registered for fixture {name!r}")
+    kind, prefix, entities = REFUSAL_CAUSES[name]
+    if refusal is None:
+        raise ValueError(f"arris did not refuse, but fixture {name!r} stands for a refusal")
+    if (
+        refusal.kind != kind
+        or not refusal.message.startswith(prefix)
+        or len(refusal.entities) != entities
+    ):
+        raise ValueError(
+            f"refused for another reason than fixture {name!r}: {refusal.kind}: {refusal.message}"
+        )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Write the verdicts of a corpus table's unclassified rows, checked against both sides."""
     import arris_gym as ag
@@ -634,6 +681,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     refused = []
     for stem, result in zip(stems, results, strict=True):
         try:
+            evidence = verdicts[stem]["evidence"]
+            if verdicts[stem]["disagreement"] == "arris_refusal" and isinstance(evidence, dict):
+                check_refusal_cause(result.refusal, str(evidence["path"]))
             compare(result, reports[stem], Verdict.model_validate(verdicts[stem]))
         except ValueError as error:
             refused.append(f"{stem}: {error}")

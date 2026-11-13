@@ -29,6 +29,7 @@ from arris_gym.fidelity import (
     RegressionFixture,
     Verdict,
 )
+from arris_gym.sandbox.outcome import ArrisRefusal
 
 C2 = Path(__file__).parent / "fixtures" / "c2"
 REGRESSION = Path(__file__).parent / "fixtures" / "regression"
@@ -215,3 +216,18 @@ def test_a_stem_two_verdict_files_class_is_an_error(tmp_path: Path) -> None:
     assert list(cq_corpus.read_verdict_files(both[:1], ["s"])) == ["s"]
     with pytest.raises(ValueError, match="two files"):
         cq_corpus.read_verdict_files(both, ["s"])
+
+
+def test_a_row_refused_for_another_reason_is_not_classed_by_the_tangent_fixture() -> None:
+    fixture = "tests/fixtures/regression/cq-tangent-cylinders"
+    kind, message, _ = cf.REFUSAL_CAUSES["cq-tangent-cylinders"]
+    same = ArrisRefusal(kind=kind, message=f"{message} (+f2, +f5)", entities=("+f2", "+f5"))
+    cf.check_refusal_cause(same, fixture)
+    other_kind = ArrisRefusal(kind="OpInvalidError", message=same.message, entities=same.entities)
+    other_message = ArrisRefusal(kind=kind, message="no such face", entities=same.entities)
+    other_shape = ArrisRefusal(kind=kind, message=same.message, entities=("+f2",))
+    for refusal in (other_kind, other_message, other_shape, None):
+        with pytest.raises(ValueError, match=r"another reason|did not refuse"):
+            cf.check_refusal_cause(refusal, fixture)
+    with pytest.raises(ValueError, match="no refusal cause"):
+        cf.check_refusal_cause(same, "tests/fixtures/regression/other")
