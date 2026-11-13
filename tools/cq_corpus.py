@@ -16,7 +16,12 @@ counted unclassified, never worked here). Written under `--out-dir` (default
 
 No program text is written. Work is saved in chunks under `--work-dir` and a
 run with `--budget` stops between chunks (exit 3); run it again to resume.
-`--slice FILE` restricts BenchCAD to a slice's stems.
+`--slice FILE` restricts BenchCAD to a slice's stems. `--oracle-rows FILE` (a
+committed `oracle.jsonl.gz`) reuses each row whose program SHA-256 matches and
+whose versions are those of the oracle this run probes, and runs the oracle only
+on the rest: a change to `cq` alone re-runs `cq` alone. The oracle's bytes vary
+from run to run (BACKLOG `oracle-nondeterministic-step`), so a re-run would only
+draw them again.
 """
 
 from __future__ import annotations
@@ -27,7 +32,7 @@ import json
 import pathlib
 import sys
 import time
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 import arris_gym as ag
@@ -37,6 +42,7 @@ from arris_gym.census import CorpusProgram, census_program
 from arris_gym.cq import subset
 from arris_gym.fidelity import (
     OracleReport,
+    OracleVersions,
     TableEntry,
     Verdict,
     arris_rows,
@@ -53,6 +59,8 @@ TIMEOUT = 30.0
 CHUNK = 500
 # Exit status of a run that spent its `--budget`: run it again to resume.
 RESUME = 3
+# The program `oracle_versions` runs to learn which oracle this run uses.
+PROBE = 'import cadquery as cq\n\nresult = cq.Workplane("XY").box(1, 1, 1)\n'
 
 
 def load(corpus: str) -> tuple[list[CorpusProgram], str, str, str]:
@@ -98,18 +106,65 @@ def rows(
     ]
 
 
+def read_oracle(path: pathlib.Path) -> dict[str, OracleReport]:
+    """The reports of an `oracle.jsonl.gz` this tool wrote, by program SHA-256."""
+    reports = {}
+    for line in gzip.decompress(path.read_bytes()).decode("utf-8").splitlines():
+        report = OracleReport.model_validate(json.loads(line)["report"])
+        reports[report.program_sha256] = report
+    return reports
+
+
+def reusable(
+    saved: Mapping[str, OracleReport], versions: OracleVersions
+) -> dict[str, OracleReport]:
+    """The saved reports the oracle of `versions` gave. A timeout or a crash carries no
+    versions, so it is never reused: a timeout is never cached."""
+    return {sha: r for sha, r in saved.items() if r.versions == versions}
+
+
+def oracle_versions(args: argparse.Namespace) -> OracleVersions:
+    """The versions of the oracle this run uses, read from its report of `PROBE`."""
+    (report,) = oracle_run.run_many([PROBE], timeout=args.oracle_timeout, workers=1)
+    if report.versions is None:
+        raise ValueError(f"the oracle did not answer the probe: {report.status.value}")
+    return report.versions
+
+
+def merge_reports(
+    texts: Sequence[str],
+    shas: Sequence[str],
+    known: Mapping[str, OracleReport],
+    run: Callable[[Sequence[str]], list[OracleReport]],
+) -> list[OracleReport]:
+    """One report per program, in order: `known`'s for its SHA-256, else `run`'s.
+
+    `run` gets only the programs `known` lacks, and is not called when it lacks none.
+    """
+    missing = [text for text, sha in zip(texts, shas, strict=True) if sha not in known]
+    fresh = iter(run(missing) if missing else [])
+    return [known[sha] if sha in known else next(fresh) for sha in shas]
+
+
 def run_programs(
     part: Sequence[CorpusProgram],
     args: argparse.Namespace,
     pin: tuple[str, str, str],
     verdicts: dict[str, Verdict],
+    known: Mapping[str, OracleReport],
 ) -> dict[str, Any]:
-    """Run `part` under cq and on the oracle; its entries and oracle rows, as a chunk's body."""
+    """Run `part` under cq and, for the programs `known` lacks, on the oracle; its entries
+    and oracle rows, as a chunk's body."""
     source, licence, revision = pin
     texts = [p.text for p in part]
     with ag.Sandbox() as sandbox:
         results = sandbox.run_many(texts, dialect="cq", timeout=args.timeout, workers=args.workers)
-    reports = oracle_run.run_many(texts, timeout=args.oracle_timeout, workers=args.workers)
+    reports = merge_reports(
+        texts,
+        [r.program_sha256 for r in results],
+        known,
+        lambda ts: oracle_run.run_many(ts, timeout=args.oracle_timeout, workers=args.workers),
+    )
     entries = []
     for program, result, report in zip(part, results, reports, strict=True):
         if result.program_sha256 != report.program_sha256:
@@ -128,6 +183,7 @@ def run_chunk(
     args: argparse.Namespace,
     pin: tuple[str, str, str],
     verdicts: dict[str, Verdict],
+    known: Mapping[str, OracleReport],
 ) -> None:
     """Run `part` under cq and on the oracle and save its entries and oracle rows at `path`.
 
@@ -135,7 +191,7 @@ def run_chunk(
     short foreground call; the rows are the same bytes either way. The exception is a
     program whose saved row timed out on either side: `retry_timeouts` runs it again.
     """
-    body = run_programs(part, args, pin, verdicts)
+    body = run_programs(part, args, pin, verdicts, known)
     path.write_bytes(gz(json.dumps(body, sort_keys=True)))
 
 
@@ -173,6 +229,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--budget", type=float, help="stop starting chunks after this many seconds")
     parser.add_argument("--work-dir", type=pathlib.Path, help="saved chunks; default OUT/.work")
     parser.add_argument("--workers", type=int, default=oracle_run.DEFAULT_WORKERS)
+    parser.add_argument(
+        "--oracle-rows", type=pathlib.Path, help="a committed oracle.jsonl.gz whose rows to reuse"
+    )
     args = parser.parse_args(argv)
 
     programs, source, licence, revision = load(args.corpus)
@@ -185,6 +244,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     verdicts = (
         cq_slice.read_verdicts(args.verdicts, [p.stem for p in programs]) if args.verdicts else {}
     )
+    known: dict[str, OracleReport] = {}
+    if args.oracle_rows is not None:
+        known = reusable(read_oracle(args.oracle_rows), oracle_versions(args))
+        print(f"reusing {len(known)} oracle rows of {args.oracle_rows}", file=sys.stderr)
     work = args.work_dir or out_dir / ".work"
     work.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
@@ -209,10 +272,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 done = len(list(work.glob("chunk-*.json.gz")))
                 print(f"budget spent: {done} chunks done; run again to resume", file=sys.stderr)
                 return RESUME
-            run_chunk(part, chunk, args, (source, licence, revision), verdicts)
+            run_chunk(part, chunk, args, (source, licence, revision), verdicts, known)
         data = json.loads(gzip.decompress(chunk.read_bytes()))
         data, rerun = retry_timeouts(
-            part, data, lambda ps: run_programs(ps, args, (source, licence, revision), verdicts)
+            part,
+            data,
+            lambda ps: run_programs(ps, args, (source, licence, revision), verdicts, known),
         )
         if rerun:
             chunk.write_bytes(gz(json.dumps(data, sort_keys=True)))

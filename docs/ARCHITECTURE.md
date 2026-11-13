@@ -604,7 +604,10 @@ so the fidelity target is two comparisons beside the reach. An unparsable
 program is a row outside the subset. `tools/cq_corpus.py --corpus
 benchcad|cadrecode` runs a whole corpus under `cq` and on oracle zygotes and
 writes the table, the arris report and the reach report under
-`tests/fixtures/c2/<corpus>/` (rows only, no program text). On the slice with
+`tests/fixtures/c2/<corpus>/` (rows only, no program text); with
+`--oracle-rows` a committed `oracle.jsonl.gz` answers every program whose
+SHA-256 and oracle versions it holds, so a change to `cq` alone re-runs `cq`
+alone and keeps the oracle's committed draw. On the slice with
 C1's verdicts it gives C1's figures: reach 300/300, 200 agree, 100 `arris_bug`.
 
 **The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset, arris 0.10.0,
