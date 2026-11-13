@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union, OpUnsupportedError \"no closed form for +f2 (plane surface) against +f0 (sphere surface)\", of a cylinder and a sphere that touch at one point; CadQuery 2.3.0 builds a compound of the two solids",
+  "measures": {
+    "volume": 42.93509959906051,
+    "area": 75.39822368615503,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.7682926829268293
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -5
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "the same two solids as cq-sphere-pole-on-disc, the sphere first: a compound of two solids (ADR-0016), V = 4 pi r^3 / 3 + pi R^2 h, A = 4 pi r^2 + 2 pi R h + 2 pi R^2, the centroid on the stem's axis at (pi R^2 h / V) times the stem's mid height, bounds the sphere's box extended by the stem; genus 0 and 2 shells from the construction"
+}

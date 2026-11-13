@@ -81,6 +81,14 @@ A defect a run measured, one block each:
 - Measured: 43 of 113 refused with that message, the other 70 agree. With the box moved 0.5 into the torus, `cq` builds it (volume 66.13564505370971) but the row is `unclassified`: the oracle's volume is 66.13565097373274, and a quadrature of the overlap gives 66.135645049 and converging, so Open CASCADE is the one off (about 9e-8 relative); a classing case for the oracle, not seen in the corpus
 - State: regression/cq-torus-box-point-contact (the desired compound of ADR-0016, strict `xfail`); reported in `../arris/docs/ideas/fuse-contact-refusals.md`; 80 in-subset `torus_link` rows are refused so (plans/lift-cylinder step 5)
 
+### sphere-pole-on-disc
+- What: arris refuses the fuse of a sphere and a cylinder whose end disc touches the sphere's pole (`arris_refusal`, `OpUnsupportedError` "no closed form for +f1 (plane surface) against +f3 (sphere surface)", and three variants by operand order and by whether floating point puts the pole on the disc); the oracle builds two solids meeting at that point
+- Where: arris 0.10.0 `Solid.fuse`, reached by `cq`'s `Workplane.union` after `sphere`
+- Seen: plans/lift-sphere step 3, the re-run of both corpora after `sphere` was lifted, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, `ball_knob_000027_s20260506`, 2026-11-13
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k sphere-pole`
+- Measured: 231 `ball_knob` rows refused, 153 of them in the subset (the rest still miss another form); messages 53 (stem first), 66 (sphere first), 61 and 51 (a point); the oracle's volume and area equal each shrunk fixture's closed form to 1e-9. The 191 `capsule` rows (tangent sphere and cylinder along a rim) all agree
+- State: regression/cq-sphere-pole-on-disc, -sphere-first, -corpus, -cylinder (the desired compound of ADR-0016, strict `xfail`); reported in `../arris/docs/ideas/fuse-contact-refusals.md`
+
 ### occt-compound-centroid
 - What: Open CASCADE's centroid of a compound of two disjoint boxes is wrong in one solid order: a 2 × 2 × 2 box at the origin united with a 2 × 4 × 4 box centred on (5, 0, 1) reports (4.725, 0, 0.975), where the closed form and arris give (4, 0, 0.8); volume, area and bounds are right
 - Where: `tools/oracle/worker.py` `_measures`, `BRepGProp.VolumeProperties_s` with its default `OnlyClosed = false`, OCP 7.9.3.0; with the solids reversed, `OnlyClosed = true` or `GProp_GProps.Add` over the solids it is right

@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union, OpUnsupportedError \"no closed form for +f1 (plane surface) against +v2 (point)\", of a cylinder and a sphere that touch at one point; CadQuery 2.3.0 builds a compound of the two solids",
+  "measures": {
+    "volume": 132419.6391761743,
+    "area": 17617.74498188857,
+    "centroid": [
+      0.0,
+      20.764745128694067,
+      0.0
+    ],
+    "bounds": [
+      [
+        -28.61,
+        -28.61,
+        -28.61
+      ],
+      [
+        28.61,
+        131.6,
+        28.61
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "a `ball_knob` as the corpus writes it, the stem a centred `cylinder` (radius 10.3, y 28.61..131.6) whose end disc is at -80.105 + 102.99 / 2 = -28.61 on the plane's normal, a hair off the pole of the sphere of radius 28.61, which the kernel sees as a vertex: a compound of two solids (ADR-0016), V = 4 pi r^3 / 3 + pi R^2 h, A = 4 pi r^2 + 2 pi R h + 2 pi R^2, the centroid on the stem's axis at (pi R^2 h / V) times the stem's mid height, bounds the sphere's box extended by the stem; genus 0 and 2 shells from the construction"
+}

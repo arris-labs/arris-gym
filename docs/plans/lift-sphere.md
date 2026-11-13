@@ -88,7 +88,7 @@ a given design; **[3]** unproven semantics, established here.
   BenchCAD table, to get the in-subset rows by class and the `cq_bug` rows by
   message. Rewrite steps 4 and 5 to the causes, largest first, and record any
   cause left for a later plan as Q2, with the reach it costs.
-- [ ] Step 4 **[2]** — classify what is left. Measured at step 3: the one
+- [x] Step 4 **[2]** — classify what is left. Measured at step 3: the one
   cause is `ball_knob`'s stem touching the sphere at its pole (the end disc
   of a cylinder meeting the sphere at one point), 153 in-subset
   `arris_refusal` rows (231 `ball_knob` rows refuse, 78 of them outside the
