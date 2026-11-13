@@ -121,9 +121,9 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status: `sphere` lifted 2026-11-13** (target set 2026-11-12, ADR-0014;
+**Status: `polygon` lifted 2026-11-14** (target set 2026-11-12, ADR-0014;
 the tables are in `docs/ARCHITECTURE.md` §Fidelity): BenchCAD reach
-4,011/17,900 and CAD-Recode 104/968, in-subset `cq_bug` 0 and nothing
+4,103/17,900 and CAD-Recode 104/968, in-subset `cq_bug` 0 and nothing
 unclassified in the subset on both. Next:
 lifting forms, selectors and end forms in reach-curve order.
 

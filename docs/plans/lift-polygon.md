@@ -93,7 +93,7 @@ a given design; **[3]** unproven semantics, established here.
   message. Any cause other than agreement becomes a step before step 4,
   largest first, shrunk to `regression/` fixtures, or becomes Q2 with the
   reach it costs.
-- [ ] Step 4 **[2]** — commit the re-run. The step 3 run (BenchCAD and
+- [x] Step 4 **[2]** — commit the re-run. The step 3 run (BenchCAD and
   CAD-Recode, `--oracle-rows`, the C1 verdicts and BenchCAD's own) is the
   re-run. Copy its outputs into `tests/fixtures/c2/*` as `fixtures:` with
   the new figures, update both READMEs and `tests/test_c2_baseline.py`'s

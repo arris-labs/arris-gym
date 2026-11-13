@@ -16,7 +16,6 @@ import gzip
 import hashlib
 import json
 from collections import Counter
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -39,8 +38,8 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 4_011,
-        "agree": 2_734,
+        "in_subset": 4_103,
+        "agree": 2_826,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 31,
@@ -48,7 +47,7 @@ FIGURES = {
             "arris_bug": 100,
             "arris_refusal": 1_173,
             "by_design": 0,
-            "cq_bug": 13_364,
+            "cq_bug": 13_272,
             "occt_wrong": 325,
         },
         "unclassified": 204,
@@ -76,18 +75,6 @@ C1_REACH = {"benchcad": 1_871, "cadrecode": 0}
 # The SHA-256 of BenchCAD's uncompressed oracle rows at the C2 baseline
 # (plans/fidelity-target step 6), pinned so the committed file stays them.
 BENCHCAD_BASELINE_ORACLE_ROWS = "e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157"
-
-
-def tables_subset() -> cq.Subset:
-    """The subset the committed tables were run under: today's less the forms lifted since.
-
-    plans/lift-sphere step 5 re-ran both tables after `Workplane.sphere` was
-    lifted. `Workplane.polygon` (plans/lift-polygon step 1) is declared before
-    its re-run lands (step 4), which returns this to `cq.subset()`.
-    """
-    lifted = ("Workplane.polygon",)
-    forms = tuple(f for f in cq.subset().forms if f.name not in lifted)
-    return replace(cq.subset(), forms=forms)
 
 
 def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
@@ -123,7 +110,7 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), tables_subset()) == committed
+    assert reach_report(table, census_rows(corpus), cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, census_rows(corpus), fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]

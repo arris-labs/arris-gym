@@ -673,9 +673,9 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 4,011 (22.4%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 2,734 (15.3%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,364 / 1,173 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| reach | 4,103 (22.9%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 2,826 (15.8%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,272 / 1,173 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
 | `occt_wrong` (all, in the subset) | 325 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
@@ -728,6 +728,11 @@ where Open CASCADE builds two solids meeting at a point (ADR-0016;
 and by whether floating point puts the pole on the disc). The oracle rows
 were the committed bytes, the digest unchanged. BenchCAD's 852 in-subset
 refusals are the earlier 699 and these 153.
+
+`polygon` took BenchCAD from 4,011 to 4,103 reached and CAD-Recode not at all
+(it writes none). Exactly 92 rows changed, all `grease_nipple`, from `cq_bug`
+(`unsupported_api`) to agree; every in-subset class count is unchanged. The oracle
+rows were the committed bytes, the digest unchanged.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
