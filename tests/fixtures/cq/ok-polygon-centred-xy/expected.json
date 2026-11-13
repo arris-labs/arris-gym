@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 31.176914536239792,
+    "area": 56.78460969082652,
+    "centroid": [
+      0,
+      0,
+      1.5
+    ],
+    "bounds": [
+      [
+        -2.0,
+        -1.7320508075688772,
+        0
+      ],
+      [
+        2.0,
+        1.7320508075688774,
+        3
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "polygon(6, 4) on an empty XY stack: a hexagon of circumradius r = 2 centred on the origin, its first vertex on +x, extruded 3. Area (3 sqrt3/2) r^2 = 6 sqrt3, V = 18 sqrt3; A = 2 6 sqrt3 + 6 r 3 = 12 sqrt3 + 36; x +-2, y +-sqrt3; 8 planar faces."
+}

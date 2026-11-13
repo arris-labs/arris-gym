@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 46.76537180435969,
+    "area": 85.73651497465943,
+    "centroid": [
+      0,
+      0.0,
+      0
+    ],
+    "bounds": [
+      [
+        -2.598076211353315,
+        -2,
+        -1.5000000000000013
+      ],
+      [
+        2.598076211353316,
+        2,
+        3.0
+      ]
+    ],
+    "faces": 5,
+    "face_kinds": [
+      [
+        "plane",
+        5
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "ZX (x +z, y +x, normal +y): workplane(offset=2) is the plane y = 2; a triangle of circumradius 3, first vertex at local (3, 0) = world z 3, extruded -4 to y = -2. Area (3/2) 9 sin 120 = 27 sqrt3/4, V = 27 sqrt3; A = 2 area + 3 (3 sqrt3) 4; z -1.5..3, x +-3 sqrt3/2; 5 planar faces."
+}

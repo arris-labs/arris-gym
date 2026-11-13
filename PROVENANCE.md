@@ -68,6 +68,14 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   `tests/fixtures/cq/ok-sphere-*`: on an empty stack, on a `moveTo`
   point, after `transformed` and an `origin=`, on each named plane, fused
   with a slab and three times into BenchCAD's capsule.
+- `Workplane.polygon` (`cadquery/cq.py`): `nSides` points on the circle of
+  `diameter`, `radius = diameter / 2.0` and the angle
+  `2.0 * math.pi / nSides` times `i`, the first at angle 0 on the plane's
+  local x, made into one closed wire at each point of the stack
+  (`eachpoint`, the origin on an empty stack). Confirmed on the oracle by
+  `tests/fixtures/cq/ok-polygon-*`: on an empty stack, on a `moveTo` point,
+  after `transformed` and `workplane(offset=…)`, on each named plane, fused
+  with a slab and in BenchCAD's grease nipple.
 - `Workplane.union`, `Workplane.cut` and `_combineWithBase` (`cadquery/cq.py`):
   the solid acted on is the nearest one up the chain (this stack, then the
   parent's); the other is the solid of the Workplane given; the result sits on

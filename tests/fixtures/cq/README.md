@@ -231,3 +231,18 @@ zero-volume shape at the origin (`oracle.json`); `cq` ends it `runtime`,
 and `verdict.json` classes the row `by_design` on `docs/ARCHITECTURE.md`
 §Dialects. `test_cq_sphere.py` holds every one, with a property over
 plane, point, slab and a radius not positive.
+
+`ok-polygon-*` call `polygon(nSides, diameter)`, each closed form in its
+`note`: the n-gon of circumradius r has area (n/2) r² sin(2π/n),
+(3√3/2) r² for the hexagon, its first vertex on the plane's +x.
+`-centred-xy` is a hexagon on an empty stack; `-at-point-yz` (a pentagon)
+and `-at-point-xz` centre it on a `moveTo` point; `-offset-zx` is a
+triangle on `workplane(offset=2)` extruded back through the plane;
+`-transformed-xy` a square after a 90° `transformed`; `-fused-xy` a hexagon
+prism fused onto a slab. `-grease-nipple` is BenchCAD's
+`grease_nipple_000156_s20260505` (BenchCAD/BenchCAD, CC BY 4.0) less its
+comment: a revolved profile, a hexagon fused across its neck and a bore
+(V and the z-moment by Pappus over the profile, 16 faces, genus 1). All
+seven have recorded oracle reports that meet their closed forms and
+agreeing rows in `test_cq_polygon.py`, with a property over n, diameter,
+plane, offset, point and distance.

@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 12.99038105676658,
+    "area": 35.19615242270663,
+    "centroid": [
+      3,
+      -2.5,
+      1
+    ],
+    "bounds": [
+      [
+        2.0,
+        -5,
+        0.1339745962155614
+      ],
+      [
+        4.0,
+        0,
+        1.8660254037844388
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "XZ (x +x, y +z, normal -y): moveTo(3, 1) is world (3, 0, 1); a hexagon of circumradius 1 centred there, extruded 5 along -y. Area 3 sqrt3/2, V = 15 sqrt3/2; A = 3 sqrt3 + 30; x 2..4, z 1 +- sqrt3/2, y -5..0; 8 planar faces."
+}

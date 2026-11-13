@@ -507,6 +507,46 @@ class Workplane:
             raise UnsupportedApi("Workplane.circle on a non-empty stack")
         return self._derive(self._plane.circle(radius, center=point.start))
 
+    @census_form("Workplane.polygon", [("num",)] * 2)
+    def polygon(self, nSides: int, diameter: float) -> Workplane:
+        """A pending regular polygon of `nSides` inscribed in a circle of `diameter`.
+
+        The polygon is the one sketch on the new stack, waiting for `extrude`
+        or `revolve`, centred as `circle` is: on the workplane's origin for
+        an empty stack, on a `moveTo` point for a stack holding only one, in
+        the plane's own axes (CadQuery's `eachpoint` over one point). Its
+        first vertex lies on the plane's local +x from the centre, the others
+        follow counterclockwise. The vertices are CadQuery's expression in
+        its order (`Workplane.polygon`, `cq.py`): `radius = diameter / 2.0`,
+        the angle `2.0 * math.pi / nSides` times `i`, and the point
+        `(radius * cos, radius * sin)`; CadQuery's closing point repeating
+        the first is left out, since the kernel closes the loop. Refuses, as
+        `UnsupportedApi`, any other stack, as `circle` does.
+
+        >>> import math
+        >>> import arris_gym.cq as cq
+        >>> (solid,) = cq.Workplane("XY").polygon(6, 2).extrude(1)._solids()
+        >>> round(solid.measure().volume / (3 * math.sqrt(3) / 2), 9)
+        1.0
+        >>> wp = cq.Workplane("XY").moveTo(3, 1).polygon(4, 2).extrude(1)
+        >>> [round(c, 9) + 0.0 for c in wp._solids()[0].measure().centroid]
+        [3.0, 1.0, 0.5]
+        """
+        if not self._stack:
+            cx, cy = 0.0, 0.0
+        else:
+            point = self._stack[0] if len(self._stack) == 1 else None
+            if not isinstance(point, _Path) or point.segments:
+                raise UnsupportedApi("Workplane.polygon on a non-empty stack")
+            cx, cy = point.start
+        angle = 2.0 * math.pi / nSides
+        radius = diameter / 2.0
+        vertices: list[tuple[float, float]] = []
+        for i in range(nSides):
+            o = angle * i
+            vertices.append((cx + radius * math.cos(o), cy + radius * math.sin(o)))
+        return self._derive(self._plane.polygon(vertices))
+
     @census_form("Workplane.extrude", [("num",)])
     def extrude(self, distance: float) -> Workplane:
         """The pending sketch extruded `distance` along the plane's normal.

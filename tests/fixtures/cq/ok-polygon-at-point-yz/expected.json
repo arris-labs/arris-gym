@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 19.02113032590307,
+    "area": 42.53254041760199,
+    "centroid": [
+      1.0,
+      2,
+      1
+    ],
+    "bounds": [
+      [
+        0,
+        0.3819660112501049,
+        -0.9021130325903073
+      ],
+      [
+        2,
+        4.0,
+        2.9021130325903073
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "YZ (x +y, y +z, normal +x): moveTo(2, 1) is world (0, 2, 1); a pentagon of circumradius 2 centred there, first vertex at local (4, 1), extruded 2 along +x. Area (5/2) r^2 sin 72 = 10 sin 72, V = 20 sin 72; A = 2 area + 5 (2 r sin 36) 2; y from 2 + 2 cos 144 to 4, z 1 +- 2 sin 72; 7 planar faces."
+}

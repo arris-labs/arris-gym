@@ -5,6 +5,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `polygon(nSides, diameter)`: a regular polygon
+  inscribed in the circle of `diameter`, centred on the workplane's origin
+  or on a `moveTo` point, its first vertex on the plane's x axis, ready to
+  extrude or revolve as a circle is. Its keywords (`forConstruction`,
+  `circumscribed`) end `unsupported_api`, and so does a polygon on a stack
+  holding anything but one `moveTo` point.
+
 - `dialect="cq"` now runs `sphere(radius)`: a sphere centred on the
   workplane's origin or on a `moveTo` point, its poles on the plane's
   normal, fused with a solid further up the chain. Its other arguments

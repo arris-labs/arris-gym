@@ -37,8 +37,9 @@ def c1_subset() -> cq.Subset:
     Today's subset less what C2 has lifted since: ADR-0015's `r = …`
     (plans/in-subset-cq-bugs step 2), `cq.Workplane`'s `origin=` (step 6),
     `Workplane.workplane` (step 7), `Workplane.cylinder` (plans/lift-cylinder),
-    `Workplane.threePointArc` (plans/lift-three-point-arc) and
-    `Workplane.sphere` (plans/lift-sphere).
+    `Workplane.threePointArc` (plans/lift-three-point-arc),
+    `Workplane.sphere` (plans/lift-sphere) and `Workplane.polygon`
+    (plans/lift-polygon).
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
     return replace(
@@ -52,6 +53,7 @@ def c1_subset() -> cq.Subset:
                 "Workplane.cylinder",
                 "Workplane.threePointArc",
                 "Workplane.sphere",
+                "Workplane.polygon",
             )
         ),
         end_forms=("result = …", "show_object(…)"),

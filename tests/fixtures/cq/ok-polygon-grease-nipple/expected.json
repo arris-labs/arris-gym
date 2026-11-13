@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 841.0526739578315,
+    "area": 751.4871249282221,
+    "centroid": [
+      0,
+      0,
+      6.005583356778252
+    ],
+    "bounds": [
+      [
+        -6.351,
+        -5.50012733943497,
+        0
+      ],
+      [
+        6.351,
+        5.50012733943497,
+        16
+      ]
+    ],
+    "faces": 16,
+    "face_kinds": [
+      [
+        "cone",
+        3
+      ],
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        10
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD grease_nipple_000156_s20260505 (CC BY 4.0) less its comment. A profile of ten points revolved about z (Pappus: V = 2 pi int r dA, z-moment 2 pi int r z dA, by the polygon's Green's-theorem sums), fused with a hexagon of circumradius R = 6.351 on z 5.5..8.5 (inradius 5.500 > 5, so the shoulder at z = 5.5 lies inside it and the r = 2.511 neck runs through it), bored by r = 1.25 on z 0..16. V = V_rev + 3 (3 sqrt3/2) R^2 - 3 pi 2.511^2 - 16 pi 1.25^2. A: bottom annulus, chamfer cone, r = 5 cylinder, the hexagon less r = 5 at z = 5.5, six sides 3 R, the hexagon less r = 2.511 at z = 8.5, the neck, two cones, top annulus, bore. Bounds: the hexagon, its first vertex on +x (x +-R, y +-R sqrt3/2), z 0..16. 16 faces, genus 1."
+}

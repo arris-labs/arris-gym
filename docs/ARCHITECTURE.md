@@ -322,10 +322,10 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in census order. Today it is the census's 17 API forms:
+the **subset**, grown in census order. Today it is the census's 18 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
-`transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `sphere`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+`transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close` and `revolve`;
 selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
@@ -377,6 +377,15 @@ stack ends `unsupported_api` (CadQuery centres it on the object's
 raises `Standard_ConstructionError`; `sphere(0)` ends `runtime` by design,
 as `cylinder(h, 0)` does: CadQuery builds a zero-volume shape its checker
 rejects, and the row is `by_design` on this anchor.
+`polygon(nSides, diameter)` is a pending closed sketch centred as `circle`
+is (the origin of an empty stack or a lone `moveTo` point): `nSides`
+vertices on the circle of `diameter`, the first on the plane's +x, the
+others counterclockwise, each offset from the centre computed by
+CadQuery's own expression in its order (`radius * cos(2.0 * pi / nSides *
+i)`), so it carries its bits on the same libm, as `transformed`'s turn does. CadQuery's closing vertex,
+the first repeated, is left to the kernel's closed loop. Any other stack
+ends `unsupported_api`, as `circle`'s does; its keywords
+(`forConstruction`, `circumscribed`) are outside the subset.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 A pending path is its start and its segments, each a line to a point or a
