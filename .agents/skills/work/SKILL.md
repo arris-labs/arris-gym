@@ -41,7 +41,12 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    minute goes with `run_in_background`, and the step goes on with what does
    not depend on it (`.agents/rules/git.md`, no foreground waits). A
    subagent has no one to notify: it runs in the foreground under `timeout`
-   of at most 110 s and splits a probe that needs longer. For a
+   of at most 110 s and splits a probe that needs longer. The exception is
+   the commit: its hook runs the gate (~2 min), so `git commit` runs in the
+   foreground under `timeout 300` with the Bash tool's own timeout raised to
+   300000 ms. A whole-corpus re-run cannot be split (a timeout row re-runs on
+   every pass, so a resume makes no progress): a step that needs one is the
+   conductor's, run with `run_in_background`. For a
    change to what a program builds or scores, look at the result (`inspect`
    skill) before trusting a green test.
 4. Read your own `git diff --cached` against `.agents/review.md` and
