@@ -176,6 +176,25 @@ rectangle drawn by `lineTo` after the arc, extruded -2 toward world +y.
 major arc through a far point at each end, the second ending on the start.
 `-lens-zx` is two arcs, the second after the first and ending on the start,
 extruded -3. `-hemisphere-xy` revolves a quarter disc about +y (V = 2πr³/3).
-All five have recorded oracle reports and agreeing rows in
+`-on-slab-xy` draws a unit half disc on `workplane(offset=1)` over a
+4 × 4 × 2 slab and fuses its extrusion on (V = 32 + π/2, A = 66 + π).
+All six have recorded oracle reports and agreeing rows in
 `test_cq_three_point_arc.py`, with a property over a circular segment's
 plane, centre, radius, angles and signed height.
+
+`runtime-three-point-arc-on-closed-wire`, `-on-pending-circle`, `-on-solid`
+and `-on-compound` call `threePointArc` on each other last object the
+subset puts on a stack. Read on the oracle (2026-11-13, `oracle.json`
+beside each), CadQuery's `_findFromPoint` raises `RuntimeError` on a wire,
+a solid and a compound; `cq` ends each `runtime` too, and the rows agree.
+`arris-refusal-three-point-arc-collinear`, `-coincident` and `-full-circle`
+draw an arc through three points on one line, through a point equal to its
+end, and from a point back to itself: the oracle's `GC_MakeArcOfCircle`
+fails (`runtime`), the kernel refuses the profile (`OpProfileError`), and
+the rule classes both failing as agreeing. `-near-chord` passes 1e-8 off a
+chord of 2: the oracle builds it, the kernel refuses its via point as on
+the chord, and the row is `arris_refusal`. A `test_cq_three_point_arc.py`
+property draws three points on one line in every admitted plane and gets
+the kernel's refusal each time. `unsupported-three-point-arc-point-of-three-numbers`
+writes `(1, 1, 0)`: the oracle builds it (the third number is 0, on the
+plane), and the subset refuses a point of three numbers as `polyline`'s.

@@ -1,0 +1,10 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "message": "the profile is not valid: loop 0, segment 1: the arc's via point is on its chord",
+  "refusal": {
+    "kind": "OpProfileError",
+    "message": "the profile is not valid: loop 0, segment 1: the arc's via point is on its chord",
+    "entities": []
+  }
+}

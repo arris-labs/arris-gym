@@ -1,0 +1,10 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "message": "the profile is not valid: loop 0 has fewer than two segments",
+  "refusal": {
+    "kind": "OpProfileError",
+    "message": "the profile is not valid: loop 0 has fewer than two segments",
+    "entities": []
+  }
+}

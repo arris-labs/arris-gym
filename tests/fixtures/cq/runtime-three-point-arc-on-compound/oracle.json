@@ -1,0 +1,12 @@
+{
+  "status": "runtime",
+  "message": "RuntimeError: Cannot convert object type '<class 'cadquery.occ_impl.shapes.Compound'>' to vector ",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "9c69f49453e5095fa08051ddc6bf63d7210d4bd0666e1ffeb1cb2ab2eab2a013",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

@@ -9,7 +9,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   from where `lineTo` would start, through `point1`, ending at `point2`,
   each two numbers in the workplane's coordinates, so an outline of lines
   and arcs can be closed, extruded and revolved. A point of three numbers
-  or a `Vector`, or a keyword, ends `unsupported_api`.
+  or a `Vector`, or a keyword, ends `unsupported_api`. After a closed
+  outline, a circle or a solid it ends `runtime`, as CadQuery's does;
+  three points on one line (two that coincide, or an arc ending where it
+  starts) end `arris_refusal` in the kernel's words where CadQuery raises.
 
 - `dialect="cq"` now runs `union` on a workplane whose chain holds no
   solid, as CadQuery does: the result is the given workplane's solid, so

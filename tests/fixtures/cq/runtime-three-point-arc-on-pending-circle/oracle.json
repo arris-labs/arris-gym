@@ -1,0 +1,12 @@
+{
+  "status": "runtime",
+  "message": "RuntimeError: Cannot convert object type '<class 'cadquery.occ_impl.shapes.Wire'>' to vector ",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "5567aa01579cdb95d3bdd928909f8dd0b0ec5e6767ae54f4584f801b1dd8b3e7",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

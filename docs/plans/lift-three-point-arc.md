@@ -53,10 +53,10 @@ committed.
 - **Refusals**, each read on the oracle in step 2:
   - a solid or a closed sketch as the last object raises `RuntimeError` as
     `lineTo` does (`runtime`);
-  - three collinear or coincident points: CadQuery's exception, its words
-    read on the oracle, ends `runtime` on both sides (Q1);
-  - an arc whose end is the start of the path (a full circle drawn by one
-    arc): read on the oracle, then lifted or refused (Q1).
+  - three collinear or coincident points, and an arc that ends on its own
+    start: *Settled* at step 2 (Q1), the kernel refuses them
+    (`arris_refusal`, `OpProfileError`) where the oracle raises `runtime`;
+    the rule agrees.
 - **No public type or API change.** `cq.subset().forms` gains one
   declaration. CHANGELOG gets a bullet. `PROVENANCE.md` names
   `threePointArc` and `_findFromPoint`'s pen, which are read, not copied.
@@ -81,7 +81,7 @@ a given design; **[3]** unproven semantics, established here.
   2πr³/3), each checked against the oracle. A `hypothesis` property ranges
   over a circular segment (centre, radius, two angles, plane, height)
   against the closed form. The form is declared, and reach reads it.
-- [ ] Step 2 **[3]** — the contexts and refusals. Run `threePointArc` on
+- [x] Step 2 **[3]** — the contexts and refusals. Run `threePointArc` on
   each other last object on both sides (the work skill's new-context rule):
   a closed sketch, a solid, a compound, a pending circle. Run it with
   collinear, coincident and full-circle points. Each one is lifted when it
@@ -141,11 +141,24 @@ a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
-- ⚠ OPEN: Q1 — how `cq` ends a degenerate arc: collinear or coincident
-  points, and one arc that closes on its own start. Ending them as `runtime`
-  matches an oracle failure. A full circle the oracle builds is lifted or
-  refused as `unsupported_api`. The agent decides at step 2 against
-  ADR-0006's classes. No corpus program writes one, so reach does not move.
+- *Settled* (step 2): Q1 — how `cq` ends a degenerate arc. Read on the
+  oracle, collinear and coincident points and an arc ending on its own
+  start all fail `GC_MakeArcOfCircle` (`runtime`); no full circle is
+  built. `cq` adds no check: the arc reaches the kernel, which refuses the
+  profile in its words (`arris_refusal`), and ADR-0006's rule classes both
+  failing as agreeing. A check in `cq` would have to mirror Open CASCADE's
+  threshold, measured at an angle of 1.4e-8 to 2e-8 between the chords,
+  which the kernel's own refusal already covers; the arc it refuses that
+  the oracle builds (1e-8 off a chord of 2) is an `arris_refusal` row
+  (`arris-refusal-three-point-arc-near-chord`). The fixtures are
+  `arris-refusal-*`, not `runtime-*`, since that is the status `cq` gives.
+  Differs only where a program draws a degenerate arc and never builds it:
+  CadQuery raises at the call, `cq` does not; no corpus program writes one.
+- Note for step 3: a point of three numbers ends `unsupported_api`
+  (step 1, as `polyline`'s), yet the census form `(tuple, tuple)` admits
+  it and the oracle builds `(1, 1, 0)` on the plane
+  (`unsupported-three-point-arc-point-of-three-numbers`). A corpus program
+  that writes one is an in-subset `cq_bug`; step 3 counts them.
 - ⚠ OPEN: Q2 — a `cq_bug` cause step 3 measures that steps 4 and 5 cannot
   lift. The agent decides at step 3, by its reach cost: lift it as a step
   here, or remove its form and name the reach it costs (ADR-0012). The

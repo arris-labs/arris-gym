@@ -502,7 +502,11 @@ class Workplane:
         (CadQuery's `_findFromPoint`). Both points are two numbers in the
         workplane's coordinates; one of three numbers or a `Vector` is
         outside the subset. Raises `RuntimeError` (CadQuery's, `runtime`)
-        when the last object is a solid or a closed sketch.
+        when the last object is a solid, a compound, a closed sketch or a
+        pending circle (read on the oracle: `runtime-three-point-arc-*`).
+        Three points on one line, two that coincide included, are no arc:
+        CadQuery raises here, while the kernel refuses the profile when it
+        is built (`arris_refusal`, `arris-refusal-three-point-arc-*`).
 
         >>> import math
         >>> import arris_gym.cq as cq

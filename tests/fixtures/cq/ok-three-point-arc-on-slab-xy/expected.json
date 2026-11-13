@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 33.5707963267949,
+    "area": 69.1415926535898,
+    "centroid": [
+      0,
+      0.0198585300204678,
+      0.07018583852631825
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -1
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "faces": 9,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        8
+      ]
+    ]
+  },
+  "note": "a 4 x 4 x 2 slab centred on the origin, workplane(offset=1) on it at its top face z = 1, then the upper half of the unit circle from the moveTo point (-1, 0) through (0, 1) to (1, 0), closed by its diameter and extruded 1, fused onto the slab. V = 32 + pi/2; A = 64 + pi + 2 (the half disc's footprint on the slab's top comes back as the boss's top; the boss adds its half cylinder pi and its 2 x 1 flat side); ybar = (pi/2)(4/(3 pi)) / V = (2/3) / V; zbar = (pi/2)(3/2) / V"
+}

@@ -372,9 +372,19 @@ A pending path is its start and its segments, each a line to a point or a
 circular arc to a point through a middle one. `threePointArc(point1,
 point2)` goes on from where `lineTo` would (the path's end, a `moveTo`
 point, the plane's origin on an empty stack) through `point1` to `point2`,
-each two numbers in plane coordinates. `close` makes the loop with
-`Loop.path`: a line back to the start, unless the last segment, a line or
-an arc, ends within CadQuery's 1e-6 of it, when it ends on the start.
+each two numbers in plane coordinates. Like `lineTo`, it ends `runtime`
+after a closed outline, a pending circle, a solid or a compound, where
+CadQuery's `_findFromPoint` raises. Three points on one line (two that
+coincide, or an arc that ends on its own start) reach the kernel, which
+refuses the profile (`arris_refusal`, its words verbatim); CadQuery raises
+at the call (`runtime`), and the rule classes the pair as agreeing. No
+check in `cq` mirrors Open CASCADE's threshold, read on the oracle as an
+angle between the two chords of 1.4e-8 to 2e-8, the same at chords of
+0.002, 2 and 2000; the kernel refuses that band and a wider one, so an arc
+Open CASCADE builds nearly flat is an `arris_refusal` row. `close` makes
+the loop with `Loop.path`: a line back to the start, unless the last
+segment, a line or an arc, ends within CadQuery's 1e-6 of it, when it
+ends on the start.
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty
 stack its origin is the old one moved `d` along the normal; on a stack
 holding one solid it is the old origin projected onto the plane through

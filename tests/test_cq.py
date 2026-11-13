@@ -32,12 +32,15 @@ from arris_gym.fidelity import (
 
 CASES = fixture_cases.load("cq")
 # A recorded report beside a `verdict.json` is one the oracle got wrong: its
-# closed form is held to the oracle in `test_cq_compound.py` instead.
+# closed form is held to the oracle in `test_cq_compound.py` instead. A
+# report beside a fixture that expects a failure has no closed form: its row
+# is held in that fixture's own test (`test_cq_three_point_arc.py`).
 RECORDED = [
     c
     for c in CASES
     if (fixture_cases.ROOT / "cq" / c.slug / "oracle.json").is_file()
     and not (fixture_cases.ROOT / "cq" / c.slug / "verdict.json").is_file()
+    and c.expected["status"] == "ok"
 ]
 
 
