@@ -29,7 +29,10 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    `docs/ARRIS_API.md`, never from memory. A new status brings a program that
    reaches it; a new `cq` call brings its fidelity row; a new metric brings
    its closed-form test; a new path program text reaches brings its
-   `hypothesis` property. An ADR or design doc the step writes is run through
+   `hypothesis` property. A lift that admits a new context (what a stack
+   holds, a pending wire, a result kind) runs the subset's other operations
+   in that context on both sides; each that disagrees is refused, with its
+   fixture, in the same commit. An ADR or design doc the step writes is run through
    `tools/glossary-avoid.py` (an ADR keeps its words for good). A new public
    item is in the plan's *Design deltas* (add it if missing) and its new word
    gets its `GLOSSARY.md` entry, in the same commit.
