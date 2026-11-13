@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 19.02113032590307,
+    "area": 42.53254041760199,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -2,
+        -1.902113032590307,
+        0
+      ],
+      [
+        1.618033988749895,
+        1.902113032590307,
+        2
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "XY: polygon(5, -4) has radius -2, so each vertex is turned by pi: the first at (-2, 0), the others at 252, 324, 36 and 108 degrees on the circle of radius 2. Area (5/2) r^2 sin 72 = 10 sin 72, V = 20 sin 72; A = 2 area + 5 (2 r sin 36) 2 = 20 sin 72 + 40 sin 36; x from -2 to 2 cos 36, y +- 2 sin 72, z 0 to 2; 7 planar faces."
+}

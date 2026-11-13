@@ -82,7 +82,7 @@ a given design; **[3]** unproven semantics, established here.
   plane and centre and checks against the closed form. Declare the form, and
   have `test_c2_baseline`'s `tables_subset()` hold the committed reports to
   today's subset less `polygon`.
-- [ ] Step 2 **[3]** — the contexts and arguments. Run `polygon` on each
+- [x] Step 2 **[3]** — the contexts and arguments. Run `polygon` on each
   other last object, on both sides: a solid, a compound, a closed sketch, a
   drawn path, a pending circle. Also run `nSides` as 6.0, 2, 0 and -6, and a
   diameter of 0 and of -d. Each case is lifted when it agrees and refused
@@ -131,11 +131,16 @@ a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
-- ⚠ OPEN: Q1 — what `polygon` does with a non-integer, too small or zero
-  `nSides`, and with a zero or negative diameter. The agent decides in step 2,
-  from the oracle. The default is `cylinder`'s rule: where CadQuery raises,
-  `cq` ends `runtime` (`ValueError`). Where CadQuery builds a shape its
-  checker rejects, `cq` ends `runtime` by design. Where it builds a valid
-  shape (a negative diameter), `cq` builds the same.
+- *Settled* (step 2): Q1 — `cylinder`'s rule, read on the oracle. `nSides`
+  of 0 and 6.0 raise CadQuery's own `ZeroDivisionError` and `TypeError`,
+  which `cq` raises from the same expression. -6, 1 and a zero diameter
+  raise `StdFail_NotDone`; `cq` ends each `runtime` (`ValueError`), where
+  the kernel refused the profile before. `polygon(2, d)` builds a
+  zero-volume solid the oracle's checker passes (`ok`); `cq` ends it
+  `runtime` too, a `by_design` row (`runtime-polygon-two-sides`), since two
+  sides enclose no area. A negative diameter builds the polygon turned by π
+  on both sides and agrees (`ok-polygon-negative-diameter`). The five other
+  contexts are built by CadQuery on the object's `Center()` and stay
+  refused (`unsupported-polygon-*`).
 - ⚠ OPEN: Q2 — any cause step 3 finds that this plan leaves for later. The
   agent decides in step 3 and records the reach it costs.

@@ -9,6 +9,8 @@ and its `extrude` is fused with a solid in the chain (`combine=True`).
 """
 
 import math
+import pathlib
+import re
 
 import pytest
 from hypothesis import given, settings
@@ -18,7 +20,16 @@ import arris_gym as ag
 import arris_gym.cq as cq
 import fixture_cases
 from arris_gym.census import CorpusProgram, reach
-from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+from arris_gym.fidelity import (
+    DisagreementClass,
+    DocAnchor,
+    FidelityOutcome,
+    OracleReport,
+    OracleStatus,
+    Verdict,
+    compare,
+    program_sha256,
+)
 
 PLANES = ["XY", "YZ", "XZ", "ZX"]
 FIXTURES = [
@@ -29,6 +40,26 @@ FIXTURES = [
     "ok-polygon-transformed-xy",
     "ok-polygon-fused-xy",
     "ok-polygon-grease-nipple",
+    "ok-polygon-negative-diameter",
+]
+# The other last objects the subset puts on a stack, read on the oracle
+# (2026-11-14): CadQuery builds a polygon on each, centred on the object's
+# `Center()`, which the subset does not model; `cq` refuses each.
+CONTEXTS = [
+    "unsupported-polygon-on-solid",
+    "unsupported-polygon-on-compound",
+    "unsupported-polygon-on-closed-wire",
+    "unsupported-polygon-on-pending-wire",
+    "unsupported-polygon-on-pending-circle",
+]
+# Arguments CadQuery fails on (Q1 of plans/lift-polygon), each read on the
+# oracle (`oracle.json` beside it): `cq` ends each `runtime` and the rows agree.
+FAILING = [
+    "runtime-polygon-float-sides",
+    "runtime-polygon-zero-sides",
+    "runtime-polygon-negative-sides",
+    "runtime-polygon-one-side",
+    "runtime-polygon-zero-diameter",
 ]
 
 
@@ -145,3 +176,92 @@ def test_reach_reads_the_declared_form_only() -> None:
     )
     assert refused.status is ag.Status.UNSUPPORTED_API
     assert refused.message == "Workplane.polygon(num, num; forConstruction=bool)"
+
+
+@pytest.mark.parametrize("slug", CONTEXTS)
+def test_a_polygon_on_any_other_last_object_is_refused(slug: str) -> None:
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    result = fixture_cases.run(case)
+    assert result.status is ag.Status.UNSUPPORTED_API
+    assert result.message == "Workplane.polygon on a non-empty stack"
+
+
+def _recorded(slug: str) -> tuple[fixture_cases.Case, OracleReport]:
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    path = fixture_cases.ROOT / "cq" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text())
+    assert report.program_sha256 == program_sha256(case.program)
+    return case, report
+
+
+@pytest.mark.parametrize("slug", FAILING)
+def test_an_argument_cadquery_fails_on_fails_on_both_sides(slug: str) -> None:
+    case, report = _recorded(slug)
+    assert report.status is OracleStatus.RUNTIME
+    result = fixture_cases.run(case)
+    assert fixture_cases.check(result, case.expected) == []
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
+def test_two_sides_are_a_by_design_row_against_the_oracles_zero_volume_solid() -> None:
+    # Q1 of plans/lift-polygon: CadQuery's `polygon(2, d)` is a closed wire
+    # out and back along one diameter, and its extrusion a solid of zero
+    # volume its checker passes; `cq` builds nothing and ends `runtime`.
+    slug = "runtime-polygon-two-sides"
+    case, report = _recorded(slug)
+    directory = fixture_cases.ROOT / "cq" / slug
+    verdict = Verdict.model_validate_json((directory / "verdict.json").read_text())
+    assert report.status is OracleStatus.OK
+    assert report.measures is not None
+    assert report.measures.volume == 0.0
+    result = fixture_cases.run(case)
+    assert fixture_cases.check(result, case.expected) == []
+    assert compare(result, report).disagreement is DisagreementClass.CQ_BUG
+    row = compare(result, report, verdict)
+    assert (row.outcome, row.disagreement) == (
+        FidelityOutcome.DISAGREE,
+        DisagreementClass.BY_DESIGN,
+    )
+    assert isinstance(verdict.evidence, DocAnchor)
+    path, anchor = verdict.evidence.anchor.split("#")
+    text = (pathlib.Path(__file__).resolve().parent.parent / path).read_text()
+    headings = re.findall(r"^#+ (.+)$", text, re.MULTILINE)
+    assert anchor in [h.lower().replace(" ", "-") for h in headings]
+    assert "polygon(2, d)" in text
+
+
+@settings(max_examples=30, deadline=None)
+@given(
+    plane=st.sampled_from(PLANES),
+    point=st.none() | st.tuples(st.integers(-6, 6), st.integers(-6, 6)),
+    on_slab=st.booleans(),
+    sides=st.integers(-8, 8),
+    diameter=st.integers(-20, 20).map(lambda n: n / 4),
+)
+def test_a_polygon_ends_runtime_or_builds_as_its_arguments_say_in_every_admitted_context(
+    plane: str, point: tuple[int, int] | None, on_slab: bool, sides: int, diameter: float
+) -> None:
+    # Read on the oracle (`runtime-polygon-*`, `ok-polygon-negative-diameter`):
+    # fewer than three sides or a zero diameter end `runtime`, never a body;
+    # otherwise a negative diameter builds the polygon turned by pi, of the
+    # same area as its positive twin.
+    chain = (".box(40, 40, 2).workplane(offset=1)" if on_slab else "") + (
+        "" if point is None else f".moveTo{point}"
+    )
+    program = (
+        f"import cadquery as cq\nr = cq.Workplane('{plane}'){chain}"
+        f".polygon({sides}, {diameter}).extrude(1)\n"
+    )
+    result = ag.run(program, dialect="cq")
+    if sides < 3 or diameter == 0:
+        assert result.status is ag.Status.RUNTIME, result.message
+        error = "ZeroDivisionError" if sides == 0 else "ValueError"
+        assert result.message.startswith(f"{error}: "), result.message
+        return
+    assert result.status is ag.Status.OK, result.message
+    assert result.measures is not None
+    radius = diameter / 2
+    area = sides / 2 * radius**2 * math.sin(2 * math.pi / sides)
+    # The slab is centred on the plane, its top face at offset 1, where the
+    # prism starts: the prism stands on it, wholly inside its 40 x 40 top.
+    assert fixture_cases.close(result.measures.volume - (3200 if on_slab else 0), area)

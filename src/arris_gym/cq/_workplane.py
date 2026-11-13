@@ -520,8 +520,19 @@ class Workplane:
         its order (`Workplane.polygon`, `cq.py`): `radius = diameter / 2.0`,
         the angle `2.0 * math.pi / nSides` times `i`, and the point
         `(radius * cos, radius * sin)`; CadQuery's closing point repeating
-        the first is left out, since the kernel closes the loop. Refuses, as
-        `UnsupportedApi`, any other stack, as `circle` does.
+        the first is left out, since the kernel closes the loop. A negative
+        `diameter` turns the polygon by π, as CadQuery's does. Refuses, as
+        `UnsupportedApi`, any other stack, as `circle` does: CadQuery centres
+        a polygon on each object's `Center()` there (read on the oracle:
+        `unsupported-polygon-*`).
+
+        Fails as CadQuery does (read on the oracle: `runtime-polygon-*`):
+        `nSides` of 0 raises `ZeroDivisionError` and a float `TypeError`,
+        CadQuery's own, from the same expression. Raises `ValueError`
+        (`runtime`) for fewer than three sides and for a zero `diameter`:
+        CadQuery raises `StdFail_NotDone` on each but two sides, which it
+        extrudes into a zero-volume solid (`runtime-polygon-two-sides`, a
+        `by_design` row).
 
         >>> import math
         >>> import arris_gym.cq as cq
@@ -545,6 +556,13 @@ class Workplane:
         for i in range(nSides):
             o = angle * i
             vertices.append((cx + radius * math.cos(o), cy + radius * math.sin(o)))
+        named = f"Workplane.polygon({nSides}, {diameter})"
+        if nSides < 3:
+            # CadQuery raises StdFail_NotDone below two sides; two sides
+            # make the oracle's zero-volume solid, refused by design.
+            raise ValueError(f"{named}: fewer than three sides enclose no area")
+        if diameter == 0:
+            raise ValueError(f"{named}: a zero diameter (CadQuery's StdFail_NotDone)")
         return self._derive(self._plane.polygon(vertices))
 
     @census_form("Workplane.extrude", [("num",)])

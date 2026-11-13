@@ -383,9 +383,17 @@ vertices on the circle of `diameter`, the first on the plane's +x, the
 others counterclockwise, each offset from the centre computed by
 CadQuery's own expression in its order (`radius * cos(2.0 * pi / nSides *
 i)`), so it carries its bits on the same libm, as `transformed`'s turn does. CadQuery's closing vertex,
-the first repeated, is left to the kernel's closed loop. Any other stack
-ends `unsupported_api`, as `circle`'s does; its keywords
-(`forConstruction`, `circumscribed`) are outside the subset.
+the first repeated, is left to the kernel's closed loop; a negative
+diameter turns it by π, as CadQuery's does. A drawn path, a closed outline,
+a pending circle, a solid or a compound on the stack ends `unsupported_api`,
+as `circle`'s does (CadQuery centres a polygon on the object's `Center()`,
+not modelled); its keywords (`forConstruction`, `circumscribed`) are
+outside the subset. `nSides` of 0 and a float raise CadQuery's own
+`ZeroDivisionError` and `TypeError`; fewer than three sides and a zero
+diameter end `runtime` (`ValueError`), as CadQuery raises `StdFail_NotDone`,
+and `polygon(2, d)` does so by design: CadQuery extrudes the wire out and
+back along one diameter into a zero-volume solid its checker passes, and
+the row is `by_design` on this anchor.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 A pending path is its start and its segments, each a line to a point or a

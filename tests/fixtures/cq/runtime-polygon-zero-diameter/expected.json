@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.polygon(6, 0): a zero diameter (CadQuery's StdFail_NotDone)"
+}

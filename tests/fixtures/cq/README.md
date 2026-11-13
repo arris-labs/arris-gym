@@ -246,3 +246,27 @@ comment: a revolved profile, a hexagon fused across its neck and a bore
 seven have recorded oracle reports that meet their closed forms and
 agreeing rows in `test_cq_polygon.py`, with a property over n, diameter,
 plane, offset, point and distance.
+`-negative-diameter` (2026-11-14) is `polygon(5, -4)`: each vertex turned
+by π, the first at (-2, 0), the area and side of `polygon(5, 4)`; x from
+-2 to 2 cos 36°, y ±2 sin 72°. Its recorded oracle report meets that closed
+form and the row agrees.
+
+`unsupported-polygon-on-solid`, `-on-compound`, `-on-closed-wire`,
+`-on-pending-wire` and `-on-pending-circle` call `polygon(6, 1).extrude(1)`
+on each other last object the subset puts on a stack, as
+`unsupported-sphere-*` do. Read on the oracle (2026-11-14, a scratch
+`tools/oracle_run.py` run over these five programs), CadQuery builds a
+polygon on each, centred on the object's `Center()`: inside the post at
+(5, 0, 1), which it leaves at V = 2π; between the two boxes at (2.5, 0, 0),
+a third piece (V = 2 + 3√3/8); at the segment's centre (1.5, 1), the
+segment dropped (V = 3√3/8); at the circle's centre, a hexagonal hole in
+its disc (V = 9π − 3√3/8); and with the triangle, an `invalid` shape.
+`runtime-polygon-float-sides` and `-zero-sides` raise CadQuery's own
+`TypeError` and `ZeroDivisionError` on both sides; `-negative-sides`,
+`-one-side` and `-zero-diameter` raise `StdFail_NotDone` on the oracle and
+`ValueError` under `cq`. Each has its `oracle.json` and the rows agree.
+`runtime-polygon-two-sides` is answered `ok` by the oracle with a solid of
+zero volume, the wire out and back along one diameter (`oracle.json`);
+`cq` ends it `runtime`, and `verdict.json` classes the row `by_design` on
+`docs/ARCHITECTURE.md` §Dialects. `test_cq_polygon.py` holds every one,
+with a property over plane, point, slab, sides and diameter.

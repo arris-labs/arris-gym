@@ -10,7 +10,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   or on a `moveTo` point, its first vertex on the plane's x axis, ready to
   extrude or revolve as a circle is. Its keywords (`forConstruction`,
   `circumscribed`) end `unsupported_api`, and so does a polygon on a stack
-  holding anything but one `moveTo` point.
+  holding anything but one `moveTo` point. A negative diameter turns the
+  polygon by half a turn, as CadQuery's does; fewer than three sides or a
+  zero diameter end `runtime`.
 
 - `dialect="cq"` now runs `sphere(radius)`: a sphere centred on the
   workplane's origin or on a `moveTo` point, its poles on the plane's
