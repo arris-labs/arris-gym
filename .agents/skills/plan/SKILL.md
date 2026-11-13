@@ -32,7 +32,11 @@ and the human can read in two minutes: under ~150 lines and ~10 steps.
      signature, and module boundary that changes. A non-obvious decision
      becomes an ADR — list it as a step. A `⚠ OPEN:` in a design doc that
      this plan closes is listed here with the ADR that closes it. A new
-     term is named with its glossary entry. A numeric constant the plan
+     term is named with its glossary entry. A plan that admits a name (a
+     method, a form) greps `tests/`, `src/` and `docs/` for that name used as
+     an "unsupported" example and lists the hits: each is moved in the lift's
+     commit, and *Acceptance* never says an existing fixture passes
+     "unchanged" while one of them is on the list. A numeric constant the plan
      cannot derive in closed form (a timeout, a tolerance, a reward weight)
      is written "measured by step N", and that step is graded [2] or higher.
    - *Steps* are commit-sized: each has an observable result and its own
