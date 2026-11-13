@@ -71,7 +71,7 @@ a given design; **[3]** unproven semantics, established here.
   on the stack) are refused here too, so no wrong part is built before
   step 2 reads them on the oracle; the dimension checks are step 2's.
   `test_c2_baseline` holds the committed reach reports to `tables_subset()`
-  (today's less `cylinder`) until step 7 re-runs the tables.
+  (today's less `cylinder`) until step 6 re-runs the tables.
 - [x] Step 2 **[3]** — the refusals and the degenerate dimensions. Run
   `cylinder` on every other stack context on both sides (the work skill's
   new-context rule): a pending path, a pending circle, a sketch, a solid,
@@ -81,25 +81,49 @@ a given design; **[3]** unproven semantics, established here.
   *Settled*: the oracle builds all five contexts, each centred on the
   object's `Center()`; step 1's refusals already end them
   `unsupported_api`, now with fixtures. Q1 as below.
-- [ ] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows`
+- [x] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows`
   on both corpora into a scratch out-dir, then `cq_diagnose.py` over the new
   BenchCAD table, to get the in-subset rows by class and the `cq_bug` rows
   by message. Rewrite steps 4 and 5 to the causes (largest first), and
   record any cause left for a later plan as Q2, with the reach it costs.
-- [ ] Step 4 **[3]** — cause 1 from step 3 (placeholder).
-- [ ] Step 5 **[3]** — cause 2 from step 3 (placeholder). If step 3 finds
-  no `cq_bug`, steps 4 and 5 are deleted.
-- [ ] Step 6 **[2]** — classify what is left. Each in-subset `arris_bug` or
-  `arris_refusal` row's cause is shrunk to a strict-xfail `regression/`
-  fixture and listed in `arris-report`. A new kernel ask goes to
-  `../arris/docs/ideas/`, and a disagreement with the oracle that a closed
-  form settles gets its verdict. No in-subset row may be unclassified.
-- [ ] Step 7 **[2]** — the re-run committed. Run both corpora with
-  `--oracle-rows` and BenchCAD with the C1 verdicts, in the background, and
-  commit `tests/fixtures/c2/*` as `fixtures:` with the new figures. The
-  oracle rows must be the committed bytes (none re-run but timeouts); state
-  their digest beside the table digest. `test_c2_baseline`'s
-  `tables_subset()` returns to `cq.subset()`.
+  *Settled*: one `cq_bug` cause, so step 4 is it; the old step 5 is deleted
+  and the old steps 6 and 7 are now 5 and 6. Measured on the committed oracle
+  rows (digests unchanged): BenchCAD reach 3,304/17,900, 2,248 agree, 64
+  in-subset `cq_bug`, table `6fd67f29…2147`; CAD-Recode reach 104/968, 103
+  agree, 0 `cq_bug`, 1 unclassified (stem `550`: crossing cylinders, volume
+  2.6e-9 apart), table `1ded5914…06e15`. BenchCAD in-subset, not agreeing:
+  64 `cq_bug`; 420 unclassified (`cotter_pin` 159, `u_bolt` 136, `j_hook`
+  125); 496 refusals (`pull_handle` 176, `lobed_knob` 168 with the 100
+  `arris_bug`, `wall_anchor` 81, `torus_link` 80, `hinge` 61, `bucket` 6).
+- [ ] Step 4 **[3]** — the one `cq_bug` cause: `union` and `cut` on a
+  workplane with no solid (`cq.Workplane("XY").union(cq.Workplane(…).cylinder(…))`,
+  the first call of every `t_pipe_fitting` program) end `runtime`
+  "Cannot find a solid on the stack or in the parent chain" where the oracle
+  builds. 64 programs, all `t_pipe_fitting`, all in the subset. Read on the
+  oracle what `union`, `cut` and `intersect` return with an empty chain, the
+  other side's context (a pending path, a sketch, a solid) and `clean=`,
+  `glue=`, `tol=`; lift what it builds, refuse what `cq` cannot match, each
+  with a closed-form `cq/ok-*` or `unsupported-*` fixture checked against the
+  oracle. Reach does not move (the form is declared); the 64 rows move to
+  `agree` or to a class outside `cq_bug`.
+- [ ] Step 5 **[2]** — classify what is left. The 420 unclassified
+  in-subset BenchCAD rows and the one CAD-Recode row, and the in-subset
+  `arris_bug` and `arris_refusal` rows. `u_bolt` and `j_hook` (261 rows)
+  are `ok` against `ok` with volume off by up to 1e-5 relative: they
+  `revolve` a circle 180° into a half torus, so the closed form
+  (V = π r² · πR) decides which kernel is off and gives the verdict.
+  `cotter_pin` (159) is `arris_refusal` against the oracle's `invalid`;
+  `pull_handle`, `wall_anchor`, `torus_link`, `hinge`, `bucket`, `lobed_knob`
+  are refusals already classed. Each cause is shrunk to a strict-xfail
+  `regression/` fixture and listed in `arris-report`. A new kernel ask goes
+  to `../arris/docs/ideas/`. No in-subset row may be unclassified.
+- [ ] Step 6 **[2]** — the re-run committed. Run both corpora with
+  `--oracle-rows` and BenchCAD with the C1 verdicts, and
+  commit `tests/fixtures/c2/*` as `fixtures:` with the new figures. A
+  BenchCAD chunk holding oracle timeouts takes minutes, so run it with
+  `--chunk 100` and resume. The oracle rows must be the committed bytes
+  (none re-run but timeouts); state their digest beside the table digest.
+  `test_c2_baseline`'s `tables_subset()` returns to `cq.subset()`.
 
 ## Acceptance
 
@@ -113,7 +137,7 @@ a given design; **[3]** unproven semantics, established here.
 - `… --corpus cadrecode --oracle-rows …/cadrecode/oracle.jsonl.gz`: reach
   104/968, `in_subset_cq_bug` 0, 0 unclassified in the subset.
 - The `cq/ok-cylinder-*` and `unsupported-cylinder-*` fixtures and the
-  closed-form property pass; every `regression/` fixture step 6 adds is
+  closed-form property pass; every `regression/` fixture step 5 adds is
   strict xfail; the gate is green.
 
 ## Docs to update on completion
@@ -126,7 +150,7 @@ a given design; **[3]** unproven semantics, established here.
   and its `--oracle-rows` command.
 - `CHANGELOG.md` §Unreleased — `cylinder` under `dialect="cq"`.
 - `PROVENANCE.md` — CadQuery's `cylinder` placement.
-- `docs/BACKLOG.md` §Findings — any arris finding step 6 files.
+- `docs/BACKLOG.md` §Findings — any arris finding step 5 files.
 
 ## Open questions
 
@@ -137,7 +161,5 @@ a given design; **[3]** unproven semantics, established here.
   purpose (`checker_fail`), which `cq` cannot produce honestly; the
   kernel's own refusal (`arris_refusal`) leaves the row unclassified too.
   No corpus program writes a literal 0, so reach does not move.
-- ⚠ OPEN: Q2 — a `cq_bug` cause step 3 measures that steps 4 and 5 cannot
-  lift. The agent decides at step 3, by its reach cost: lift it as a step
-  here, or remove its form and name the reach it costs (ADR-0012). The
-  acceptance's 0 `cq_bug` holds either way.
+- *Settled* (step 3): Q2 — step 3 measured one `cq_bug` cause, and step 4
+  lifts it, so no form is removed and reach stays 3,304/104.
