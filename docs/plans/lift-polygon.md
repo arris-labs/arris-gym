@@ -137,8 +137,11 @@ a given design; **[3]** unproven semantics, established here.
   raise `StdFail_NotDone`; `cq` ends each `runtime` (`ValueError`), where
   the kernel refused the profile before. `polygon(2, d)` builds a
   zero-volume solid the oracle's checker passes (`ok`); `cq` ends it
-  `runtime` too, a `by_design` row (`runtime-polygon-two-sides`), since two
-  sides enclose no area. A negative diameter builds the polygon turned by π
+  `runtime` too, and the row is `cq_bug`, not `by_design`: the form is
+  admitted, and ADR-0012 classes a declined behaviour of an admitted form
+  `cq_bug` until fixed (`cylinder(h, 0)` and `sphere(0)` differ: there the
+  oracle answers `invalid`). It is held by the strict `xfail`
+  `regression/cq-polygon-two-sides` and a `docs/BACKLOG.md` line. A negative diameter builds the polygon turned by π
   on both sides and agrees (`ok-polygon-negative-diameter`). The five other
   contexts are built by CadQuery on the object's `Center()` and stay
   refused (`unsupported-polygon-*`).

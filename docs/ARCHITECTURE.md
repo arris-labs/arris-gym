@@ -390,10 +390,11 @@ as `circle`'s does (CadQuery centres a polygon on the object's `Center()`,
 not modelled); its keywords (`forConstruction`, `circumscribed`) are
 outside the subset. `nSides` of 0 and a float raise CadQuery's own
 `ZeroDivisionError` and `TypeError`; fewer than three sides and a zero
-diameter end `runtime` (`ValueError`), as CadQuery raises `StdFail_NotDone`,
-and `polygon(2, d)` does so by design: CadQuery extrudes the wire out and
-back along one diameter into a zero-volume solid its checker passes, and
-the row is `by_design` on this anchor.
+diameter end `runtime` (`ValueError`), as CadQuery raises `StdFail_NotDone`.
+`polygon(2, d)` ends `runtime` too, where CadQuery extrudes the wire out and
+back along one diameter into a zero-volume solid its checker passes: a
+`cq_bug` row, since the form is admitted (ADR-0012), held by the strict
+`xfail` `regression/cq-polygon-two-sides`.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 A pending path is its start and its segments, each a line to a point or a

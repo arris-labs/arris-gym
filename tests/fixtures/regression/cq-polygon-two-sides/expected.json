@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "cq ends polygon(2, 4) runtime, ValueError \"fewer than three sides enclose no area\"; CadQuery 2.3.0 extrudes the two-sided wire into a zero-volume solid its checker passes",
+  "measures": {
+    "volume": 0.0,
+    "area": 8.0,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -2,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "polygon(2, 4) has its vertices at (2, 0) and (2 cos pi, 2 sin pi) = (-2, 0): a closed wire out and back along one diameter of 4. Extruded 1 along +z, its two sides are the same 4 x 1 rectangle twice and its two ends degenerate: V = 0, A = 2 (4 x 1) = 8, bounds x -2..2, y 0, z 0..1, one shell, genus 0. The centroid of a zero volume is 0/0, no closed form: it is the oracle's (0, 0, 0), recorded in oracle.json (gym.md: the oracle answers when the construction runs out)"
+}

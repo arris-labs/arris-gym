@@ -42,6 +42,7 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - The `occt_wrong` verdicts for the tee and hook families rest on a closed form checked only against arris and its quadrature; add a limiting case with an elementary answer (branch radius equal to the main radius, a hook with no cylinder overlap) so the check is independent of both kernels
 - 176 `pull_handle` rows end `OpInternalError` ("kernel bug: the face arrangement is not a subdivision…") and are `arris_refusal` by ADR-0006's rule, though the kernel calls it a bug and C1's `lobed_knob` rows were raised to `arris_bug` by verdict; decide whether these get `arris_bug` verdicts
 - Three BenchCAD programs outside the subset (`bearing_retainer_cap_014254`, `_015325`, `_016792`) end `OpInternalError` "a section edge of f38 ends at a node nothing else reaches"; shrink each to a `regression/` fixture and report it to arris
+- `cq`'s `polygon(2, d)` ends `runtime` where CadQuery 2.3.0 builds a zero-volume solid its checker passes (`ok`): an in-subset `cq_bug` (ADR-0012), held by `regression/cq-polygon-two-sides` (strict `xfail`); the census cannot see a literal, so the form cannot leave the subset for it alone: build the out-and-back prism in `cq`, and ask arris (`../arris/docs/ideas/`) if the kernel refuses a zero-volume solid (plans/lift-polygon step 2)
 
 ## Findings
 

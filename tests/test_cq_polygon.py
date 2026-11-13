@@ -9,8 +9,6 @@ and its `extrude` is fused with a solid in the chain (`combine=True`).
 """
 
 import math
-import pathlib
-import re
 
 import pytest
 from hypothesis import given, settings
@@ -21,12 +19,9 @@ import arris_gym.cq as cq
 import fixture_cases
 from arris_gym.census import CorpusProgram, reach
 from arris_gym.fidelity import (
-    DisagreementClass,
-    DocAnchor,
     FidelityOutcome,
     OracleReport,
     OracleStatus,
-    Verdict,
     compare,
     program_sha256,
 )
@@ -203,31 +198,26 @@ def test_an_argument_cadquery_fails_on_fails_on_both_sides(slug: str) -> None:
     assert compare(result, report).outcome is FidelityOutcome.AGREE
 
 
-def test_two_sides_are_a_by_design_row_against_the_oracles_zero_volume_solid() -> None:
+@pytest.mark.xfail(
+    reason="cq ends polygon(2, d) runtime where CadQuery builds a zero-volume solid",
+    raises=AssertionError,
+    strict=True,
+)
+def test_two_sides_agree_with_the_oracles_zero_volume_solid() -> None:
     # Q1 of plans/lift-polygon: CadQuery's `polygon(2, d)` is a closed wire
     # out and back along one diameter, and its extrusion a solid of zero
-    # volume its checker passes; `cq` builds nothing and ends `runtime`.
-    slug = "runtime-polygon-two-sides"
-    case, report = _recorded(slug)
-    directory = fixture_cases.ROOT / "cq" / slug
-    verdict = Verdict.model_validate_json((directory / "verdict.json").read_text())
+    # volume its checker passes. The form is admitted, so the row is
+    # `cq_bug` until `cq` builds it (ADR-0012), never `by_design`.
+    directory = fixture_cases.ROOT / "regression" / "cq-polygon-two-sides"
+    case = next(c for c in fixture_cases.load("regression") if c.slug == directory.name)
+    report = OracleReport.model_validate_json((directory / "oracle.json").read_text())
+    assert report.program_sha256 == program_sha256(case.program)
     assert report.status is OracleStatus.OK
     assert report.measures is not None
     assert report.measures.volume == 0.0
+    assert not (directory / "verdict.json").exists()
     result = fixture_cases.run(case)
-    assert fixture_cases.check(result, case.expected) == []
-    assert compare(result, report).disagreement is DisagreementClass.CQ_BUG
-    row = compare(result, report, verdict)
-    assert (row.outcome, row.disagreement) == (
-        FidelityOutcome.DISAGREE,
-        DisagreementClass.BY_DESIGN,
-    )
-    assert isinstance(verdict.evidence, DocAnchor)
-    path, anchor = verdict.evidence.anchor.split("#")
-    text = (pathlib.Path(__file__).resolve().parent.parent / path).read_text()
-    headings = re.findall(r"^#+ (.+)$", text, re.MULTILINE)
-    assert anchor in [h.lower().replace(" ", "-") for h in headings]
-    assert "polygon(2, d)" in text
+    assert compare(result, report).outcome is FidelityOutcome.AGREE, result.message
 
 
 @settings(max_examples=30, deadline=None)
@@ -235,14 +225,15 @@ def test_two_sides_are_a_by_design_row_against_the_oracles_zero_volume_solid() -
     plane=st.sampled_from(PLANES),
     point=st.none() | st.tuples(st.integers(-6, 6), st.integers(-6, 6)),
     on_slab=st.booleans(),
-    sides=st.integers(-8, 8),
+    # Two sides are the strict xfail `test_two_sides_agree_…` instead.
+    sides=st.integers(-8, 8).filter(lambda n: n != 2),
     diameter=st.integers(-20, 20).map(lambda n: n / 4),
 )
 def test_a_polygon_ends_runtime_or_builds_as_its_arguments_say_in_every_admitted_context(
     plane: str, point: tuple[int, int] | None, on_slab: bool, sides: int, diameter: float
 ) -> None:
     # Read on the oracle (`runtime-polygon-*`, `ok-polygon-negative-diameter`):
-    # fewer than three sides or a zero diameter end `runtime`, never a body;
+    # fewer than three sides (two aside) or a zero diameter end `runtime`;
     # otherwise a negative diameter builds the polygon turned by pi, of the
     # same area as its positive twin.
     chain = (".box(40, 40, 2).workplane(offset=1)" if on_slab else "") + (

@@ -531,8 +531,8 @@ class Workplane:
         CadQuery's own, from the same expression. Raises `ValueError`
         (`runtime`) for fewer than three sides and for a zero `diameter`:
         CadQuery raises `StdFail_NotDone` on each but two sides, which it
-        extrudes into a zero-volume solid (`runtime-polygon-two-sides`, a
-        `by_design` row).
+        extrudes into a zero-volume solid: a `cq_bug` row, held by the strict
+        `xfail` `regression/cq-polygon-two-sides`.
 
         >>> import math
         >>> import arris_gym.cq as cq
@@ -556,10 +556,14 @@ class Workplane:
         for i in range(nSides):
             o = angle * i
             vertices.append((cx + radius * math.cos(o), cy + radius * math.sin(o)))
+        # These checks come after the vertex loop on purpose: CadQuery's own
+        # ZeroDivisionError (nSides 0) and TypeError (a float nSides) raise
+        # first, from the same expressions, so those rows agree.
         named = f"Workplane.polygon({nSides}, {diameter})"
         if nSides < 3:
-            # CadQuery raises StdFail_NotDone below two sides; two sides
-            # make the oracle's zero-volume solid, refused by design.
+            # CadQuery raises StdFail_NotDone below two sides. Two sides make
+            # the oracle's zero-volume solid, which cq does not build: a
+            # cq_bug row (regression/cq-polygon-two-sides), not by design.
             raise ValueError(f"{named}: fewer than three sides enclose no area")
         if diameter == 0:
             raise ValueError(f"{named}: a zero diameter (CadQuery's StdFail_NotDone)")

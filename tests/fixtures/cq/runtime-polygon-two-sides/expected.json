@@ -1,5 +1,0 @@
-{
-  "dialect": "cq",
-  "status": "runtime",
-  "message": "ValueError: Workplane.polygon(2, 4): fewer than three sides enclose no area"
-}
