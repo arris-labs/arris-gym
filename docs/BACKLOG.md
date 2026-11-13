@@ -109,6 +109,14 @@ A defect a run measured, one block each:
 - Measured: not reached by any corpus row (the tangent cylinders before it are refused first); the oracle's 631.65 for R = r = 4 is the closed form
 - State: regression/cq-horn-torus; reported in `../arris/docs/ideas/fuse-contact-refusals.md`
 
+### spindle-torus-revolve
+- What: arris refuses a revolve of an arc that stays on one side of the axis while its circle crosses it (the outer part of a spindle torus), `OpDegenerateError` "an arc's circle crosses the revolve axis: a spindle torus"; Open CASCADE builds it, V = pi (236 + 225 pi - 225 asin(4/5)) / 3 on the fixtures; the horn-torus finding (a circle that touches the axis) is its neighbour
+- Where: arris 0.10.0 `revolve`, reached by `cq`'s `Workplane.revolve` after `threePointArc`
+- Seen: plans/lift-three-point-arc steps 3 and 4, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k spindle-torus`
+- Measured: 68 newly reached rows, `rivet` 32 (the arc starts on the axis, at a slant) and `dome_cap` 36 (the arc ends on it; its circle is centred 1.3e-4 off the axis from rounded points); the oracle's volume, area and centroid equal each fixture's closed form to 1e-12
+- State: regression/cq-spindle-torus-arc-from-axis, cq-spindle-torus-arc-to-axis; reported in `../arris/docs/ideas/spindle-torus-revolve.md`
+
 ### slots-through-a-cylinder
 - What: arris refuses the third of three slots cut 60 degrees apart through a cylinder's axis (`OpDegenerateError`, "the faces touch along a curve interior to both result faces"); two slots build, and Open CASCADE builds all three
 - Where: arris 0.10.0 `Solid.cut`, reached by `cq`'s `Workplane.cut`

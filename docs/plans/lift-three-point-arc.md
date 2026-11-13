@@ -94,7 +94,7 @@ a given design; **[3]** unproven semantics, established here.
   record any cause left for a later plan as Q2, with the reach it costs.
   Measured: no `cq_bug`, so the two cause steps were deleted and the last
   two renumbered (below, Q2).
-- [ ] Step 4 **[2]** — classify what is left. Shrink the cause of each
+- [x] Step 4 **[2]** — classify what is left. Shrink the cause of each
   in-subset `arris_bug` or `arris_refusal` row to a strict-xfail
   `regression/` fixture, listed in `arris-report`. A new kernel ask goes to
   `../arris/docs/ideas/`. A disagreement with the oracle that a closed form
@@ -173,3 +173,12 @@ a given design; **[3]** unproven semantics, established here.
   filed. No corpus program writes a point of three numbers to
   `threePointArc` (0 of 17,900), so that note costs no reach. The
   cause steps are gone; the plan's steps are now 1 to 5.
+- *Settled* (step 4): Q3 — the 68 `arris_refusal` rows are not the filed horn
+  torus (a circle that touches the axis): `rivet`'s and `dome_cap`'s circles
+  cross it, the arc staying on one side (`dome_cap`'s by 1.3e-4, from rounded
+  points). Two strict-xfail fixtures, `cq-spindle-torus-arc-from-axis` and
+  `-to-axis`, take their closed form from the region's integrals (the oracle
+  equals them to 1e-12); a new BACKLOG finding `spindle-torus-revolve` and
+  `../arris/docs/ideas/spindle-torus-revolve.md`. No verdict file: ADR-0006's
+  rule already classes the rows `arris_refusal`, 0 unclassified; `arris-report`
+  lists the message when step 5 regenerates it.

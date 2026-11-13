@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses a revolve of an arc whose circle crosses the axis while the arc stays on one side of it, OpDegenerateError \"an arc's circle crosses the revolve axis: a spindle torus\"; CadQuery 2.3.0 builds it",
+  "measures": {
+    "volume": 768.870163820388,
+    "area": 535.4182526685349,
+    "centroid": [
+      0,
+      2.0920247843220077,
+      0
+    ],
+    "bounds": [
+      [
+        -8,
+        0,
+        -8
+      ],
+      [
+        8,
+        5,
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "the region of the disc of radius 5 centred on (3, 0) with x >= 0 and y >= 0, turned a full turn about the y axis (the circle meets the axis at y = 4 and y = -4; the arc keeps x >= 0, from (0, 4) over the top (3, 5) to (8, 0)). V = pi [ int_0^4 (3 + s)^2 dy + int_4^5 ((3 + s)^2 - (3 - s)^2) dy ] with s = sqrt(25 - y^2), = pi (236 + 225 pi - 225 asin(4/5)) / 3; ybar = pi int y (...) dy / V = 1536 / (236 + 225 pi - 225 asin(4/5)); A = the arc's surface 2 pi int (3 + 5 cos t) 5 dt over t from 0 to pi - atan(4/3), = 10 pi (3 (pi - atan(4/3)) + 4), plus the base disc of radius 8, 64 pi; the profile touches the axis along a segment, so the body is a ball: genus 0, one shell"
+}
