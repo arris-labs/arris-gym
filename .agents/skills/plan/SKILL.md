@@ -63,7 +63,8 @@ and the human can read in two minutes: under ~150 lines and ~10 steps.
      new. Docstrings on new public items are part of the steps.
    - *Open questions* carry `⚠ OPEN:` items, each with who decides and by
      which step. The agent decides by default — a timeout, a tolerance, a
-     rescope inside the plan — and records its pick and the reason. The
+     rescope inside the plan, adding to or trimming what the request named
+     when the reach curve or an ADR decides it — and records its pick and the reason. The
      human decides only a change to a cycle's scope on the roadmap, to the
      project's positioning, or what publishes or costs money (a paid model's
      API run included).
