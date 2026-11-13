@@ -36,7 +36,8 @@ def c1_subset() -> cq.Subset:
 
     Today's subset less what C2 has lifted since: ADR-0015's `r = …`
     (plans/in-subset-cq-bugs step 2), `cq.Workplane`'s `origin=` (step 6),
-    `Workplane.workplane` (step 7) and `Workplane.cylinder` (plans/lift-cylinder).
+    `Workplane.workplane` (step 7), `Workplane.cylinder` (plans/lift-cylinder)
+    and `Workplane.threePointArc` (plans/lift-three-point-arc).
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
     return replace(
@@ -44,7 +45,8 @@ def c1_subset() -> cq.Subset:
         forms=tuple(
             constructor if form.name == "cq.Workplane" else form
             for form in cq.subset().forms
-            if form.name not in ("Workplane.workplane", "Workplane.cylinder")
+            if form.name
+            not in ("Workplane.workplane", "Workplane.cylinder", "Workplane.threePointArc")
         ),
         end_forms=("result = …", "show_object(…)"),
     )

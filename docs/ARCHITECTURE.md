@@ -322,11 +322,11 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in census order. Today it is the census's 15 API forms:
+the **subset**, grown in census order. Today it is the census's 16 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `circle`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
-`polyline`, `close` and `revolve`;
+`threePointArc`, `polyline`, `close` and `revolve`;
 selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
@@ -368,6 +368,13 @@ CadQuery builds a zero-volume shape its own checker rejects (`invalid`),
 and `cq` builds nothing, so the row is `by_design` on this anchor.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
+A pending path is its start and its segments, each a line to a point or a
+circular arc to a point through a middle one. `threePointArc(point1,
+point2)` goes on from where `lineTo` would (the path's end, a `moveTo`
+point, the plane's origin on an empty stack) through `point1` to `point2`,
+each two numbers in plane coordinates. `close` makes the loop with
+`Loop.path`: a line back to the start, unless the last segment, a line or
+an arc, ends within CadQuery's 1e-6 of it, when it ends on the start.
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty
 stack its origin is the old one moved `d` along the normal; on a stack
 holding one solid it is the old origin projected onto the plane through

@@ -166,3 +166,16 @@ to 1.75 (V = 8.75, centroid x 33/280). Each has a recorded oracle report and
 an agreeing row in `test_cq.py`, with a property over both planes, offsets,
 height and radius. `runtime-cut-on-empty-chain` is `cut` there: CadQuery's
 `findSolid` raises, and `cq` ends it `runtime` in the same words.
+
+`ok-three-point-arc-*` call `threePointArc(point1, point2)`, each closed
+form in its `note`. `-half-disc-xy` starts on a `moveTo` point and closes
+the radius-2 half disc by its diameter (V = 6π). `-from-origin-xz` starts
+on an empty stack, at the origin: a radius-5 half disc on a 10 × 2
+rectangle drawn by `lineTo` after the arc, extruded -2 toward world +y.
+`-stadium-yz` is a stadium as BenchCAD's `dog_bone` draws it: lines, then a
+major arc through a far point at each end, the second ending on the start.
+`-lens-zx` is two arcs, the second after the first and ending on the start,
+extruded -3. `-hemisphere-xy` revolves a quarter disc about +y (V = 2πr³/3).
+All five have recorded oracle reports and agreeing rows in
+`test_cq_three_point_arc.py`, with a property over a circular segment's
+plane, centre, radius, angles and signed height.

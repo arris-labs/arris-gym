@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 67.09428270024183,
+    "area": 100.36723488025795,
+    "centroid": [
+      0,
+      -1.5,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        0,
+        4
+      ]
+    ],
+    "faces": 4,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "two arcs, the second after the first and ending on the start: (-4, 0) through (0, 2) to (4, 0) on the radius-5 circle about (0, -3), back through (0, -2) on the one about (0, 3). Each is a segment of half-angle beta = atan2(4, 3), area 25 beta - 12, arc length 10 beta. ZX maps local (u, v, w) to world (v, w, u); extruded -3. V = 3 lens; A = 2 lens + 3 (20 beta)"
+}

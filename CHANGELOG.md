@@ -5,6 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `threePointArc(point1, point2)`: a circular arc
+  from where `lineTo` would start, through `point1`, ending at `point2`,
+  each two numbers in the workplane's coordinates, so an outline of lines
+  and arcs can be closed, extruded and revolved. A point of three numbers
+  or a `Vector`, or a keyword, ends `unsupported_api`.
+
 - `dialect="cq"` now runs `union` on a workplane whose chain holds no
   solid, as CadQuery does: the result is the given workplane's solid, so
   `cq.Workplane("XY").union(part)` starts a chain. A `cut` there still ends

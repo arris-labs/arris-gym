@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 18.84955592153876,
+    "area": 43.41592653589793,
+    "centroid": [
+      0,
+      0.8488263631567752,
+      1.5
+    ],
+    "bounds": [
+      [
+        -2,
+        0,
+        0
+      ],
+      [
+        2,
+        2,
+        3
+      ]
+    ],
+    "faces": 4,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        3
+      ]
+    ]
+  },
+  "note": "from the moveTo point (-2, 0) through (0, 2) to (2, 0): the upper half of the radius-2 circle about the origin, closed by its diameter, extruded 3. V = 3 (2 pi) = 6 pi; A = 2 (2 pi) + 3 (2 pi + 4) = 10 pi + 12; ybar = 4 r / (3 pi) = 8 / (3 pi)"
+}

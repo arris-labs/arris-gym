@@ -11,6 +11,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import NoReturn
 
+import arris
 import arris.build
 
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
@@ -51,30 +52,63 @@ _ZERO = Vector(0, 0, 0)
 
 
 @dataclass(frozen=True)
-class _Path:
-    """A pending path in plane coordinates: its points in order, the first its start.
+class _Segment:
+    """One drawn segment of a pending path, in plane coordinates.
 
-    One point is a `moveTo` with nothing drawn yet (`polyline` refuses a
-    list of one, so only `moveTo` makes it); each further point ends a
-    straight segment. `close` turns it into an `arris.build.Sketch`.
+    A straight line to `to` when `via` is `None`, else a circular arc to
+    `to` through `via` (`threePointArc`'s middle point).
     """
 
-    points: tuple[tuple[float, float], ...]
+    to: tuple[float, float]
+    via: tuple[float, float] | None = None
+
+    def ending_at(self, to: tuple[float, float]) -> _Segment:
+        """This segment of the same kind, ending at `to` instead."""
+        return _Segment(to, self.via)
+
+    def built(self) -> arris.Segment:
+        """The kernel's segment: `Segment.arc` takes the end first, then the middle point."""
+        if self.via is None:
+            return arris.Segment.line(self.to)
+        return arris.Segment.arc(self.to, self.via)
+
+
+@dataclass(frozen=True)
+class _Path:
+    """A pending path in plane coordinates: its start and the segments drawn from it.
+
+    A path with no segment is a `moveTo` point with nothing drawn yet
+    (`polyline` refuses a list of one, so only `moveTo` makes it). `close`
+    turns it into an `arris.build.Sketch`.
+    """
+
+    start: tuple[float, float]
+    segments: tuple[_Segment, ...] = ()
+
+    @property
+    def end(self) -> tuple[float, float]:
+        """Where the next segment starts: the last segment's end, else the start."""
+        return self.segments[-1].to if self.segments else self.start
 
     def to(self, x: float, y: float) -> _Path:
-        """This path with a segment on to `(x, y)`."""
-        return _Path((*self.points, (float(x), float(y))))
+        """This path with a straight segment on to `(x, y)`."""
+        return _Path(self.start, (*self.segments, _Segment((float(x), float(y)))))
+
+    def arc(self, via: tuple[float, float], to: tuple[float, float]) -> _Path:
+        """This path with a circular arc on to `to` through `via`."""
+        return _Path(self.start, (*self.segments, _Segment(to, via)))
 
 
-def _uv(point: object) -> tuple[float, float]:
-    """A point of a polyline's list as plane coordinates: two numbers, else outside the subset.
+def _uv(point: object, refusal: str) -> tuple[float, float]:
+    """A drawn point as plane coordinates: two numbers, else outside the subset.
 
     CadQuery also takes three (the third along the normal) and a `Vector`;
-    a path that leaves its plane is not one the subset draws.
+    a path that leaves its plane is not one the subset draws. `refusal` is
+    the `UnsupportedApi` message, `{}` standing for what the point is.
     """
     pair = numbers_of(point, (2,))
     if pair is None:
-        raise UnsupportedApi(f"Workplane.polyline(list with a point of {shape_of(point)})")
+        raise UnsupportedApi(refusal.format(shape_of(point)))
     return (pair[0], pair[1])
 
 
@@ -194,14 +228,14 @@ class Workplane:
         return sketches[0]
 
     def _pen(self) -> _Path:
-        """The path a `lineTo` goes on from: the last object, or the plane's origin.
+        """The path a `lineTo` or a `threePointArc` goes on from: the last object, or the origin.
 
         CadQuery reads the last object only: a drawn path goes on from its
         end, a `moveTo` point starts one, an empty stack starts at the
         origin. Anything else is CadQuery's `RuntimeError` (`runtime`).
         """
         if not self._stack:
-            return _Path(((0.0, 0.0),))
+            return _Path((0.0, 0.0))
         last = self._stack[-1]
         if isinstance(last, _Path):
             return last
@@ -318,8 +352,8 @@ class Workplane:
         [3.0, 1.0, 0.0]
         """
         point = self._stack[0] if len(self._stack) == 1 else None
-        if isinstance(point, _Path) and len(point.points) == 1:
-            center = point.points[0]
+        if isinstance(point, _Path) and not point.segments:
+            center = point.start
         else:
             self._refuse_pending("Workplane.box")
             if self._solids():
@@ -366,8 +400,8 @@ class Workplane:
         [3.0, 1.0, 0.0]
         """
         point = self._stack[0] if len(self._stack) == 1 else None
-        if isinstance(point, _Path) and len(point.points) == 1:
-            center = point.points[0]
+        if isinstance(point, _Path) and not point.segments:
+            center = point.start
         else:
             self._refuse_pending("Workplane.cylinder")
             if self._solids():
@@ -408,9 +442,9 @@ class Workplane:
         if not self._stack:
             return self._derive(self._plane.circle(radius))
         point = self._stack[0] if len(self._stack) == 1 else None
-        if not isinstance(point, _Path) or len(point.points) != 1:
+        if not isinstance(point, _Path) or point.segments:
             raise UnsupportedApi("Workplane.circle on a non-empty stack")
-        return self._derive(self._plane.circle(radius, center=point.points[0]))
+        return self._derive(self._plane.circle(radius, center=point.start))
 
     @census_form("Workplane.extrude", [("num",)])
     def extrude(self, distance: float) -> Workplane:
@@ -441,7 +475,7 @@ class Workplane:
         0.5
         """
         self._refuse_pending("Workplane.moveTo")
-        return self._derive(_Path(((float(x), float(y)),)))
+        return self._derive(_Path((float(x), float(y))))
 
     @census_form("Workplane.lineTo", [("num",)] * 2)
     def lineTo(self, x: float, y: float) -> Workplane:
@@ -459,6 +493,27 @@ class Workplane:
         """
         return self._derive(self._pen().to(x, y))
 
+    @census_form("Workplane.threePointArc", [("tuple",)] * 2)
+    def threePointArc(self, point1: object, point2: object) -> Workplane:
+        """The pending path with a circular arc through `point1` on to `point2`.
+
+        The arc starts where `lineTo` would: the end of the path drawn so
+        far, a `moveTo` point, or the plane's origin on an empty stack
+        (CadQuery's `_findFromPoint`). Both points are two numbers in the
+        workplane's coordinates; one of three numbers or a `Vector` is
+        outside the subset. Raises `RuntimeError` (CadQuery's, `runtime`)
+        when the last object is a solid or a closed sketch.
+
+        >>> import math
+        >>> import arris_gym.cq as cq
+        >>> half = cq.Workplane("XY").moveTo(-2, 0).threePointArc((0, 2), (2, 0)).close()
+        >>> round(half.extrude(1)._solids()[0].measure().volume / math.pi, 9)
+        2.0
+        """
+        path = self._pen()
+        refusal = "Workplane.threePointArc(tuple, tuple) with a point of {}"
+        return self._derive(path.arc(_uv(point1, refusal), _uv(point2, refusal)))
+
     @census_form("Workplane.polyline", [("list",)])
     def polyline(self, listOfXYTuple: Sequence[object]) -> Workplane:
         """A pending path through the points of `listOfXYTuple`, in order.
@@ -475,14 +530,14 @@ class Workplane:
         6.0
         """
         self._refuse_pending("Workplane.polyline")
-        points = tuple(_uv(p) for p in listOfXYTuple)
+        points = tuple(_uv(p, "Workplane.polyline(list with a point of {})") for p in listOfXYTuple)
         if len(points) < 2:
             # CadQuery leaves no `moveTo` point here: a box or a circle after
             # it is centred on the origin and a `lineTo` starts there (read on
             # the oracle). A one-point `_Path` stays a `moveTo` point only.
             count = f"{len(points)} point" + ("" if len(points) == 1 else "s")
             raise UnsupportedApi(f"Workplane.polyline(list of {count})")
-        return self._derive(_Path(points))
+        return self._derive(_Path(points[0], tuple(_Segment(p) for p in points[1:])))
 
     @census_form("Workplane.close")
     def close(self) -> Workplane:
@@ -490,9 +545,10 @@ class Workplane:
 
         A straight segment back to the first point is added unless the path
         ends within CadQuery's `_CLOSE_GAP` of it, in which case its last
-        point is taken as the first. Raises `ValueError` (CadQuery's words,
-        `runtime`) when nothing has been drawn; a path the kernel cannot
-        close (a single segment) ends in the kernel's own words.
+        segment, a line or an arc, ends exactly at the first point. Raises
+        `ValueError` (CadQuery's words, `runtime`) when nothing has been
+        drawn; a path the kernel cannot close (a single segment) ends in the
+        kernel's own words.
 
         >>> import arris_gym.cq as cq
         >>> closed = cq.Workplane("XY").polyline([(0, 0), (1, 0), (1, 1)]).close()
@@ -500,16 +556,17 @@ class Workplane:
         ()
         """
         last = self._stack[-1] if self._stack else None
-        if not isinstance(last, _Path) or len(last.points) < 2:
+        if not isinstance(last, _Path) or not last.segments:
             raise ValueError("No start point specified - cannot close")
-        points = last.points
-        (u0, v0), (u1, v1) = points[0], points[-1]
+        segments = last.segments
+        (u0, v0), (u1, v1) = last.start, last.end
         if math.hypot(u1 - u0, v1 - v0) <= _CLOSE_GAP:
-            points = (*points[:-1], points[0])
-        path = self._plane.start(points[0])
-        for point in points[1:]:
-            path = path.line_to(point)
-        return self._derive(path.close())
+            # The last segment, a line or an arc, ends exactly at the start.
+            segments = (*segments[:-1], segments[-1].ending_at(last.start))
+        else:
+            segments = (*segments, _Segment(last.start))
+        loop = arris.Loop.path(last.start, [segment.built() for segment in segments])
+        return self._derive(arris.build.Sketch(self._plane, loop))
 
     @census_form("Workplane.revolve", [("num",), ("tuple",), ("tuple",)])
     def revolve(

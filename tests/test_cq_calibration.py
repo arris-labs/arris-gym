@@ -11,7 +11,9 @@ no plane ends at its first line, and `agree-cylinder` and `agree-hexagon-prism`,
 which would otherwise match, are open for the conductor (plans/m3-cq-subset).
 The `XZ` revolves run since `cq.Workplane('XZ')` was lifted
 (plans/in-subset-cq-bugs step 4): the frustum and the washer match their
-closed forms, the sphere and the torus name their next call outside.
+closed forms, and the sphere has matched its own since `threePointArc` was
+lifted (plans/lift-three-point-arc step 1); the torus names its next call
+outside.
 """
 
 from __future__ import annotations
@@ -46,7 +48,7 @@ FIRST_OUTSIDE: dict[str, str | None] = {
     "agree-hexagon-prism": "cq.Workplane()",
     "agree-l-prism-fuse": "cq.Workplane()",
     "agree-revolve-frustum": None,
-    "agree-revolve-sphere": "Workplane.threePointArc",
+    "agree-revolve-sphere": None,
     "agree-revolve-torus": "Workplane.center",
     "agree-revolve-washer": None,
     "agree-tube": "cq.Workplane()",

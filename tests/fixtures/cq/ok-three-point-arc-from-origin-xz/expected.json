@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 118.53981633974483,
+    "area": 177.95574287564276,
+    "centroid": [
+      5,
+      1,
+      1.0685579797393108
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        -2
+      ],
+      [
+        10,
+        2,
+        5
+      ]
+    ],
+    "faces": 6,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        5
+      ]
+    ]
+  },
+  "note": "on an empty stack the arc starts at the origin: (0, 0) through (5, 5) to (10, 0) is the upper half of the radius-5 circle about (5, 0); the lines add the 10 x 2 rectangle below it. Profile area a = 25 pi / 2 + 20, perimeter 5 pi + 14. XZ maps local (u, v, w) to world (u, -w, v), so extruding -2 spans world y 0..2. V = 2 a; A = 2 a + 2 (5 pi + 14); vbar = (25 pi / 2 * 20 / (3 pi) - 20 * 1) / a"
+}

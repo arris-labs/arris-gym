@@ -86,6 +86,14 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   object an error); `polyline` starts at its first point, not the current
   one; `close` adds a segment back to the first point only when the gap is
   over 1e-6, and with nothing drawn is an error.
+- `Workplane.threePointArc` and `Edge.makeThreePointArc` (`cadquery/cq.py`,
+  `cadquery/occ_impl/shapes.py`): an arc from `_findFromPoint`'s pen (as
+  `lineTo`'s) through `point1` to `point2`, both in plane coordinates; the
+  arc's end is the pen of the next call and what `close` measures its gap
+  from. Confirmed on the oracle by `tests/fixtures/cq/ok-three-point-arc-*`:
+  on a `moveTo` point, on an empty stack, after `lineTo` and after an arc,
+  on each named plane, closed by a line and by an arc ending on the start,
+  extruded both ways and revolved.
 - `Workplane.revolve` and `Solid.revolve` (`cadquery/cq.py`,
   `cadquery/occ_impl/shapes.py`): the angle in degrees taken modulo 360, 0
   meaning a full turn, turned into radians by `2 * pi / 360`; the axis

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 261.79938779914943,
+    "area": 235.61944901923448,
+    "centroid": [
+      0,
+      1.875,
+      0
+    ],
+    "bounds": [
+      [
+        -5,
+        0,
+        -5
+      ],
+      [
+        5,
+        5,
+        5
+      ]
+    ],
+    "faces": 2,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        1
+      ],
+      [
+        "sphere",
+        1
+      ]
+    ]
+  },
+  "note": "from the origin to (5, 0), the quarter arc through (3, 4) to (0, 5) on the radius-5 circle about the origin, closed down the y axis: a quarter disc revolved 360 degrees about +y is a hemisphere. V = 2 pi r^3 / 3; A = 2 pi r^2 + pi r^2 = 75 pi; ybar = 3 r / 8"
+}

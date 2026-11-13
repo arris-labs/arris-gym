@@ -113,11 +113,12 @@ def test_committed_benchcad_curve_repeats_offline() -> None:
     assert all(r["licence"] == "CC-BY-4.0" for r in rows)
     outcomes = [ProgramCensus.model_validate(r["census"]) for r in rows]
     expected = ReachCurve.from_json((root / "reach.json").read_text())
-    # The committed curve measures C1, before Workplane.workplane and
-    # Workplane.cylinder were declared.
+    # The committed curve measures C1, before Workplane.workplane,
+    # Workplane.cylinder and Workplane.threePointArc were declared.
     assert reach_curve(outcomes, fixture_cases.c1_subset()) == expected
     assert cq.subset().admits("Workplane.workplane(offset=num)")
     assert cq.subset().admits("Workplane.cylinder(num, num)")
+    assert cq.subset().admits("Workplane.threePointArc(tuple, tuple)")
     assert expected.digest == manifest["reach_digest"]
     report = CensusReport.from_json((root / "census.json").read_text())
     assert report.digest == manifest["census_digest"]

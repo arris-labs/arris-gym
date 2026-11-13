@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 393.8091544796509,
+    "area": 525.7328162715112,
+    "centroid": [
+      1,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        0,
+        -13,
+        -5
+      ],
+      [
+        2,
+        13,
+        5
+      ]
+    ],
+    "faces": 6,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        4
+      ]
+    ]
+  },
+  "note": "a stadium as dog_bone draws it: the 8 x 6 rectangle |u| <= 4, |v| <= 3 and at each end the major arc of a radius-5 circle about (+-8, 0) through (+-13, 0); the second arc ends on the start. The chord's half-angle is alpha = atan2(3, 4), each minor segment 25 alpha - 12, so the profile is 48 + 2 (25 pi - 25 alpha + 12) and its perimeter 16 + 2 * 5 (2 pi - 2 alpha). YZ maps local (u, v, w) to world (w, u, v); extruded 2. V = 2 area; A = 2 area + 2 perimeter"
+}
