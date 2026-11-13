@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 24,
+    "area": 49.941125496954285,
+    "centroid": [
+      3,
+      1,
+      2
+    ],
+    "bounds": [
+      [
+        1.5,
+        -1,
+        0
+      ],
+      [
+        4.5,
+        3,
+        4
+      ]
+    ],
+    "faces": 6,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "A square of circumradius 2 (diagonals on the local axes, area 8, side 2 sqrt2) on YZ moved by transformed to local (1, 2, 3), which is world (3, 1, 2); extruded 1.5 to each side along world x. V = 8 * 3 = 24, A = 16 + 4 * 2 sqrt2 * 3."
+}

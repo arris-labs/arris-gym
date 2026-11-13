@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 6.283185307179586,
+    "area": 18.84955592153876,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        0
+      ],
+      [
+        1,
+        1,
+        2
+      ]
+    ],
+    "faces": 3,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "both=False is extrude(2): a unit cylinder from the plane up to z = 2. V = 2 pi, A = 2 pi (1 + 2) = 6 pi, centroid z = 1."
+}

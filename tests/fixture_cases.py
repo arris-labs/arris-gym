@@ -39,13 +39,19 @@ def c1_subset() -> cq.Subset:
     `Workplane.workplane` (step 7), `Workplane.cylinder` (plans/lift-cylinder),
     `Workplane.threePointArc` (plans/lift-three-point-arc),
     `Workplane.sphere` (plans/lift-sphere) and `Workplane.polygon`
-    (plans/lift-polygon).
+    (plans/lift-polygon), and `Workplane.extrude`'s `both=`
+    (plans/lift-extrude-both).
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
+    extrude = cq.CensusForm("Workplane.extrude", (("num",),))
     return replace(
         cq.subset(),
         forms=tuple(
-            constructor if form.name == "cq.Workplane" else form
+            constructor
+            if form.name == "cq.Workplane"
+            else extrude
+            if form.name == "Workplane.extrude"
+            else form
             for form in cq.subset().forms
             if form.name
             not in (

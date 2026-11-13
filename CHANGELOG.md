@@ -5,6 +5,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `extrude(distance, both=True)`: the pending sketch
+  grows `distance` to each side of its plane, one prism of height
+  `2 * |distance|`, fused with or cut from the chain's solid as `extrude`'s
+  is. `both=False` is plain `extrude`; the other keywords (`combine`,
+  `clean`, `taper`, `until`) and `extrude(distance, True)`, whose second
+  argument is CadQuery's `combine`, still end `unsupported_api`.
+
 - `dialect="cq"` now runs `polygon(nSides, diameter)`: a regular polygon
   inscribed in the circle of `diameter`, centred on the workplane's origin
   or on a `moveTo` point, its first vertex on the plane's x axis, ready to

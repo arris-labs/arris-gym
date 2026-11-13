@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 12.566370614359172,
+    "area": 31.41592653589793,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -2
+      ],
+      [
+        1,
+        1,
+        2
+      ]
+    ],
+    "faces": 3,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "A unit circle on XY extruded 2 to each side: a cylinder of height 4 centred on the plane. V = 4 pi, A = 2 pi (1 + 4) less nothing = 10 pi, centroid the origin. cq builds one cylinder face and two caps (3 faces); CadQuery's glue leaves the cylinder split in two halves (4 faces, oracle.json), a face count the fidelity table carries and never judges (ADR-0005)."
+}

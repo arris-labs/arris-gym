@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 77.19615242270663,
+    "area": 132,
+    "centroid": [
+      0.06731102858927235,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -3,
+        -3,
+        -2
+      ],
+      [
+        3,
+        3,
+        2
+      ]
+    ],
+    "faces": 20,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        20
+      ]
+    ]
+  },
+  "note": "A centred 6 by 6 by 2 slab (z -1..1) fused with a hexagon of circumradius 1 at (1, 0) extruded 2 to each side (z -2..2): the prism sticks out 1 above and 1 below, inside the slab's footprint. V = 72 + 2 (3 sqrt3 / 2); A = 120 + 12 (the slab, the hexagon's two caps replacing the patches they cover, and 6 * 1 of sides on each side); centroid x = 2A_hex / V; 20 planar faces (6 + 7 + 7)."
+}

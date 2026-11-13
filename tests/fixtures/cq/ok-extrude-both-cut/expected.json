@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 66.80384757729337,
+    "area": 126.80384757729337,
+    "centroid": [
+      -0.07778223277775402,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -3,
+        -3,
+        -1
+      ],
+      [
+        3,
+        3,
+        1
+      ]
+    ],
+    "faces": 12,
+    "shells": 1,
+    "genus": 1,
+    "face_kinds": [
+      [
+        "plane",
+        12
+      ]
+    ]
+  },
+  "note": "The same slab with the same prism (z -2..2, through it) cut out: a hexagonal hole. V = 72 - 3 sqrt3; A = 120 - 2 (3 sqrt3 / 2) + 6 * 2 (the six walls of height 2); centroid x = -2A_hex / V; genus 1, 12 planar faces (6 + 6 walls)."
+}

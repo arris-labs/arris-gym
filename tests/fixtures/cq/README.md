@@ -270,3 +270,17 @@ its disc (V = 9π − 3√3/8); and with the triangle, an `invalid` shape.
 `cq` ends `runtime`, is a `cq_bug` row, not a fixture here: it is the strict
 `xfail` `regression/cq-polygon-two-sides`. `test_cq_polygon.py` holds every
 one, with a property over plane, point, slab, sides and diameter.
+
+`ok-extrude-both-*` call `extrude(distance, both=True)`, each closed form in
+its `note`: a circle (`-circle-xy`, V = 4π) and a hexagon (`-hexagon-xy`) on
+`XY`, a square on `YZ` after `transformed` (`-polygon-yz-transformed`), a
+negative distance on `XZ` (`-negative-distance`, the same prism as the
+positive one), `both=False` (`-false`, the plain extrusion), the hexagon
+prism fused with (`-fused`) and cut through (`-cut`) a 6 × 6 × 2 slab, and
+BenchCAD's `hex_key_organizer_000841_s20260506` as written
+(`-hex-key-organizer`, CC BY 4.0, three blind hexagonal pockets). Each has
+a recorded oracle report that meets its closed form and an agreeing row in
+`test_cq_extrude_both.py`, with a property over plane, profile, point,
+offset, signed distance and `both`. The oracle keeps a circle's cylinder
+as two faces (4 in all, `-circle-xy`) where `cq` builds one: the fidelity
+table carries face counts and never judges them (ADR-0005).

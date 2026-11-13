@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 25.132741228718345,
+    "area": 50.26548245743669,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -1,
+        -2
+      ],
+      [
+        2,
+        1,
+        2
+      ]
+    ],
+    "faces": 3,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "A radius-2 circle on XZ (normal -y) extruded -1 with both: the same prism as +1, 1 to each side. V = 4 pi * 2, A = 2 * 4 pi + 2 pi * 2 * 2 = 16 pi, bounds y -1..1."
+}

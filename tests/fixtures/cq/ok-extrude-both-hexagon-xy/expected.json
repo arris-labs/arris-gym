@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 7.794228634059948,
+    "area": 23.196152422706632,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -1,
+        -0.8660254037844386,
+        -1.5
+      ],
+      [
+        1,
+        0.8660254037844386,
+        1.5
+      ]
+    ],
+    "faces": 8,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        8
+      ]
+    ]
+  },
+  "note": "A hexagon of circumradius 1 (first vertex on +x) extruded 1.5 to each side of XY: a prism of height 3. V = (3 sqrt3 / 2) 3, A = 2 (3 sqrt3 / 2) + 6 * 3; 8 planar faces, so CadQuery's clean merges the two halves' side faces into one prism."
+}

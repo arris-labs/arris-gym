@@ -569,20 +569,26 @@ class Workplane:
             raise ValueError(f"{named}: a zero diameter (CadQuery's StdFail_NotDone)")
         return self._derive(self._plane.polygon(vertices))
 
-    @census_form("Workplane.extrude", [("num",)])
-    def extrude(self, distance: float) -> Workplane:
+    @census_form("Workplane.extrude", [("num",)], keywords={"both": ("bool",)})
+    def extrude(self, distance: float, both: bool = False) -> Workplane:
         """The pending sketch extruded `distance` along the plane's normal.
 
         The solid grows from the plane, not about it, and is fused with the
-        chain's solid if there is one (CadQuery's `combine=True`). Raises
-        `ValueError` (`runtime`) when the stack holds no pending sketch.
+        chain's solid if there is one (CadQuery's `combine=True`). With
+        `both`, it grows `distance` to each side of the plane: CadQuery fuses
+        the two sweeps and cleans away the seam, which is the one prism of
+        height `2|distance|` that arris sweeps in one go. Raises `ValueError`
+        (`runtime`) when the stack holds no pending sketch.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").circle(1).extrude(2)
         >>> round(wp._solids()[0].measure().centroid[2], 9)
         1.0
+        >>> wp = cq.Workplane("XY").circle(1).extrude(2, both=True)
+        >>> round(wp._solids()[0].measure().centroid[2], 9)
+        0.0
         """
-        return self._combined(self._pending_sketch().extrude(distance))
+        return self._combined(self._pending_sketch().extrude(distance, both=both))
 
     @census_form("Workplane.moveTo", [("num",)] * 2)
     def moveTo(self, x: float = 0, y: float = 0) -> Workplane:

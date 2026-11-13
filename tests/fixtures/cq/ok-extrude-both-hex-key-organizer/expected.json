@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 1658.5145173133703,
+    "area": 1068.81846,
+    "centroid": [
+      -0.0793967207276427,
+      0,
+      -0.04683996191170079
+    ],
+    "bounds": [
+      [
+        -10.5,
+        -5.5,
+        -3.75
+      ],
+      [
+        10.5,
+        5.5,
+        3.75
+      ]
+    ],
+    "faces": 27,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        27
+      ]
+    ]
+  },
+  "note": "BenchCAD's hex_key_organizer_000841 as written: a 21 by 11 by 7.5 box (z -3.75..3.75) with three hexagonal pockets cut by prisms of height 5.6 centred on z = 1.15, so each runs from z = -1.65 out through the top: depth 5.4. V = 1732.5 - 5.4 sum(A_i), A_i = (3 sqrt3 / 2) r_i^2; A = 942 + 5.4 sum(P_i) (each pocket's floor replaces its mouth, its six walls are new); centroid x = -5.4 sum(A_i x_i) / V (pockets at x = -6.23, 0, 6.23), z = -5.4 sum(A_i) 1.05 / V; 6 + 3 * 7 = 27 planar faces."
+}

@@ -76,6 +76,16 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   `tests/fixtures/cq/ok-polygon-*`: on an empty stack, on a `moveTo` point,
   after `transformed` and `workplane(offset=…)`, on each named plane, fused
   with a slab and in BenchCAD's grease nipple.
+- `Workplane.extrude` and `Workplane._extrude`, the `both` branch
+  (`cadquery/cq.py`): the face is swept `distance` along the normal and,
+  with `both=True`, fused (`glue=True`) with the sweep of `-distance`, and
+  `clean()` merges the halves' coplanar side faces, so the solid is one
+  prism of height `2|distance|` centred on the plane. Confirmed on the
+  oracle by `tests/fixtures/cq/ok-extrude-both-*`: a circle and polygons on
+  several planes, a negative distance, `both=False`, fused with and cut
+  from a slab, and BenchCAD's hex key organizer. A circle's cylinder stays
+  two faces there (four in all) where `cq` builds one; face counts are
+  carried, never judged.
 - `Workplane.union`, `Workplane.cut` and `_combineWithBase` (`cadquery/cq.py`):
   the solid acted on is the nearest one up the chain (this stack, then the
   parent's); the other is the solid of the Workplane given; the result sits on
