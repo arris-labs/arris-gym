@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `union` on a workplane whose chain holds no
+  solid, as CadQuery does: the result is the given workplane's solid, so
+  `cq.Workplane("XY").union(part)` starts a chain. A `cut` there still ends
+  `runtime`.
+
 - `dialect="cq"` now runs `cylinder(height, radius)`: its axis along the
   plane's normal, centred on the plane's origin or a `moveTo` point in all
   three axes, and fused with a solid already in the chain. Its other

@@ -69,6 +69,10 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   its base returns a compound too. Confirmed on the oracle by
   `tests/fixtures/cq/ok-compound-*`, `ok-cut-into-pieces` and
   `ok-workplane-on-compound` (ADR-0016).
+  With no solid up the chain, `union` returns the given Workplane's solid
+  as it stands (its `solidRef is None` branch) and `cut` raises `findSolid`'s
+  `ValueError`. Confirmed on the oracle by `ok-union-on-empty-chain-*` and
+  `runtime-cut-on-empty-chain`.
 - `Workplane.circle` and `Workplane.extrude` (`cadquery/cq.py`, with
   `eachpoint` and `_getFaces`): a circle is centred on the plane's origin
   where the stack is empty, and on each point of the stack otherwise, in the

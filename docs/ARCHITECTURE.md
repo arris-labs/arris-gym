@@ -335,7 +335,9 @@ module-level `result`, else module-level `r` (ADR-0015), and resolves to
 the one solid on a `Workplane`'s stack: none or a non-`Workplane` is
 `runtime`. A `union` of disjoint solids, or a `cut` that splits its base,
 leaves a compound: the one solid `fuse` or `cut` returns, a shell per piece,
-on which later calls act as on any solid (ADR-0016). Inside the worker
+on which later calls act as on any solid (ADR-0016). A `union` on a chain
+holding no solid is its operand's solid where it stands, on the caller's
+plane; a `cut` there ends `runtime`, both as in CadQuery. Inside the worker
 a module exposing its CadQuery names is installed as `sys.modules["cadquery"]`,
 so `import cadquery as cq` runs, and
 `show_object` is a builtin of the program's namespace; under `arris` neither

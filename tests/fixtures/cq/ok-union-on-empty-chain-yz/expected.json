@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 8.75,
+    "area": 27.0,
+    "centroid": [
+      0.11785714285714285,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1
+      ],
+      [
+        1.75,
+        1,
+        1
+      ]
+    ],
+    "faces": 11,
+    "face_kinds": [
+      [
+        "plane",
+        11
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "the union keeps its own plane (YZ, normal +x), not the operand's (XY): the 2 x 2 x 2 cube is the chain's solid, workplane(offset=1.25) puts the plane through its centroid height moved 1.25 along +x, and the unit box there spans x 0.75 to 1.75, 0.75 of it outside the cube. V = 8 + 0.75; centroid x = 0.75 * 1.375 / 8.75 = 33/280; A = 24 - 1 + 4 * 0.75 + 1 = 27; faces 6 + 5."
+}

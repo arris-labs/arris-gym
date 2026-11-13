@@ -154,3 +154,15 @@ segment z ±1); `cq` ends it `runtime`, and `verdict.json` classes the row
 `by_design` on `docs/ARCHITECTURE.md` §Dialects. `test_cq_cylinder.py`
 holds that row, and a property over plane, point, slab and the degenerate
 dimensions.
+
+`ok-union-on-empty-chain`, `-tube` and `-yz` call `union` on a workplane
+whose chain holds no solid, the first call of every BenchCAD
+`t_pipe_fitting` program. Read on the oracle (2026-11-13), CadQuery puts the
+given solid on the stack as it stands: a 6 × 2 cylinder (V = 24π); with a
+coaxial radius-1 bore cut through it, a tube (V = 18π, A = 42π, genus 1);
+an XY cube united on a `YZ` workplane keeps the caller's plane, so
+`workplane(offset=1.25)` moves along +x and the unit box there spans x 0.75
+to 1.75 (V = 8.75, centroid x 33/280). Each has a recorded oracle report and
+an agreeing row in `test_cq.py`, with a property over both planes, offsets,
+height and radius. `runtime-cut-on-empty-chain` is `cut` there: CadQuery's
+`findSolid` raises, and `cq` ends it `runtime` in the same words.

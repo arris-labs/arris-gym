@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 75.39822368615503,
+    "area": 100.53096491487338,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -3
+      ],
+      [
+        2,
+        2,
+        3
+      ]
+    ],
+    "faces": 3,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "union on a workplane whose chain holds no solid is the operand's solid itself (CadQuery's union with no solidRef): a cylinder of height 6 and radius 2 centred on the origin, axis +z. V = pi r^2 h = 24 pi; A = 2 pi r (r + h) = 32 pi."
+}

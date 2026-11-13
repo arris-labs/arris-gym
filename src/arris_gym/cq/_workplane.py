@@ -551,9 +551,12 @@ class Workplane:
     def union(self, toUnion: Workplane) -> Workplane:
         """The chain's solid fused with the solid of `toUnion`, on this plane.
 
-        Raises `ValueError` (a CadQuery error, `runtime`) when the chain holds
-        no solid or `toUnion` holds none. Disjoint solids make a compound:
-        one solid whose body holds a shell per piece (ADR-0016).
+        On a chain that holds no solid, the result is `toUnion`'s solid
+        itself, where it stands, on this plane (CadQuery's `union` with no
+        solid to fuse with, read on the oracle: `ok-union-on-empty-chain-*`).
+        Raises `ValueError` (a CadQuery error, `runtime`) when `toUnion`
+        holds no solid. Disjoint solids make a compound: one solid whose body
+        holds a shell per piece (ADR-0016).
 
         >>> import arris_gym.cq as cq
         >>> a = cq.Workplane("XY").box(2, 2, 2)
@@ -563,9 +566,8 @@ class Workplane:
         """
         self._refuse_pending("Workplane.union")
         others = self._operand(toUnion, "Workplane.union(Workplane)")
-        base = self._base_solid()
-        if base is None:
-            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+        # With no solid in the chain, the first `_combined` puts the operand's
+        # solid on the stack as it is.
         result = self
         for other in others:
             result = result._combined(other)
@@ -575,8 +577,9 @@ class Workplane:
     def cut(self, toCut: Workplane) -> Workplane:
         """The chain's solid less the solid of `toCut`, on this plane.
 
-        Raises `ValueError` (`runtime`) when the chain holds no solid or
-        `toCut` holds none. A cut that splits its base leaves a compound, one
+        Raises `ValueError` (`runtime`) when the chain holds no solid, in
+        CadQuery's words (read on the oracle: `runtime-cut-on-empty-chain`),
+        or `toCut` holds none. A cut that splits its base leaves a compound, one
         solid with a shell per piece (ADR-0016).
 
         >>> import arris_gym.cq as cq

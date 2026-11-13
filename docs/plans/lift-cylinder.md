@@ -95,7 +95,7 @@ a given design; **[3]** unproven semantics, established here.
   64 `cq_bug`; 420 unclassified (`cotter_pin` 159, `u_bolt` 136, `j_hook`
   125); 496 refusals (`pull_handle` 176, `lobed_knob` 168 with the 100
   `arris_bug`, `wall_anchor` 81, `torus_link` 80, `hinge` 61, `bucket` 6).
-- [ ] Step 4 **[3]** — the one `cq_bug` cause: `union` and `cut` on a
+- [x] Step 4 **[3]** — the one `cq_bug` cause: `union` and `cut` on a
   workplane with no solid (`cq.Workplane("XY").union(cq.Workplane(…).cylinder(…))`,
   the first call of every `t_pipe_fitting` program) end `runtime`
   "Cannot find a solid on the stack or in the parent chain" where the oracle
@@ -106,8 +106,24 @@ a given design; **[3]** unproven semantics, established here.
   with a closed-form `cq/ok-*` or `unsupported-*` fixture checked against the
   oracle. Reach does not move (the form is declared); the 64 rows move to
   `agree` or to a class outside `cq_bug`.
+  *Settled*: read in CadQuery's source and on the oracle, `union` with no
+  solid up the chain returns the given solid as it stands, on the caller's
+  plane (`ok-union-on-empty-chain-*`); `cut` there raises `findSolid`'s
+  `ValueError`, as `cq` already did (`runtime-cut-on-empty-chain`); an
+  operand holding no solid is `runtime` on both sides. `intersect` is
+  outside the subset and every keyword of the three is refused by the form
+  check, so nothing else needs reading. Re-run on the 141 `t_pipe_fitting`
+  programs with the committed oracle rows: the 64 in the subset now end
+  `ok`, faces equal, but **unclassified**, not `agree`: volume up to 1.5e-4
+  relative apart. Their closed form (a tee: two coaxial bores cut from a
+  main cylinder united with a perpendicular branch, the branch's overlap
+  ∫ 2√(a²−x²)√(b²−x²) dx by quadrature) puts `cq` within 1.6e-10 of it on
+  all 64 and the oracle 1.3e-8 to 1.5e-4 off: they are `occt_wrong`, and
+  step 5 classes them so.
 - [ ] Step 5 **[2]** — classify what is left. The 420 unclassified
-  in-subset BenchCAD rows and the one CAD-Recode row, and the in-subset
+  in-subset BenchCAD rows, the 64 `t_pipe_fitting` rows step 4 moved there
+  (`occt_wrong` by the tee's closed form, step 4's note), the one
+  CAD-Recode row, and the in-subset
   `arris_bug` and `arris_refusal` rows. `u_bolt` and `j_hook` (261 rows)
   are `ok` against `ok` with volume off by up to 1e-5 relative: they
   `revolve` a circle 180° into a half torus, so the closed form

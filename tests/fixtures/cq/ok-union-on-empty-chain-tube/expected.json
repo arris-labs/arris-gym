@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 56.548667764616276,
+    "area": 131.94689145077132,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -3
+      ],
+      [
+        2,
+        2,
+        3
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "t_pipe_fitting's first and last calls: the union on an empty chain gives the radius-2, height-6 cylinder, and a coaxial radius-1, height-8 cylinder is cut through it, a tube. V = pi (2^2 - 1^2) 6 = 18 pi; A = 2 pi 2 6 + 2 pi 1 6 + 2 pi (2^2 - 1^2) = 42 pi; one through hole, genus 1."
+}

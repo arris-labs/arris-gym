@@ -22,7 +22,13 @@ import arris_gym as ag
 import arris_gym.cq as cq
 import fixture_cases
 from arris_gym.cq import _forms, _result, _vector, _workplane
-from arris_gym.fidelity import OracleReport, OracleStatus, program_sha256
+from arris_gym.fidelity import (
+    FidelityOutcome,
+    OracleReport,
+    OracleStatus,
+    compare,
+    program_sha256,
+)
 
 CASES = fixture_cases.load("cq")
 # A recorded report beside a `verdict.json` is one the oracle got wrong: its
@@ -286,17 +292,66 @@ def test_union_and_cut_return_new_workplanes_and_change_none() -> None:
     assert fixture_cases.close(solid_volume(cut), 4.0)
 
 
-def test_union_and_cut_need_a_solid_on_both_sides() -> None:
+def test_cut_needs_a_solid_in_the_chain_and_both_need_one_in_the_operand() -> None:
+    # Read on the oracle: `runtime-cut-on-empty-chain`; CadQuery's `union`
+    # raises too when the Workplane given holds no solid.
     empty, boxed = cq.Workplane("XY"), cq.Workplane("XY").box(1, 1, 1)
+    with pytest.raises(ValueError, match=r"^Cannot find a solid on the stack or in the parent"):
+        empty.cut(boxed)
     calls: list[Callable[[], cq.Workplane]] = [
-        lambda: empty.union(boxed),
         lambda: boxed.union(empty),
-        lambda: empty.cut(boxed),
         lambda: boxed.cut(empty),
+        lambda: empty.union(empty),
+        lambda: empty.union(cq.Workplane("XY").circle(1)),
     ]
     for call in calls:
-        with pytest.raises(ValueError, match=r"solid"):
+        with pytest.raises(ValueError, match=r"holding no solid$"):
             call()
+
+
+@settings(max_examples=30, deadline=None)
+@given(
+    plane=st.sampled_from(["XY", "YZ", "XZ", "ZX"]),
+    other_plane=st.sampled_from(["XY", "YZ", "XZ", "ZX"]),
+    moved=st.tuples(*(st.integers(-5, 5) for _ in range(3))),
+    at=st.tuples(*(st.integers(-5, 5) for _ in range(3))),
+    height=st.integers(1, 6),
+    radius=st.integers(1, 4),
+)
+def test_a_union_on_a_chain_with_no_solid_is_its_operands_solid_on_its_own_plane(
+    plane: str,
+    other_plane: str,
+    moved: tuple[int, int, int],
+    at: tuple[int, int, int],
+    height: int,
+    radius: int,
+) -> None:
+    # Read on the oracle: CadQuery's `union` with no solid up the chain puts
+    # the given solid on the stack where it stands (`ok-union-on-empty-chain-*`),
+    # wherever the caller's plane is.
+    caller = cq.Workplane(plane).transformed(offset=cq.Vector(*moved))
+    there = cq.Workplane(other_plane).transformed(offset=cq.Vector(*at))
+    operand = there.cylinder(height, radius)
+    united = caller.union(operand)
+    (solid,) = united._solids()
+    assert solid is operand._solids()[0]
+    assert united._plane is caller._plane
+    assert fixture_cases.close(solid.measure().volume, math.pi * radius**2 * height)
+    # The chain goes on from it: a coaxial bore cut through it leaves a tube.
+    bore = there.cylinder(height + 2, radius / 2)
+    tube = math.pi * (radius**2 - (radius / 2) ** 2) * height
+    assert fixture_cases.close(solid_volume(united.cut(bore)), tube)
+
+
+@pytest.mark.parametrize(
+    "slug",
+    ["ok-union-on-empty-chain", "ok-union-on-empty-chain-tube", "ok-union-on-empty-chain-yz"],
+)
+def test_union_on_empty_chain_fixtures_agree_with_the_recorded_oracle(slug: str) -> None:
+    case = next(c for c in CASES if c.slug == slug)
+    path = fixture_cases.ROOT / "cq" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text(encoding="utf-8"))
+    assert compare(fixture_cases.run(case), report).outcome is FidelityOutcome.AGREE
 
 
 def test_union_and_cut_take_a_workplane_only() -> None:
