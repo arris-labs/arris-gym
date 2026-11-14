@@ -18,7 +18,9 @@ Two axes, reported apart so one cannot mask the other.
    *Non-goals* fence out;
 3. an item that looks done but looks wrong;
 4. a box ticked whose commit carries no fixture or property for it;
-5. a *Docs to update* line or a design doc the commits make untrue, and a
+5. a design doc the commits make untrue, a *Docs to update* line the plan's
+   own steps should have done (the lines left for `/retire-plan` are its
+   work: check the list is complete, not that it is done), and a
    public type or signature change missing from a commit body or from
    `CHANGELOG.md` §Unreleased.
 
