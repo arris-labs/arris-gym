@@ -1,7 +1,6 @@
 ---
 name: retire-plan
 description: Close a completed plan: verify, review its commits against the plan, update the docs, delete the plan.
-disable-model-invocation: true
 argument-hint: <plan slug>
 ---
 
