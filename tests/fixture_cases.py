@@ -70,24 +70,6 @@ def c1_subset() -> cq.Subset:
     )
 
 
-def c2_baseline_subset() -> cq.Subset:
-    """`cq.subset()` less the declarations of plans/lift-face-selectors.
-
-    The committed C2 reports (`tests/fixtures/c2/`) were measured before
-    `Workplane.faces` and the six axis selectors; plans/lift-face-selectors
-    step 8 re-runs them and this goes back to `cq.subset()`.
-    """
-    return replace(
-        cq.subset(),
-        forms=tuple(
-            form
-            for form in cq.subset().forms
-            if form.name not in ("Workplane.faces", "Workplane.hole")
-        ),
-        selectors=(),
-    )
-
-
 @dataclass(frozen=True)
 class Case:
     """One fixture: its directory name, program text and expected JSON."""

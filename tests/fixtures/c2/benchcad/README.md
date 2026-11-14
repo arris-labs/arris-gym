@@ -34,26 +34,29 @@ tests/fixtures/c1/verdicts.json tests/fixtures/c2/benchcad/verdicts.json
 --oracle-rows tests/fixtures/c2/benchcad/oracle.jsonl.gz --chunk 100` (network, the
 oracle environment; outside the gate), which saves its work in chunks and resumes.
 No program text is committed. Each figure is over all 17,900 programs. Re-run by
-plans/lift-extrude-both step 5 (2026-11-14), after `extrude(…, both=True)` and `polyline` after a lone `moveTo` point were lifted (before that, by plans/lift-polygon step 4, after `Workplane.polygon`; before that, by plans/lift-sphere step 5, after `Workplane.sphere`; before that, by plans/lift-three-point-arc step 5, after `Workplane.threePointArc`)
+plans/lift-face-selectors step 8 (2026-11-14), after `Workplane.faces`, the axis selectors, `hole` on a stack, a second `circle` and the rest of that plan were lifted (before that, by plans/lift-extrude-both step 5, after `extrude(…, both=True)` and `polyline` after a lone `moveTo` point were lifted; before that, by plans/lift-polygon step 4, after `Workplane.polygon`; before that, by plans/lift-sphere step 5, after `Workplane.sphere`; before that, by plans/lift-three-point-arc step 5, after `Workplane.threePointArc`)
 (before that, by plans/lift-cylinder step 6, after `Workplane.cylinder`, and `union` on
 a chain holding no solid, were lifted; before that, by plans/in-subset-cq-bugs
 step 10, after the `YZ`, `XZ`, `ZX`, `origin=`, `workplane(offset=…)`, `circle` and
 `box` on a `moveTo` point and compound lifts).
 
-- Reach: 4,345/17,900 in-subset (4,103 before `extrude(both=)`, 4,011 before `polygon`, 3,667 before `sphere`, 3,304 before `threePointArc`, 1,871 before `cylinder`; C1's subset reaches 1,871).
-- Agreement: 2,943 agree; outcomes {'agree': 2943, 'disagree': 14753, 'unclassified': 204}.
-- Classes: {'arris_bug': 100, 'arris_refusal': 1173, 'by_design': 0, 'cq_bug': 13030, 'occt_wrong': 450}.
-- Arris statuses: {'arris_refusal': 1273, 'checker_fail': 0, 'crash': 0, 'ok': 3393, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 13234}.
+- Reach: 5,295/17,900 in-subset (4,345 before `faces` and its selectors, 4,103 before `extrude(both=)`, 4,011 before `polygon`, 3,667 before `sphere`, 3,304 before `threePointArc`, 1,871 before `cylinder`; C1's subset reaches 1,871).
+- Agreement: 3,820 agree; outcomes {'agree': 3820, 'disagree': 13876, 'unclassified': 204}.
+- Classes: {'arris_bug': 142, 'arris_refusal': 1174, 'by_design': 0, 'cq_bug': 12110, 'occt_wrong': 450}.
+- Arris statuses: {'arris_refusal': 1274, 'checker_fail': 37, 'crash': 0, 'ok': 4275, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 12314}.
 - Oracle statuses: {'crash': 0, 'invalid': 332, 'no_result': 0, 'ok': 17537, 'runtime': 0, 'syntax': 0, 'timeout': 31}.
 - Timeouts: 31 (all oracle-side, on double_simplex_sprocket programs; each ran again and timed out again).
-- In-subset: outcomes {'agree': 2943, 'disagree': 1402, 'unclassified': 0}, classes {'arris_bug': 100, 'arris_refusal': 852, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 450};
-  `in_subset_cq_bug` 0, `in_subset_by_design` 0, no in-subset row unclassified. The 852 in-subset
-  refusals are `pull_handle` 176, `cotter_pin` 159, `wall_anchor` 81, `torus_link` 80, 68
-  `lobed_knob` programs outside the C1 slice (no verdict), `hinge` 61, `bucket` 6, 68 spindle-torus revolves of `threePointArc` (`rivet` 32, `dome_cap` 36) and 153 `ball_knob` programs whose stem's end disc touches the sphere at its pole, each
-  a regression fixture (BACKLOG Findings); the 450 `occt_wrong` are 64 `t_pipe_fitting`, 202
-  `u_bolt` and 184 `j_hook`; the 117 `hex_key_organizer` programs `extrude(both=)` reached all agree. The 204 unclassified rows are all outside the subset.
+- In-subset: outcomes {'agree': 3820, 'disagree': 1475, 'unclassified': 0}, classes {'arris_bug': 142, 'arris_refusal': 883, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 450};
+  `in_subset_cq_bug` 0, `in_subset_by_design` 0, no in-subset row unclassified. The 142 in-subset
+  `arris_bug` rows are the 100 `lobed_knob` verdicts, 37 `bearing_retainer_cap` (`checker_fail`:
+  the `faces(sel).workplane().hole(d)` programs) and 5 `shaft_collar` cross holes, each a regression
+  fixture; the 450 `occt_wrong` are 64 `t_pipe_fitting`, 202 `u_bolt` and 184 `j_hook`. The 204
+  unclassified rows are all outside the subset. The 883 in-subset refusals are 31 more than the previous re-run's 852
+  (its families listed in that re-run's README, still refused).
 
-Table digest: `a3d8033e10bf2124fb7751dcb7db9c340a0d37e7acfb5ebb17dfe34797ab7bb9`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, unchanged, the baseline's: this re-run read 17,857 oracle rows from the committed file and ran the oracle again only on the 43 programs it had no usable row for (the 31 timeouts, which timed out again, and 12 more); the written file's digest equals the committed one.
+Table digest: `948a51a084e6c5ed07cda8952f01c0004a970403abb0fec47dca21bf95bfa6ae`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, unchanged, the baseline's: this re-run's oracle rows are byte-equal to the committed file.
+
+The table before this re-run (plans/lift-extrude-both step 5, reach 4,345, 2,943 agree, no in-subset `cq_bug`) had digest `a3d8033e10bf2124fb7751dcb7db9c340a0d37e7acfb5ebb17dfe34797ab7bb9`.
 
 The table before this re-run (plans/lift-polygon step 4, reach 4,103, 2,826 agree, no in-subset `cq_bug`) had digest `db6adfc4d5cb0793eb1a7389e607ba6928ffc692ae132f957314350057de2cee`.
 

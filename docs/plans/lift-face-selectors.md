@@ -247,8 +247,8 @@ within a given design; **[3]** unproven semantics, established here.
   `../arris/docs/ideas/tight-body-bounds.md`, BACKLOG §Findings
   `cross-hole-bounds`. Step 8: BenchCAD's `arris_bug` becomes 100
   `lobed_knob` + 37 `bearing_retainer_cap` + 5 `shaft_collar`
-  (`test_benchcads_arris_bugs_are_the_100_lobed_knob_verdicts`).
-- [ ] Step 8 **[2]** — commit the re-run: `tests/fixtures/c2/*` as
+  (`test_benchcads_arris_bugs_are_lobed_knob_verdicts_and_two_checker_fail_families`).
+- [x] Step 8 **[2]** — commit the re-run: `tests/fixtures/c2/*` as
   `fixtures:` with the new figures, both READMEs, `test_c2_baseline`'s
   figures, its subset back to `cq.subset()`.
 

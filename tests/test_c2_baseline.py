@@ -1,4 +1,4 @@
-"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-extrude-both step 5).
+"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-face-selectors step 8).
 
 `tools/cq_corpus.py` wrote `tests/fixtures/c2/<corpus>/` (network, the oracle
 environment, outside the gate). This reads the committed rows only: the table
@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 
 import fixture_cases
-from arris_gym import Status
+from arris_gym import Status, cq
 from arris_gym.census import ProgramCensus, Unparsable
 from arris_gym.fidelity import (
     DisagreementClass,
@@ -38,16 +38,16 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 4_345,
-        "agree": 2_943,
+        "in_subset": 5_295,
+        "agree": 3_820,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
-            "arris_bug": 100,
-            "arris_refusal": 1_173,
+            "arris_bug": 142,
+            "arris_refusal": 1_174,
             "by_design": 0,
-            "cq_bug": 13_030,
+            "cq_bug": 12_110,
             "occt_wrong": 450,
         },
         "unclassified": 204,
@@ -110,7 +110,7 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), fixture_cases.c2_baseline_subset()) == committed
+    assert reach_report(table, census_rows(corpus), cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, census_rows(corpus), fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]
@@ -132,11 +132,16 @@ def test_the_published_figures_are_the_committed_tables(corpus: str) -> None:
     assert table.oracle_statuses["ok"] == figures["oracle_ok"]
 
 
-def test_benchcads_arris_bugs_are_the_100_lobed_knob_verdicts() -> None:
+def test_benchcads_arris_bugs_are_lobed_knob_verdicts_and_two_checker_fail_families() -> None:
     entries = table_of("benchcad").entries
     bugs = [e for e in entries if e.row.disagreement is DisagreementClass.ARRIS_BUG]
-    assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == {"lobed_knob": 100}
-    assert all(e.row.verdict is not None for e in bugs)
+    assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == {
+        "lobed_knob": 100,
+        "bearing_retainer_cap": 37,
+        "shaft_collar": 5,
+    }
+    # Only the lobed_knob rows are verdicts; the other 42 are checker_fail rows the rule classes.
+    assert all(e.row.verdict is not None for e in bugs if e.name.startswith("lobed_knob"))
 
 
 def test_cadrecodes_agreements_are_not_two_failures() -> None:

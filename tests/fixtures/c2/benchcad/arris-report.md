@@ -1,13 +1,13 @@
 # arris report
 
-Over 17900 programs: 1173 arris refusals, 100 arris bugs.
+Over 17900 programs: 1174 arris refusals, 142 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 
-### ` "OpDegenerateError" ` (653)
+### ` "OpDegenerateError" ` (654)
 
 - 281x ` "degenerate result: an arc's circle crosses the revolve axis: a spindle torus" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f81, +f82)" `
@@ -32,6 +32,7 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 3x ` "degenerate result: the faces touch along a curve interior to both result faces (+f15, +f6, +f11)" `
 - 65x ` "degenerate result: the faces touch along a curve interior to both result faces (+f15, +f6, +f7)" `
 - 159x ` "degenerate result: the faces touch along a curve interior to both result faces (+f2, +f5)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f27, +f21, +f22)" `
 - 61x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f8)" `
 - 11x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f27)" `
 - 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f36)" `
@@ -72,6 +73,43 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 
 ## Bugs
 
+- ` "bearing_retainer_cap_000183_s20260505" ` (6f0954d8247786f30f3cbaf178bcc1c6700ab644d6c9203fdd3f77cafa23a1ee): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_000434_s20260507" ` (7941313c536d1890d2e97bbff547b7fc33f89b11ac354013daeab3d0f7661eba): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_000465_s20260507" ` (55faf9dbc4911c0a9b616188862f694a9cb26227614a163675615d87e5ca7d34): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_000915_s20260505" ` (9fa9cfa9679ff4af39753bf92dd81cb04b020a59dad3522d3b17ac0444539854): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_001271_s20260505" ` (0c1e6f4e716dea869d2ea46b5c01de37adbe32c3882c887ecd47b8dac957fe07): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_001818_s20260505" ` (3432f9fa165c6f684b2563b8f4aca4b4a075e3fc29ee14c6afc8e83faa60345d): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_002590_s20260505" ` (7fbb954b958ca7e3cfcdb12a169107ad6320f265157750adc217027910672988): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_003250_s20260505" ` (22827d4d6210c503b81579727ee66ba4ac1bd5e9de14b9d6413ee4c2fa6a93a2): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_004169_s20260505" ` (ed8bbe9db3c685ff02025877235db46ef61482236c110cdd4891b9078793eacd): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_004656_s20260505" ` (4d363c44bfd97130abc882464a6f0384eb63182581dfcc73b50041b0a184d7c0): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_005067_s20260505" ` (c76f75d056b9d0c13c6af2ab307d0a5dd2a545f06a5bb3fb3a818f4721f1e36b): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_005195_s20260505" ` (dc4fe48aff6e883559153482600799342a19c3b6f852a2d45363970435d88fd9): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_005392_s20260505" ` (232c90549cbc929afd388b6980f6972065134291006f3c7db43dcb1dd59ea634): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_005790_s20260505" ` (89191f4df876230ca5a361ca2abbcf12ba3fd62b4e1d1a27d0205a149b705b5f): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_005901_s20260505" ` (5faae438817d2b800554507dfd76f04d6a7b4a8eb71f71378757b617694dddb3): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_006460_s20260505" ` (f943c03761ba6000b17d0168f35cbffea8605334d0b0c14377e98fa60a16407b): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_006593_s20260505" ` (0cba6737e9e6886b28d5b2b2b50831151beb21c2228320789564d0f40b72e670): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_007364_s20260505" ` (440d5b6d859d176f7afc9038eac014f103520d7e9ee0837848a172cd82456203): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_007592_s20260505" ` (9a39a5830ab68405eb6fd3f464a80945ca17f174f47e004f3b0b86a1fdbd68c9): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_007918_s20260505" ` (dbb5496c0ac44bf3037a3bcf6992875edeff01b5c69e08a43c7e4592cd06fb9b): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_009321_s20260505" ` (75ee444ce9994635d7467ad4efb2c84f4244dbe74d2fc0853b6af4e3e169bc8e): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_009827_s20260505" ` (b3d05c03774d68b81cce583098d91e766f86776587f5d4b2faaa26ecbc6fac94): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_010067_s20260505" ` (bb378e7dbf723640a8c5eff0f8d9d5ca9d737d9c45f8920e8b3d7af98d4e5667): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_011713_s20260505" ` (36adb6e6beb7662c6477d46b303c742cfde06d60602cd71f8f29fc45fafc639f): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_012949_s20260505" ` (0e314ce937a5ca265add380045091cc3636347315925df6b30b8bcffb50d0adf): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_012997_s20260505" ` (d34913b965aa031199cefedd1ebebdeb957677760785311484d45c4341cdf4ca): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_013380_s20260505" ` (6461ca431d46038646f47615c2ef86a47a24d5578c34cd5b645b0a29fdb72969): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_014769_s20260505" ` (c014e4d49c81c21d560d406ce38d6a871c79dd95ce3b90c752c639f4ba484b88): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_015041_s20260505" ` (96eaf2ded3df30a2dbd4a01acf65f389b4c32cddb963c7d2219dcd3853664f25): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_016349_s20260505" ` (0dcde3772097cf5c95bcf686b0e6a63206af2dfa93ccfad96b962932ac2db08c): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_017244_s20260505" ` (179b8adfb28ecff284faf104fa7bc7fa61acd45f7da769ff72422b135bcc03cc): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_017480_s20260505" ` (25e08cea5f044ee6bab18f73be74cb56c8076d2a6c855d77b2eb7293d72fa05d): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_017613_s20260505" ` (5e55dda58ee2e94cbaba16562d164f55d7f8d2cb8fa6fb33173fb41fc1ee16e1): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_017991_s20260505" ` (a86a4072cb37c44078bddeb6c84b748d529cd5492cf5cfec3b6b38f5f8801a2c): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_018080_s20260505" ` (34fdb21ef008b22ff2a3aa0d4d4b4c1617e03ca90e1d452c45d66201cdcf3e4f): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_019123_s20260505" ` (40b77b636ee98e8ed862cd21f765be0088fc55495f54d9a3b85983e5283fbf1e): arris checker_fail, oracle ok, fixture none
+- ` "bearing_retainer_cap_019836_s20260505" ` (f365fab1e1361a778b55790ece3ae74a69d235322eabb787b944ba59bda97460): arris checker_fail, oracle ok, fixture none
 - ` "lobed_knob_000072_s20260505" ` (be8882b2d1bb494ad4f454dff9eb9348f0286e46015e89adebf4799615103eb8): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
 - ` "lobed_knob_000093_s20260505" ` (f6bf1209f7ff84746e5a0c0c8176b058506aff024926758da511cf9841d73448): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
 - ` "lobed_knob_000115_s20260507" ` (8aeb5279ed261530ff19d9bf8df88e3e9c2fc1c6f3662eb51a5aa46b8715a793): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
@@ -172,3 +210,8 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "lobed_knob_011510_s20260505" ` (47a1fcfa7a9a947f011410da25bdfd76337c0b300b2bd05ab7e9e804a37f7e7a): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
 - ` "lobed_knob_011521_s20260505" ` (e6c9b3feb787a54242f7f1a1ea726963a7deb44f0c310e57eb3f02cd17606162): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
 - ` "lobed_knob_011564_s20260505" ` (4bf823261f1290b94b3cf85040986429cfe2d162f00b679817a430116078c1e4): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
+- ` "shaft_collar_004211_s20260505" ` (e9bb5462cfde8560583ea701d365c9df2927e3ecc9b9a7449485ee8119d29500): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_004399_s20260505" ` (37d28b9220fbbdd7be73b45c3504546c803aa94e356c5bf900f5d0107676cb3a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_007583_s20260505" ` (3fef34e70c2eb8bb88e5567cba99588f79dd7da4b6a6c23d2e592f77b991969d): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_017335_s20260505" ` (1be979cbcdd097953f3fba37a9764f6d202a15dceab56ffe6f5ae7f62cff4c15): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_017997_s20260505" ` (8d490a591ea6f317ae58b5b3fdc1f41c271ea7de045a70ea11ac751a4a017f6e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
