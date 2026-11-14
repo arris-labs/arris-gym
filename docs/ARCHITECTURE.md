@@ -393,7 +393,10 @@ the parent origin projected onto it) and keeps the solid in the chain; on
 several planar faces with one normal and one offset it is their one plane.
 Several faces not all planar, or planar ones whose normals fail CadQuery's
 co-planar test whichever comes first, end `runtime` with CadQuery's
-`ValueError`. A curved face or faces of one curved surface, several faces
+`ValueError`, but only on a small part: the margin is relative to the box
+diagonal and CadQuery's clusters are absolute, so such a tie is held under a
+diagonal of 0.5 to 1 and ends `unsupported_api` in `faces` above it (ADR-0017's
+2026-11-14 amendment). A curved face or faces of one curved surface, several faces
 whose plane needs their areas or centres (a near tie, other normals) and every
 call but `workplane` on a stack of faces end `unsupported_api`. `workplane(offset=)`
 on faces moves the plane along its normal, as on a solid. `faces` on a stack

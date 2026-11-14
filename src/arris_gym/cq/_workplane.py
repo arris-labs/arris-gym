@@ -341,7 +341,12 @@ class Workplane:
         stays in the chain. Several planar faces with one normal and one
         offset give their one plane (rule 4); faces not all planar raise
         CadQuery's `ValueError` (`runtime`), and so do planar faces whose
-        normals fail its co-planar test whichever face comes first. A curved
+        normals fail its co-planar test whichever face comes first. Those two
+        errors are reached only on a small part: such a cluster ties on an
+        estimated centre, which `faces` holds only within ADR-0017's margin,
+        a box diagonal under 1 (under 0.5 where two estimated centres tie;
+        the ADR's 2026-11-14 amendment), and on a larger part `faces` ends
+        `UnsupportedApi` first, where CadQuery still raises. A curved
         face, faces of one curved surface (rule 5) and several faces whose
         plane needs their areas or centres are `UnsupportedApi`. An `offset`
         on faces moves the plane that far along its normal, as it does on a
@@ -402,7 +407,11 @@ class Workplane:
         object on the new stack, in CadQuery's order, the solid stays in the
         chain, and `workplane()` places a plane on them (ADR-0017). Raises
         `UnsupportedApi` for any other selector, for selected faces and for a
-        selection that depends on a centre arris does not give. A stack with
+        selection that depends on a centre arris does not give: an estimated
+        centre is trusted to `1e-4` of the solid's box diagonal, so a tie on
+        one is kept only on a small part (a diagonal under 1, under 0.5 for
+        two estimated centres) and is `UnsupportedApi` on a larger one, where
+        CadQuery keeps the tied faces (ADR-0017's 2026-11-14 amendment). A stack with
         no solid (empty, a `moveTo` point, a drawn path or a sketch, whose
         objects have no faces) raises CadQuery's `ValueError` (`runtime`),
         read on the oracle: `runtime-faces-on-*`. Where the solid is a compound

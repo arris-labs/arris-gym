@@ -187,3 +187,34 @@ of the 950 keeps a curved face.
 - **Closed forms per surface kind** (a cylinder band's centre). These fit a
   ranking but not rule 5, which also turns on how each kernel splits a face. The
   exact per-face centre asked of arris serves both, so they wait for it.
+
+## Amendment (2026-11-14): rule 4's `runtime` is reached only on small parts
+
+Rule 2's margin is relative, `1e-4` of the solid's box diagonal D, and rule 1's
+clusters are absolute, `CQ_TOLERANCE` = 1e-4 in model units. Since
+plans/lift-face-selectors step 3's fix, `faces` holds a tie of estimated keys
+only when it holds under every combination of their shifts: two keys `|Δ|`
+apart, each moved by up to the margin, must stay within `CQ_TOLERANCE`, so
+`|Δ| + 2 × 1e-4 × D ≤ 1e-4`. A tie of two estimated keys is therefore seen only
+on a part whose diagonal is under 0.5, and a tie of an estimated key with an
+exact one only under 1. On a larger part the same selection ends
+`unsupported_api` in `faces`, naming the selector, before `workplane()` runs.
+
+So rule 4's outcomes that need a curved face, or a planar face not normal to
+the axis, in the kept cluster depend on the part's size: CadQuery's
+`ValueError` (`runtime`, "If multiple objects selected, they all must be planar
+faces." or "Selected faces must be co-planar.") on a small part, and
+`unsupported_api` on the same shape scaled up, where CadQuery still raises.
+Rule 5's cluster on one curved surface ends `unsupported_api` at every size,
+from `workplane()` on a small part and from `faces` on a larger one. Measured
+on `cq.Workplane("XY").cylinder(h, r).faces(">X").workplane()`, whose side
+face ties with both discs: (0.2, 0.1), D = 0.35, ends `runtime`; (0.5, 0.3),
+D = 0.98, (1, 0.5), (2, 1) and (20, 10) end `unsupported_api`. CadQuery raises
+the `ValueError` for all five. `tests/test_cq_faces.py` holds each.
+
+The size dependence is the margin's, and it ends with it: when arris gives a
+face's centre of mass (asked of arris in rule 2), every key is exact and rule 4's
+errors are reached at every size. Until then a refusal where CadQuery raises
+is a `cq_bug` row if a corpus has one (ADR-0012); the step 7 re-run counts no
+in-subset `cq_bug`, so none of the corpus's programs reaches it. Rules 1 to 5
+are otherwise unchanged.

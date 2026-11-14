@@ -615,6 +615,43 @@ def test_opposite_and_unrelated_normals_follow_cadquerys_coplanar_test() -> None
             plane_on_faces(pair, arris.build.Workplane.XY(), turned.model)
 
 
+@pytest.mark.parametrize(
+    ("height", "radius", "status"),
+    [
+        (0.2, 0.1, ag.Status.RUNTIME),
+        (0.5, 0.3, ag.Status.UNSUPPORTED_API),
+        (1, 0.5, ag.Status.UNSUPPORTED_API),
+        (2, 1, ag.Status.UNSUPPORTED_API),
+        (20, 10, ag.Status.UNSUPPORTED_API),
+    ],
+)
+def test_rule_4s_error_is_reached_only_on_a_small_part(
+    height: float, radius: float, status: ag.Status
+) -> None:
+    # A cylinder's `>X`: its side's centre lies on the axis and ties with both discs', all
+    # three estimated, so CadQuery raises its not-planar `ValueError` at every size. The tie
+    # holds within the margin (1e-4 of the box diagonal, twice over for two estimated keys,
+    # against an absolute CQ_TOLERANCE) only for a diagonal under 0.5: 0.35 here for
+    # (0.2, 0.1), 0.98 for (0.5, 0.3). ADR-0017's 2026-11-14 amendment.
+    from arris_gym.cq._selector import NOT_PLANAR
+
+    diagonal = math.sqrt(2 * (2 * radius) ** 2 + height**2)
+    assert (diagonal < 0.5) is (status is ag.Status.RUNTIME)
+    result = ag.run(
+        "import cadquery as cq\n"
+        f'result = cq.Workplane("XY").cylinder({height}, {radius}).faces(">X").workplane()\n',
+        dialect="cq",
+    )
+    assert result.status is status, result.message
+    if status is ag.Status.RUNTIME:
+        assert result.message == f"ValueError: {NOT_PLANAR}"
+    else:
+        assert result.message == (
+            "Workplane.faces('>X'): the selection depends on the centre of a face that arris "
+            "does not give"
+        )
+
+
 def test_the_selector_doctests_run() -> None:
     import doctest
 

@@ -31,7 +31,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   outward normal, or the one plane of several coplanar faces. A circle,
   polygon or `moveTo` drawn there and extruded fuses with the solid, as in
   CadQuery. Several selected faces not all planar, or whose normals CadQuery
-  finds not co-planar, end `runtime` with CadQuery's `ValueError`.
+  finds not co-planar, end `runtime` with CadQuery's `ValueError` on a small
+  part only (a bounding-box diagonal under about 0.5 to 1 model units); the
+  same shape larger ends `unsupported_api` in `faces`, where CadQuery still
+  raises: `cylinder(0.2, 0.1).faces(">X").workplane()` ends `runtime`,
+  `cylinder(2, 1)`'s `unsupported_api`.
   `workplane(offset=…)` on them moves the plane along its normal. `faces` on a
   stack with no faces (an empty stack, a point, a drawn path) ends `runtime` with
   CadQuery's `ValueError`; on a compound it selects across its pieces. Any other
