@@ -293,8 +293,8 @@ circle by 0: read on the oracle (2026-11-14) the sweep fails with
 `-on-solid`, `-on-open-path` and `-on-point` are `both` where no pending
 wire is: CadQuery and `cq` both raise `No pending wires present`.
 `unsupported-extrude-both-two-sketches` draws a second circle before the
-extrusion: the oracle extrudes both (`ok`), the subset refuses `circle` on
-a pending wire before `extrude` is reached. `test_cq_extrude_both.py` holds
+extrusion: the oracle extrudes both (`ok`, `oracle.json`: an annulus, V = 6 pi), the
+subset refuses `circle` on a pending wire before `extrude` is reached. `test_cq_extrude_both.py` holds
 the failing rows as agreeing, with properties over stacks, planes and
 distances.
 

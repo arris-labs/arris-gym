@@ -209,8 +209,9 @@ def test_the_closed_path_agrees_with_the_recorded_oracle() -> None:
 
 def test_two_sketches_are_refused_where_the_second_is_drawn() -> None:
     # CadQuery extrudes both circles (a pending wire each, the oracle answers
-    # `ok`, V = 10 pi); the subset holds one sketch on a stack, so `circle`
-    # after `circle` is refused before `extrude` is reached.
+    # `ok`, an annulus, V = 6 pi in `oracle.json`); the subset holds one
+    # sketch on a stack, so `circle` after `circle` is refused before
+    # `extrude` is reached.
     case = next(
         c for c in fixture_cases.load("cq") if c.slug == "unsupported-extrude-both-two-sketches"
     )
