@@ -55,6 +55,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    `set` reaching a result, a public item nothing calls or tests, a test
    whose input or assertion got weaker while its name and docstring keep the
    old claim. A weakened test is a plan open question, never a quiet edit.
+   Also: a sentence in a doc or docstring ("faces match the oracle") is
+   checked against the fixture that proves it, and a fixture a README says
+   has a recorded oracle report has its `oracle.json`.
 5. Commit `type(scope): summary (plans/<slug> step N)` with the box ticked
    in the same commit; the body says why, cites docs/ADRs, names any
    public type or signature changed. A commit that repairs an earlier
@@ -108,7 +111,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    whose result you need goes in the foreground under `timeout`, never
    backgrounded and polled. You answer to the conductor, never the human:
    hand back the commit id and anything surprising, or the question that
-   stopped you." The conductor writes no code itself; it alone talks to
+   stopped you." A step that needs a run over 110 s (a corpus re-run) is
+   split in the plan: the conductor runs it in the background, a subagent
+   records its outputs in the next step. The conductor writes no code itself; it alone talks to
    the human.
 3. On each hand-back, check what landed: one commit per step of the
    batch, each naming `(plans/<slug> step N)`, every step ticked, `git
