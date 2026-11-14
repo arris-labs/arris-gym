@@ -57,7 +57,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    old claim. A weakened test is a plan open question, never a quiet edit.
    Also: a sentence in a doc or docstring ("faces match the oracle") is
    checked against the fixture that proves it, and a fixture a README says
-   has a recorded oracle report has its `oracle.json`.
+   has a recorded oracle report has its `oracle.json`; a doc that says a
+   file is tool-written is checked by regenerating the file byte-identical,
+   and a hand edit becomes a tool option.
 5. Commit `type(scope): summary (plans/<slug> step N)` with the box ticked
    in the same commit; the body says why, cites docs/ADRs, names any
    public type or signature changed. A commit that repairs an earlier
