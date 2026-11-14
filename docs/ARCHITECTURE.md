@@ -322,11 +322,11 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 20 API forms:
+the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 23 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
-axis selectors `>X <X >Y <Y >Z <Z`, `hole` (one diameter), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `pushPoints` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close` and `revolve`;
 `chamfer` and STEP export wait for their bundle in C2's order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
@@ -733,13 +733,13 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 5,295 (29.6%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 3,820 (21.3%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 12,110 / 1,174 / 142 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 450 | 0 | 1 | 0 |
+| reach | 6,154 (34.4%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 4,481 (25.0%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 11,256 / 1,335 / 142 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 482 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
-| in-subset `cq_bug` | 0 | 717 | 0 | 0 |
+| in-subset `cq_bug` | 7 | 717 | 0 | 0 |
 | in-subset `by_design` | 0 | 0 | 0 | 0 |
 
 The baseline's 717 in-subset `cq_bug` rows were all `unsupported_api` where the
@@ -828,6 +828,33 @@ digest unchanged. BenchCAD's 883 in-subset refusals by family: `pull_handle`
 176 (`OpInternalError`), `cotter_pin` 159, `ball_knob` 153, `wall_anchor` 81,
 `torus_link` 80, `lobed_knob` 68, `hinge` 61, `dome_cap` 36, `rivet` 32,
 `bearing_retainer_cap` 30, `bucket` 6, `shaft_collar` 1.
+
+`pushPoints`, `hole(diameter, depth=)`, `cboreHole`, `cskHole`, a second
+`faces(sel)` on the faces a first kept and `circle` on a stack of points took
+BenchCAD from 5,295 to 6,154 reached and CAD-Recode not at all (it writes none
+of them; ADR-0018). Each bore is cut at every point in one `Solid.cut`, the
+counterbore's and the countersink's pieces separate tools, because arris
+refuses the cut of their fusion where its end is flush with the face
+(`regression/arris-cut-fused-bore-tool-flush`). The 859 newly reached programs
+are 661 `cq_bug` rows that now agree, 159 `hinge` refusals (a knuckle
+cylinder tangent to the plate, `regression/cq-tangent-cylinder-and-box`) and
+32 rows the oracle gets wrong: `manifold_block` 17 and `connecting_rod` 15,
+`occt_wrong` by a closed form of volume, area, centroid and bounds
+(`tools/cq_closed_forms.py` `part_measures`, boundary fluxes) to which arris
+is within 3e-11 and Open CASCADE's cylinder-cylinder section is 2e-9 to
+2e-6 off. `occt_wrong` is 482, in-subset refusals 1,042.
+
+**Seven in-subset `cq_bug` rows stay**, all `connecting_rod`
+(ADR-0014's amendment of 2026-11-14): `faces(">Z").faces(">Z")` keeps a
+cylinder face, and `workplane()` on it (6) or `faces(">Y")` ranking by its
+centre (1) ends `unsupported_api` where the oracle builds the part. They need
+a face's exact centre of mass (`face-surface-properties`, a plan in arris)
+and, for the 6, the side of a cylinder that arris splits in two where a box's
+window crosses its seam read as one face, as Open CASCADE reads it, in arris
+or by `cq` merging the halves before ranking
+(`regression/cq-workplane-on-a-cylinder-face-split-at-its-seam`). The count
+stays visible rather than the declaration narrowed. The oracle rows were the
+committed bytes, the digest unchanged.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

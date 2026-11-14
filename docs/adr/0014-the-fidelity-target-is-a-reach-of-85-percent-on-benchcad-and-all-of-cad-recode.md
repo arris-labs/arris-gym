@@ -133,3 +133,17 @@ for riskiness: a bundle with new semantics is lifted before one that only
 adds forms. The reach curve still measures what each item unlocks; it no
 longer sets the order of lifts. T, the static membership rule and the
 Consequences' other points are unchanged.
+
+## Amendment (2026-11-14): seven in-subset `cq_bug` rows wait on arris
+
+The target's "no in-subset `cq_bug`" holds for CAD-Recode and, for BenchCAD
+after the holes and point stacks (ADR-0018), with seven named exceptions: the
+`connecting_rod` programs that write `faces(">Z").faces(">Z")` over a cylinder
+face and then `workplane()` on it (6) or `faces(">Y")` by its centre (1). They
+need a face's exact centre of mass (arris's `face-surface-properties`) and,
+for the six, the side of a cylinder that arris splits in two at a box's window
+read as one face, as Open CASCADE reads it
+(`regression/cq-workplane-on-a-cylinder-face-split-at-its-seam`). The
+declaration is not narrowed: the count stays in the table as the measure of
+what arris still owes, and each lift's table states it. The target is met
+when the seven agree.

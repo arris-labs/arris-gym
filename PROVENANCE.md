@@ -76,6 +76,23 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   bounding-box diagonal) from each stack point, against the plane's normal, and
   cuts it from the chain's solid. Read in cadquery 2.3.0 and confirmed on the
   oracle: `tests/fixtures/cq/ok-hole-*`.
+- `Workplane.pushPoints`, `cboreHole`, `cskHole`, `hole(depth=)` and
+  `largestDimension` (`cadquery/cq.py`, `cadquery/occ_impl/shapes.py`):
+  `pushPoints` replaces the stack by the points in the plane's local
+  coordinates (a third number is an offset along the normal); `hole` with a
+  depth bores that length, else the solid's box diagonal; `cboreHole` and
+  `cskHole` fuse a cylinder with a second cylinder or a cone of height
+  `(cskDiameter - diameter) / 2 / tan(cskAngle / 2)` and cut it at every
+  point through `cutEach`; the arguments CadQuery refuses and its order of
+  checks were read on the oracle. `arris-gym` cuts the pieces separately, not
+  fused (ADR-0018). Confirmed on the oracle: `tests/fixtures/holes/`,
+  `tests/fixtures/cq/ok-push-points-*`, `ok-hole-depth-*`, `ok-cbore-*`,
+  `ok-csk-*`, `ok-ctx-*`.
+- A second `faces(sel)` on the stack of faces a first kept, and `circle` and
+  `extrude` on a stack of points (`cadquery/cq.py`, `_selectObjects`,
+  `eachpoint`): the selector ranks only the stacked faces; a circle at each
+  point, extruded and fused. Confirmed by `tests/fixtures/cq/ok-ctx-*` and
+  `unsupported-circle-points-*`.
 - `Workplane.sphere` and `Solid.makeSphere` (`cadquery/cq.py`,
   `cadquery/occ_impl/shapes.py`): one sphere at each point of the stack
   (`eachpoint`, in the plane's own axes, the origin on an empty stack),
