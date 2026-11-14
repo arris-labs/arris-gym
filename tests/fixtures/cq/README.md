@@ -444,7 +444,10 @@ corpus writes it up to its first `union`: that union touches a cylinder to the
 plate's side, which arris refuses (`regression/cq-tangent-cylinder-and-box`).
 `runtime-csk-*`: the arguments CadQuery refuses (a negative diameter, an angle of
 zero, a zero or negative countersink diameter, an angle of 180 and one below
-zero), its words recorded beside ours.
+zero, and the range's ends, 360 and -180), its words recorded beside ours.
+`unsupported-csk-*`: an angle past either end (400, -200), where the oracle
+builds the countersink of the angle 360 degrees nearer (40, 160), its report
+beside ours (ADR-0018's amendment).
 
 `ok-ctx-faces-on-faces-*` (step 6, `tests/test_cq_point_contexts.py`) run a second
 `faces` on the faces the first kept, each beside its recorded oracle report: the

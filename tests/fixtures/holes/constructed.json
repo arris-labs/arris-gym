@@ -482,6 +482,38 @@
   }
  },
  {
+  "name": "csk-angle-360",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(2, 1)]).cskHole(1, 2, 360)\nshow_object(result)\n",
+  "report": {
+   "measures": null,
+   "message": "OCP.OCP.Standard.Standard_DomainError: cone with negative or null height",
+   "program_sha256": "24494aa55c6c6da576bcd2595014e2f77be121c2b2f75f7a2f90e8040b44a7a8",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  }
+ },
+ {
+  "name": "csk-angle-minus-180",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(2, 1)]).cskHole(1, 2, -180)\nshow_object(result)\n",
+  "report": {
+   "measures": null,
+   "message": "OCP.OCP.Standard.Standard_DomainError: cone with negative or null height",
+   "program_sha256": "1cde0843f71be92f8d694b05499fae74bcb66ca9d28745e8760580bcb1af49b8",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  }
+ },
+ {
   "name": "csk-angle-negative",
   "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(2, 1)]).cskHole(1, 2, -90)\nshow_object(result)\n",
   "report": {

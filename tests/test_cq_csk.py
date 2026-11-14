@@ -222,7 +222,28 @@ RUNTIME = {
         "an angle that gives the cone no height (CadQuery's Standard_DomainError)",
         "cskHole(1, 2, -90)",
     ),
+    # The ends of the range: tan(-90 deg) is a huge negative number and tan(180 deg)
+    # a tiny negative one, so both cones have a negative height on the oracle.
+    "runtime-csk-angle-minus-180": (
+        "pushPoints([(2, 1)]).cskHole(1, 2, -180)",
+        "an angle that gives the cone no height (CadQuery's Standard_DomainError)",
+        "cskHole(1, 2, -180)",
+    ),
+    "runtime-csk-angle-360": (
+        "pushPoints([(2, 1)]).cskHole(1, 2, 360)",
+        "an angle that gives the cone no height (CadQuery's Standard_DomainError)",
+        "cskHole(1, 2, 360)",
+    ),
 }
+
+# Past either end, CadQuery's tangent repeats: the oracle builds the countersink
+# of the angle 360 degrees nearer, which no program asks for (ADR-0018 rule 4).
+# slug: (chain after the plane, the angle the oracle's cone has)
+UNSUPPORTED = {
+    "unsupported-csk-angle-above-360": ("pushPoints([(2, 1)]).cskHole(1, 2, 400)", 40.0),
+    "unsupported-csk-angle-below-minus-180": ("pushPoints([(2, 1)]).cskHole(1, 2, -200)", 160.0),
+}
+OUTSIDE = "Workplane.cskHole with an angle outside [-180.0, 360.0]"
 
 
 def runtime_programs() -> dict[str, tuple[str, str]]:
@@ -240,6 +261,14 @@ def cases() -> dict[str, fixture_cases.Case]:
 def runtime_cases() -> dict[str, fixture_cases.Case]:
     return {
         case.slug: case for case in fixture_cases.load("cq") if case.slug.startswith("runtime-csk-")
+    }
+
+
+def unsupported_cases() -> dict[str, fixture_cases.Case]:
+    return {
+        case.slug: case
+        for case in fixture_cases.load("cq")
+        if case.slug.startswith("unsupported-csk-")
     }
 
 
@@ -294,6 +323,31 @@ def test_a_countersink_cadquery_refuses_agrees_with_the_oracle(slug: str) -> Non
     assert compare(fixture_cases.run(runtime_cases()[slug]), report).outcome is (
         FidelityOutcome.AGREE
     )
+
+
+def test_every_unsupported_csk_fixture_is_an_angle_outside_the_range() -> None:
+    committed = unsupported_cases()
+    assert sorted(committed) == sorted(UNSUPPORTED)
+    for slug, (chain, _) in UNSUPPORTED.items():
+        assert committed[slug].program == wrap(f"{TOP}.{chain}"), slug
+        assert committed[slug].expected == {
+            "dialect": "cq",
+            "status": "unsupported_api",
+            "message": OUTSIDE,
+        }
+        result = fixture_cases.run(committed[slug])
+        assert result.status is ag.Status.UNSUPPORTED_API, slug
+        assert result.message == OUTSIDE, slug
+
+
+@pytest.mark.parametrize("slug", sorted(UNSUPPORTED))
+def test_past_the_range_the_oracle_builds_the_angle_a_turn_nearer(slug: str) -> None:
+    """The oracle's cone is the one of the angle 360 degrees nearer: the closed form's volume."""
+    report = recorded(slug)
+    assert report.status.value == "ok"
+    assert report.measures is not None
+    want = countersunk_box(BOX, ONE, 1, 2, UNSUPPORTED[slug][1])["volume"]
+    assert fixture_cases.close(report.measures.volume, float(str(want)))
 
 
 @pytest.mark.parametrize(

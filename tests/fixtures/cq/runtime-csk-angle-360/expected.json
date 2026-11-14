@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.cskHole(1, 2, 360): an angle that gives the cone no height (CadQuery's Standard_DomainError)"
+}

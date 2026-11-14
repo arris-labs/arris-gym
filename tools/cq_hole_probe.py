@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""What CadQuery's point stacks and bore tools build, read on the oracle (ADR-0018).
+"""What CadQuery's stacks of points and bore tools build, read on the oracle (ADR-0018).
 
 The evidence of ADR-0018. Each construction in `CONSTRUCTED` is an own program
 whose answer has a closed form: a box with holes, counterbores or countersinks
@@ -39,7 +39,7 @@ _BOX = 'cq.Workplane("XY").box(10, 8, 4)'
 # Own programs, each a construction with a closed form
 # (`tests/fixtures/holes/README.md` gives them).
 CONSTRUCTED: dict[str, str] = {
-    # The point stack.
+    # The stack of points.
     "points-tuple": f"result = {_TOP}.pushPoints([(2, 1)]).hole(1)",
     "points-list": f"result = {_TOP}.pushPoints([[2, 1], [-3, -2]]).hole(1)",
     "points-several": f"result = {_TOP}.pushPoints([(-3, -2), (3, 2), (3, -2)]).hole(1)",
@@ -89,6 +89,10 @@ CONSTRUCTED: dict[str, str] = {
     "csk-angle-zero": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(1, 2, 0)",
     "csk-angle-180": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(1, 2, 180)",
     "csk-angle-negative": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(1, 2, -90)",
+    # The ends of ADR-0018 rule 4's range, where `tan(angle / 2)` crosses the pole
+    # (-180) or comes back through zero (360): each a cone of no height.
+    "csk-angle-minus-180": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(1, 2, -180)",
+    "csk-angle-360": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(1, 2, 360)",
     "csk-diameter-negative": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(1, -2, 90)",
     "csk-diameter-zero": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(1, 0, 90)",
     "csk-hole-diameter-zero": f"result = {_TOP}.pushPoints([(2, 1)]).cskHole(0, 2, 90)",

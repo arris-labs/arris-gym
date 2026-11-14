@@ -150,3 +150,19 @@ plans/lift-holes-and-points step 6 lifts each where it agrees with the oracle.
   operations where CadQuery has one, each a coplanar contact of its own.
 - **arris's `Solid.hole`** (`at` workplanes and a depth). It bores a cylinder
   only.
+
+## Amendment (2026-11-14): both ends of the countersink's angle are refusals
+
+Rule 4's ranges are amended: a `cskAngle` in `[−180, 0]` or `[180, 360]`
+raises in `cq` (`runtime`), and one outside `[−180, 360]` ends
+`unsupported_api`. 360 belongs with 180, not past the range: CadQuery's
+`tan(radians(360 / 2))` is `−1.2e-16`, so its cone's height is `−8e15`
+times the radius and Open CASCADE refuses it as it refuses 180
+(`Standard_DomainError: cone with negative or null height`), where an angle
+past 360 builds the cone of the angle 360 degrees nearer. Read on the oracle:
+`tools/cq_hole_probe.py` adds `cskHole` at 360 and at −180 (50 constructions),
+both that refusal, `tests/test_hole_probe.py` holding each to CadQuery's words;
+`cq/runtime-csk-angle-360` and `-minus-180` agree with their recorded reports,
+and `cq/unsupported-csk-angle-above-360` and `-below-minus-180` record the
+cones of 40 and 160 degrees the oracle builds at 400 and −200. The rest of
+rule 4 is unchanged.

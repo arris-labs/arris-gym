@@ -48,9 +48,14 @@ _REVOLVE_RADIANS_PER_DEGREE = 2 * math.pi / 360.0
 # One whole turn in radians, the angle `sphere`'s half disc and `cskHole`'s
 # cone's triangle are revolved by: not a tolerance.
 _FULL_TURN = 2 * math.pi
-# `cskHole`'s angle, in degrees: from the first to the second CadQuery's
-# `tan(angle / 2)` is one branch of the cone's height; outside it the
-# tangent repeats and the cone is one no program asks for (ADR-0018 rule 4).
+# `cskHole`'s angle, in degrees, both ends included. Its half runs from -90 to
+# 180, across the pole of CadQuery's `tan(angle / 2)` at a half of 90: the cone
+# has a positive height only from 0 to `_CSK_NO_HEIGHT`, and a negative one at
+# both ends, as the oracle reads them (`runtime-csk-angle-minus-180` and
+# `runtime-csk-angle-360`).
+# Outside the range the tangent repeats and the oracle builds the cone of the
+# angle 360 degrees nearer, which no program asks for (`unsupported-csk-*`;
+# ADR-0018 rule 4 and its amendment).
 _CSK_ANGLES = (-180.0, 360.0)
 # From this angle up, to the top of `_CSK_ANGLES`, the cone's height is
 # negative, as it is below zero (the oracle's "negative or null height").
@@ -643,8 +648,8 @@ class Workplane:
         leaves the cone alone. Raises `ValueError` (`runtime`) for what
         CadQuery refuses, in its order: a negative diameter, an angle of zero,
         a zero or negative `cskDiameter`, and an angle that gives the cone no
-        height (from -180 to 0 and from 180 to 360); `UnsupportedApi` for an
-        angle outside -180 to 360, where CadQuery's tangent repeats
+        height (from -180 to 0 and from 180 to 360, both ends included);
+        `UnsupportedApi` for an angle outside them, where CadQuery's tangent repeats
         (`runtime-csk-*`, `unsupported-csk-*`), and otherwise as `hole` does.
 
         >>> import arris_gym.cq as cq
@@ -670,7 +675,9 @@ class Workplane:
                 f"{named}: a negative countersink diameter (CadQuery's Standard_DomainError)"
             )
         if not _CSK_ANGLES[0] <= cskAngle <= _CSK_ANGLES[1]:
-            raise UnsupportedApi(f"Workplane.cskHole with an angle outside {_CSK_ANGLES}")
+            raise UnsupportedApi(
+                f"Workplane.cskHole with an angle outside [{_CSK_ANGLES[0]}, {_CSK_ANGLES[1]}]"
+            )
         if cskAngle < 0 or cskAngle >= _CSK_NO_HEIGHT:
             raise ValueError(
                 f"{named}: an angle that gives the cone no height (CadQuery's Standard_DomainError)"

@@ -1,4 +1,4 @@
-"""ADR-0018's evidence: what CadQuery's point stacks and bore tools build, and arris's tool.
+"""ADR-0018's evidence: what CadQuery's stacks of points and bore tools build, and arris's tool.
 
 The oracle's reports come from `tools/cq_hole_probe.py` (outside the gate) and
 are committed in `tests/fixtures/holes/constructed.json`; these tests read
@@ -231,6 +231,10 @@ RAISES: dict[str, str] = {
     "csk-angle-negative": (
         "OCP.OCP.Standard.Standard_DomainError: cone with negative or null height"
     ),
+    "csk-angle-minus-180": (
+        "OCP.OCP.Standard.Standard_DomainError: cone with negative or null height"
+    ),
+    "csk-angle-360": "OCP.OCP.Standard.Standard_DomainError: cone with negative or null height",
     "csk-diameter-negative": (
         "OCP.OCP.Standard.Standard_DomainError: cone with negative or too small radius"
     ),

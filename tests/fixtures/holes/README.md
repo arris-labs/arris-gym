@@ -1,4 +1,4 @@
-# What CadQuery's point stacks and bore tools build, read on the oracle
+# What CadQuery's stacks of points and bore tools build, read on the oracle
 
 ADR-0018's evidence (plans/lift-holes-and-points step 1). Written by
 `tools/cq_hole_probe.py` (CadQuery 2.3.0 on `cadquery-ocp` 7.9.3.0, oracle
@@ -14,7 +14,8 @@ an empty list, points off the part and on side faces, overlapping and
 duplicated; `hole(d, depth=)` blind, to the bottom and past it;
 `cboreHole` and `cskHole` (82° and 90°) at one and several points, narrower,
 equal, deeper and zero pieces; `faces(sel).faces(sel)`; `circle` on points
-then `extrude`; and the arguments CadQuery refuses. Each entry is the name,
+then `extrude`; and the arguments CadQuery refuses, `cskHole`'s angle at
+both ends of ADR-0018 rule 4's range (−180 and 360, its amendment) among them. Each entry is the name,
 the program text and the oracle's report less `step` and `seconds`. Two runs
 give the same bytes.
 

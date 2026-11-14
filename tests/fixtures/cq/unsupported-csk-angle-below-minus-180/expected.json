@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "unsupported_api",
+  "message": "Workplane.cskHole with an angle outside [-180.0, 360.0]"
+}

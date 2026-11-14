@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "OCP.OCP.Standard.Standard_DomainError: cone with negative or null height",
+  "program_sha256": "e8d1a2529ea8a91c4f495fa11bc90f7bd009609b7cb6754356f8c513dac85d62",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}
