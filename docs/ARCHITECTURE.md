@@ -395,6 +395,17 @@ diameter end `runtime` (`ValueError`), as CadQuery raises `StdFail_NotDone`.
 back along one diameter into a zero-volume solid its checker passes: a
 `cq_bug` row, since the form is admitted (ADR-0012), held by the strict
 `xfail` `regression/cq-polygon-two-sides`.
+`extrude(distance, both=True)` grows the pending sketch `distance` to each
+side of its plane: CadQuery's `_extrude` fuses the sweep of `distance` with
+that of `-distance` and `clean()` merges the side faces, which is arris's one
+`Sketch.extrude(distance, both=True)` prism of height `2 * |distance|` (the
+same volume, centroid, bounds and face count on the oracle,
+`ok-extrude-both-*`); a negative distance is the same prism, `both=False` is
+plain `extrude`. A zero distance, `both` or not, ends `runtime`
+(`ValueError`), where CadQuery raises `Standard_ConstructionError`; `both` on
+a stack with no pending sketch is `No pending wires present` on both sides.
+`extrude`'s other keywords and `extrude(d, True)` (CadQuery's second positional
+argument is `combine`) stay `unsupported_api`.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 A `polyline` after a lone `moveTo` point is `polyline` alone: it starts at its
@@ -679,10 +690,10 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 4,103 (22.9%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 2,826 (15.8%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,272 / 1,173 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 325 | 0 | 1 | 0 |
+| reach | 4,345 (24.3%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 2,943 (16.4%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,030 / 1,173 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 450 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
 | in-subset `cq_bug` | 0 | 717 | 0 | 0 |
@@ -739,6 +750,18 @@ refusals are the earlier 699 and these 153.
 (it writes none). Exactly 92 rows changed, all `grease_nipple`, from `cq_bug`
 (`unsupported_api`) to agree; every in-subset class count is unchanged. The oracle
 rows were the committed bytes, the digest unchanged.
+
+`extrude(both=)` and `polyline` after a lone `moveTo` point took BenchCAD from
+4,103 to 4,345 reached and CAD-Recode not at all (it writes no `both=`). Of
+the 242 newly reached programs, 117 `hex_key_organizer` agree and 125 are the
+`u_bolt` (66) and `j_hook` (59) programs, which draw their hexagonal or
+pentagonal nut under the box with `extrude(e, both=True)`: all `occt_wrong` by
+the hook closed form, which gained the nut's prism, so `occt_wrong` is 450
+(`u_bolt` 202, `j_hook` 184, `t_pipe_fitting` 64). Before `polyline` after a
+`moveTo` was lifted, 86 of the 125 were `cq_bug` rows
+(`Workplane.polyline on a pending wire`). In-subset `cq_bug` stays 0, the
+refusals 852, and the oracle rows were the committed bytes, the digest
+unchanged.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

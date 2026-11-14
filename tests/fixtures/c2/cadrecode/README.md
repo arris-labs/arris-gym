@@ -36,7 +36,7 @@ the library's code licence does not replace it.
 report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
 `uv run --extra corpus tools/cq_corpus.py --corpus cadrecode --verdicts tests/fixtures/c2/cadrecode/verdicts.json --oracle-rows tests/fixtures/c2/cadrecode/oracle.jsonl.gz` (network, the oracle environment; outside the gate), which saves
 its work in chunks and resumes. No program text is committed. Each figure is
-over all 968 programs. Re-run by plans/lift-polygon step 4 (2026-11-14), after `Workplane.polygon` was lifted (no corpus program writes it: every figure and both digests are unchanged, as after `Workplane.sphere`, plans/lift-sphere step 5, and after `Workplane.threePointArc`, plans/lift-three-point-arc step 5); before that by plans/lift-cylinder step 6
+over all 968 programs. Re-run by plans/lift-extrude-both step 5 (2026-11-14), after `extrude(…, both=True)` and `polyline` after a lone `moveTo` point were lifted (no corpus program writes them: every figure and both digests are unchanged); before that by plans/lift-polygon step 4, after `Workplane.polygon` was lifted (no corpus program writes it: every figure and both digests are unchanged, as after `Workplane.sphere`, plans/lift-sphere step 5, and after `Workplane.threePointArc`, plans/lift-three-point-arc step 5); before that by plans/lift-cylinder step 6
 (2026-11-13), after `Workplane.cylinder`, and `union` on a chain holding no solid,
 were lifted (before that, by plans/in-subset-cq-bugs step 10: both workers read `r`
 (ADR-0015), and `origin=`, `workplane(offset=…)`, `box` on a `moveTo` point and a

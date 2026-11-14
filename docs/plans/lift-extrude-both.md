@@ -111,7 +111,7 @@ a given design; **[3]** unproven semantics, established here.
   and two cylinders) inside ADR-0005's tolerance. Run the tool and append
   its verdicts to `tests/fixtures/c2/benchcad/verdicts.json`, each checked
   by `compare` (arris on the closed form, Open CASCADE off it).
-- [ ] Step 5 **[2]** — commit the re-run. Re-run step 3 with step 4's
+- [x] Step 5 **[2]** — commit the re-run. Re-run step 3 with step 4's
   verdicts (BenchCAD and CAD-Recode, `--oracle-rows`, the C1 verdicts and
   BenchCAD's own). Copy its outputs into `tests/fixtures/c2/*` as
   `fixtures:` with the new figures, update both READMEs and
