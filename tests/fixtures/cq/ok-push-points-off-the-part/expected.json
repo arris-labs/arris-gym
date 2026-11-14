@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 192,
+    "area": 208,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`.faces(\">Z\").workplane().pushPoints([(20, 0)]).hole(1)`: the cylinder misses the box."
+}

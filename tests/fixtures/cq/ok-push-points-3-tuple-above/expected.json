@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 185.89719739196033,
+    "area": 232.41121043215873,
+    "centroid": [
+      -0.032828911321196794,
+      -0.032828911321196794,
+      -0.003769914363133907
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`.faces(\">Z\").workplane().pushPoints([(1, 1, 3)]).hole(1)`: a hole from three above the face. The bore starts at z = 7 and runs the box's diagonal D = sqrt(116) down, to z = 7 - D = -3.77: short of the bottom, so it is blind there, its cylinder 4 - (7 - D) = D - 3 long inside the part. V = 192 - pi r^2 (D - 3); it takes the top disc, adds the wall 2 pi r (D - 3) and the cap disc at its end: A = 208 + 2 pi r (D - 3). The cut's centroid is (1, 1, (11 - D) / 2)."
+}

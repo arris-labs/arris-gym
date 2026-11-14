@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 173.15044407846125,
+    "area": 278.68583470577033,
+    "centroid": [
+      -0.018143716987328168,
+      -0.007257486794931273,
+      -0.0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 9,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 3
+  },
+  "note": "Three points on `>Z`. A 4 x 6 x 8 box centred on the origin, a hole of diameter 1 through it at each centre. Each cylinder (r = 1/2) runs the box's extent `length` along `axis`: it removes pi r^2 length, takes two discs from the faces and adds its wall, 2 pi r length. The holes are apart and inside the face, so the part has 6 planes and one cylinder per hole, genus n. Each hole's centroid is its centre with the axis coordinate 0, so the part's is -(pi r^2 length) sum(centres) / V."
+}

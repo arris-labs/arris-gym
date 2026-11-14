@@ -70,7 +70,15 @@ subset.
   `fidelity/agree-box-*-hole*` write `pushPoints` but use the bare
   `cq.Workplane()` and stay refused. `fixture_cases.c1_subset()` drops the
   four forms until step 8.
-- `Subset`'s doctest count and ARCHITECTURE's "20 API forms" move to 24.
+- `Subset`'s doctest count and ARCHITECTURE's "20 API forms" move to 23: the
+  three new forms (`pushPoints`, `cboreHole`, `cskHole`) are the additions;
+  `hole` is one of the 20 already and gains a keyword.
+- `fixture_cases.c2_baseline_subset()` (step 2): `cq.subset()` less the new
+  forms and `hole`'s keyword, which `test_c2_baseline` compares the committed
+  reach to until step 8 returns it to `cq.subset()`.
+- `hole` measures its depth on arris's box less its 2e-7 padding
+  (`_BOUNDS_PAD`), the diagonal CadQuery's tight box gives: a bore that ends
+  inside the part (`ok-push-points-3-tuple-above`) was 5e-7 too long.
 
 ## Steps
 
@@ -85,7 +93,7 @@ within a given design; **[3]** unproven semantics, established here.
   list, 3-tuple, empty), `hole` with depth inside and past the part,
   `cboreHole`, `cskHole` (82° and 90°) at one and several points, and
   `faces(sel).faces(sel)`.
-- [ ] Step 2 **[2]** — `pushPoints` and `hole(d)` on its points. Fixtures
+- [x] Step 2 **[2]** — `pushPoints` and `hole(d)` on its points. Fixtures
   `cq/ok-push-points-*` (one point, several, lists, after each selector),
   one corpus program as written (`dog_bone`); `hypothesis`: a random box,
   face and non-overlapping points, volume `V − n·π d²/4·h`.

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 5168.338215004953,
+    "area": 4035.0168764696,
+    "centroid": [
+      0,
+      -1.84,
+      0
+    ],
+    "bounds": [
+      [
+        -59.29,
+        -3.68,
+        -9.216456618112737
+      ],
+      [
+        59.29,
+        0,
+        9.216456618112737
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        4
+      ]
+    ],
+    "shells": 1,
+    "genus": 2
+  },
+  "note": "BenchCAD's `dog_bone_000282_s20260505`: a stadium plate, two holes of 11.46. On `XZ` the profile is a 87 x 12.92 rectangle (x +-43.5, z +-6.46) with a major arc at each end, through (+-59.29, 0) from the corners. The arc's circle has its centre (c, 0) with (59.29 - c)^2 = (43.5 - c)^2 + 6.46^2 and radius R = 59.29 - c; its part beyond the chord x = 43.5, at distance d = c - 43.5 from the centre, is the whole disc less the segment R^2 acos(d / R) - d sqrt(R^2 - d^2). The prism runs 3.68 along -y, so the `>Y` face is y = 0 and the plane's x is world -x, its y world z: both holes (r = 5.73, at +-43.5) are inside the profile and bore its whole 3.68. V = (A - 2 pi r^2) h, area 2 (A - 2 pi r^2) + P h + 2 (2 pi r) h with perimeter P = 2 (87) + 2 R (2 pi - 2 acos(d / R)) taken on the two arcs. The part is symmetric about x = 0 and z = 0: centroid (0, -h / 2, 0). The arcs bulge past the corners: z reaches +-R."
+}

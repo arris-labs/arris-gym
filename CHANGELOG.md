@@ -5,6 +5,15 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `pushPoints(list)`: a stack of points, each a tuple
+  or list of two numbers (the plane's own x and y) or three (the third along
+  the normal), and `hole(diameter)` after it bores at every one in a single cut,
+  as CadQuery's does; an empty list bores once at the plane's origin. A point
+  that is not two or three numbers, and `pushPoints` after a selected face, a
+  `moveTo` or a drawn path, or any other call on the points, still end
+  `unsupported_api`. A hole that ends inside the part (a point offset above the
+  face) is now as long as CadQuery's.
+
 - `dialect="cq"` now runs a second `circle` after a first one, as CadQuery
   does: it is drawn about the first circle's centre and the two make a ring
   that `extrude` (with or without `both=True`) or `revolve` builds, the larger

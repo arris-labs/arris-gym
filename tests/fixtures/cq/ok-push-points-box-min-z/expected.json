@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 179.4336293856408,
+    "area": 255.1238898038469,
+    "centroid": [
+      -0.0,
+      -0.0,
+      -0.0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 2
+  },
+  "note": "Two points on `<Z`, in that face's own x and y (ADR-0017). A 4 x 6 x 8 box centred on the origin, a hole of diameter 1 through it at each centre. Each cylinder (r = 1/2) runs the box's extent `length` along `axis`: it removes pi r^2 length, takes two discs from the faces and adds its wall, 2 pi r length. The holes are apart and inside the face, so the part has 6 planes and one cylinder per hole, genus n. Each hole's centroid is its centre with the axis coordinate 0, so the part's is -(pi r^2 length) sum(centres) / V."
+}

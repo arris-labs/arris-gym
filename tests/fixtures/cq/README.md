@@ -403,3 +403,13 @@ selected face's centre and at a drawn path's, which the subset does not model;
 each has CadQuery's report of a part it builds.
 `tests/fixtures/regression/cq-hole-tangent-column` is arris's refusal of a cut
 tangent to a bore.
+
+`ok-push-points-*` (plans/lift-holes-and-points step 2, `tests/test_cq_push_points.py`)
+bore a 4 x 6 x 8 box through at the points `pushPoints` stacks, each beside its
+recorded oracle report: one point, several, as lists, an empty list (one bore
+at the plane's origin), two points on each of the six faces (in that face's own
+x and y, ADR-0017), a third number below the face (a blind bore from there) and
+above it (the bore starts in the air and ends inside, a diagonal long), a point
+off the part (the box unchanged) and `dog_bone_000282_s20260505` as the corpus
+writes it. `unsupported-*` programs for the points and stacks the subset
+refuses are held in `tests/test_cq_push_points.py` as calls, not as fixtures.

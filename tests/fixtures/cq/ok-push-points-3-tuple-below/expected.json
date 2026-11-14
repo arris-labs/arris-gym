@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 186.50221285621785,
+    "area": 229.99114857512856,
+    "centroid": [
+      -0.02947840167462574,
+      -0.02947840167462574,
+      0.01473920083731287
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`.faces(\">Z\").workplane().pushPoints([(1, 1, -1)]).hole(1)`: a hole from one below the face. The third number is the offset along the normal: the bore starts at z = 3 and runs down the box's diagonal, so it leaves through the bottom, 7 long, and the part keeps the top metre. V = 192 - pi r^2 7. It takes the bottom disc, adds the wall 2 pi r 7 and the cap disc at z = 3: A = 208 + 2 pi r 7. The cut's centroid is (1, 1, -1/2)."
+}

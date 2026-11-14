@@ -52,6 +52,12 @@ _FULL_TURN = 2 * math.pi
 # the gap is wider than this, its numerical-error threshold (`cq.py`); a
 # narrower gap is no segment. In plane units.
 _CLOSE_GAP = 1e-6
+# `arris`'s `bounds` is a conservative box, wider than the body by this much on
+# every side (measured on boxes of 1 to 40,000 and a cylinder: 2e-7, absolute).
+# CadQuery's `largestDimension` is the diagonal of the tight box, so `hole`
+# takes the padding off before it measures one: a bore that ends inside the
+# part is as long as CadQuery's (`ok-push-points-3-tuple-above`).
+_BOUNDS_PAD = 2e-7
 _ZERO = Vector(0, 0, 0)
 
 
@@ -88,6 +94,19 @@ class _Disc(arris.build.Sketch):
 
     center: tuple[float, float] = (0.0, 0.0)
     radius: float = 0.0
+
+
+@dataclass(frozen=True)
+class _Points:
+    """A stack of points `pushPoints` put on the plane, in its local coordinates.
+
+    Each is `(u, v, w)`: x and y in the plane's own axes, `w` the offset along
+    its normal (0 when the program gave two numbers). Never empty: CadQuery's
+    `pushPoints([])` is an empty stack, which `eachpoint` treats as the plane's
+    origin, so `pushPoints` leaves a stack with no object for it.
+    """
+
+    points: tuple[tuple[float, float, float], ...]
 
 
 @dataclass(frozen=True)
@@ -245,6 +264,8 @@ class Workplane:
         """
         if any(isinstance(o, Faces) for o in self._stack):
             raise UnsupportedApi("Workplane.extrude on selected faces")
+        if any(isinstance(o, _Points) for o in self._stack):
+            raise UnsupportedApi("Workplane.extrude on a point stack")
         sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
         if len(sketches) != 1 or len(self._stack) != 1:
             raise ValueError("No pending wires present")
@@ -262,6 +283,8 @@ class Workplane:
         last = self._stack[-1]
         if isinstance(last, Faces):
             raise UnsupportedApi("Workplane.lineTo on selected faces")
+        if isinstance(last, _Points):
+            raise UnsupportedApi("Workplane.lineTo on a point stack")
         if isinstance(last, _Path):
             return last
         kind = "Sketch" if isinstance(last, arris.build.Sketch) else type(last).__name__
@@ -278,6 +301,8 @@ class Workplane:
         """
         if any(isinstance(o, Faces) for o in self._stack):
             raise UnsupportedApi(f"{form} on selected faces")
+        if any(isinstance(o, _Points) for o in self._stack):
+            raise UnsupportedApi(f"{form} on a point stack")
         if any(isinstance(o, (_Path, arris.build.Sketch)) for o in self._stack):
             raise UnsupportedApi(f"{form} on a pending wire")
 
@@ -434,6 +459,41 @@ class Workplane:
         (solid,) = solids
         return self._derive(Faces(solid, select_faces(solid, selector)))
 
+    @census_form("Workplane.pushPoints", [("list",)])
+    def pushPoints(self, pntList: Sequence[object]) -> Workplane:
+        """A stack of the points of `pntList`, in this workplane's local coordinates.
+
+        Each point is a tuple or list of two numbers (x and y in the plane's
+        own axes, as `moveTo` takes them) or three (the third its offset along
+        the normal). The solid stays in the chain for the next call, `hole`
+        for one, to act on: it bores at every point (ADR-0018 rules 1 and 2).
+        An empty list leaves an empty stack, which bores at the plane's
+        origin, as CadQuery's does (read on the oracle:
+        `ok-push-points-empty`). A point that is not two or three numbers
+        (one number, a `Vector`) ends `UnsupportedApi`: CadQuery's error
+        there comes from inside its `Vector`, not from a check of the value.
+        A stack that holds selected faces, a pending wire or a drawn path is
+        outside the subset, as for `moveTo`; a stack of points is replaced.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane()
+        >>> wp.pushPoints([(0.5, 0.5), [-0.5, -0.5]])._stack[0].points
+        ((0.5, 0.5, 0.0), (-0.5, -0.5, 0.0))
+        """
+        if not any(isinstance(o, _Points) for o in self._stack):
+            self._refuse_pending("Workplane.pushPoints")
+        points: list[tuple[float, float, float]] = []
+        for point in pntList:
+            numbers = numbers_of(point, (2, 3))
+            if numbers is None:
+                raise UnsupportedApi(
+                    f"Workplane.pushPoints(list with a point of {shape_of(point)})"
+                )
+            points.append((numbers[0], numbers[1], numbers[2] if len(numbers) == 3 else 0.0))
+        if not points:
+            return self._derive()
+        return self._derive(_Points(tuple(points)))
+
     @census_form("Workplane.hole", [("num",)])
     def hole(self, diameter: float) -> Workplane:
         """The chain's solid with a hole of `diameter` bored from the plane, as CadQuery bores it.
@@ -446,12 +506,14 @@ class Workplane:
         the plane's origin on an empty stack (after `workplane()`), the point
         of a lone `moveTo` on that plane, or the centre of mass of a solid on
         the stack, in all three coordinates (read on the oracle: `ok-hole-on-*`).
-        The result is the one solid on the new stack, a compound where the hole
-        splits the part (ADR-0016). A zero `diameter` cuts nothing, as in
-        CadQuery. Raises `ValueError` (`runtime`) in CadQuery's words for a
-        chain without a solid and for a negative diameter, and `UnsupportedApi`
-        for selected faces or a drawn path or sketch on the stack: CadQuery
-        bores at their centres.
+        On a stack of points (`pushPoints`) it is bored at every one, all in
+        one cut, as CadQuery's `cutEach` does (ADR-0018 rule 2; read on the
+        oracle: `ok-push-points-*`). The result is the one solid on the new
+        stack, a compound where the hole splits the part (ADR-0016). A zero
+        `diameter` cuts nothing, as in CadQuery. Raises `ValueError`
+        (`runtime`) in CadQuery's words for a chain without a solid and for a
+        negative diameter, and `UnsupportedApi` for selected faces or a drawn
+        path or sketch on the stack: CadQuery bores at their centres.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane().hole(1)
@@ -462,16 +524,18 @@ class Workplane:
         if base is None:
             raise ValueError("Cannot find a solid on the stack or in the parent chain")
         plane = self._plane
-        at = plane.origin
+        centres = [plane.origin]
         if self._stack:
             # CadQuery's `eachpoint` bores at each object's centre: a point is
             # itself and a solid its centre of mass. Faces and drawn paths have
             # centres the subset does not model.
             (last,) = self._stack
-            if isinstance(last, _Path) and not last.segments:
-                at = plane.point(last.start[0], last.start[1], 0.0)
+            if isinstance(last, _Points):
+                centres = [plane.point(*point) for point in last.points]
+            elif isinstance(last, _Path) and not last.segments:
+                centres = [plane.point(last.start[0], last.start[1], 0.0)]
             elif isinstance(last, arris.build.Solid):
-                at = last.measure().centroid
+                centres = [last.measure().centroid]
             else:
                 self._refuse_pending("Workplane.hole")
                 raise UnsupportedApi("Workplane.hole on a stack holding objects")
@@ -485,11 +549,13 @@ class Workplane:
         box = base.model.bounds(base.body)
         if box is None:
             raise UnsupportedApi("Workplane.hole on a solid without a box")
-        depth = math.sqrt(sum((box[1][k] - box[0][k]) ** 2 for k in range(3)))
-        tool = arris.build.Solid.cylinder(
-            at, (-plane.z[0], -plane.z[1], -plane.z[2]), diameter / 2.0, depth, model=base.model
-        )
-        return self._derive(base.cut(tool))
+        depth = math.sqrt(sum((box[1][k] - box[0][k] - 2 * _BOUNDS_PAD) ** 2 for k in range(3)))
+        down = (-plane.z[0], -plane.z[1], -plane.z[2])
+        tools = [
+            arris.build.Solid.cylinder(at, down, diameter / 2.0, depth, model=base.model)
+            for at in centres
+        ]
+        return self._derive(base.cut(*tools))
 
     @census_form("Workplane.box", [("num",)] * 3)
     def box(self, length: float, width: float, height: float) -> Workplane:
