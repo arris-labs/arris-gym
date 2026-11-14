@@ -44,6 +44,9 @@ def c1_subset() -> cq.Subset:
     (plans/lift-face-selectors), `Workplane.hole`, and
     plans/lift-holes-and-points' forms: `Workplane.pushPoints`, `Workplane.cboreHole`,
     `Workplane.cskHole`.
+
+    A frozen record, never widened to admit a lifted form: `reach.json` is the
+    C1 curve and `test_committed_benchcad_curve_repeats_offline` holds it.
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
     extrude = cq.CensusForm("Workplane.extrude", (("num",),))
