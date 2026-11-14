@@ -301,3 +301,37 @@ def test_a_row_refused_for_another_reason_is_not_classed_by_the_tangent_fixture(
             cf.check_refusal_cause(refusal, fixture)
     with pytest.raises(ValueError, match="no refusal cause"):
         cf.check_refusal_cause(same, "tests/fixtures/regression/other")
+
+
+def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> None:
+    """`--refusal` and `--arris-bug` rebuild the committed fixture verdicts from the committed
+    table (run with `--verdicts`), and leave a row arris ended `unsupported_api` unclassed."""
+    import gzip
+
+    from arris_gym.fidelity import FidelityTable, fidelity_table
+
+    table = FidelityTable.model_validate_json(
+        gzip.decompress((C2 / "benchcad" / "fidelity.json.gz").read_bytes())
+    )
+    committed = json.loads((C2 / "benchcad" / "verdicts.json").read_text(encoding="utf-8"))
+    collars = [e for e in table.entries if e.name.startswith("shaft_collar_")]
+    outside = [e for e in collars if e.row.status is ag.Status.UNSUPPORTED_API]
+    pins = [e for e in table.entries if e.name.startswith("cotter_pin_") and e.row.verdict][:3]
+    knob = next(e for e in table.entries if e.name.startswith("lobed_knob_") and e.row.verdict)
+    assert outside
+    assert any(e.row.outcome.value == "agree" for e in collars)  # rows no verdict touches
+    picked = [*collars, *pins, knob]
+    path = tmp_path / "fidelity.json.gz"
+    path.write_bytes(gzip.compress(fidelity_table(picked).to_json().encode()))
+    texts = {e.name: "" for e in picked}
+    refusals = {"cotter_pin": "tests/fixtures/regression/cq-tangent-cylinders"}
+    bugs = {"shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds"}
+    got = cf.verdicts_for(path, texts, refusals, bugs)
+    want = {k: v for k, v in committed.items() if k.startswith(("shaft_collar_", "cotter_pin_"))}
+    want = {k: v for k, v in want.items() if k in texts}
+    assert got == want
+    assert len([k for k in got if k.startswith("shaft_collar_")]) == 5
+    assert not {e.name for e in outside} & set(got)
+    assert set(cf.verdicts_for(path, texts, refusals)) == {e.name for e in pins}
+    with pytest.raises(ValueError, match="both"):
+        cf.verdicts_for(path, texts, refusals, {"cotter_pin": bugs["shaft_collar"]})

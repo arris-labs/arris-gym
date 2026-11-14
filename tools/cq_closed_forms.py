@@ -6,7 +6,13 @@ Outside the gate, no oracle imported or run. Reads the pinned BenchCAD corpus
 family's measures from how the part is built (never from either kernel's output),
 and writes one `Verdict` per stem that the row's measures can test:
 
-    uv run --extra corpus tools/cq_closed_forms.py --table T --oracle-rows O --out V.json
+    uv run --extra corpus tools/cq_closed_forms.py --table T --oracle-rows O --out V.json \
+        [--refusal FAMILY=FIXTURE ...] [--arris-bug FAMILY=FIXTURE ...]
+
+A row no rule classes is one the table left unclassified or classed only by a verdict, so
+the tool reads a table run with or without `--verdicts` alike; a row arris ended
+`unsupported_api` is outside the subset and gets no verdict. A family given by
+`--refusal` or `--arris-bug` is classed by that regression fixture rather than a closed form.
 
 Two part shapes, each read from its program's text (a program that is not exactly
 one of them raises, never guessed):
@@ -772,21 +778,35 @@ def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | No
 
 
 def verdicts_for(
-    table: Path, corpus_texts: dict[str, str], refusals: dict[str, str]
+    table: Path,
+    corpus_texts: dict[str, str],
+    refusals: dict[str, str],
+    arris_bugs: dict[str, str] | None = None,
 ) -> dict[str, dict[str, object]]:
-    """A verdict for each unclassified row of `table` of a family this tool knows.
+    """A verdict for each row of `table` no rule classes, of a family this tool knows.
 
-    A family with a closed form is `occt_wrong` by it; a family named in `refusals`
-    (`family=regression fixture`) is `arris_refusal` by that fixture. Each verdict is
-    built as a `Verdict`, so ADR-0006's checks of the evidence run here.
+    A row no rule classes is `unclassified`, or classed only by a verdict (a table run
+    with `--verdicts`), so the same table gives the same verdicts either way; a row
+    arris ended `unsupported_api` is outside the subset and gets none. A family
+    with a closed form is `occt_wrong` by it; a family named in `refusals`
+    (`family=regression fixture`) is `arris_refusal` by that fixture, and one named in
+    `arris_bugs` is `arris_bug` by its fixture. A family in both raises `ValueError`.
+    Each verdict is built as a `Verdict`, so ADR-0006's checks of the evidence run here.
     """
+    from arris_gym import Status
     from arris_gym.fidelity import FidelityTable
 
+    bugs = arris_bugs or {}
+    both = sorted(set(refusals) & set(bugs))
+    if both:
+        raise ValueError(f"a family classed both arris_refusal and arris_bug: {both}")
     rows = FidelityTable.model_validate_json(gzip.decompress(table.read_bytes())).entries
     out: dict[str, dict[str, object]] = {}
     for entry in rows:
-        if entry.row.outcome.value != "unclassified":
+        if entry.row.outcome.value != "unclassified" and entry.row.verdict is None:
             continue
+        if entry.row.status is Status.UNSUPPORTED_API:
+            continue  # outside the subset: the kernel never saw it, so no finding classes it
         family = re.sub(r"_\d+_s\d+$", "", entry.name)
         text = corpus_texts[entry.name]
         verdict: dict[str, object]
@@ -794,6 +814,11 @@ def verdicts_for(
             verdict = {
                 "disagreement": "arris_refusal",
                 "evidence": {"kind": "fixture", "path": refusals[family]},
+            }
+        elif family in bugs:
+            verdict = {
+                "disagreement": "arris_bug",
+                "evidence": {"kind": "fixture", "path": bugs[family]},
             }
         else:
             closed = closed_form_for(entry.name, text, entry.row.program_sha256)
@@ -845,11 +870,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         metavar="FAMILY=FIXTURE",
         help="class a family's rows arris_refusal by this regression fixture directory",
     )
+    parser.add_argument(
+        "--arris-bug",
+        action="append",
+        default=[],
+        metavar="FAMILY=FIXTURE",
+        help="class a family's rows arris_bug by this regression fixture directory",
+    )
     args = parser.parse_args(argv)
     refusals = dict(item.split("=", 1) for item in args.refusal)
+    arris_bugs = dict(item.split("=", 1) for item in args.arris_bug)
     programs = benchcad.read() if args.corpus == "benchcad" else cadrecode.read()
     texts = {p.stem: p.text for p in programs}
-    verdicts = verdicts_for(args.table, texts, refusals)
+    verdicts = verdicts_for(args.table, texts, refusals, arris_bugs)
     reports = {}
     for line in gzip.decompress(args.oracle_rows.read_bytes()).decode("utf-8").splitlines():
         row = json.loads(line)
