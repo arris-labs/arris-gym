@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 unites them into a body its checker refuses, \"L5 f5: loops 0 and 1 intersect\" and \"L5 f6: loops 0 and 1 intersect\" (checker_fail), of a unit cylinder and a cylinder of radius 2 that holds it, tangent to it along one line; CadQuery 2.3.0 builds the closed form",
+  "measures": {
+    "volume": 15.707963267948966,
+    "area": 43.982297150257104,
+    "centroid": [
+      0,
+      -0.8,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -1
+      ],
+      [
+        2,
+        1,
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A cylinder of radius 1 and height 2 on the origin (z -1..1) united with a cylinder of radius 2 and height 1 on (0, -1, 0) (z -0.5..0.5): the small one lies inside the large one's circle, tangent to it along the line x = 0, y = 1. V = 4 pi + pi (2 - 1) = 5 pi; A = (2 4 pi + 4 pi) - 2 pi + 2 pi + 2 pi = 14 pi (the large cylinder, less the two unit discs its caps lose, plus the unit cylinder's side and caps outside it); ybar = (4 pi (-1) + pi 0) / 5 pi = -0.8; bounds x -2..2, y -3..1, z -1..1; one shell, genus 0. Faces are carried, not judged (ADR-0005)."
+}

@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 unites them into a body its checker refuses, \"L5 f16: loop 0 intersects itself\" and \"L5 f19: loop 0 intersects itself\" (checker_fail), of a box and two cylinders, each tangent to one of the box's end faces along a line; CadQuery 2.3.0 builds the closed form",
+  "measures": {
+    "volume": 154.50155561268042,
+    "area": 379.7930651069109,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -15,
+        -3,
+        -0.5
+      ],
+      [
+        15,
+        3,
+        0.5
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A 30 x 5 x 1 box on the origin united with two cylinders of radius 3 and height 1 on x = 12 and x = -12: each reaches x = +-15, tangent to the box's end face along the line y = 0, and stands out of its sides y = +-2.5. With S = 2 (a sqrt(r^2 - a^2) + r^2 asin(a / r)), a = 2.5, r = 3, the disc's area inside the strip |y| < 2.5: V = 150 + 2 (9 pi - S); A = 370 + 2 (2 (9 pi - S) + r (pi - 2 asin(a / r)) - 2 2 sqrt(r^2 - a^2)) (per cylinder its caps and side outside the box, less the chords of the box's sides it covers); centroid the origin by symmetry; bounds x -15..15, y -3..3, z -0.5..0.5; one shell, genus 0. Faces are carried, not judged (ADR-0005)."
+}

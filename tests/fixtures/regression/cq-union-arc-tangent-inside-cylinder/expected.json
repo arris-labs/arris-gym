@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a section edge of f0 ends at a node nothing else reaches\", of a cylinder and a plate inside its circle whose arc is tangent to it along one line; CadQuery 2.3.0 builds the closed form",
+  "measures": {
+    "volume": 6.506360077604267,
+    "area": 19.74225500323748,
+    "centroid": [
+      0,
+      0.01554951114585812,
+      -0.03858864460821761
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1.25
+      ],
+      [
+        1,
+        1,
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A cylinder of radius 1 and height 2 on the origin (z -1..1) united with a plate z -1.25..-0.25: the rectangle x -0.5..0.5, y 0..0.5 and the half disc of radius 0.5 on (0, 0.5) above it, area P = 0.5 + pi / 8, inside the cylinder's circle and tangent to it along x = 0, y = 1. Only its part below z = -1 stands out: V = 2 pi + P / 4; A = 6 pi + (2 + pi / 2) / 4 (its side; its bottom replaces the disc it covers); ybar = (P / 4) yP / V with yP = (0.5 0.25 + (pi / 8)(0.5 + 2 / (3 pi))) / P, zbar = (P / 4)(-1.125) / V, xbar 0; bounds x -1..1, y -1..1, z -1.25..1; one shell, genus 0. Faces are carried, not judged (ADR-0005)."
+}

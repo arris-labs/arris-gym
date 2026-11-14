@@ -195,7 +195,7 @@ within a given design; **[3]** unproven semantics, established here.
   `unsupported-extrude-both-two-sketches` became `ok-extrude-both-circle-circle`.
   `test_cq.py`'s recorded-oracle test counts one solid per shell less the
   fixture's `cavities` (the revolved ring is a hollow torus).
-- [ ] Step 7b **[3]** — `bearing_retainer_cap`, 37 `arris_bug`
+- [x] Step 7b **[3]** — `bearing_retainer_cap`, 37 `arris_bug`
   (`checker_fail`: 22 "L5 f10: loops 1 and 2 intersect", 10 "f18/f19: loop
   0 intersects itself", 5 "f16/f17: loop 0 intersects itself"); every program ends in a `faces(sel).workplane().hole(d)`
   (e.g. `_000183`: a cylinder united with a slotted plate, cut by two
@@ -207,6 +207,21 @@ within a given design; **[3]** unproven semantics, established here.
   `OpInternalError` rows of this family (`arris_refusal`, 25 known at
   planning) are shrunk to a fixture and filed in the same idea, one more
   `regression/` fixture if their cause is not the same.
+  *Settled* (step 7b): our `hole` is not at fault. All 37 `checker_fail` and
+  28 `OpInternalError` rows end the same with the `faces().workplane().hole()`
+  removed, and `_000183` the same with the hole's cylinder built by hand. The
+  cause is the `union` before it: an operand tangent from inside to the other's
+  face along a line. So the fixture is named for that, not
+  `cq-hole-after-slotted-union`, and is three, one per corpus shape and kernel
+  outcome: `regression/cq-union-cylinder-tangent-inside` (22 slotted plates
+  whose rounded arc ends fall outside the cylinder, `checker_fail`),
+  `cq-union-end-cylinders-tangent` (15 bars with tangent end bosses,
+  `checker_fail`; their 3 `OpInternalError` rows have no fixture of their own)
+  and `cq-union-arc-tangent-inside-cylinder` (25 slotted plates whose arc ends
+  fall inside, `OpInternalError`), each a closed form the oracle matches.
+  Filed in `../arris/docs/ideas/union-tangent-inside.md`; BACKLOG §Findings
+  `union-tangent-inside`. The 37 rows stay `arris_bug` and the 28
+  `arris_refusal` until arris answers.
 - [ ] Step 7c **[3]** — `shaft_collar`, 5 in-subset `unclassified` (`ok` on
   both sides, bounds delta 5e-4 to 1e-3, volume delta 3e-6 to 1e-5): a
   `.faces(">Y").workplane().hole(d)` then a `cut` of a `cylinder` through

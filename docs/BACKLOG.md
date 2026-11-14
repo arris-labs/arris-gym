@@ -148,6 +148,14 @@ A defect a run measured, one block each:
 - Measured: 64 `t_pipe_fitting`, 136 `u_bolt`, 125 `j_hook` rows and CAD-Recode `550` (two crossing cylinders, volume 2.6e-9) are `occt_wrong` by their closed forms (`tools/cq_closed_forms.py`); arris agrees with each to the ADR-0005 constants
 - State: measured; classed `occt_wrong` by verdicts (`tests/fixtures/c2/*/verdicts.json`); no regression fixture, since the oracle is not under test here
 
+### union-tangent-inside
+- What: arris fails a `fuse` where one operand lies on the material side of the other's face and touches it along a line: a cylinder inside a larger one's circle, a plate whose arc lies inside a cylinder's circle, a bar's end face tangent to an end boss. It returns a body its checker refuses (L5, "loops 0 and 1 intersect", "loop 0 intersects itself") or raises `OpInternalError` ("a section edge of f0 ends at a node nothing else reaches"); Open CASCADE builds each, matching a closed form
+- Where: arris 0.10.0 `Solid.fuse`, reached by `cq`'s `Workplane.union`; not `cq`'s `hole`, which each program ends with: they fail the same without it
+- Seen: plans/lift-face-selectors step 7b, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, `bearing_retainer_cap` (e.g. `_000183_s20260505`, `_000434_s20260507`, `_000542_s20260505`), 2026-11-14
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k "tangent-inside or end-cylinders-tangent"`
+- Measured: 62 of 160 `bearing_retainer_cap` rows, all in the subset: 22 `checker_fail` slotted plates whose middle arc's rounded ends fall outside the cylinder, 25 `OpInternalError` whose ends fall inside it, 15 `checker_fail` and 3 `OpInternalError` bars with tangent end bosses (2 more of those `OpUnsupportedError`, 21 `ok`); the oracle's volume, area and centroid equal each fixture's closed form
+- State: regression/cq-union-cylinder-tangent-inside, cq-union-end-cylinders-tangent, cq-union-arc-tangent-inside-cylinder (strict `xfail`); reported in `../arris/docs/ideas/union-tangent-inside.md`
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)
