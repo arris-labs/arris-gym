@@ -5,6 +5,7 @@ ADR-0017. Private: `Workplane.faces` and `Workplane.workplane` call it.
 
 from __future__ import annotations
 
+import itertools
 import math
 import struct
 from collections.abc import Sequence
@@ -84,6 +85,75 @@ def _pick(keys: Sequence[float], maximum: bool) -> list[int]:
             clusters.append([i])
             start = keys[i]
     return clusters[-1] if maximum else clusters[0]
+
+
+def _cell(d: float) -> tuple[bool, bool, bool, bool]:
+    """Where a difference `d` of two keys falls among the comparisons `_pick` makes of it."""
+    return (d > CQ_TOLERANCE, d > 0.0, d < 0.0, d < -CQ_TOLERANCE)
+
+
+def _pick_within(
+    keys: Sequence[float], estimated: Sequence[bool], margin: float, maximum: bool
+) -> list[int] | None:
+    """What `_pick` keeps if it keeps the same under every shift of an estimated key.
+
+    Each estimated key lies in `[k - margin, k + margin]`, an exact key is a
+    point, and `_pick` looks at a pair of keys only through their order and
+    whether they lie within `CQ_TOLERANCE`. So its answer holds over the whole
+    box when no such comparison can change; or when the keys whose comparisons
+    can change (the connected sets of such pairs) each lie within
+    `CQ_TOLERANCE` of one another at the worst and every other key compares
+    the same way to all of a set's members: the set then acts as one key.
+    A key below a gap that every shift keeps wider than `CQ_TOLERANCE` (above,
+    for `<`) cannot reach the kept cluster, which starts at the first key past
+    the gap; only the keys on the kept side of the widest such gap are checked.
+    Returns `None` where none of this can be shown.
+    """
+    width = [margin if e else 0.0 for e in estimated]
+    ranked = sorted(range(len(keys)), key=lambda j: keys[j], reverse=maximum)
+    block = len(ranked)
+    for cut in range(1, len(ranked)):
+        near, far = ranked[:cut], ranked[cut:]
+        if maximum:
+            clear = min(keys[i] - width[i] for i in near) - max(keys[i] + width[i] for i in far)
+        else:
+            clear = min(keys[i] - width[i] for i in far) - max(keys[i] + width[i] for i in near)
+        if clear > CQ_TOLERANCE:
+            block = cut
+            break
+    near = ranked[:block]
+
+    def cell(i: int, j: int) -> tuple[bool, bool, bool, bool] | None:
+        """The comparisons of `keys[j] - keys[i]` if no shift changes them."""
+        d = keys[j] - keys[i]
+        reach = width[i] + width[j]
+        low, high = _cell(d - reach), _cell(d + reach)
+        return low if low == high else None
+
+    parent = {i: i for i in near}
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    for i, j in itertools.combinations(near, 2):
+        if (estimated[i] or estimated[j]) and cell(i, j) is None:
+            parent[find(i)] = find(j)
+    sets: dict[int, list[int]] = {}
+    for i in near:
+        sets.setdefault(find(i), []).append(i)
+    for members in sets.values():
+        if len(members) == 1:
+            continue
+        for i, j in itertools.permutations(members, 2):
+            if abs(keys[j] - keys[i]) + width[i] + width[j] > CQ_TOLERANCE:
+                return None
+        for k in near:
+            if k not in members and len({cell(m, k) for m in members}) != 1:
+                return None
+    return _pick(keys, maximum)
 
 
 def _estimates(
@@ -182,20 +252,10 @@ def select_faces(solid: arris.build.Solid, selector: str) -> tuple[arris.Face, .
     )
     order = [*exact, *undecided]
     keys = [*exact.values(), *values]
-    kept = _pick(keys, maximum)
     margin = diagonal * _ESTIMATE_MARGIN
-    # Every estimated key moved by the margin, all together and one at a time,
-    # must keep the same faces.
-    first = len(exact)
-    for shift in (margin, -margin):
-        moved = [*keys[:first], *(k + shift for k in keys[first:])]
-        if sorted(_pick(moved, maximum)) != sorted(kept):
-            raise UnsupportedApi(_depends(selector))
-        for j in range(first, len(keys)):
-            moved = list(keys)
-            moved[j] += shift
-            if sorted(_pick(moved, maximum)) != sorted(kept):
-                raise UnsupportedApi(_depends(selector))
+    kept = _pick_within(keys, [i >= len(exact) for i in range(len(keys))], margin, maximum)
+    if kept is None:
+        raise UnsupportedApi(_depends(selector))
     return tuple(faces[order[k]] for k in _ordered(kept, keys))
 
 

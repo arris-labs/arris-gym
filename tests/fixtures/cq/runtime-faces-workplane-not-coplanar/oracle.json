@@ -1,7 +1,7 @@
 {
   "measures": null,
   "message": "ValueError: Selected faces must be co-planar.",
-  "program_sha256": "9a393e055e689669d989d9f421ff812387861bb15af921ad5a617350d58e32db",
+  "program_sha256": "40aab1343f6636439dd3afdd1716c2102ca6d55f78021f5f1f4620ffb309dda3",
   "status": "runtime",
   "step_sha256": null,
   "versions": {
