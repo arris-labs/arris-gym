@@ -5,6 +5,18 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `hole(diameter)` as CadQuery does with no depth: a
+  cylinder bored from the workplane's origin (after `workplane()` on a face or
+  on a solid), against the plane's normal and as long as the solid's
+  bounding-box diagonal. It cuts through material below the
+  plane and leaves what lies above it. A hole that splits the part leaves a
+  compound. A zero diameter changes nothing and a negative one ends `runtime`,
+  as in CadQuery; a chain with no solid ends `runtime` too. A hole on a stack
+  that holds anything (a solid, selected faces, a point or a path) ends
+  `unsupported_api`, and a hole that leaves
+  nothing ends `arris_refusal`, where CadQuery's own checker cannot measure its
+  empty result.
+
 - `dialect="cq"` now runs `faces(selector)` for `">X"`, `"<X"`, `">Y"`,
   `"<Y"`, `">Z"` and `"<Z"` on the solid a chain holds, and `workplane()` on
   the planar faces it keeps: the plane of that face, its normal the face's

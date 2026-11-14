@@ -41,7 +41,7 @@ def c1_subset() -> cq.Subset:
     `Workplane.sphere` (plans/lift-sphere) and `Workplane.polygon`
     (plans/lift-polygon), and `Workplane.extrude`'s `both=`
     (plans/lift-extrude-both), `Workplane.faces` with the six axis selectors
-    (plans/lift-face-selectors).
+    (plans/lift-face-selectors), `Workplane.hole`.
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
     extrude = cq.CensusForm("Workplane.extrude", (("num",),))
@@ -57,6 +57,7 @@ def c1_subset() -> cq.Subset:
             if form.name
             not in (
                 "Workplane.faces",
+                "Workplane.hole",
                 "Workplane.workplane",
                 "Workplane.cylinder",
                 "Workplane.threePointArc",
@@ -78,7 +79,11 @@ def c2_baseline_subset() -> cq.Subset:
     """
     return replace(
         cq.subset(),
-        forms=tuple(form for form in cq.subset().forms if form.name != "Workplane.faces"),
+        forms=tuple(
+            form
+            for form in cq.subset().forms
+            if form.name not in ("Workplane.faces", "Workplane.hole")
+        ),
         selectors=(),
     )
 

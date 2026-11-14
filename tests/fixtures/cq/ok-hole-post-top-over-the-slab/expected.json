@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 210.4292036732051,
+    "area": 308.7123889803847,
+    "centroid": [
+      0.17107891571888337,
+      0.17107891571888337,
+      0.1425657630990695
+    ],
+    "bounds": [
+      [
+        -5,
+        -5,
+        -1
+      ],
+      [
+        5,
+        5,
+        4
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        11
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "A 10 x 10 x 2 slab (z -1..1), a 2 x 2 x 4 post at (3, 3) (z 0..4), `hole(1)` on its top. The plane is the post's top, z = 4, with the parent origin on it, so the hole is at (0, 0) and starts in the air: it bores the slab only (2 deep). The union has V = 200 + 16 - 4 (the post's lower metre is inside the slab) and A = 280 - 4 + 24 + 4; the hole takes pi r^2 2 of volume, two discs of area and adds 2 pi r 2 of wall."
+}

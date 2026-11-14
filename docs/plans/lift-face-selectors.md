@@ -128,11 +128,20 @@ within a given design; **[3]** unproven semantics, established here.
   held as plane tests against their records. Curved faces of one kind and
   size are refused even where they are two faces in both kernels (CadQuery
   would raise): an arris split cannot be told from them.
-- [ ] Step 5 **[2]** — `hole(d)`. Fixtures `cq/ok-hole-*`: through a box
+- [x] Step 5 **[2]** — `hole(d)`. Fixtures `cq/ok-hole-*`: through a box
   from each selector, from a face with material above its plane, through a
   compound, a corpus program as written; `runtime-hole-*` for `d ≤ 0`. A
   property: random box, face and diameter, volume `V − π d²/4 · depth` and
   centroid by closed form. Declare the form; move `test_cq.py:898`.
+  *Settled* (step 5): `Workplane.hole` cuts `Solid.cylinder(at, -normal, r,
+  diagonal)` from the chain's solid rather than calling `Solid.hole`, whose
+  numeric depth gave a volume 8e-5 off the closed form. `hole(0)` is a no-op
+  (the oracle's result is the box) and `hole(-1)` is `runtime`. A cylinder that
+  swallows the part is an oracle `crash` row (its empty shape has no box) and
+  ours an `arris_refusal`, so no fixture holds that one against the oracle.
+  A stack holding anything (a `moveTo` point, a solid) is refused until
+  step 6 reads those contexts.
+
 - [ ] Step 6 **[2]** — contexts, read on the oracle: `faces` on an empty
   stack, a pending wire, a compound; `workplane()` then `offset=` on a face;
   `hole` on a solid's stack (no `workplane`), on a `moveTo` point, wider

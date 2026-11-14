@@ -322,13 +322,13 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 19 API forms:
+the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 20 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
-axis selectors `>X <X >Y <Y >Z <Z`, `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+axis selectors `>X <X >Y <Y >Z <Z`, `hole` (one diameter), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close` and `revolve`;
-`hole`, `chamfer` and STEP export wait for their bundle in C2's order.
+`chamfer` and STEP export wait for their bundle in C2's order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
 form. A program's result is the last `show_object` argument, else
@@ -393,6 +393,14 @@ co-planar test whichever comes first, end `runtime` with CadQuery's
 whose plane needs their areas or centres (a near tie, other normals),
 `offset=` there and every other call on a stack of faces end
 `unsupported_api`, the last two until their steps land.
+`hole(diameter)` cuts CadQuery's cylinder from the chain's solid: it starts at
+the plane's origin, on an empty stack; it runs against the plane's normal
+for the diagonal of the solid's box (`cutEach` of `largestDimension()`), so it
+bores what lies below the plane and leaves what lies above. A zero diameter
+cuts nothing, a negative one is `runtime`, and a stack holding anything is
+`unsupported_api` (CadQuery bores at each object's centre) and a hole that leaves
+nothing is the kernel's refusal (CadQuery's checker cannot measure its empty
+result, an oracle `crash` row).
 `polygon(nSides, diameter)` is a pending closed sketch centred as `circle`
 is (the origin of an empty stack or a lone `moveTo` point): `nSides`
 vertices on the circle of `diameter`, the first on the plane's +x, the

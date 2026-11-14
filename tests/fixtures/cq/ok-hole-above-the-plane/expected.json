@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 188.85840734641022,
+    "area": 220.5663706143592,
+    "centroid": [
+      0,
+      0,
+      0.03326929097551248
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`box(4, 6, 8).workplane().hole(1)`: the plane is through the box's centroid. The cylinder (r = 1/2) runs from z = 0 down 4 and out of the bottom: a blind hole in the lower half and the upper half untouched, V = 192 - pi. It takes the bottom disc and adds the wall and the cap at z = 0: A = 208 + pi d 4. Its centroid is at z = -2, so the part's is 2 pi / V."
+}

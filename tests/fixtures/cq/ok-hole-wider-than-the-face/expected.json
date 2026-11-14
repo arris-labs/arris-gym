@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 51.27047819983878,
+    "area": 199.00123699008867,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        10
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "A 4 x 6 x 8 box with a hole of diameter 5 through its z faces. The cylinder (r = 5/2) clears the y faces but not the x faces (|x| = 2): it takes from each z face the disc cut at x = +-2, area R = 4 (3/2 + (r^2 / 2) asin(4/5)) = 6 + 12.5 asin(0.8), and a strip of chord 3 from each x face; its wall is two arcs of r (pi - 2 acos(0.8)). The hole spans the box from the y = 3/2 cut to the y = -3/2 one, so it leaves two pieces; each z face and each x face is two faces, 12 in all."
+}

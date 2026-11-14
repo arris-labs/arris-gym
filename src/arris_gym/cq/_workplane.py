@@ -399,6 +399,54 @@ class Workplane:
         (solid,) = solids
         return self._derive(Faces(solid, select_faces(solid, selector)))
 
+    @census_form("Workplane.hole", [("num",)])
+    def hole(self, diameter: float) -> Workplane:
+        """The chain's solid with a hole of `diameter` bored from the plane, as CadQuery bores it.
+
+        The hole is a cylinder that starts at one point and runs against the
+        plane's normal for the diagonal of the solid's box, so it reaches
+        through any material below the plane and leaves what lies above it
+        (CadQuery's `hole` with no depth: `cutEach` of a cylinder of
+        `largestDimension()`, read on the oracle: `ok-hole-*`). The point is
+        the plane's origin, so the stack must be empty (after `workplane()`).
+        The result is the one solid on the new stack, a compound where the hole
+        splits the part (ADR-0016). A zero `diameter` cuts nothing, as in
+        CadQuery. Raises `ValueError` (`runtime`) in CadQuery's words for a
+        chain without a solid and for a negative diameter, and `UnsupportedApi`
+        for a stack that holds anything: CadQuery bores at each object's
+        centre.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane().hole(1)
+        >>> round(wp._solids()[0].measure().volume, 6)
+        6.429204
+        """
+        base = self._base_solid()
+        if base is None:
+            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+        if self._stack:
+            # CadQuery bores at each object's centre; the subset models the
+            # plane's own origin only.
+            self._refuse_pending("Workplane.hole")
+            raise UnsupportedApi("Workplane.hole on a stack holding objects")
+        plane = self._plane
+        at = plane.origin
+        named = f"Workplane.hole({diameter})"
+        if diameter < 0:
+            raise ValueError(
+                f"{named}: a negative diameter (CadQuery's Standard_ConstructionError)"
+            )
+        if diameter == 0:
+            return self._derive(base)
+        box = base.model.bounds(base.body)
+        if box is None:
+            raise UnsupportedApi("Workplane.hole on a solid without a box")
+        depth = math.sqrt(sum((box[1][k] - box[0][k]) ** 2 for k in range(3)))
+        tool = arris.build.Solid.cylinder(
+            at, (-plane.z[0], -plane.z[1], -plane.z[2]), diameter / 2.0, depth, model=base.model
+        )
+        return self._derive(base.cut(tool))
+
     @census_form("Workplane.box", [("num",)] * 3)
     def box(self, length: float, width: float, height: float) -> Workplane:
         """A `length` by `width` by `height` box centred on the origin or a `moveTo` point.

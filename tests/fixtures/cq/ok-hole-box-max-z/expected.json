@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 166.86725877128166,
+    "area": 251.9822971502571,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "A 4 x 6 x 8 box centred on the origin with a hole of diameter 2 along `axis`, through. The hole removes a cylinder of the box's extent `length` along the axis: V = V_box - pi r^2 length; it takes two discs of the faces and adds the cylinder's wall, A = A_box - 2 pi r^2 + 2 pi r length. It is centred, so the centroid stays the origin."
+}

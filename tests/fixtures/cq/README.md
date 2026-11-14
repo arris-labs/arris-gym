@@ -351,3 +351,19 @@ apart, the oracle's plane at their area-weighted offset), and
 subset (the record's `box(centered=)` and `mirror` are outside it): one
 curved face kept, a plane arris cannot place (rule 5).
 `tests/test_cq_faces.py` holds each against its record.
+
+`ok-hole-*` are `hole(diameter)` read on the oracle (`tests/test_cq_hole.py`
+writes their expectations and holds each against its recorded report):
+`ok-hole-box-*` bores a 4 x 6 x 8 box through from each of the six selectors;
+`ok-hole-above-the-plane` is `box.workplane().hole(1)`, the plane through the
+box's centroid, so the cylinder bores the lower half and the upper half stays;
+`ok-hole-post-top-over-the-slab` starts a hole in the air above a slab (the
+post's top plane); `ok-hole-in-a-compound` bores one of two disjoint boxes from
+the other's top; `ok-hole-wider-than-the-face` is a hole whose cylinder cuts
+the box in two pieces; `ok-hole-zero-diameter` leaves the box as it was; and
+`ok-hole-corpus-hex-standoff` is BenchCAD's `hex_standoff_000011_s20260507` as
+written (CC BY 4.0). `runtime-hole-negative-diameter` and `runtime-hole-no-solid`
+end in CadQuery's own errors, each with a recorded report saying so. A hole
+that leaves nothing (`hole(10)` on the same box) is an oracle `crash` row, not
+a report: its empty result has no bounding box to measure, so no fixture holds
+it against the oracle, and `tests/test_cq_hole.py` holds arris's refusal.

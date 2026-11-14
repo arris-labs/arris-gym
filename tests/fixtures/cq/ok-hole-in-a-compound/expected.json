@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 22.4292036732051,
+    "area": 68.7123889803847,
+    "centroid": [
+      3.5667784360784713,
+      0,
+      0.7133556872156943
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1
+      ],
+      [
+        6,
+        1,
+        3
+      ]
+    ],
+    "faces": 13,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 2,
+    "genus": 1
+  },
+  "note": "Two disjoint boxes, `faces(\">Z\")` the taller one's top, a hole of diameter 1 there. Box A is 2 x 2 x 2 at the origin (z -1..1), box B 2 x 2 x 4 at (5, 0, 1) (z -1..3). The top of B is the plane z = 3 and the hole is at (0, 0): through A, 2 deep. V = 8 + 16 - pi/2; A = 24 + 40 + 2 pi r 2 - 2 pi r^2."
+}

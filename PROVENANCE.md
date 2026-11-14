@@ -71,6 +71,11 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   Read in cadquery 2.3.0 and confirmed on the oracle: ADR-0017,
   `tests/fixtures/selectors/` for the 950 BenchCAD programs and the
   constructions, `tests/fixtures/cq/ok-faces-*` for the planes.
+- `Workplane.hole`, `cutEach` and `eachpoint` (`cadquery/cq.py`): `hole(d)` bores
+  a cylinder of diameter `d` and length `largestDimension()` (the solid's
+  bounding-box diagonal) from each stack point, against the plane's normal, and
+  cuts it from the chain's solid. Read in cadquery 2.3.0 and confirmed on the
+  oracle: `tests/fixtures/cq/ok-hole-*`.
 - `Workplane.sphere` and `Solid.makeSphere` (`cadquery/cq.py`,
   `cadquery/occ_impl/shapes.py`): one sphere at each point of the stack
   (`eachpoint`, in the plane's own axes, the origin on an empty stack),

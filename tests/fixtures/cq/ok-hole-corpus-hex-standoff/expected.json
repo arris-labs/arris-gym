@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 349.1199571663758,
+    "area": 612.9582360841819,
+    "centroid": [
+      0,
+      -9.835,
+      0
+    ],
+    "bounds": [
+      [
+        -3.1755,
+        -19.67,
+        -2.750063669717485
+      ],
+      [
+        3.1755,
+        0,
+        2.750063669717485
+      ]
+    ],
+    "faces": 9,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `hex_standoff_000011_s20260507`: a hexagonal prism with a bore of 3.28. The hexagon has circumdiameter 6.351 (R = 3.1755, area 3 sqrt 3 / 2 R^2, a vertex on +x) on `XZ`, extruded 19.67 along -y; the bore, r = 1.64, runs its whole length from the `>Y` face. V = (A_hex - pi r^2) h, A = 2 (A_hex - pi r^2) + 6 R h + 2 pi r h."
+}
