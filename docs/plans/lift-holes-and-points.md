@@ -109,11 +109,49 @@ within a given design; **[3]** unproven semantics, established here.
   `circle` on points then `extrude`, each hole on a compound and after a
   hole; lifted where they agree, else refused, each with its `ok-`,
   `runtime-` or `unsupported-` fixture.
-- [ ] Step 7 **[2]** — the measurement: `cq_corpus.py --oracle-rows` on both
+- [x] Step 7 **[2]** — the measurement: `cq_corpus.py --oracle-rows` on both
   corpora into a scratch out-dir, then `cq_diagnose.py`; in-subset rows by
   class, `cq_bug` and unclassified by family, recorded here. Each cause
   becomes a step 7a, 7b … before step 8, largest first, shrunk to
   `regression/` fixtures and filed with arris where the kernel is at fault.
+  **Measured** (arris 0.10.0, reward 1, scratch tables, not committed): BenchCAD
+  reach 6,154/17,900; in-subset 4,481 agree, 1,042 `arris_refusal`, 450
+  `occt_wrong`, 142 `arris_bug`, 32 unclassified, 7 `cq_bug` (whole table: 236
+  unclassified). CAD-Recode reach 104/968, in-subset `cq_bug` 0, its one
+  `occt_wrong` the known crossing. Against the committed C2 table the only
+  moves are `cq_bug` to `agree` (661), `arris_refusal` (161) and unclassified
+  (32); no row is a new `arris_bug` (the 142 are `lobed_knob` 100,
+  `bearing_retainer_cap` 37, `shaft_collar` 5, as before). The 1,042 refusals are
+  the known fixtures' (`hinge` 220, 159 of them new, the tangent cylinder;
+  `pull_handle` 176, `cotter_pin` 159, `ball_knob` 153, `wall_anchor` 81,
+  `torus_link` 80, `lobed_knob` 68 …); no corpus program writes the
+  bore-over-a-bore refusal.
+- [ ] Step 7a **[3]** — 32 in-subset rows unclassified, both `ok`/`ok`, volume
+  and area off the oracle by 1e-8 to 2e-6 (relative), bounds and centroid within
+  their constants: `manifold_block` 17 (`cboreHole` and `hole` crossing a `hole`
+  of the same radius, r 8.75, along x, y and z) and `connecting_rod` 15 (the
+  vertical `hole` through the cylinder-and-rail part where cylinders of other
+  axes cross). The cause is the oracle's cylinder-cylinder section as on
+  `u_bolt` (step 6's quadrature of `manifold_block`), unproven here: each family
+  needs a closed form of all four figures in `tools/cq_closed_forms.py` before a
+  verdict (`occt_wrong`) may class it, and no quadrature in the tool gives area
+  and centroid of these sections yet. Needs a whole-table re-run (the
+  conductor's) to commit the verdicts; if it is judged too dear, the alternative
+  is to narrow the declaration (`cboreHole`'s and `hole`'s use across a crossing
+  bore), an ADR-0014 amendment: the human's choice.
+- [ ] Step 7b **[3]** — 7 in-subset `cq_bug`, all `connecting_rod`
+  (`unsupported_api`, the oracle `ok`): `faces(">Z").faces(">Z").workplane()`
+  where the kept face is a cylinder's (6: "Workplane.workplane on a cylinder
+  face"; 1: `faces(">Y")` "the selection depends on the centre of a face that
+  arris does not give"). The plane's normal is CadQuery's `normalAt()` at the
+  face's parameter centre, which needs the face's centre of mass and its
+  parameter range, filed with arris in `face-surface-properties.md` (2026-11-14).
+  Not fixable here: the acceptance's 0 needs that arris capability, or a
+  narrowing the human decides. A `regression/` fixture of one shrunk case, with
+  its closed form, is this step's work once the choice is made.
+- [x] Step 7c **[1]** — the `cq-bore-over-a-bore-of-its-width` refusal filed
+  with arris as item 8 of `../arris/docs/ideas/fuse-contact-refusals.md`
+  (README of the fixture updated to say so).
 - [ ] Step 8 **[1]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, READMEs' figures and digests); `c1_subset()`
   takes the four forms back.
