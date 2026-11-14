@@ -187,7 +187,8 @@ within a given design; **[3]** unproven semantics, established here.
   `cq` ends `unsupported_api` `cq_bug` whatever the message (`_oracle_ok`),
   so a narrower refusal would not move the 105: the lift is the way. The
   oracle builds the ring (`ok-circle-circle-*`); all 105 `impeller` programs
-  now end `ok` and agree against the recorded oracle reports. Same-radius
+  now end `ok` and agree against the recorded oracle reports;
+  `ok-circle-circle-corpus-impeller` is one of them as written. Same-radius
   circles (oracle `invalid`, a refusal is `unclassified` either way) and a
   third circle stay refused; a zero radius (oracle: the plain disc) is the
   strict xfail `regression/cq-circle-circle-zero-radius`.

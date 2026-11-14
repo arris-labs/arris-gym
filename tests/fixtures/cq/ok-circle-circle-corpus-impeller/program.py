@@ -1,0 +1,71 @@
+import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .cylinder(3.02, 56.75)
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 15.035), rotate=cq.Vector(0, 0, 0))
+            .cylinder(28.05, 9.82)
+    )
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 0.0))
+            .transformed(offset=cq.Vector(23.768, 0, 1.01), rotate=cq.Vector(0, 0, -26.7))
+            .polyline([(-14.448, -2.718), (-6.192, 2.492), (16.512, 1.903), (8.256, -3.397)])
+            .close()
+            .extrude(17.15)
+    )
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 60.0))
+            .transformed(offset=cq.Vector(23.768, 0, 1.01), rotate=cq.Vector(0, 0, -26.7))
+            .polyline([(-14.448, -2.718), (-6.192, 2.492), (16.512, 1.903), (8.256, -3.397)])
+            .close()
+            .extrude(17.15)
+    )
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 120.0))
+            .transformed(offset=cq.Vector(23.768, 0, 1.01), rotate=cq.Vector(0, 0, -26.7))
+            .polyline([(-14.448, -2.718), (-6.192, 2.492), (16.512, 1.903), (8.256, -3.397)])
+            .close()
+            .extrude(17.15)
+    )
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 180.0))
+            .transformed(offset=cq.Vector(23.768, 0, 1.01), rotate=cq.Vector(0, 0, -26.7))
+            .polyline([(-14.448, -2.718), (-6.192, 2.492), (16.512, 1.903), (8.256, -3.397)])
+            .close()
+            .extrude(17.15)
+    )
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 240.0))
+            .transformed(offset=cq.Vector(23.768, 0, 1.01), rotate=cq.Vector(0, 0, -26.7))
+            .polyline([(-14.448, -2.718), (-6.192, 2.492), (16.512, 1.903), (8.256, -3.397)])
+            .close()
+            .extrude(17.15)
+    )
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 300.0))
+            .transformed(offset=cq.Vector(23.768, 0, 1.01), rotate=cq.Vector(0, 0, -26.7))
+            .polyline([(-14.448, -2.718), (-6.192, 2.492), (16.512, 1.903), (8.256, -3.397)])
+            .close()
+            .extrude(17.15)
+    )
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 17.252), rotate=cq.Vector(0, 0, 0))
+            .circle(56.75)
+            .circle(41.32)
+            .extrude(2.27)
+    )
+    .faces(">Z").workplane()
+    .hole(7.23)
+)
+
+# Export
+show_object(result)

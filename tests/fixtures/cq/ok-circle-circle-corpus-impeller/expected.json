@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 60880.02569530621,
+    "area": 41024.34402209823,
+    "centroid": [
+      0,
+      0,
+      7.080694024159537
+    ],
+    "bounds": [
+      [
+        -56.75,
+        -56.75,
+        -1.51
+      ],
+      [
+        56.75,
+        56.75,
+        29.060000000000002
+      ]
+    ],
+    "faces": 40,
+    "face_kinds": [
+      [
+        "cylinder",
+        5
+      ],
+      [
+        "plane",
+        35
+      ]
+    ],
+    "shells": 2,
+    "genus": 2
+  },
+  "note": "BenchCAD impeller_006376_s20260505 as written (CC BY 4.0): a disc of radius 56.75 and height 3.02 about the origin on `XY`; a hub of radius 9.82 from z = 1.01 to 29.06; six blades, a convex quadrilateral turned -26.7 degrees about (23.768, 0) and then k 60 degrees about z, from z = 1.01 to 18.16, sunk 0.5 into the disc; a ring of radii 56.75 and 41.32 from z = 17.252 to 19.522 (the second `circle`); a bore of 7.23 from the hub's top (`>Z`) through the whole part. Each blade lies 10.46 to 39.79 from the axis, clear of the hub and inside the ring's hole, within 35.7 degrees: the blades meet no hub, ring or other blade, so the ring is a second shell. V and A sum the pieces, less the disc's top under the hub and blades and the bore; the centroid is on the axis (six-fold symmetry)."
+}

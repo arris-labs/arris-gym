@@ -60,8 +60,12 @@ second `circle` on a stack holding one circle (plans/lift-face-selectors
 step 7a): CadQuery centres it on the first wire's centre and builds both
 pending wires as a ring, the larger outside whichever was drawn first. V =
 16π for radii 3 and 1 and height 2; the revolve (V = 80π², Pappus) is two
-tori, two shells. Each has a recorded oracle report and an agreeing row in
-`test_cq_circle.py`. The 105 BenchCAD `impeller` programs that ended
+tori, two shells. `ok-circle-circle-corpus-impeller` is BenchCAD's
+`impeller_006376_s20260505` as written (BenchCAD/BenchCAD, CC BY 4.0): a
+disc, a hub, six blades and the ring the second `circle` makes, clear of the
+blades, so a second shell; a bore from the hub's top (V and A summed over the
+pieces, 40 faces, genus 2). Each has a recorded oracle report and an agreeing
+row in `test_cq_circle.py`. The 105 BenchCAD `impeller` programs that ended
 `circle` on a non-empty stack ran against the oracle's recorded reports on
 2026-11-14: 105 `ok` and agree. `unsupported-circle-circle-same-radius`
 (CadQuery's checker calls the shape invalid) and `-circle-circle-circle` (a
