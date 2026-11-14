@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 318.4292036732051,
+    "area": 310.28318530717956,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.007399429647195427
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`pushPoints([(-3, -2), (3, 2)]).circle(0.5).cutBlind(-1)`: a pocket at each point"
+}

@@ -97,7 +97,7 @@ within a given design; **[3]** unproven semantics, established here.
   then `extrude`), `runtime-` fixtures, one `motor_end_cap` as written;
   `hypothesis`: each point at radius `r` within the tolerance, the volume of
   `n` holes on a disc's face.
-- [ ] Step 4 **[2]** — `cutBlind` per ADR-0019 on a circle, a ring and circles
+- [x] Step 4 **[2]** — `cutBlind` per ADR-0019 on a circle, a ring and circles
   at points: `cq/ok-cut-blind-*` with closed-form volume and centroid,
   `runtime-` for zero depth and no solid, a `bellows` and a `spur_gear` as
   written; `hypothesis`: a random pocket in a box, volume `V − π r²·|d|`

@@ -494,3 +494,21 @@ beside the oracle's recorded report and held to the closed form of how it is bui
 `runtime-polar-array-*` are the counts CadQuery refuses (zero, negative, a float), its
 words verbatim; `unsupported-polar-array-*` are the `fill=` and `rotate=` keywords no
 corpus program writes, which the oracle builds.
+
+`ok-cut-blind-*` (plans/lift-arrays-and-blind-cuts step 4, `tests/test_cq_cut_blind.py`)
+cut a circle, a ring or circles at points from a box and from a revolved cylinder
+and flange: a pocket, a hole through, a depth past the part, a positive depth (the
+box unchanged), a plane inside the part (a pocket from below the face, a closed
+void of two shells), the tool's wall on the part's (a slab off the end) and six
+tools through a flange flush at both ends, each beside the oracle's recorded report
+and held to the closed form of how it is built. `ok-cut-blind-corpus-spur-gear`
+(a groove and a bore in a 196-sided gear outline) and `ok-cut-blind-corpus-bellows`
+(twelve holes in a revolved bellows) are BenchCAD's programs as written, their
+`program.py` a row of the committed census, the closed forms the polygon's shoelace
+sums and Pappus's rule (the bellows' top holes cut a sliver under the rim, a
+quadrature). The oracle agrees with the gear. On the bellows arris is on the closed
+form to 1e-9 and Open CASCADE's recorded report is not (volume 1.3e-7 high, area
+2.3e-7 low, a centroid 4e-6 off the axis, 26 faces for 28): `occt_wrong` by that closed
+form, held in `test_cq_cut_blind.py`, so the fixture is not asserted to agree.
+`runtime-cut-blind-*` are the refusals, in CadQuery's order (no pending circle, a zero
+depth, no solid), and `unsupported-cut-blind-*` the `clean=` keyword and a string depth.

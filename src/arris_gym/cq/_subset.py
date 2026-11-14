@@ -137,7 +137,7 @@ def subset() -> Subset:
 
     >>> from arris_gym.cq import subset
     >>> len(subset().forms), subset().selectors
-    (25, ('<X', '<Y', '<Z', '>X', '>Y', '>Z'))
+    (26, ('<X', '<Y', '<Z', '>X', '>Y', '>Z'))
     """
     from arris_gym.cq._selector import SELECTORS
     from arris_gym.cq._vector import Vector

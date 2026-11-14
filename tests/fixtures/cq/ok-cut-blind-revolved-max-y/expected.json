@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 311.01767270538954,
+    "area": 289.02652413026095,
+    "centroid": [
+      0.0,
+      1.9848484848484846,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        0.0,
+        -5.0
+      ],
+      [
+        5.0,
+        4.0,
+        5.0
+      ]
+    ],
+    "faces": 5,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        3
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "a disc of 1 cut 1 deep from a revolved cylinder's `>Y` end face"
+}

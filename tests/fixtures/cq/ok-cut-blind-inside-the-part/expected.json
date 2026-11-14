@@ -1,0 +1,40 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 316.8584073464102,
+    "area": 316.5663706143592,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.004957407758089246
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 9,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 2,
+    "genus": 0,
+    "cavities": 1
+  },
+  "note": "`workplane(offset=-1).circle(1).cutBlind(-1)`: the tool lies wholly inside the part, a closed void: one solid of two shells, the box's and the void's"
+}

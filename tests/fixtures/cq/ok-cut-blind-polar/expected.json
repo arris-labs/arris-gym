@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 315.2876110196153,
+    "area": 322.84955592153875,
+    "centroid": [
+      -7.042604820625731e-19,
+      -2.3237190054472222e-18,
+      -0.02241947740260961
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 18,
+    "face_kinds": [
+      [
+        "cylinder",
+        6
+      ],
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`polarArray(3, 0, 360, 6).circle(0.5).cutBlind(-1)`: six pockets"
+}

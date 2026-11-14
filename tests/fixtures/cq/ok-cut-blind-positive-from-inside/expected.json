@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 316.8584073464102,
+    "area": 310.28318530717956,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.014872223274267737
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`workplane(offset=-1).circle(1).cutBlind(2)`: from 1 below the top, up through it: a pocket 1 deep"
+}

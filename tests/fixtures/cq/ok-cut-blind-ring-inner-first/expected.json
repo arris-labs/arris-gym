@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 310.5752220392306,
+    "area": 322.84955592153875,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.0455193007617598
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`circle(1).circle(2).cutBlind(-1)`: the same groove, whichever circle came first"
+}

@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 546976.3992297594,
+    "area": 97300.90855446437,
+    "centroid": [
+      0,
+      86.97863716427767,
+      0
+    ],
+    "bounds": [
+      [
+        -50.84,
+        0,
+        -50.84
+      ],
+      [
+        50.84,
+        182.78,
+        50.84
+      ]
+    ],
+    "faces": 28,
+    "face_kinds": [
+      [
+        "cone",
+        9
+      ],
+      [
+        "cylinder",
+        14
+      ],
+      [
+        "plane",
+        5
+      ]
+    ],
+    "shells": 1,
+    "genus": 13
+  },
+  "note": "BenchCAD's `bellows_011187_s20260505`: a revolved bellows with six holes at each end.\n\n    The 16-edge profile (x the radius, y the height) turns about the y axis:\n    V0 = 2 pi sum (x_i + x_j)(x_i y_j - x_j y_i) / 6 (Pappus), A0 = pi sum (x_i +\n    x_j) |edge| (each edge a cone, a cylinder or a disc), the centroid's height\n    2 pi (int x y dA) / V0. Six circles of 1.52 on a circle of 48.896 are cut\n    10.99 deep from each end face.\n    The `<Y` end: they lie inside the flange (radii 46.52 to 50.84, y 0 to 10.99), the\n    tool as thick as it: six holes through, V = pi r^2 10.99 each, centre y = 5.495,\n    its wall added and its two discs taken. The `>Y` end: the outer cone from\n    (43.08, 171.79) to (50.84, 182.78) leaves a sliver above it under the\n    top face, the tool's floor (171.79) below the cone everywhere in the\n    circle: the pocket is the sliver, h(rho) = 182.78 - 171.79 - k (rho -\n    43.08) deep, k = 10.99 / 7.76, over the circle: V = integral of h dA, its\n    wall added (the integral of h around the circle) and the top disc and the cone's\n    patch (sqrt(1 + k^2) pi r^2) taken; the sliver goes through to the cone, a\n    hole through the rim. The six about the axis cancel in x and z.\n    Faces: the 16 edges (5 planes, 9 cones, 2 cylinders) and a wall for each of the\n    twelve holes (cylinders): 28 faces, genus 1 + 12.\n    "
+}

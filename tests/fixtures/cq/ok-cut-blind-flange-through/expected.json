@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 245.04422698000388,
+    "area": 373.84952577718536,
+    "centroid": [
+      -7.249127479119125e-18,
+      2.0,
+      -1.999346495441227e-17
+    ],
+    "bounds": [
+      [
+        -5.0,
+        0.0,
+        -5.0
+      ],
+      [
+        5.0,
+        4.0,
+        5.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        8
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 7
+  },
+  "note": "six tools through a revolved flange (radii 2 to 5, 4 thick): both ends flush with its faces, six holes through"
+}

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 4427.931869616835,
+    "area": 3029.8936950184816,
+    "centroid": [
+      6.297152900602018,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        0,
+        -14.0,
+        -13.764
+      ],
+      [
+        11.4,
+        14.0,
+        13.764
+      ]
+    ],
+    "faces": 203,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        200
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `spur_gear_000738_s20260505`: a gear outline extruded 11.4, a groove, a hole.\n\n    The outline is a polygon of N vertices on `YZ` (local x world y, local y world\n    z) extruded 11.4 along +x: with its shoelace area A, perimeter P and\n    centroid c, V0 = 11.4 A, A0 = 2 A + 11.4 P, centre (5.7, c). The `<X` face\n    carries a ring of 8.47 and 4.34 cut 6.52 deep from x = 0: it lies inside the\n    outline (checked below), so V = pi (8.47^2 - 4.34^2) 6.52 comes off, the\n    ring's walls 2 pi (8.47 + 4.34) 6.52 are added (its mouth and floor cancel),\n    centre (3.26, 0, 0). The `>X` bore of 3.26 (r = 1.63) goes through the\n    core, x from 0 to 11.4, inside the island of 4.34: V = pi r^2 11.4 off, its\n    wall 2 pi r 11.4 added and its two ends 2 pi r^2 taken, centre (5.7, 0, 0).\n    Faces: the N sides, `>X`, the `<X` outline face, the island's top and the\n    groove's floor are planes (N + 4); the groove's two walls and the bore's wall\n    are cylinders: N + 7, genus 1.\n    "
+}

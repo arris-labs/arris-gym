@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 318.4292036732051,
+    "area": 310.28318530717956,
+    "centroid": [
+      -0.01973181239252114,
+      -0.004932953098130285,
+      -0.0024664765490651423
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`faces(\">X\").workplane().moveTo(1, 0.5).circle(0.5).cutBlind(-2)`: a pocket from the side"
+}

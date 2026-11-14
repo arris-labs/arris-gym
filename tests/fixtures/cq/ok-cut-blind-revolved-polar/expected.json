@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 309.44687637859465,
+    "area": 301.59289474462014,
+    "centroid": [
+      -7.175532276285429e-19,
+      1.9771573604060912,
+      -2.367578637348979e-18
+    ],
+    "bounds": [
+      [
+        -5.0,
+        0.0,
+        -5.0
+      ],
+      [
+        5.0,
+        4.0,
+        5.0
+      ]
+    ],
+    "faces": 15,
+    "face_kinds": [
+      [
+        "cylinder",
+        7
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "six pockets of 0.5, 1 deep, on a circle of 3 in a revolved cylinder's end face"
+}

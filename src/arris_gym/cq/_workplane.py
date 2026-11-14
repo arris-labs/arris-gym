@@ -131,7 +131,8 @@ class _Discs:
     """The circles `circle` drew on a stack of points, one at each, all of one radius.
 
     They wait for `extrude`, which builds each and fuses it with the chain's
-    solid (ADR-0018 rule 5). No two overlap or touch: `circle` refuses a stack
+    solid (ADR-0018 rule 5), or for `cutBlind`, which cuts them all from it in
+    one call (ADR-0019 rule 3). No two overlap or touch: `circle` refuses a stack
     where they would, as CadQuery's wires then nest or merge.
     """
 
@@ -1173,6 +1174,45 @@ class Workplane:
         for sketch in sketches[1:]:
             result = result._combined(sketch.extrude(distance, both=both))
         return result
+
+    @census_form("Workplane.cutBlind", [("num",)])
+    def cutBlind(self, until: float) -> Workplane:
+        """The pending circle, ring or circles at points extruded `until` and cut from the solid.
+
+        Each pending sketch is swept `until` along the plane's normal, against
+        it when negative, and all the sweeps are cut from the chain's solid in
+        one call (ADR-0019 rule 3). A negative `until` cuts into the part from
+        a face, a depth past the part leaves a hole through, and a positive
+        one runs out of the face's plane and leaves the part as it is. In
+        CadQuery's order it raises `ValueError` (`runtime`): with no pending
+        sketch, "No pending wires present"; then for `until == 0`, naming
+        CadQuery's `Standard_ConstructionError` (the sweep comes first, so a
+        chain with no solid ends there too); then with no solid in the chain,
+        "Cannot find a solid on the stack or in the parent chain"
+        (`runtime-cut-blind-*`). The keywords no corpus program writes
+        (`clean=`, `both=`, `taper=`) and an `until` that is not a number
+        end `unsupported_api`. A stack of selected faces or of points, and a
+        drawn path, are outside the subset, as for `extrude`.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane()
+        >>> round(wp.circle(0.5).cutBlind(-1)._solids()[0].measure().volume, 9)
+        7.214601837
+        """
+        discs = [o for o in self._stack if isinstance(o, _Discs)]
+        sketches: Sequence[arris.build.Sketch]
+        if discs and len(self._stack) == 1:
+            sketches = discs[0].sketches
+        else:
+            sketches = (self._pending_sketch("Workplane.cutBlind"),)
+        if until == 0:
+            raise ValueError(
+                f"Workplane.cutBlind({until}): a zero depth (CadQuery's Standard_ConstructionError)"
+            )
+        base = self._base_solid()
+        if base is None:
+            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+        return self._derive(base.cut(*(s.extrude(until, model=base.model) for s in sketches)))
 
     @census_form("Workplane.moveTo", [("num",)] * 2)
     def moveTo(self, x: float = 0, y: float = 0) -> Workplane:

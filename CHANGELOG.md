@@ -5,6 +5,14 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `cutBlind(depth)`: the pending circle, ring (two
+  concentric circles) or circles at points (`pushPoints`, `rarray`,
+  `polarArray`) cut from the part, `depth` along the workplane's normal, so a
+  negative depth cuts into the part from a face, one past the part makes a
+  hole through, and a positive one cuts nothing. A depth of zero, a chain with
+  no pending circle and a chain with no solid end `runtime`, as in CadQuery;
+  `clean=` and an `until` that is not a number end `unsupported_api`.
+
 - `dialect="cq"` now runs `polarArray(radius, startAngle, angle, count)`:
   points on a circle about the workplane's origin, at which `hole`,
   `cboreHole`, `cskHole` and `circle` act as at the points of a `pushPoints`.

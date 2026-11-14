@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 304.7344873982099,
+    "area": 301.59289474462014,
+    "centroid": [
+      0.0,
+      1.9536082474226808,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        0.0,
+        -5.0
+      ],
+      [
+        5.0,
+        4.0,
+        5.0
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        4
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "a ring of 2 and 1 cut 1 deep from a revolved cylinder's end face: a groove"
+}

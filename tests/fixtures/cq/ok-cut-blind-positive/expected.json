@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 320.0,
+    "area": 304.0,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`cutBlind(1)` from the top face: the sweep runs out of the part, the box is unchanged (volume, area, centroid and bounds are the box's). The tool touches the top face along its circle, which arris keeps as an edge: the top is two planes, a disc and the rest, a face more than CadQuery's 6 (face counts are carried, never judged)"
+}
