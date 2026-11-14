@@ -11,6 +11,10 @@
   loop, or a `tail --pid`/`tail -f`, waiting on one is never written: the
   completion notification is the wait. In Claude Code `tools/bash-guard.sh`
   refuses it (a PreToolUse hook).
+  Start the long job itself with `run_in_background`, never detached inside
+  its own shell with `&` or `nohup` (its notification would fire at once),
+  and never wait on it with `pgrep -f <pattern>`: the watcher matches its
+  own command line and loops forever (the guard refuses that too).
 - Commit **directly to `main`**, one plan step per commit. Branch
   (`plan/<slug>`, rebased, `merge --ff-only`, deleted after) only when a
   plan may be thrown away or the human asked to review first.

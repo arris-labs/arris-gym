@@ -20,6 +20,10 @@ run 2 false "timeout 590 sh -c 'until grep -q \"^done\" /tmp/x.log; do sleep 5; 
 run 2 false 'cd repo; tail --pid=877518 -f /dev/null; tail -12 /tmp/blend.log'
 run 2 false 'timeout 170 tail -f /tmp/t.output | grep -m1 Summary'
 run 2 false 'while ! grep -q "^exit" c1.log; do sleep 10; done'
+# pgrep -f in a wait loop matches itself, in either mode
+run 2 true 'while pgrep -f "tools/cq_corpus.py" >/dev/null; do sleep 20; done; tail x.log'
+run 2 false 'until ! pgrep -f cq_corpus; do sleep 5; done'
+run 0 true 'while pgrep -x python >/dev/null; do sleep 20; done'
 # the same loop in the background is its own notification
 run 0 true 'timeout 1800 sh -c "until grep -q done x; do sleep 5; done"'
 # not waits

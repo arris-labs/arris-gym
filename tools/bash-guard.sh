@@ -7,6 +7,8 @@
 #     command itself in the foreground with a `timeout` when its result is
 #     needed now, or with `run_in_background` and wait for the notification.
 #     A background command may loop: its end is the notification.
+#   - A `while`/`until` loop on `pgrep -f`, background or not: it matches its
+#     own command line and never ends.
 #   - A blind stage (`git add -A`, `.`, `--all`, `git commit -a`).
 #   - `git stash`, any form but `list` and `show`: a subagent's `git stash; git stash pop` on a
 #     clean tree popped an old stash of another plan and left a file
@@ -41,6 +43,12 @@ bare=$(sed -E "s/'[^']*'//g; s/\"([^\"\\]|\\.)*\"//g" <<<"$code")
 
 # A word starts the command, follows a separator, or opens a quoted `sh -c`.
 w="(^|[;&|({'\"[:space:]])"
+# A wait on `pgrep -f <pattern>` matches the waiting shell's own command line,
+# which holds the pattern: the loop never ends (a 7-hour hang, background or
+# not). Refused in both modes.
+if grep -qE "${w}(while|until)[[:space:]].*pgrep[[:space:]]+(-[a-zA-Z]*f|--full)" <<<"$code"; then
+  refuse "a wait loop on \`pgrep -f\` matches itself and never ends (.agents/rules/git.md). Start the long job directly with run_in_background and wait for its completion notification; never detach it with & or nohup."
+fi
 if [ "$bg" != true ]; then
   if grep -qE "${w}(while|until)[[:space:]].*[[:space:]]sleep[[:space:]]" <<<"$code" ||
     grep -qE "${w}tail[[:space:]]+([^|;&]*[[:space:]])?(--pid|-[a-zA-Z]*f[a-zA-Z]*([[:space:]]|\$)|--follow)" <<<"$code"; then
