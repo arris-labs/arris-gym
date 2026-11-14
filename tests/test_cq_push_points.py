@@ -493,27 +493,31 @@ def test_a_zero_diameter_with_a_depth_cuts_nothing() -> None:
         ),
         (
             f"{BASE}.pushPoints([(1, 1)]).box(1, 1, 1)",
-            "Workplane.box on a point stack",
+            "Workplane.box on a stack of points",
         ),
         (
             f"{BASE}.pushPoints([(1, 1)]).moveTo(0, 0)",
-            "Workplane.moveTo on a point stack",
+            "Workplane.moveTo on a stack of points",
         ),
         (
             f"{BASE}.pushPoints([(1, 1)]).lineTo(0, 0)",
-            "Workplane.lineTo on a point stack",
+            "Workplane.lineTo on a stack of points",
         ),
         (
             f"{BASE}.pushPoints([(1, 1)]).extrude(1)",
-            "Workplane.extrude on a point stack",
+            "Workplane.extrude on a stack of points",
         ),
         (
             f"{BASE}.pushPoints([(1, 1)]).workplane()",
-            "Workplane.workplane on a point stack",
+            "Workplane.workplane on a stack of points",
+        ),
+        (
+            f"{BASE}.pushPoints([(1, 1)]).revolve(360, (0, 0, 0), (0, 1, 0))",
+            "Workplane.revolve on a stack of points",
         ),
     ],
 )
-def test_a_point_stack_outside_the_subset_is_unsupported(chain: str, message: str) -> None:
+def test_a_stack_of_points_outside_the_subset_is_unsupported(chain: str, message: str) -> None:
     """A point that is not two or three numbers, and a call on a stack of points, name the form."""
     result = ag.run(wrap(chain.replace("'", '"')), dialect="cq")
     assert result.status is ag.Status.UNSUPPORTED_API

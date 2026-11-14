@@ -354,6 +354,11 @@ PIN = "Workplane.circle on points no further apart than 2 radii"
             'cq.Workplane("XY").box(2, 2, 2).faces(">Z").faces(">Z").hole(1)',
             "Workplane.hole on selected faces",
         ),
+        (
+            'cq.Workplane("XY").box(2, 2, 2).faces(">Z").faces(">Z")'
+            ".revolve(360, (0, 0, 0), (0, 1, 0))",
+            "Workplane.revolve on selected faces",
+        ),
     ],
 )
 def test_a_context_cadquery_reads_differently_is_unsupported(chain: str, message: str) -> None:

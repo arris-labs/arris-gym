@@ -281,17 +281,19 @@ class Workplane:
             return self._derive(new)
         return self._derive(base.fuse(new))
 
-    def _pending_sketch(self) -> arris.build.Sketch:
+    def _pending_sketch(self, form: str) -> arris.build.Sketch:
         """The one sketch the stack holds, which `extrude` and `revolve` consume.
 
-        Raises `ValueError` (CadQuery's words, `runtime`) for any other stack.
+        Raises `UnsupportedApi` naming `form`, the call that consumes it, for
+        selected faces, a stack of points and circles at points, and
+        `ValueError` (CadQuery's words, `runtime`) for any other stack.
         """
         if any(isinstance(o, Faces) for o in self._stack):
-            raise UnsupportedApi("Workplane.extrude on selected faces")
+            raise UnsupportedApi(f"{form} on selected faces")
         if any(isinstance(o, _Points) for o in self._stack):
-            raise UnsupportedApi("Workplane.extrude on a point stack")
+            raise UnsupportedApi(f"{form} on a stack of points")
         if any(isinstance(o, _Discs) for o in self._stack):
-            raise UnsupportedApi("Workplane.revolve on circles at points")
+            raise UnsupportedApi(f"{form} on circles at points")
         sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
         if len(sketches) != 1 or len(self._stack) != 1:
             raise ValueError("No pending wires present")
@@ -310,7 +312,7 @@ class Workplane:
         if isinstance(last, Faces):
             raise UnsupportedApi("Workplane.lineTo on selected faces")
         if isinstance(last, _Points):
-            raise UnsupportedApi("Workplane.lineTo on a point stack")
+            raise UnsupportedApi("Workplane.lineTo on a stack of points")
         if isinstance(last, _Discs):
             raise UnsupportedApi("Workplane.lineTo on circles at points")
         if isinstance(last, _Path):
@@ -330,7 +332,7 @@ class Workplane:
         if any(isinstance(o, Faces) for o in self._stack):
             raise UnsupportedApi(f"{form} on selected faces")
         if any(isinstance(o, _Points) for o in self._stack):
-            raise UnsupportedApi(f"{form} on a point stack")
+            raise UnsupportedApi(f"{form} on a stack of points")
         if any(isinstance(o, (_Path, _Discs, arris.build.Sketch)) for o in self._stack):
             raise UnsupportedApi(f"{form} on a pending wire")
 
@@ -1085,7 +1087,7 @@ class Workplane:
         if discs and len(self._stack) == 1:
             sketches = discs[0].sketches
         else:
-            sketches = (self._pending_sketch(),)
+            sketches = (self._pending_sketch("Workplane.extrude"),)
         if distance == 0:
             raise ValueError(
                 f"Workplane.extrude({distance}, both={both}): a zero distance "
@@ -1243,7 +1245,7 @@ class Workplane:
         >>> round(solid.measure().volume / math.pi, 9)
         3.0
         """
-        sketch = self._pending_sketch()
+        sketch = self._pending_sketch("Workplane.revolve")
         start_at, end_at = _axis_point(axisStart), _axis_point(axisEnd)
         degrees = angleDegrees % 360.0
         if degrees == 0:
