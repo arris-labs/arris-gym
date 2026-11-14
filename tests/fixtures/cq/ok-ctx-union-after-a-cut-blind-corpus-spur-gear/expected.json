@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 11858.211917208997,
+    "area": 5107.195659964324,
+    "centroid": [
+      6.216777764802055,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        0,
+        -20.0,
+        -19.662
+      ],
+      [
+        12.53,
+        20.0,
+        19.662
+      ]
+    ],
+    "faces": 207,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        204
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `spur_gear_017922_s20260505` as written: a gear outline, a filled pocket, a groove, a bore.\n\n    The outline is a polygon of N vertices on `YZ` (local x world y, local y world z)\n    extruded 12.53 along +x, shoelace area A, perimeter P, centroid c. A pocket of r = 7.35\n    and 9.77 deep from `>X`, then a united cylinder of r = 9.35 and the whole 12.53 (x 0 to\n    12.53) fills it again: that cylinder lies inside the outline (checked below: the nearest\n    edge is farther from the axis than 9.35) and holds the pocket, so the part is the prism\n    again. The second pocket, r = 6.43 and 9.19 deep (x 3.34 to 12.53), is only partly filled by its\n    cylinder of r = 5.43: a groove of r 5.43 to 6.43 is left, V_G = pi (6.43^2 - 5.43^2) 9.19.\n    The bore of r = 3.09 (`hole(6.18)` from `>X` through, inside the island of 5.43) takes\n    V_B = pi 3.09^2 12.53. V = 12.53 A - V_G - V_B; the groove adds its walls\n    2 pi (6.43 + 5.43) 9.19 (its mouth and floor cancel) and the bore its wall 2 pi r 12.53 less\n    its two ends 2 pi r^2: A_total = 2 A + 12.53 P + those. The moments in x are the prism's\n    12.53 / 2 less the groove's at 12.53 - 9.19 / 2 and the bore's at 12.53 / 2; y and z are the\n    prism's, the groove and the bore being on the axis.\n    Faces, as arris builds them: the N sides, the groove's two walls and the bore's wall (three\n    cylinders), the groove's floor, and the end faces: arris keeps the unions' coplanar\n    splits, so x = 0 is three planes (the circles of 9.35 and 5.43 cut it) and x = 12.53 four\n    (the circle of 9.35, and the island's top), where Open CASCADE's `clean` merges them:\n    N + 8 planes and 3 cylinders; genus 1 (the bore).\n    "
+}

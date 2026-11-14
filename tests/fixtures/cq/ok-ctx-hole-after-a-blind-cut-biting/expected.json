@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 259.2578241364566,
+    "area": 378.8227274551982,
+    "centroid": [
+      0,
+      0,
+      -0.06061549024221052
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        5,
+        4,
+        2
+      ]
+    ],
+    "faces": 15,
+    "face_kinds": [
+      [
+        "cylinder",
+        8
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 4
+  },
+  "note": "The 10 x 8 x 4 box, a pocket of r = 2 and 1 deep, then four bores of r = 1 that bite into it.\n\n    `circle(2).cutBlind(-1)` on `>Z` takes z 1 to 2 inside r = 2. `faces(\">Z\")` is then the\n    one top face, the box's top less the pocket, centred on the origin, and\n    `polarArray(2.5, 0, 360, 4).hole(2)` bores r = 1 at (+-2.5, 0), (0, +-2.5), through\n    (z -2 to 2). Each bore's disc overlaps the pocket's in a lens L (circles 2.5 apart, the\n    standard formula in `lens`), so the pocket's slab (V_P = pi 4 1) and the bores\n    (V_B = pi 4 each) overlap in L * 1 four times: V = 320 - 4 pi - 4 pi 4 + 4 L.\n    Faces: the top has the pocket and the four bites cut out; the floor (z = 1) is the pocket\n    less the bites, the pocket's wall splits into the four arcs between them (each of\n    arc A_P = 2 a R); each bore's wall is one cylinder with a notch where it meets the pocket\n    (length 4 less the arc A_B = 2 b r of the pocket's depth 1). Area = the four sides 144,\n    the bottom less four discs (80 - 4 pi), the top less the pocket and the bites\n    (80 - 4 pi - 4 (pi - L)), the floor (4 pi - 4 L), the four arcs of pocket wall\n    (2 pi 2 - 4 A_P) and the bores' walls (4 (8 pi - A_B)).\n    The part is symmetric under a quarter turn, so x and y are 0; z is minus the two removed\n    moments about 0: the pocket's slab at z = 1.5, less the lens re-added at 1.5.\n    Planes: four sides, top, floor, bottom (7); cylinders: four arcs, four bores (8); genus 4.\n    "
+}

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 259.57409300285667,
+    "area": 433.53978619539146,
+    "centroid": [
+      0,
+      0,
+      0.33547655068078663
+    ],
+    "bounds": [
+      [
+        -6,
+        -6,
+        -1
+      ],
+      [
+        6,
+        6,
+        3.5
+      ]
+    ],
+    "faces": 11,
+    "face_kinds": [
+      [
+        "cylinder",
+        5
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 2,
+    "genus": 2
+  },
+  "note": "`impeller`'s shape: a disc and a hub, a ring clear of the hub, a bore, a pocket from the ring's top.\n\n    A disc of r = 6 on `XY` from z -1 to 1; a hub of r = 2 from z -1 to 3 (its top\n    2 above the disc's); a ring of r 5 to 6 from z = 3 to 3.5, which touches\n    neither, a second shell. `faces(\">Z\")` is the ring's top at z = 3.5 and `workplane()`\n    its plane with the origin on the axis: `hole(1)` bores r = 1/2 from there down through\n    hub and disc (z -1 to 3), and a second `faces(\">Z\").workplane().circle(3).cutBlind(-1)`\n    cuts r < 3 from z = 3.5 to 2.5. That clears the hub's top 0.5 (the circle is wider than\n    the hub and the ring is outside it) and nothing else. V = 72 pi + 8 pi + 5.5 pi - pi\n    (bore) - 1.875 pi (the slab, pi (4 - 1/4) 0.5), at z 0, 2, 3.25, 1 and 2.75.\n    A: the disc's bottom less the bore, lateral and top less the hub's foot; the hub's wall\n    from z = 1 to 2.5 and its floor at 2.5; the bore's wall from -1 to 2.5; the ring's\n    2 planes and 2 walls.\n    Faces, as arris builds them: arris keeps the hub's foot (z = -1, r 0.5 to 2) and the\n    disc's bottom as two planes, where Open CASCADE's `clean` merges them. Planes: bottom,\n    foot, top, floor, ring top and bottom (6); cylinders: disc, hub, bore, ring outer and\n    inner (5); two shells, genus 2.\n    "
+}

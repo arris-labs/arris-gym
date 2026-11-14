@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the second cutBlind, OpDegenerateError (\"degenerate result: the faces touch along a curve interior to both result faces\"): the part is a prism whose pocket a united cylinder filled, and a second blind cut from the same end face meets the circles the union left on it; the same cut without the first pocket, or with its circle inside the first one's, is built; CadQuery 2.3.0 builds the closed form",
+  "measures": {
+    "volume": 766.2344482105506,
+    "area": 637.743308678728,
+    "centroid": [
+      0,
+      0,
+      1.9627921279212792
+    ],
+    "bounds": [
+      [
+        -8,
+        -8,
+        0
+      ],
+      [
+        8,
+        8,
+        4
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A disc of radius 8 extruded 4 (z 0 to 4); a pocket of radius 1.5 and 2 deep from its top, then a united cylinder of radius 2.5 and height 4 on the same axis fills it again: the cylinder lies inside the disc and holds the pocket, so the part is the prism. A second pocket of radius 2.2 and 2.5 deep (z 1.5 to 4) from the top takes V = pi (8^2 4 - 2.2^2 2.5) = pi 243.9, its wall 2 pi 2.2 2.5 = 11 pi added (its mouth and floor cancel) to the prism's 2 pi 64 + 2 pi 8 4 = 192 pi: A = 203 pi; the centroid is on the axis, z = (256 pi 2 - 12.1 pi 2.75) / (243.9 pi); bounds x, y -8..8, z 0..4; one shell, genus 0. Faces are carried, not judged (ADR-0005)."
+}

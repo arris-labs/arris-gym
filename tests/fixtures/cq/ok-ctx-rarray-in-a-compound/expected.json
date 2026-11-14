@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 627.4336293856409,
+    "area": 651.9822971502571,
+    "centroid": [
+      10.200282070099806,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        25,
+        4,
+        2
+      ]
+    ],
+    "faces": 16,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 2,
+    "genus": 4
+  },
+  "note": "`faces(\">Z\").workplane().rarray(4, 3, 2, 2).hole(1)` on the pair of boxes. Four bores of r = 1/2 on a circle or a grid about the pair's first box, through it.\n\n    The pair is two 10 x 8 x 4 boxes 10 apart (V = 640, A = 608, one solid each),\n    and `faces(\">Z\").workplane()` is z = 2 with its origin at (0, 0), over the first.\n    Four points, (+-3, 0) and (0, +-3) of `polarArray(3, 0, 360, 4)` or (+-2, +-1.5) of\n    `rarray(4, 3, 2, 2)`, each a bore through the first box (z -2 to 2) clear of its sides:\n    V = 640 - 4 pi r^2 4 = 640 - 4 pi, each wall adds 2 pi r 4 and its two ends take\n    2 pi r^2: A = 608 + 4 (4 pi - pi / 2). The points are symmetric about the box's\n    centre, so the x moment is the second box's, 320 * 20, and y, z are 0.\n    Faces: 12 planes and 4 cylinders; two shells, genus 4.\n    "
+}

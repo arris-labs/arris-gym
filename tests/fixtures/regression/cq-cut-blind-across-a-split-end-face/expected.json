@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the cut, OpDegenerateError (\"degenerate result: the faces touch along a curve interior to both result faces\"): the revolved cylinder's end face is split into a disc and an annulus by a profile vertex on its edge, and the tool lies flush with it across that circle; a tool inside one of the two faces is cut; CadQuery 2.3.0 builds the closed form",
+  "measures": {
+    "volume": 788.5397560510381,
+    "area": 860.7963870836033,
+    "centroid": [
+      0,
+      1.6952191235059761,
+      0
+    ],
+    "bounds": [
+      [
+        -10,
+        0,
+        -10
+      ],
+      [
+        10,
+        3,
+        10
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A cylinder of radius 10 and height 3 revolved about y from the profile (0, 0), (6, 0), (10, 0), (10, 3), (0, 3): the vertex (6, 0) splits its bottom face `<Y` into a disc and an annulus. A pocket of radius 7 and 1 deep from that face (y 0 to 1): V = pi (10^2 3 - 7^2 1) = 251 pi; the pocket's wall 2 pi 7 = 14 pi is added to the cylinder's 2 pi 10 3 + 2 pi 10^2 = 260 pi (its mouth and floor cancel): A = 274 pi; the centroid is on the axis, y = (300 pi 1.5 - 49 pi 0.5) / (251 pi); bounds x, z -10..10, y 0..3; one shell, genus 0. Faces are carried, not judged (ADR-0005)."
+}

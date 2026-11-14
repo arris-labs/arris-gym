@@ -102,11 +102,24 @@ within a given design; **[3]** unproven semantics, established here.
   `runtime-` for zero depth and no solid, a `bellows` and a `spur_gear` as
   written; `hypothesis`: a random pocket in a box, volume `V − π r²·|d|`
   capped at the box.
-- [ ] Step 5 **[2]** — the corpus contexts, read on the oracle: a hole after a
+- [x] Step 5 **[2]** — the corpus contexts, read on the oracle: a hole after a
   blind cut on the same face (`dome_cap`), arrays on a compound
   (`t_pipe_fitting`), `union` after `cutBlind` (`spur_gear`), `impeller`;
   lifted where they agree, else refused, each with its `ok-`, `runtime-` or
-  `unsupported-` fixture.
+  `unsupported-` fixture. *Settled*: all four
+  agree on the oracle where they run (161 `impeller`, 36 of 38 `spur_gear`;
+  `t_pipe_fitting`'s 77 differ by the tee's own error, step 6). `dome_cap`'s
+  87 in-subset programs all end in the known spindle-torus refusal, so its
+  context (a hole after a blind cut on the same face) is read on a box and a
+  revolved cylinder instead: `ok-ctx-*` in `tests/test_cq_array_contexts.py`.
+  Two new arris refusals, both `OpDegenerateError` "the faces touch along a
+  curve interior to both result faces", each a tool flush with a face split by
+  an edge it crosses, each an xfail fixture and not yet filed with arris:
+  `regression/cq-cut-blind-after-a-filled-pocket` (2 `spur_gear` programs; a
+  union's circles split the face) and `regression/cq-cut-blind-across-a-split-end-face`
+  (42 of 202 `bellows`; a profile vertex splits it; `hole` and a fused post
+  across it are refused the same, so it is not `cutBlind`'s). Step 6 counts them
+  as `arris_refusal` rows.
 - [ ] Step 6 **[2, conductor-run]** — the measurement: `cq_corpus.py
   --oracle-rows` on both corpora into a scratch out-dir, then `cq_diagnose.py`;
   in-subset rows by class, `cq_bug` and unclassified by family, recorded

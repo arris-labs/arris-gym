@@ -512,3 +512,23 @@ form to 1e-9 and Open CASCADE's recorded report is not (volume 1.3e-7 high, area
 form, held in `test_cq_cut_blind.py`, so the fixture is not asserted to agree.
 `runtime-cut-blind-*` are the refusals, in CadQuery's order (no pending circle, a zero
 depth, no solid), and `unsupported-cut-blind-*` the `clean=` keyword and a string depth.
+
+`ok-ctx-*` of plans/lift-arrays-and-blind-cuts step 5 (`tests/test_cq_array_contexts.py`),
+each beside the oracle's recorded report and held to the closed form of how it is built:
+`ok-ctx-polar-array-in-a-compound` and `ok-ctx-rarray-in-a-compound` bore four holes in
+the pair's first box from `faces(">Z").workplane()` (`t_pipe_fitting` writes both on a
+compound); `ok-ctx-hole-after-a-blind-cut-biting` and `-revolved` call `faces(...).workplane()`
+again after a pocket and bore a ring of holes, those of the first biting into the pocket (the
+overlap is the circles' lens), as `dome_cap` does on a dome that is itself the known
+spindle-torus refusal; `ok-ctx-cut-blind-from-a-higher-face` takes `impeller`'s shape (a ring
+above a hub, a pocket from the ring's top that clears only the hub); and
+`ok-ctx-union-after-a-cut-blind-corpus-spur-gear` is `spur_gear_017922_s20260505` as written,
+a pocket filled by a united cylinder, a groove it leaves, a bore: a row of the committed
+census, the oracle agreeing. Of the corpus's contexts, read on the committed oracle rows: all 161 in-subset `impeller` and
+36 of 38 in-subset `spur_gear` programs agree; the two that do not are the refusal of
+`regression/cq-cut-blind-after-a-filled-pocket`. Of the 202 in-subset `bellows`, 135 write no
+`cutBlind` and agree, 42 end `arris_refusal` (`regression/cq-cut-blind-across-a-split-end-face`)
+and 25 differ by Open CASCADE's error as `ok-cut-blind-corpus-bellows` does (volume up to 2e-6).
+The 77 new `t_pipe_fitting` rows differ by the tee's own Open CASCADE error (volume up to 1e-4,
+as its 64 older rows), which step 6 classes. All 87 in-subset `dome_cap` end in the known
+spindle-torus refusal.
