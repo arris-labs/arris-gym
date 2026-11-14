@@ -151,8 +151,12 @@ within a given design; **[3]** unproven semantics, established here.
   face's parameter centre, which needs the face's centre of mass and its
   parameter range, filed with arris in `face-surface-properties.md` (2026-11-14).
   Not fixable here: the acceptance's 0 needs that arris capability, or a
-  narrowing the human decides. A `regression/` fixture of one shrunk case, with
-  its closed form, is this step's work once the choice is made.
+  narrowing the human decides. **Fixture** (retirement review):
+  `regression/cq-workplane-on-a-cylinder-face-split-at-its-seam`, strict `xfail`, the
+  oracle's report beside its closed form. The shrink shows a second cause: arris keeps
+  a cylinder's side as two faces where a box's window crosses its seam, and the upper
+  half's centre outranks the box's top, which Open CASCADE's one side face (centred on
+  the axis) does not; a face's exact centre alone does not lift these 6 rows.
 - [x] Step 7c **[1]** — the `cq-bore-over-a-bore-of-its-width` refusal filed
   with arris as item 8 of `../arris/docs/ideas/fuse-contact-refusals.md`
   (README of the fixture updated to say so).

@@ -516,3 +516,26 @@ def test_the_context_doctests_run() -> None:
     from arris_gym.cq import _workplane
 
     assert doctest.testmod(_workplane).failed == 0
+
+
+def test_the_oracle_places_the_plane_on_the_box_where_arris_splits_the_cylinder() -> None:
+    """The oracle's report of a regression fixture is the fixture's closed form.
+
+    `regression/cq-workplane-on-a-cylinder-face-split-at-its-seam`: the
+    fixture's desired measures are worked out from how the part is built (its
+    `note`); Open CASCADE's recorded report agrees with all four figures, so
+    CadQuery's plane is the box's top, as the README says.
+    """
+    slug = "cq-workplane-on-a-cylinder-face-split-at-its-seam"
+    (case,) = [c for c in fixture_cases.load("regression") if c.slug == slug]
+    path = fixture_cases.ROOT / "regression" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text())
+    assert report.status.value == "ok"
+    assert report.measures is not None
+    want = case.expected["measures"]
+    assert isinstance(want, dict)
+    got = report.measures
+    pairs = [(got.volume, want["volume"]), (got.area, want["area"])]
+    pairs += list(zip(got.centroid, want["centroid"], strict=True))
+    assert all(fixture_cases.close(g, float(str(w))) for g, w in pairs), pairs
+    assert got.solids == want["shells"]

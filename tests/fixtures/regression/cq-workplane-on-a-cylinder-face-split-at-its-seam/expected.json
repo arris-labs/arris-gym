@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 keeps the cylinder's side as two faces split at its seam where the box's window crosses it, and the upper half's centre (above z = 2) wins faces('>Z'), so cq ends unsupported_api, \"Workplane.workplane on a cylinder face\"; Open CASCADE keeps one side face, centred on the axis, and CadQuery 2.3.0 places the plane on the box's top",
+  "measures": {
+    "volume": 623.5615770291864,
+    "area": 571.8575069911271,
+    "centroid": [
+      -0.0012595358539236727,
+      -6.069669499305183,
+      -0.001889303780885509
+    ],
+    "bounds": [
+      [
+        -2.5,
+        -20,
+        -5
+      ],
+      [
+        2.5,
+        5,
+        5
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "a cylinder of r = 5 along x (x -2..2) and a box x -2.5..2.5, y -20..-3, z -2..2 that enters it from -y, united; faces('>Z') twice keeps the box's top (z = 2: the cylinder's side is one face centred on its axis), the plane z = 2 with origin (0, 0, 2) and x along +x; a blind bore of r = 1/2 and depth 1 at (1, -10, 2). With S = 2 sqrt(21) + 25 asin(2/5) - 12 the overlap's section (y from -sqrt(25 - z^2) to -3, |z| <= 2), the union is V = 100 pi + 340 - 4 S and A = 90 pi + 346 - 40 asin(2/5) (the side's window) - 2 S (the cylinder's ends) - 8 (sqrt(21) - 3) (the box's top and bottom inside) - 16 (its face y = -3 inside); its y-moment -3910 + 352/3. The bore takes pi/4 from V at (1, -10, 1.5) and adds pi to A (a wall of pi, a floor for its mouth). 1 shell, genus 0"
+}
