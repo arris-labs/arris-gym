@@ -1,6 +1,6 @@
 # Idea: next-lift
 
-- Status: Open (round 1 decided: bundles, riskiest first)
+- Status: Accepted (C, bundles riskiest first); not yet planned
 - Raised: 2026-11-14
 - Prompt (verbatim from the human): "next-lift"
 
@@ -195,3 +195,18 @@ Round 1 (2026-11-14), the human: "yes".
   amendment ("census order" → "the knee's items, riskiest bundle first"),
   written by the first plan with the selector ADR.
 - Q3: yes; **Knee** and **Lift** added to `GLOSSARY.md`.
+
+Round 2 (2026-11-14), the human: "yes".
+- Q4: A, the first plan lifts `faces(str)`, `workplane()` on a face, the
+  six axis selectors and `hole(num)` (+950, reach 5,295); `cutThruAll`
+  waits for the head bundle.
+- Q5: A, CAD-Recode's sketch bundle goes after `edges`/`fillet`/`chamfer`
+  and before the head, so `rect` is lifted once for both receivers.
+
+The bundles in order: (1) selectors, `workplane()` on a face, `hole(num)`;
+(2) the other holes and point stacks (`hole(depth=)`, `pushPoints`,
+`rarray`, `center`, `cutBlind`, `polarArray`); (3) `edges`, `fillet`,
+`chamfer`, the parallel selectors and `>Z or <Z`; (4) CAD-Recode's sketch
+API, in two or three plans; (5) the head (`slot2D`, `rect`, `mirrorY`,
+`cutThruAll`, `loft(combine=)`, `extrude(taper=)`). Each bundle's exact
+items are re-measured against the subset at its `/plan`.
