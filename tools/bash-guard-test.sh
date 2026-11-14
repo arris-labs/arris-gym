@@ -6,9 +6,9 @@
 set -uo pipefail
 guard="$(git rev-parse --show-toplevel)/tools/bash-guard.sh"
 fail=0
-run() { # <expected exit> <run_in_background> <command>
+run() { # <expected exit> <run_in_background> <command> [timeout ms, default 300000]
   local got
-  jq -n --arg c "$3" --argjson b "$2" '{tool_name:"Bash",tool_input:{command:$c,run_in_background:$b}}' |
+  jq -n --arg c "$3" --argjson b "$2" --argjson t "${4:-300000}" '{tool_name:"Bash",tool_input:{command:$c,run_in_background:$b,timeout:$t}}' |
     "$guard" 2>/dev/null
   got=$?
   [ "$got" = "$1" ] || { echo "FAIL (want $1, got $got, bg=$2): $3" >&2; fail=1; }
@@ -47,6 +47,12 @@ run 2 false 'git commit -am wip'
 run 0 false 'git add src/a.py docs/x.md'
 run 0 false 'git commit -m "add . and -a"'
 run 0 false 'git status --short'
+# a foreground commit needs the Bash timeout raised past the gate
+run 2 false 'git commit -m x' 120000
+run 2 false 'timeout 300 git commit -m x' 120000
+run 0 false 'timeout 300 git commit -m x' 300000
+run 0 true 'git commit -m x' 120000
+run 0 false 'git log --grep=commit' 120000
 # heredoc bodies and quoted text are data
 run 0 false "$(printf 'git commit -F - <<%s\nrefuse git stash; while x; do sleep 1; done\n%s\ngit log -1' "'EOF'" EOF)"
 run 0 false "$(printf 'cat >f <<-END\n\tgit stash pop\n\tEND\nls')"

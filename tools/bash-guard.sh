@@ -14,6 +14,9 @@
 #     clean tree popped an old stash of another plan and left a file
 #     unmerged. Steps commit; a patch file sets work
 #     aside.
+#   - A foreground `git commit` whose Bash `timeout` is under 300000 ms: the
+#     hook runs the gate (~2 min) and the harness backgrounds the call at the
+#     default 120 s, which a subagent has no one to be notified of.
 #
 # Neither rule reads a heredoc's body (a commit message, a script written to
 # a file), and the stash rule reads no quoted text either (`git commit -m
@@ -27,6 +30,7 @@ set -uo pipefail
 input=$(cat)
 cmd=$(jq -r '.tool_input.command // ""' <<<"$input")
 bg=$(jq -r '.tool_input.run_in_background // false' <<<"$input")
+tmo=$(jq -r '.tool_input.timeout // 120000' <<<"$input")
 
 refuse() { echo "bash-guard: $*" >&2; exit 2; }
 
@@ -63,5 +67,10 @@ fi
 # A blind stage sweeps in another session's (or the conductor's) uncommitted work.
 if grep -qE "${w}git[[:space:]]+([^|;&]*[[:space:]])?(add[[:space:]]+([^|;&]*[[:space:]])?(-A|--all|\.)([[:space:]]|\$)|commit[[:space:]]+([^|;&]*[[:space:]])?-[a-zA-Z]*a[a-zA-Z]*([[:space:]]|\$))" <<<"$bare"; then
   refuse "a blind stage (git add -A/--all/., git commit -a; .agents/rules/git.md): name the paths you changed, after reading git status."
+fi
+# The commit hook runs the gate: the Bash timeout must outlast it.
+if [ "$bg" != true ] && [ "$tmo" -lt 300000 ] &&
+  grep -qE "${w}git[[:space:]]+([^|;&]*[[:space:]])?commit([[:space:]]|\$)" <<<"$bare"; then
+  refuse "a foreground git commit with a Bash timeout under 300000 ms (.agents/skills/work/SKILL.md): the pre-commit gate takes ~2 min and the harness backgrounds the call at the default 120 s. Run it as \`timeout 300 git commit …\` with the Bash tool's timeout parameter set to 300000."
 fi
 exit 0
