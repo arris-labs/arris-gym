@@ -14,7 +14,7 @@ the tool reads a table run with or without `--verdicts` alike; a row arris ended
 `unsupported_api` is outside the subset and gets no verdict. A family given by
 `--refusal` or `--arris-bug` is classed by that regression fixture rather than a closed form.
 
-Two part shapes, each read from its program's text (a program that is not exactly
+Three part shapes, each read from its program's text (a program that is not exactly
 one of them raises, never guessed):
 
 - **t_pipe_fitting**: a main cylinder M (axis = the plane's normal, radius R,
@@ -36,6 +36,14 @@ one of them raises, never guessed):
   of the box-bottom patch it covers), `A` and `P` by the shoelace formula; a cylinder
   foot just below the box adds only its disc's circular segments beyond the nut's edges.
 
+- **manifold_block / connecting_rod**: boxes and cylinders whose axes and faces all lie
+  along x, y or z, united and cut in the program's order (`part_ops` reads the program
+  by CadQuery's rules; bores crossing bores, a counterbore on a box's edge, a cross hole
+  into a ring's wall). Volume and moments are fluxes through the boundary (the divergence
+  theorem), and along a line on any face each solid is one exact interval, so what is
+  left is one integral across the lines per face, split where its formula changes
+  (`part_measures`).
+
 - **crossing cylinders**: the one CAD-Recode program whose row nothing classes (`CROSSING`).
 
 The integrals are tanh-sinh quadrature (endpoint square-root singularities are
@@ -53,9 +61,12 @@ import gzip
 import itertools
 import json
 import math
+import multiprocessing
 import re
 import sys
 from collections.abc import Callable, Sequence
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -766,6 +777,633 @@ def crossing_closed_form(sha256: str) -> dict[str, object]:
     }
 
 
+# --- Boxes and cylinders on the axes: manifold_block and connecting_rod -------------------
+#
+# A part built of boxes and cylinders whose axes and faces are all along x, y or z, united
+# and cut in the program's order. Its measures are integrals over its boundary (the
+# divergence theorem: V = 1/3 of the flux of x, the moment along j the flux of x_j^2/2 e_j),
+# and every boundary patch lies on one of the solids' faces. Along a line on such a face
+# (a cylinder's side along its axis, a flat face along one of its axes) each solid is one
+# interval, found exactly, so the solid on either side of the face, and with it the boundary
+# and its orientation, is exact interval arithmetic. What is left is one integral across the
+# lines, smooth between the points where an interval appears or two ends cross: those points
+# are found (`_piecewise`) and the integral is tanh-sinh quadrature between them.
+
+# Two planes this close are one: the programs' decimal literals (a top at `h / 2`) do not add
+# up exactly, and the kernels' own tolerance, 1e-7, is far above it.
+COPLANAR_TOL = 1e-9
+# Two interval ends this close, relative to the larger, are one point to `_piecewise`: the
+# same point reached by two formulas rounds either way, and its order must not flicker.
+TIE_REL = 1e-12
+# `_piecewise` samples a range at this many points to find where the integrand's formula
+# changes, and halves a bracket this many times to place a change (to the last bit).
+SCAN_POINTS = 512
+BISECT_STEPS = 64
+# A change closer than this to a piece's end (relative to the range) is not split off: where
+# an interval opens at a square root's zero, its argument rounds to either side of zero over
+# ~1e-8 of the range, and the interval there is ~1e-8 long, so it moves the sum by < 1e-15.
+FUZZ_REL = 1e-7
+# More splits than this in one range is a formula that never settles: an error, not a result.
+MAX_SPLITS = 10_000
+
+
+@dataclass(frozen=True)
+class Cuboid:
+    """A box from `lo` to `hi`."""
+
+    lo: Vec
+    hi: Vec
+
+
+@dataclass(frozen=True)
+class Rod:
+    """A cylinder along `axis` (0, 1, 2), radius `r`, from `lo` to `hi` along it; `centre`'s
+    coordinate along the axis is not read."""
+
+    axis: int
+    centre: Vec
+    r: float
+    lo: float
+    hi: float
+
+
+Solid = Cuboid | Rod
+Op = tuple[str, Solid]  # "+" unites, "-" cuts, in the program's order
+Interval = tuple[float, float]
+Signature = tuple[object, ...]
+Integrand = Callable[[float], tuple[tuple[float, ...], Signature]]
+
+
+def _others(a: int) -> tuple[int, int]:
+    return ((1, 2), (0, 2), (0, 1))[a]
+
+
+def _within(x: float, lo: float, hi: float, nudge: int) -> bool:
+    """Whether `x`, moved by an infinitesimal `nudge` (-1, 0 or +1), is inside (lo, hi)."""
+    if nudge and abs(x - lo) <= COPLANAR_TOL:
+        return nudge > 0
+    if nudge and abs(x - hi) <= COPLANAR_TOL:
+        return nudge < 0
+    return lo < x < hi
+
+
+def _chord(r: float, off: float) -> float | None:
+    """Half the chord of a circle of radius `r` at `off` from its centre, or None."""
+    gap = (r - off) * (r + off)
+    return math.sqrt(gap) if gap > 0 else None
+
+
+def _on_line(solid: Solid, d: int, at: Vec, nudge: tuple[int, int]) -> Interval | None:
+    """Where the line along axis `d` through `at` lies inside `solid` (its d coordinate is not
+    read); `nudge` moves the coordinate on one axis by an infinitesimal step, (axis, ±1)."""
+    axis, step = nudge
+    if isinstance(solid, Cuboid):
+        for j in _others(d):
+            if not _within(at[j], solid.lo[j], solid.hi[j], step if j == axis else 0):
+                return None
+        return solid.lo[d], solid.hi[d]
+    c = solid.centre
+    if solid.axis == d:
+        b, k = _others(d)
+        if (at[b] - c[b]) ** 2 + (at[k] - c[k]) ** 2 < solid.r * solid.r:
+            return solid.lo, solid.hi
+        return None
+    a = solid.axis
+    if not _within(at[a], solid.lo, solid.hi, step if a == axis else 0):
+        return None
+    o = 3 - a - d
+    w = _chord(solid.r, at[o] - c[o])
+    return None if w is None else (c[d] - w, c[d] + w)
+
+
+def _union(intervals: Sequence[Interval]) -> list[Interval]:
+    out: list[Interval] = []
+    for lo, hi in sorted(intervals):
+        if hi <= lo:
+            continue
+        if out and lo <= out[-1][1]:
+            out[-1] = (out[-1][0], max(hi, out[-1][1]))
+        else:
+            out.append((lo, hi))
+    return out
+
+
+def _minus(keep: Sequence[Interval], drop: Sequence[Interval]) -> list[Interval]:
+    out: list[Interval] = []
+    for interval in keep:
+        pieces = [interval]
+        for dlo, dhi in drop:
+            cut: list[Interval] = []
+            for lo, hi in pieces:
+                if dhi <= lo or dlo >= hi:
+                    cut.append((lo, hi))
+                    continue
+                if dlo > lo:
+                    cut.append((lo, dlo))
+                if dhi < hi:
+                    cut.append((dhi, hi))
+            pieces = cut
+        out.extend(pieces)
+    return out
+
+
+def _both(one: Sequence[Interval], two: Sequence[Interval]) -> list[Interval]:
+    out = [
+        (max(alo, blo), min(ahi, bhi))
+        for alo, ahi in one
+        for blo, bhi in two
+        if min(ahi, bhi) > max(alo, blo)
+    ]
+    return sorted(out)
+
+
+def _length(intervals: Sequence[Interval]) -> float:
+    total = 0.0
+    for lo, hi in intervals:
+        total += hi - lo
+    return total
+
+
+def _order(ends: Sequence[tuple[float, int]]) -> tuple[int, ...]:
+    """The labels of `ends` in order of their values, tied ends in order of their labels."""
+    out: list[int] = []
+    group: list[int] = []
+    last: float | None = None
+    for value, label in sorted(ends):
+        if last is not None and abs(value - last) > TIE_REL * max(abs(value), abs(last), 1.0):
+            out.extend(sorted(group))
+            group = []
+        group.append(label)
+        last = value
+    out.extend(sorted(group))
+    return tuple(out)
+
+
+def _part_on_line(
+    ops: Sequence[Op],
+    d: int,
+    at: Vec,
+    nudge: tuple[int, int],
+    own: tuple[int, bool] | None,
+    seen: list[object],
+    ends: list[tuple[float, int]],
+) -> list[Interval]:
+    """The part's intervals on a line, `ops` applied in order. `own` = (i, inside) puts the
+    line just inside or just outside solid i (whose side it lies on); `seen` and `ends`
+    collect what the integrand's formula depends on."""
+    part: list[Interval] = []
+    for i, (kind, solid) in enumerate(ops):
+        if own is not None and own[0] == i:
+            assert isinstance(solid, Rod)
+            interval = (solid.lo, solid.hi) if own[1] else None
+        else:
+            interval = _on_line(solid, d, at, nudge)
+        seen.append(interval is not None)
+        if interval is None:
+            continue
+        ends.extend(((interval[0], 2 * i), (interval[1], 2 * i + 1)))
+        part = _union([*part, interval]) if kind == "+" else _minus(part, [interval])
+    return part
+
+
+def _nodes(a: float, b: float) -> list[tuple[float, float]]:
+    """`tanh_sinh`'s nodes and weights on [a, b], its points strictly inside."""
+    half = (b - a) / 2
+    steps = int(SINH_SPAN / SINH_STEP)
+    out: list[tuple[float, float]] = []
+    for k in range(-steps, steps + 1):
+        t = k * SINH_STEP
+        u = math.pi / 2 * math.sinh(t)
+        weight = math.pi / 2 * math.cosh(t) / math.cosh(u) ** 2
+        if u >= 0:
+            x = b - half * 2 / (math.exp(2 * u) + 1)
+        else:
+            x = a + half * 2 / (math.exp(-2 * u) + 1)
+        if a < x < b:
+            out.append((x, weight * half * SINH_STEP))
+    return out
+
+
+def _change(f: Integrand, lo: float, hi: float) -> float:
+    """Where `f`'s signature stops being the one it has at `lo`, between `lo` and `hi`."""
+    first = f(lo)[1]
+    for _ in range(BISECT_STEPS):
+        mid = (lo + hi) / 2
+        if not lo < mid < hi:
+            break
+        if f(mid)[1] == first:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
+def _piecewise(f: Integrand, a: float, b: float) -> list[float]:
+    """The integral over [a, b] of `f`'s values, split wherever its signature changes.
+
+    `f` returns its values and a signature: what its formula depends on (which intervals
+    exist, the order of their ends). Between two changes the values are smooth but for a
+    square root at an end, which tanh-sinh integrates exactly. A scan finds the changes and
+    bisection places them; a piece whose own nodes show a change the scan missed is split.
+    """
+    mids = [a + (b - a) * (i + 0.5) / SCAN_POINTS for i in range(SCAN_POINTS)]
+    sigs = [f(x)[1] for x in mids]
+    cuts = [a]
+    for i in range(SCAN_POINTS - 1):
+        if sigs[i] != sigs[i + 1]:
+            cuts.append(_change(f, mids[i], mids[i + 1]))
+    cuts.append(b)
+    total: list[float] = []
+    pending = list(itertools.pairwise(cuts))
+    splits = 0
+    fuzz = FUZZ_REL * (b - a)
+    while pending:
+        lo, hi = pending.pop()
+        if hi <= lo:
+            continue
+        sig = f((lo + hi) / 2)[1]
+        evals = [(x, w, f(x)) for x, w in _nodes(lo, hi)]
+        missed = [
+            i
+            for i, (x, _, (_, s)) in enumerate(evals)
+            if s != sig and x - lo > fuzz and hi - x > fuzz
+        ]
+        if missed:
+            splits += 1
+            if splits > MAX_SPLITS:
+                raise ValueError("an integrand whose formula never settles")
+            i = max(missed, key=lambda m: min(evals[m][0] - lo, hi - evals[m][0]))
+            j = i + 1 if evals[i][0] < (lo + hi) / 2 else i - 1
+            x0, x1 = sorted((evals[i][0], evals[j][0]))
+            cut = _change(f, x0, x1)
+            pending.extend(((lo, cut), (cut, hi)))
+            continue
+        for _, w, (values, _) in evals:
+            if not total:
+                total = [0.0] * len(values)
+            for m, value in enumerate(values):
+                total[m] += w * value
+    return total
+
+
+def _flat_extent(solid: Solid, b: int, k: int, v: float) -> Interval | None:
+    """A flat face of `solid` (a box's, a cylinder's end) on the line along b at k = v."""
+    if isinstance(solid, Cuboid):
+        return (solid.lo[b], solid.hi[b]) if solid.lo[k] < v < solid.hi[k] else None
+    w = _chord(solid.r, v - solid.centre[k])
+    return None if w is None else (solid.centre[b] - w, solid.centre[b] + w)
+
+
+# What `_flat` and `_side` return: area, three times the volume, and the three moments.
+_ZERO = (0.0, 0.0, 0.0, 0.0, 0.0)
+
+
+def _flat(
+    ops: Sequence[Op], solid: Solid, a: int, side: int, c: float, before: Sequence[Solid]
+) -> list[float]:
+    """The part's boundary on a flat face of `solid` at `a = c`, its outward normal `side`.
+
+    `before` holds the solids whose flat face in this plane was read already: what lies on
+    them is not read twice.
+    """
+    b, k = _others(a)
+    if isinstance(solid, Cuboid):
+        v0, v1 = solid.lo[k], solid.hi[k]
+    else:
+        v0, v1 = solid.centre[k] - solid.r, solid.centre[k] + solid.r
+
+    def f(v: float) -> tuple[tuple[float, ...], Signature]:
+        at = [0.0, 0.0, 0.0]
+        at[a], at[k] = c, v
+        point = (at[0], at[1], at[2])
+        extent = _flat_extent(solid, b, k, v)
+        if extent is None:
+            return _ZERO, ("none",)
+        seen: list[object] = []
+        ends: list[tuple[float, int]] = [(extent[0], -1), (extent[1], -2)]
+        inside = _part_on_line(ops, b, point, (a, -side), None, seen, ends)
+        outside = _part_on_line(ops, b, point, (a, side), None, seen, ends)
+        face = [extent]
+        for j, other in enumerate(before):
+            known = _flat_extent(other, b, k, v)
+            seen.append(known is not None)
+            if known is not None:
+                face = _minus(face, [known])
+                ends.extend(((known[0], -3 - 2 * j), (known[1], -4 - 2 * j)))
+        out = _length(_both(_minus(inside, outside), face))  # the part's normal is +side
+        into = _length(_both(_minus(outside, inside), face))  # its normal is -side
+        net = (out - into) * side
+        values = [out + into, c * net, 0.0, 0.0, 0.0]
+        values[2 + a] = c * c / 2 * net
+        return tuple(values), (tuple(seen), _order(ends))
+
+    return _piecewise(f, v0, v1)
+
+
+def _side(ops: Sequence[Op], i: int, rod: Rod) -> list[float]:
+    """The part's boundary on the side of cylinder i, over its angle by quarter turns."""
+    a, r = rod.axis, rod.r
+    b, k = _others(a)
+
+    def f(t: float) -> tuple[tuple[float, ...], Signature]:
+        cos, sin = math.cos(t), math.sin(t)
+        at = [0.0, 0.0, 0.0]
+        at[b] = rod.centre[b] + r * cos
+        at[k] = rod.centre[k] + r * sin
+        point = (at[0], at[1], at[2])
+        seen: list[object] = []
+        ends: list[tuple[float, int]] = []
+        inside = _part_on_line(ops, a, point, (-1, 0), (i, True), seen, ends)
+        outside = _part_on_line(ops, a, point, (-1, 0), (i, False), seen, ends)
+        own = [(rod.lo, rod.hi)]
+        out = _length(_both(_minus(inside, outside), own))
+        into = _length(_both(_minus(outside, inside), own))
+        net = out - into
+        values = [r * (out + into), r * (at[b] * cos + at[k] * sin) * net, 0.0, 0.0, 0.0]
+        values[2 + b] = r * at[b] ** 2 / 2 * cos * net
+        values[2 + k] = r * at[k] ** 2 / 2 * sin * net
+        return tuple(values), (tuple(seen), _order(ends))
+
+    total = [0.0] * 5
+    for q in range(4):  # a quarter turn's ends are where a chord across it can touch zero
+        part = _piecewise(f, q * math.pi / 2, (q + 1) * math.pi / 2)
+        total = [x + y for x, y in zip(total, part or _ZERO, strict=True)]
+    return total
+
+
+def _solid_box(solid: Solid) -> Box:
+    if isinstance(solid, Cuboid):
+        return solid.lo, solid.hi
+    lo = [solid.centre[i] - solid.r for i in range(3)]
+    hi = [solid.centre[i] + solid.r for i in range(3)]
+    lo[solid.axis], hi[solid.axis] = solid.lo, solid.hi
+    return (lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2])
+
+
+def _united_box(ops: Sequence[Op]) -> Box:
+    boxes = [_solid_box(s) for kind, s in ops if kind == "+"]
+    lo = tuple(min(box[0][i] for box in boxes) for i in range(3))
+    hi = tuple(max(box[1][i] for box in boxes) for i in range(3))
+    return (lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2])
+
+
+def _check_bounds(ops: Sequence[Op], box: Box) -> None:
+    """Refuse a part whose cuts take away the extreme of its united solids on some side.
+
+    On each side some united solid reaches the box, and the part keeps material there: along
+    a line on that solid's extreme face (a box's, scanned across it) or its side's extreme
+    line, the part is not empty just inside.
+    """
+    for a in range(3):
+        for end in (0, 1):
+            extreme = box[end][a]
+            step = 1 if end == 0 else -1
+            found = False
+            lines: list[tuple[int, Vec, tuple[int, int], tuple[int, bool] | None]]
+            for i, (kind, solid) in enumerate(ops):
+                if kind != "+" or _solid_box(solid)[end][a] != extreme:
+                    continue
+                if isinstance(solid, Rod) and solid.axis != a:
+                    at = [solid.centre[0], solid.centre[1], solid.centre[2]]
+                    at[a] = extreme
+                    lines = [(solid.axis, (at[0], at[1], at[2]), (a, step), (i, True))]
+                else:
+                    b, k = _others(a)
+                    lo, hi = _solid_box(solid)
+                    lines = []
+                    for n in range(SCAN_POINTS):
+                        at = [0.0, 0.0, 0.0]
+                        at[a] = extreme
+                        at[k] = lo[k] + (hi[k] - lo[k]) * (n + 0.5) / SCAN_POINTS
+                        lines.append((b, (at[0], at[1], at[2]), (a, step), None))
+                for d, point, nudge, own in lines:
+                    if _part_on_line(ops, d, point, nudge, own, [], []):
+                        found = True
+                        break
+                if found:
+                    break
+            if not found:
+                raise ValueError("a part whose cuts take away the extreme of its box")
+
+
+def part_measures(ops: Sequence[Op]) -> tuple[float, float, Vec, Box]:
+    """Volume, area, centroid and bounds of a part of boxes and cylinders on the axes."""
+    totals = [0.0] * 5
+    planes: list[tuple[int, float, Solid]] = []  # flat faces read so far
+    for i, (_, solid) in enumerate(ops):
+        faces: list[tuple[int, int, float]] = []  # axis, outward side, plane
+        if isinstance(solid, Cuboid):
+            faces = [
+                (a, s, solid.hi[a] if s > 0 else solid.lo[a]) for a in range(3) for s in (-1, 1)
+            ]
+        else:
+            part = _side(ops, i, solid)
+            totals = [x + y for x, y in zip(totals, part, strict=True)]
+            faces = [(solid.axis, s, solid.hi if s > 0 else solid.lo) for s in (-1, 1)]
+        for a, s, c in faces:
+            before = [o for (pa, pc, o) in planes if pa == a and abs(pc - c) <= COPLANAR_TOL]
+            part = _flat(ops, solid, a, s, c, before) or list(_ZERO)
+            totals = [x + y for x, y in zip(totals, part, strict=True)]
+            planes.append((a, c, solid))
+    area, volume3, m_x, m_y, m_z = totals
+    volume = volume3 / 3
+    box = _united_box(ops)
+    _check_bounds(ops, box)
+    return volume, area, (m_x / volume, m_y / volume, m_z / volume), box
+
+
+# CadQuery's planes: each one's local x, y and normal in global coordinates.
+_PLANES: dict[str, tuple[Vec, Vec, Vec]] = {
+    "XY": ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)),
+    "XZ": ((1.0, 0.0, 0.0), (0.0, 0.0, 1.0), (0.0, -1.0, 0.0)),
+    "YZ": ((0.0, 1.0, 0.0), (0.0, 0.0, 1.0), (1.0, 0.0, 0.0)),
+}
+Frame = tuple[Vec, Vec, Vec, Vec]  # origin, x, y, normal
+
+
+def _at(frame: Frame, u: float, v: float, w: float) -> Vec:
+    o, x, y, n = frame
+    p = [o[i] + u * x[i] + v * y[i] + w * n[i] for i in range(3)]
+    return p[0], p[1], p[2]
+
+
+def _axis(n: Vec) -> int:
+    (axis,) = [i for i in range(3) if abs(n[i]) == 1.0]
+    return axis
+
+
+def _cross(u: Vec, v: Vec) -> Vec:
+    return (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])
+
+
+def _top(ops: Sequence[Op], a: int) -> float:
+    """The plane of `faces(">A")`: CadQuery keeps the faces whose centre lies furthest along A.
+
+    That is the highest flat face of a united solid facing +A (a box's, or a cylinder's end
+    on that axis). A cut leaves faces inside the part, below it. A cylinder across the axis
+    has its side's centre on its own mid-plane only when the whole part is symmetric about
+    that plane, which is checked; that plane must lie below the top.
+    """
+    top = -math.inf
+    for kind, solid in ops:
+        if kind == "+" and isinstance(solid, Cuboid):
+            top = max(top, solid.hi[a])
+        elif kind == "+" and isinstance(solid, Rod) and solid.axis == a:
+            top = max(top, solid.hi)
+    for kind, solid in ops:
+        if kind == "+" and isinstance(solid, Rod) and solid.axis != a:
+            mid = solid.centre[a]
+            for _, other in ops:
+                lo, hi = _solid_box(other)
+                if abs((lo[a] - mid) + (hi[a] - mid)) > PLACEMENT_TOL:
+                    raise ValueError("a cylinder's side whose centre this tool cannot place")
+            if not mid < top:
+                raise ValueError("a cylinder's side above the top face")
+    return top
+
+
+def _made(plane: str, offset: Vec, call: str, args: str) -> Solid:
+    """`Workplane(plane).transformed(offset=offset).box(...)` or `.cylinder(h, r)`."""
+    x, y, n = _PLANES[plane]
+    o = _at(((0.0, 0.0, 0.0), x, y, n), *offset)
+    values = [_num(v) for v in args.split(",")]
+    if call == "box" and len(values) == 3:
+        half = [sum(abs(values[j] * (x, y, n)[j][i]) / 2 for j in range(3)) for i in range(3)]
+        return Cuboid(
+            (o[0] - half[0], o[1] - half[1], o[2] - half[2]),
+            (o[0] + half[0], o[1] + half[1], o[2] + half[2]),
+        )
+    if call == "cylinder" and len(values) == 2:
+        h, r = values
+        a = _axis(n)
+        return Rod(a, o, r, o[a] - h / 2, o[a] + h / 2)
+    raise ValueError(f"a solid this tool does not read: {call}({args})")
+
+
+_CALL = re.compile(r"\.(\w+)\(((?:[^()]|\((?:[^()]|\([^()]*\))*\))*)\)")
+_MADE = re.compile(
+    rf'^\s*cq\.Workplane\("(XY|XZ|YZ)"\)\s*'
+    rf"(?:\.transformed\(offset=cq\.Vector\({_NUMBER}, {_NUMBER}, {_NUMBER}\), "
+    rf"rotate=cq\.Vector\(0, 0, 0\)\)\s*)?"
+    rf"\.(box|cylinder)\(([^()]*)\)\s*$"
+)
+
+
+def part_ops(text: str) -> list[Op]:
+    """The boxes and cylinders a manifold_block or connecting_rod program unites and cuts.
+
+    Read by CadQuery 2.3.0's rules, which `arris_gym.cq` follows (ADR-0017, ADR-0018): a
+    box or a cylinder is centred on its workplane, a cylinder along the plane's normal;
+    `faces(">A").workplane()` (once or twice, ADR-0018 rule 5) is the plane of the top face
+    along +A (`_top`), its x `(0, 0, 1)` crossed with its normal (+x for a normal along z),
+    its origin the previous origin projected onto it; `pushPoints` are points in that plane;
+    `hole(d)` and `cboreHole(d, D, h)` bore from each point (the origin when none) against
+    the normal for `largestDimension()`, the diagonal of the part's box (so through it), the
+    counterbore a second cylinder of D to h deep. Raises `ValueError` for any other call.
+    """
+    m = re.search(r'result = \(\n\s*cq\.Workplane\("(XY|XZ|YZ)"\)', text)
+    if m is None:
+        raise ValueError("not a part this tool reads")
+    plane = m.group(1)
+    x, y, n = _PLANES[plane]
+    body = text[m.end() : text.index("\n)\n", m.end())]
+    ops: list[Op] = []
+    frame: Frame = ((0.0, 0.0, 0.0), x, y, n)
+    points: list[Vec] | None = None
+    selected: int | None = None
+    for call in _CALL.finditer(body):
+        name, args = call.group(1), call.group(2)
+        if name in ("box", "cylinder"):
+            if ops:
+                raise ValueError("a second solid on the chain")
+            ops.append(("+", _made(plane, (0.0, 0.0, 0.0), name, args)))
+        elif name in ("union", "cut"):
+            made = _MADE.match(args)
+            if made is None or made.group(1) != plane:
+                raise ValueError(f"a {name} this tool does not read")
+            offset = (
+                _num(made.group(2) or "0"),
+                _num(made.group(3) or "0"),
+                _num(made.group(4) or "0"),
+            )
+            solid = _made(plane, offset, made.group(5), made.group(6))
+            ops.append(("+" if name == "union" else "-", solid))
+            points = None
+        elif name == "faces":
+            chosen = re.fullmatch(r'">([XYZ])"', args)
+            if chosen is None:
+                raise ValueError(f"a selector this tool does not read: {args}")
+            a = "XYZ".index(chosen.group(1))
+            if selected is not None and selected != a:
+                raise ValueError("faces on faces of another direction")
+            selected = a
+        elif name == "workplane" and args == "":
+            if selected is None:
+                raise ValueError("a workplane on no faces")
+            normal = [0.0, 0.0, 0.0]
+            normal[selected] = 1.0
+            nv = (normal[0], normal[1], normal[2])
+            xd = _cross((0.0, 0.0, 1.0), nv)
+            if math.hypot(*xd) == 0.0:
+                xd = (1.0, 0.0, 0.0)
+            origin = list(frame[0])
+            origin[selected] = _top(ops, selected)
+            frame = ((origin[0], origin[1], origin[2]), xd, _cross(nv, xd), nv)
+            points = [frame[0]]
+            selected = None
+        elif name == "pushPoints":
+            pairs = re.findall(rf"\({_NUMBER}, {_NUMBER}\)", args)
+            if not pairs or len(pairs) != args.count("(") or points is None:
+                raise ValueError("points this tool does not read")
+            points = [_at(frame, _num(u), _num(v), 0.0) for u, v in pairs]
+        elif name in ("hole", "cboreHole"):
+            if points is None:
+                raise ValueError("a hole on no workplane")
+            values = [_num(v) for v in args.split(",")]
+            a = _axis(frame[3])
+            top = frame[0][a]
+            lo, hi = _united_box(ops)
+            depth = math.dist(lo, hi)
+            if top - depth >= lo[a] or len(values) != (1 if name == "hole" else 3):
+                raise ValueError("a hole this tool does not read")
+            for p in points:
+                if name == "hole":
+                    ops.append(("-", Rod(a, p, values[0] / 2, top - depth, top)))
+                else:
+                    d, big, deep = values
+                    ops.append(("-", Rod(a, p, d / 2, top - depth, top - deep)))
+                    ops.append(("-", Rod(a, p, big / 2, top - deep, top)))
+            points = None
+        else:
+            raise ValueError(f"a call this tool does not read: {name}")
+    return ops
+
+
+def part_closed_form(text: str) -> dict[str, object]:
+    """The `ClosedForm` JSON of a manifold_block or connecting_rod program."""
+    ops = part_ops(text)
+    volume, area, centroid, bounds = part_measures(ops)
+    solids = "; ".join(
+        f"{kind} {'box' if isinstance(s, Cuboid) else 'cylinder'} {s}" for kind, s in ops
+    )
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": list(centroid),
+        "bounds": [list(bounds[0]), list(bounds[1])],
+        "note": (
+            "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and "
+            "moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), "
+            "each face's boundary patch exact interval arithmetic along lines on it and one "
+            f"integral across them (tools/cq_closed_forms.py, part_measures): {solids}"
+        ),
+    }
+
+
+FORM_FAMILIES = ("t_pipe_fitting_", "u_bolt_", "j_hook_", "manifold_block_", "connecting_rod_")
+
+
 def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | None:
     """The closed form of a program of a family (or a SHA-256) this tool knows, else None."""
     if sha256 in CROSSING:
@@ -774,7 +1412,13 @@ def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | No
         return tee_closed_form(text)
     if stem.startswith(("u_bolt_", "j_hook_")):
         return hook_closed_form(text)
+    if stem.startswith(("manifold_block_", "connecting_rod_")):
+        return part_closed_form(text)
     return None
+
+
+def _closed_form_job(job: tuple[str, str, str]) -> dict[str, object] | None:
+    return closed_form_for(*job)
 
 
 def verdicts_for(
@@ -802,30 +1446,35 @@ def verdicts_for(
         raise ValueError(f"a family classed both arris_refusal and arris_bug: {both}")
     rows = FidelityTable.model_validate_json(gzip.decompress(table.read_bytes())).entries
     out: dict[str, dict[str, object]] = {}
+    jobs: list[tuple[str, str, str]] = []  # rows a closed form may class: stem, text, SHA-256
     for entry in rows:
         if entry.row.outcome.value != "unclassified" and entry.row.verdict is None:
             continue
         if entry.row.status is Status.UNSUPPORTED_API:
             continue  # outside the subset: the kernel never saw it, so no finding classes it
         family = re.sub(r"_\d+_s\d+$", "", entry.name)
-        text = corpus_texts[entry.name]
-        verdict: dict[str, object]
         if family in refusals:
-            verdict = {
+            out[entry.name] = {
                 "disagreement": "arris_refusal",
                 "evidence": {"kind": "fixture", "path": refusals[family]},
             }
         elif family in bugs:
-            verdict = {
+            out[entry.name] = {
                 "disagreement": "arris_bug",
                 "evidence": {"kind": "fixture", "path": bugs[family]},
             }
-        else:
-            closed = closed_form_for(entry.name, text, entry.row.program_sha256)
-            if closed is None:
-                continue
-            verdict = {"disagreement": "occt_wrong", "evidence": closed}
-        out[entry.name] = verdict
+        elif entry.name.startswith(FORM_FAMILIES) or entry.row.program_sha256 in CROSSING:
+            jobs.append((entry.name, corpus_texts[entry.name], entry.row.program_sha256))
+    # Each closed form is a pure function of its program, worked out one per process, each
+    # process started afresh (a fork of a process with threads may deadlock).
+    forms: list[dict[str, object] | None] = []
+    if jobs:
+        spawn = multiprocessing.get_context("spawn")
+        with ProcessPoolExecutor(max_workers=WORKERS, mp_context=spawn) as pool:
+            forms = list(pool.map(_closed_form_job, jobs))
+    for (stem, _, _), closed in zip(jobs, forms, strict=True):
+        if closed is not None:
+            out[stem] = {"disagreement": "occt_wrong", "evidence": closed}
     return dict(sorted(out.items()))
 
 

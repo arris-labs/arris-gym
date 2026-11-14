@@ -126,19 +126,23 @@ within a given design; **[3]** unproven semantics, established here.
   `pull_handle` 176, `cotter_pin` 159, `ball_knob` 153, `wall_anchor` 81,
   `torus_link` 80, `lobed_knob` 68 …); no corpus program writes the
   bore-over-a-bore refusal.
-- [ ] Step 7a **[3]** — 32 in-subset rows unclassified, both `ok`/`ok`, volume
-  and area off the oracle by 1e-8 to 2e-6 (relative), bounds and centroid within
-  their constants: `manifold_block` 17 (`cboreHole` and `hole` crossing a `hole`
-  of the same radius, r 8.75, along x, y and z) and `connecting_rod` 15 (the
-  vertical `hole` through the cylinder-and-rail part where cylinders of other
-  axes cross). The cause is the oracle's cylinder-cylinder section as on
-  `u_bolt` (step 6's quadrature of `manifold_block`), unproven here: each family
-  needs a closed form of all four figures in `tools/cq_closed_forms.py` before a
-  verdict (`occt_wrong`) may class it, and no quadrature in the tool gives area
-  and centroid of these sections yet. Needs a whole-table re-run (the
-  conductor's) to commit the verdicts; if it is judged too dear, the alternative
-  is to narrow the declaration (`cboreHole`'s and `hole`'s use across a crossing
-  bore), an ADR-0014 amendment: the human's choice.
+- [x] Step 7a **[3]** — 32 in-subset rows unclassified, both `ok`/`ok`, volume
+  and area off the oracle by 1e-8 to 2e-6 (relative): `manifold_block` 17 and
+  `connecting_rod` 15. **Done**: all 32 `occt_wrong` by a closed form of all four
+  figures, `tools/cq_closed_forms.py` `part_measures` (boxes and cylinders on the
+  axes, united and cut in order; volume and moments as fluxes through the boundary,
+  each face's patch exact interval arithmetic along lines on it, one quadrature
+  across them split where its formula changes; converged to 1e-15 when its step is
+  halved), checked on textbook figures (a bored box, the Steinmetz union, the
+  CAD-Recode crossing's own form) and on constructed programs against arris
+  (`tests/test_cq_closed_forms.py`). arris is within 3e-11 of it on every row, the
+  oracle off by 2e-9 to 2e-6 in volume or area; the oracle's cylinder-cylinder sections,
+  as on `u_bolt`. Read by CadQuery's rules, the parts are not the plan's guess: a face's
+  workplane origin is the previous origin projected onto it, so the `manifold_block`
+  counterbores and third hole sit on the block's edge, and the `connecting_rod` cross
+  hole sits on the ring's end face, cut into its lower wall. Written by the tool on
+  step 7's scratch table into `tests/fixtures/c2/benchcad/verdicts.json` (646, the 614
+  before unchanged); step 8's re-run carries them.
 - [x] Step 7b **[3]** — *Parked, blocked on arris (the human, 2026-11-14: kept as `cq_bug`, not narrowed)*: 7 in-subset `cq_bug`, all `connecting_rod`
   (`unsupported_api`, the oracle `ok`): `faces(">Z").faces(">Z").workplane()`
   where the kept face is a cylinder's (6: "Workplane.workplane on a cylinder

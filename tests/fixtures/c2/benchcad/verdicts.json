@@ -1,4 +1,394 @@
 {
+ "connecting_rod_000271_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 11996.243444281621,
+   "bounds": [
+    [
+     -20.64,
+     -9.025,
+     -20.64
+    ],
+    [
+     136.22,
+     9.025,
+     20.64
+    ]
+   ],
+   "centroid": [
+    50.09952394348406,
+    -0.006563308271920654,
+    0.017424639738391954
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=20.64, lo=-6.465, hi=6.465); + box Cuboid(lo=(20.139999999999993, -6.415, -6.465), hi=(116.28, 6.415, 6.465)); + cylinder Rod(axis=1, centre=(126.0, 0.0, 0.0), r=10.22, lo=-6.465, hi=6.465); - cylinder Rod(axis=1, centre=(0.0, 6.465, 0.0), r=11.9, lo=-156.2503431609939, hi=6.465); - cylinder Rod(axis=1, centre=(126.0, 0.0, 0.0), r=6.4, lo=-9.6975, hi=9.6975); + box Cuboid(lo=(30.153999999999996, -9.025, -6.465), hi=(106.26599999999999, -5.915, 6.465)); + box Cuboid(lo=(30.153999999999996, 5.915, -6.465), hi=(106.26599999999999, 9.025, 6.465)); - cylinder Rod(axis=2, centre=(5.21, 6.465, 6.465), r=1.655, lo=-156.73702357814074, hi=6.465)",
+   "volume": 35111.634837521946
+  }
+ },
+ "connecting_rod_003435_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3059.950483777473,
+   "bounds": [
+    [
+     -8.12,
+     -8.12,
+     -5.09
+    ],
+    [
+     70.58,
+     8.12,
+     5.09
+    ]
+   ],
+   "centroid": [
+    30.701160885014946,
+    0.004403874572025959,
+    -0.002072147325125682
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=2, centre=(0.0, 0.0, 0.0), r=8.12, lo=-3.48, hi=3.48); + box Cuboid(lo=(7.619999999999997, -3.48, -2.61), hi=(59.32, 3.48, 2.61)); + cylinder Rod(axis=2, centre=(64.7, 0.0, 0.0), r=5.88, lo=-3.48, hi=3.48); - cylinder Rod(axis=2, centre=(0.0, 0.0, 3.48), r=5.4, lo=-77.1789685031987, hi=3.48); - cylinder Rod(axis=2, centre=(64.7, 0.0, 0.0), r=3.7, lo=-5.22, hi=5.22); + box Cuboid(lo=(13.189999999999998, -3.48, 2.1100000000000003), hi=(53.75, 3.48, 5.09)); + box Cuboid(lo=(13.189999999999998, -3.48, -5.09), hi=(53.75, 3.48, -2.1100000000000003)); - cylinder Rod(axis=1, centre=(-1.12, 3.48, 3.48), r=0.83, lo=-77.52037036952362, hi=3.48)",
+   "volume": 4518.109170815399
+  }
+ },
+ "connecting_rod_004897_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3637.0342362071938,
+   "bounds": [
+    [
+     -11.35,
+     -7.41,
+     -11.35
+    ],
+    [
+     61.46,
+     7.41,
+     11.35
+    ]
+   ],
+   "centroid": [
+    23.617087780836147,
+    -0.3532309986381694,
+    0.006590215733293783
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=11.35, lo=-3.645, hi=3.645); + box Cuboid(lo=(10.849999999999998, -4.06, -3.645), hi=(48.84, 4.06, 3.645)); + cylinder Rod(axis=1, centre=(54.9, -3.2, 0.0), r=6.56, lo=-6.845000000000001, hi=0.44499999999999984); - cylinder Rod(axis=1, centre=(0.0, 4.06, 0.0), r=6.8, lo=-72.98222949136402, hi=4.06); - cylinder Rod(axis=1, centre=(54.9, -3.2, 0.0), r=3.6, lo=-8.6675, hi=2.2675); + box Cuboid(lo=(15.049, -7.41, -3.645), hi=(44.641, -3.5600000000000005, 3.645)); + box Cuboid(lo=(15.049, 3.5600000000000005, -3.645), hi=(44.641, 7.41, 3.645)); - cylinder Rod(axis=2, centre=(2.395, 4.06, 3.645), r=1.095, lo=-74.04810458464124, hi=3.645)",
+   "volume": 6245.652999167571
+  }
+ },
+ "connecting_rod_007116_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 14605.95969451587,
+   "bounds": [
+    [
+     -25.94,
+     -9.645,
+     -25.94
+    ],
+    [
+     113.15,
+     9.645,
+     25.94
+    ]
+   ],
+   "centroid": [
+    45.09917709753937,
+    -0.0025279826542784433,
+    0.007439945610199956
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=25.94, lo=-7.79, hi=7.79); + box Cuboid(lo=(25.44, -5.645, -7.79), hi=(74.95, 5.645, 7.79)); + cylinder Rod(axis=1, centre=(93.8, 0.0, 0.0), r=19.35, lo=-7.79, hi=7.79); - cylinder Rod(axis=1, centre=(0.0, 7.79, 0.0), r=17.7, lo=-141.47586649331456, hi=7.79); - cylinder Rod(axis=1, centre=(93.8, 0.0, 0.0), r=8.4, lo=-11.685, hi=11.685); + box Cuboid(lo=(30.791, -9.645, -7.79), hi=(69.599, -5.145, 7.79)); + box Cuboid(lo=(30.791, 5.145, -7.79), hi=(69.599, 9.645, 7.79)); - cylinder Rod(axis=2, centre=(3.295, 7.79, 7.79), r=1.1, lo=-141.90858583166377, hi=7.79)",
+   "volume": 45932.22088522772
+  }
+ },
+ "connecting_rod_007859_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3076.075256230446,
+   "bounds": [
+    [
+     -9.81,
+     -6.8999999999999995,
+     -9.81
+    ],
+    [
+     46.28,
+     5.365,
+     9.81
+    ]
+   ],
+   "centroid": [
+    17.983355033397153,
+    -0.5525354842620117,
+    0.009802079133953878
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=9.81, lo=-4.6, hi=4.6); + box Cuboid(lo=(9.31, -2.125, -4.6), hi=(32.82, 2.125, 4.6)); + cylinder Rod(axis=1, centre=(39.3, -2.3, 0.0), r=6.98, lo=-6.8999999999999995, hi=2.3); - cylinder Rod(axis=1, centre=(0.0, 4.6, 0.0), r=6.1, lo=-55.925056794686284, hi=4.6); - cylinder Rod(axis=1, centre=(39.3, -2.3, 0.0), r=3.0, lo=-9.2, hi=4.6000000000000005); + box Cuboid(lo=(12.061000000000002, -5.365, -4.6), hi=(30.069000000000003, -1.625, 4.6)); + box Cuboid(lo=(12.061000000000002, 1.625, -4.6), hi=(30.069000000000003, 5.365, 4.6)); - cylinder Rod(axis=2, centre=(1.415, 4.6, 4.6), r=1.01, lo=-56.07505850841844, hi=4.6)",
+   "volume": 4824.568909917741
+  }
+ },
+ "connecting_rod_012442_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2665.9609871787166,
+   "bounds": [
+    [
+     -9.61,
+     -5.705,
+     -9.61
+    ],
+    [
+     41.74,
+     5.705,
+     9.61
+    ]
+   ],
+   "centroid": [
+    18.67699827727275,
+    -0.0020234143234539154,
+    0.0044278007585809255
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=9.61, lo=-4.315, hi=4.315); + box Cuboid(lo=(9.11, -2.505, -4.315), hi=(29.759999999999998, 2.505, 4.315)); + cylinder Rod(axis=1, centre=(35.5, 0.0, 0.0), r=6.24, lo=-4.315, hi=4.315); - cylinder Rod(axis=1, centre=(0.0, 4.315, 0.0), r=8.1, lo=-51.18912417109201, hi=4.315); - cylinder Rod(axis=1, centre=(35.5, 0.0, 0.0), r=3.5, lo=-6.4725, hi=6.4725); + box Cuboid(lo=(11.575, -5.705, -4.315), hi=(27.294999999999998, -2.005, 4.315)); + box Cuboid(lo=(11.575, 2.005, -4.315), hi=(27.294999999999998, 5.705, 4.315)); - cylinder Rod(axis=2, centre=(1.685, 4.315, 4.315), r=0.82, lo=-51.68874094647607, hi=4.315)",
+   "volume": 3189.517756551891
+  }
+ },
+ "connecting_rod_013578_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 9327.794349461852,
+   "bounds": [
+    [
+     -15.05,
+     -9.399999999999999,
+     -15.05
+    ],
+    [
+     122.61000000000001,
+     9.399999999999999,
+     15.05
+    ]
+   ],
+   "centroid": [
+    56.19957396640862,
+    -0.001362373483090178,
+    0.00333098636453614
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=15.05, lo=-5.7, hi=5.7); + box Cuboid(lo=(14.549999999999997, -4.39, -5.7), hi=(100.69, 4.39, 5.7)); + cylinder Rod(axis=1, centre=(111.4, 0.0, 0.0), r=11.21, lo=-5.7, hi=5.7); - cylinder Rod(axis=1, centre=(0.0, 5.7, 0.0), r=11.1, lo=-135.67271872606827, hi=5.7); - cylinder Rod(axis=1, centre=(111.4, 0.0, 0.0), r=5.7, lo=-8.55, hi=8.55); + box Cuboid(lo=(23.564, -9.399999999999999, -5.7), hi=(91.67599999999999, -3.8899999999999997, 5.7)); + box Cuboid(lo=(23.564, 3.8899999999999997, -5.7), hi=(91.67599999999999, 9.399999999999999, 5.7)); - cylinder Rod(axis=2, centre=(1.92, 5.7, 5.7), r=0.98, lo=-136.46091445963623, hi=5.7)",
+   "volume": 23390.417122834217
+  }
+ },
+ "connecting_rod_014170_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5054.82421623891,
+   "bounds": [
+    [
+     -12.17,
+     -12.17,
+     -7.08
+    ],
+    [
+     64.65,
+     12.17,
+     7.08
+    ]
+   ],
+   "centroid": [
+    25.811967608148816,
+    0.005761088736232772,
+    -0.0033658091526608132
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=2, centre=(0.0, 0.0, 0.0), r=12.17, lo=-6.04, hi=6.04); + box Cuboid(lo=(11.669999999999998, -6.04, -3.37), hi=(54.849999999999994, 6.04, 3.37)); + cylinder Rod(axis=2, centre=(59.5, 0.0, 0.0), r=5.15, lo=-6.04, hi=6.04); - cylinder Rod(axis=2, centre=(0.0, 0.0, 6.04), r=8.4, lo=-75.44419724093746, hi=6.04); - cylinder Rod(axis=2, centre=(59.5, 0.0, 0.0), r=2.3, lo=-9.06, hi=9.06); + box Cuboid(lo=(16.387999999999998, -6.04, 2.8699999999999997), hi=(50.132, 6.04, 7.08)); + box Cuboid(lo=(16.387999999999998, -6.04, -7.08), hi=(50.132, 6.04, -2.8699999999999997)); - cylinder Rod(axis=1, centre=(-3.51, 6.04, 6.04), r=0.985, lo=-75.77841846430424, hi=6.04)",
+   "volume": 10257.30854910466
+  }
+ },
+ "connecting_rod_015840_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 16101.18456077557,
+   "bounds": [
+    [
+     -22.43,
+     -16.465,
+     -22.43
+    ],
+    [
+     112.63,
+     11.42,
+     22.43
+    ]
+   ],
+   "centroid": [
+    39.594092264194224,
+    -0.4627284218844616,
+    0.009248774460589648
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=22.43, lo=-10.865, hi=10.865); + box Cuboid(lo=(21.93, -5.49, -10.865), hi=(93.27000000000001, 5.49, 10.865)); + cylinder Rod(axis=1, centre=(102.7, -5.6, 0.0), r=9.93, lo=-16.465, hi=5.265000000000001); - cylinder Rod(axis=1, centre=(0.0, 10.865, 0.0), r=13.5, lo=-134.05067237535076, hi=10.865); - cylinder Rod(axis=1, centre=(102.7, -5.6, 0.0), r=5.4, lo=-21.8975, hi=10.6975); + box Cuboid(lo=(29.464000000000002, -11.42, -10.865), hi=(85.736, -4.99, 10.865)); + box Cuboid(lo=(29.464000000000002, 4.99, -10.865), hi=(85.736, 11.42, 10.865)); - cylinder Rod(axis=2, centre=(6.25, 10.865, 10.865), r=1.46, lo=-134.15636540868726, hi=10.865)",
+   "volume": 58079.1270449014
+  }
+ },
+ "connecting_rod_015908_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4188.671749896343,
+   "bounds": [
+    [
+     -12.93,
+     -12.93,
+     -7.715
+    ],
+    [
+     56.980000000000004,
+     12.93,
+     7.715
+    ]
+   ],
+   "centroid": [
+    19.04033477153472,
+    0.014729724571813036,
+    -0.0064356900742197345
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=2, centre=(0.0, 0.0, 0.0), r=12.93, lo=-4.38, hi=4.38); + box Cuboid(lo=(12.430000000000001, -4.38, -3.725), hi=(41.92, 4.38, 3.725)); + cylinder Rod(axis=2, centre=(49.2, 0.0, 0.0), r=7.78, lo=-4.38, hi=4.38); - cylinder Rod(axis=2, centre=(0.0, 0.0, 4.38), r=5.9, lo=-70.6725502564703, hi=4.38); - cylinder Rod(axis=2, centre=(49.2, 0.0, 0.0), r=3.4, lo=-6.57, hi=6.57); + box Cuboid(lo=(15.779, -4.38, 3.2249999999999996), hi=(38.571, 4.38, 7.715)); + box Cuboid(lo=(15.779, -4.38, -7.715), hi=(38.571, 4.38, -3.2249999999999996)); - cylinder Rod(axis=1, centre=(-2.575, 4.38, 4.38), r=1.095, lo=-71.73985680490998, hi=4.38)",
+   "volume": 8463.093493155073
+  }
+ },
+ "connecting_rod_016529_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3462.852690922205,
+   "bounds": [
+    [
+     -10.15,
+     -6.085,
+     -10.15
+    ],
+    [
+     49.57,
+     6.085,
+     10.15
+    ]
+   ],
+   "centroid": [
+    18.38472247699479,
+    -0.004059969703349267,
+    0.0075085989980214
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=10.15, lo=-4.935, hi=4.935); + box Cuboid(lo=(9.650000000000002, -2.925, -4.935), hi=(36.730000000000004, 2.925, 4.935)); + cylinder Rod(axis=1, centre=(42.9, 0.0, 0.0), r=6.67, lo=-4.935, hi=4.935); - cylinder Rod(axis=1, centre=(0.0, 4.935, 0.0), r=7.0, lo=-58.90844367278444, hi=4.935); - cylinder Rod(axis=1, centre=(42.9, 0.0, 0.0), r=4.7, lo=-7.4025, hi=7.4025); + box Cuboid(lo=(12.758000000000001, -6.085, -4.935), hi=(33.622, -2.425, 4.935)); + box Cuboid(lo=(12.758000000000001, 2.425, -4.935), hi=(33.622, 6.085, 4.935)); - cylinder Rod(axis=2, centre=(1.74, 4.935, 4.935), r=0.96, lo=-59.30421932900492, hi=4.935)",
+   "volume": 5207.725860114101
+  }
+ },
+ "connecting_rod_016562_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 12545.942492211556,
+   "bounds": [
+    [
+     -22.01,
+     -22.01,
+     -9.6
+    ],
+    [
+     89.66,
+     22.01,
+     9.6
+    ]
+   ],
+   "centroid": [
+    27.242282177410875,
+    0.008660066736075035,
+    -0.0047393026945307904
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=2, centre=(0.0, 0.0, 0.0), r=22.01, lo=-9.6, hi=9.6); + box Cuboid(lo=(21.51, -9.6, -6.295), hi=(68.24, 9.6, 6.295)); + cylinder Rod(axis=2, centre=(78.7, 0.0, 0.0), r=10.96, lo=-9.6, hi=9.6); - cylinder Rod(axis=2, centre=(0.0, 0.0, 9.6), r=13.2, lo=-111.9589951422765, hi=9.6); - cylinder Rod(axis=2, centre=(78.7, 0.0, 0.0), r=6.7, lo=-14.4, hi=14.4); + box Cuboid(lo=(26.583, -9.6, 5.795), hi=(63.167, 9.6, 9.415000000000001)); + box Cuboid(lo=(26.583, -9.6, -9.415000000000001), hi=(63.167, 9.6, -5.795)); - cylinder Rod(axis=1, centre=(-5.525, 9.6, 9.6), r=1.175, lo=-111.9589951422765, hi=9.6)",
+   "volume": 38840.63390602773
+  }
+ },
+ "connecting_rod_016863_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4671.983855831883,
+   "bounds": [
+    [
+     -11.94,
+     -11.94,
+     -6.17
+    ],
+    [
+     83.57000000000001,
+     11.94,
+     6.17
+    ]
+   ],
+   "centroid": [
+    32.47076018938377,
+    0.006425706633707401,
+    -0.0025798740618193424
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=2, centre=(0.0, 0.0, 0.0), r=11.94, lo=-4.26, hi=4.26); + box Cuboid(lo=(11.440000000000001, -4.26, -2.72), hi=(70.73, 4.26, 2.72)); + cylinder Rod(axis=2, centre=(76.9, 0.0, 0.0), r=6.67, lo=-4.26, hi=4.26); - cylinder Rod(axis=2, centre=(0.0, 0.0, 4.26), r=8.1, lo=-94.55803934505076, hi=4.26); - cylinder Rod(axis=2, centre=(76.9, 0.0, 0.0), r=5.3, lo=-6.39, hi=6.39); + box Cuboid(lo=(17.769000000000002, -4.26, 2.22), hi=(64.401, 4.26, 6.17)); + box Cuboid(lo=(17.769000000000002, -4.26, -6.17), hi=(64.401, 4.26, -2.22)); - cylinder Rod(axis=1, centre=(-2.635, 4.26, 4.26), r=0.92, lo=-94.96041171049433, hi=4.26)",
+   "volume": 7961.109248980417
+  }
+ },
+ "connecting_rod_017631_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 10206.255389161806,
+   "bounds": [
+    [
+     -17.18,
+     -17.18,
+     -9.584999999999999
+    ],
+    [
+     108.28999999999999,
+     17.18,
+     9.584999999999999
+    ]
+   ],
+   "centroid": [
+    44.4534212293161,
+    0.007042616004308206,
+    -0.0035117608227334006
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=2, centre=(0.0, 0.0, 0.0), r=17.18, lo=-7.29, hi=7.29); + box Cuboid(lo=(16.68, -7.29, -4.695), hi=(91.21000000000001, 7.29, 4.695)); + cylinder Rod(axis=2, centre=(99.5, 0.0, 0.0), r=8.79, lo=-7.29, hi=7.29); - cylinder Rod(axis=2, centre=(0.0, 0.0, 7.29), r=11.3, lo=-123.61418977252025, hi=7.29); - cylinder Rod(axis=2, centre=(99.5, 0.0, 0.0), r=3.5, lo=-10.935, hi=10.935); + box Cuboid(lo=(24.533, -7.29, 4.195), hi=(83.357, 7.29, 9.584999999999999)); + box Cuboid(lo=(24.533, -7.29, -9.584999999999999), hi=(83.357, 7.29, -4.195)); - cylinder Rod(axis=1, centre=(-4.195, 7.29, 7.29), r=1.25, lo=-124.20456034376478, hi=7.29)",
+   "volume": 29180.532249511318
+  }
+ },
+ "connecting_rod_019908_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 18524.321389709254,
+   "bounds": [
+    [
+     -24.43,
+     -12.575000000000001,
+     -24.43
+    ],
+    [
+     141.91,
+     12.575000000000001,
+     24.43
+    ]
+   ],
+   "centroid": [
+    54.48058638412839,
+    -0.0034536591848507536,
+    0.007861666729649639
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + cylinder Rod(axis=1, centre=(0.0, 0.0, 0.0), r=24.43, lo=-9.06, hi=9.06); + box Cuboid(lo=(23.929999999999993, -4.935, -9.06), hi=(106.99, 4.935, 9.06)); + cylinder Rod(axis=1, centre=(124.2, 0.0, 0.0), r=17.71, lo=-9.06, hi=9.06); - cylinder Rod(axis=1, centre=(0.0, 9.06, 0.0), r=14.9, lo=-165.25187452379714, hi=9.06); - cylinder Rod(axis=1, centre=(124.2, 0.0, 0.0), r=10.6, lo=-13.59, hi=13.59); + box Cuboid(lo=(32.635999999999996, -12.575000000000001, -9.06), hi=(98.28399999999999, -4.4350000000000005, 9.06)); + box Cuboid(lo=(32.635999999999996, 4.4350000000000005, -9.06), hi=(98.28399999999999, 12.575000000000001, 9.06)); - cylinder Rod(axis=2, centre=(3.36, 9.06, 9.06), r=1.325, lo=-166.1222413944975, hi=9.06)",
+   "volume": 65739.11536911629
+  }
+ },
  "cotter_pin_000042_s20260507": {
   "disagreement": "arris_refusal",
   "evidence": {
@@ -5894,6 +6284,448 @@
    "kind": "closed_form",
    "note": "vertical cylinders joined to a half torus (Pappus: V = pi r^2 pi R) at its end disc, with an optional box under them; the overlap of a cylinder with the torus and the surface patches either side of it are integrals (tools/cq_closed_forms.py): z0=56.26, R=19.0, r=4.0, cylinders=[(19.0, 0.0, 58.26)], box=None",
    "volume": 5828.778944135409
+  }
+ },
+ "manifold_block_000049_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 13609.275806076239,
+   "bounds": [
+    [
+     -33.945,
+     -16.245,
+     -18.78
+    ],
+    [
+     33.945,
+     16.245,
+     18.78
+    ]
+   ],
+   "centroid": [
+    -8.246728125284208e-06,
+    -0.10838516764246578,
+    -0.026897475855497732
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-33.945, -16.245, -18.78), hi=(33.945, 16.245, 18.78)); - cylinder Rod(axis=1, centre=(20.367, 16.245, 0.0), r=1.925, lo=-67.8704314023295, hi=16.245); - cylinder Rod(axis=1, centre=(6.789, 16.245, 0.0), r=1.925, lo=-67.8704314023295, hi=16.245); - cylinder Rod(axis=1, centre=(-6.789, 16.245, 0.0), r=1.925, lo=-67.8704314023295, hi=16.245); - cylinder Rod(axis=1, centre=(-20.367, 16.245, 0.0), r=1.925, lo=-67.8704314023295, hi=16.245); - cylinder Rod(axis=2, centre=(-8.122, 16.245, 18.78), r=1.595, lo=-65.3354314023295, hi=13.150000000000002); - cylinder Rod(axis=2, centre=(-8.122, 16.245, 18.78), r=2.77, lo=13.150000000000002, hi=18.78); - cylinder Rod(axis=2, centre=(0.001, 16.245, 18.78), r=1.595, lo=-65.3354314023295, hi=13.150000000000002); - cylinder Rod(axis=2, centre=(0.001, 16.245, 18.78), r=2.77, lo=13.150000000000002, hi=18.78); - cylinder Rod(axis=2, centre=(8.124, 16.245, 18.78), r=1.595, lo=-65.3354314023295, hi=13.150000000000002); - cylinder Rod(axis=2, centre=(8.124, 16.245, 18.78), r=2.77, lo=13.150000000000002, hi=18.78)",
+   "volume": 80766.08613186977
+  }
+ },
+ "manifold_block_002844_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 45875.304256308285,
+   "bounds": [
+    [
+     -57.65,
+     -39.015,
+     -26.705
+    ],
+    [
+     57.65,
+     39.015,
+     26.705
+    ]
+   ],
+   "centroid": [
+    -5.479816123870997e-06,
+    -0.5347578136019099,
+    -0.5906814289813472
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-57.65, -39.015, -26.705), hi=(57.65, 39.015, 26.705)); - cylinder Rod(axis=2, centre=(-28.825, 0.0, 26.705), r=8.75, lo=-122.41038820658316, hi=26.705); - cylinder Rod(axis=2, centre=(0.0, 0.0, 26.705), r=8.75, lo=-122.41038820658316, hi=26.705); - cylinder Rod(axis=2, centre=(28.825, 0.0, 26.705), r=8.75, lo=-122.41038820658316, hi=26.705); - cylinder Rod(axis=1, centre=(8.902, 39.015, 26.705), r=4.29, lo=-110.10038820658316, hi=30.545); - cylinder Rod(axis=1, centre=(8.902, 39.015, 26.705), r=7.17, lo=30.545, hi=39.015); - cylinder Rod(axis=1, centre=(-8.901, 39.015, 26.705), r=4.29, lo=-110.10038820658316, hi=30.545); - cylinder Rod(axis=1, centre=(-8.901, 39.015, 26.705), r=7.17, lo=30.545, hi=39.015); - cylinder Rod(axis=0, centre=(57.65, 39.015, 26.705), r=8.75, lo=-91.46538820658316, hi=57.65)",
+   "volume": 431204.03279513837
+  }
+ },
+ "manifold_block_003051_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 21945.741001289272,
+   "bounds": [
+    [
+     -47.57,
+     -24.985,
+     -18.035
+    ],
+    [
+     47.57,
+     24.985,
+     18.035
+    ]
+   ],
+   "centroid": [
+    3.2903575826105277e-06,
+    -0.05145295447996267,
+    -0.09656326010051776
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-47.57, -24.985, -18.035), hi=(47.57, 24.985, 18.035)); - cylinder Rod(axis=2, centre=(-28.542, 0.0, 18.035), r=2.15, lo=-95.321364620607, hi=18.035); - cylinder Rod(axis=2, centre=(-9.514, 0.0, 18.035), r=2.15, lo=-95.321364620607, hi=18.035); - cylinder Rod(axis=2, centre=(9.514, 0.0, 18.035), r=2.15, lo=-95.321364620607, hi=18.035); - cylinder Rod(axis=2, centre=(28.542, 0.0, 18.035), r=2.15, lo=-95.321364620607, hi=18.035); - cylinder Rod(axis=1, centre=(9.017, 24.985, 18.035), r=1.615, lo=-88.371364620607, hi=22.085); - cylinder Rod(axis=1, centre=(9.017, 24.985, 18.035), r=2.815, lo=22.085, hi=24.985); - cylinder Rod(axis=1, centre=(-0.001, 24.985, 18.035), r=1.615, lo=-88.371364620607, hi=22.085); - cylinder Rod(axis=1, centre=(-0.001, 24.985, 18.035), r=2.815, lo=22.085, hi=24.985); - cylinder Rod(axis=1, centre=(-9.019, 24.985, 18.035), r=1.615, lo=-88.371364620607, hi=22.085); - cylinder Rod(axis=1, centre=(-9.019, 24.985, 18.035), r=2.815, lo=22.085, hi=24.985); - cylinder Rod(axis=0, centre=(47.57, 24.985, 18.035), r=2.15, lo=-65.786364620607, hi=47.57)",
+   "volume": 168442.20375305365
+  }
+ },
+ "manifold_block_003774_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 10640.779938673224,
+   "bounds": [
+    [
+     -30.14,
+     -14.505,
+     -14.64
+    ],
+    [
+     30.14,
+     14.505,
+     14.64
+    ]
+   ],
+   "centroid": [
+    -1.5693460379333367e-05,
+    -0.2732067384907263,
+    -0.11442984597639398
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-30.14, -14.505, -14.64), hi=(30.14, 14.505, 14.64)); - cylinder Rod(axis=1, centre=(18.084, 14.505, 0.0), r=2.84, lo=-58.519495205376124, hi=14.505); - cylinder Rod(axis=1, centre=(6.028, 14.505, 0.0), r=2.84, lo=-58.519495205376124, hi=14.505); - cylinder Rod(axis=1, centre=(-6.028, 14.505, 0.0), r=2.84, lo=-58.519495205376124, hi=14.505); - cylinder Rod(axis=1, centre=(-18.084, 14.505, 0.0), r=2.84, lo=-58.519495205376124, hi=14.505); - cylinder Rod(axis=2, centre=(-7.252, 14.505, 14.64), r=2.115, lo=-58.384495205376126, hi=10.68); - cylinder Rod(axis=2, centre=(-7.252, 14.505, 14.64), r=3.56, lo=10.68, hi=14.64); - cylinder Rod(axis=2, centre=(0.001, 14.505, 14.64), r=2.115, lo=-58.384495205376126, hi=10.68); - cylinder Rod(axis=2, centre=(0.001, 14.505, 14.64), r=3.56, lo=10.68, hi=14.64); - cylinder Rod(axis=2, centre=(7.254, 14.505, 14.64), r=2.115, lo=-58.384495205376126, hi=10.68); - cylinder Rod(axis=2, centre=(7.254, 14.505, 14.64), r=3.56, lo=10.68, hi=14.64); - cylinder Rod(axis=0, centre=(30.14, 14.505, 14.64), r=2.84, lo=-42.884495205376126, hi=30.14)",
+   "volume": 47295.67476679528
+  }
+ },
+ "manifold_block_004417_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17426.58123182111,
+   "bounds": [
+    [
+     -50.35,
+     -15.375,
+     -19.605
+    ],
+    [
+     50.35,
+     15.375,
+     19.605
+    ]
+   ],
+   "centroid": [
+    -4.403297669327038e-06,
+    -0.04313694913531445,
+    -0.07639450813451847
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-50.35, -15.375, -19.605), hi=(50.35, 15.375, 19.605)); - cylinder Rod(axis=2, centre=(-16.783, 0.0, 19.605), r=2.07, lo=-92.74924602568431, hi=19.605); - cylinder Rod(axis=2, centre=(16.784, 0.0, 19.605), r=2.07, lo=-92.74924602568431, hi=19.605); - cylinder Rod(axis=1, centre=(0.0, 15.375, 19.605), r=1.645, lo=-96.97924602568432, hi=12.175); - cylinder Rod(axis=1, centre=(0.0, 15.375, 19.605), r=3.29, lo=12.175, hi=15.375); - cylinder Rod(axis=0, centre=(50.35, 15.375, 19.605), r=2.07, lo=-62.00424602568432, hi=50.35)",
+   "volume": 119869.6840150981
+  }
+ },
+ "manifold_block_005657_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8165.3983364973765,
+   "bounds": [
+    [
+     -28.135,
+     -12.96,
+     -13.88
+    ],
+    [
+     28.135,
+     12.96,
+     13.88
+    ]
+   ],
+   "centroid": [
+    -1.0826753369933363e-05,
+    -0.06742681569887725,
+    -0.09740368552072351
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-28.135, -12.96, -13.88), hi=(28.135, 12.96, 13.88)); - cylinder Rod(axis=2, centre=(-9.378, 0.0, 13.88), r=2.21, lo=-54.00797316167276, hi=13.88); - cylinder Rod(axis=2, centre=(9.379, 0.0, 13.88), r=2.21, lo=-54.00797316167276, hi=13.88); - cylinder Rod(axis=1, centre=(0.0, 12.96, 13.88), r=1.335, lo=-54.92797316167276, hi=9.540000000000001); - cylinder Rod(axis=1, centre=(0.0, 12.96, 13.88), r=2.46, lo=9.540000000000001, hi=12.96); - cylinder Rod(axis=0, centre=(28.135, 12.96, 13.88), r=2.21, lo=-39.752973161672756, hi=28.135)",
+   "volume": 39341.92789134909
+  }
+ },
+ "manifold_block_006950_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 13682.944189223015,
+   "bounds": [
+    [
+     -37.345,
+     -16.085,
+     -16.76
+    ],
+    [
+     37.345,
+     16.085,
+     16.76
+    ]
+   ],
+   "centroid": [
+    -1.4580572137086839e-18,
+    -0.05730150262855244,
+    -0.15534838564123693
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-37.345, -16.085, -16.76), hi=(37.345, 16.085, 16.76)); - cylinder Rod(axis=2, centre=(-22.407, 0.0, 16.76), r=2.07, lo=-71.20076056969948, hi=16.76); - cylinder Rod(axis=2, centre=(-7.469, 0.0, 16.76), r=2.07, lo=-71.20076056969948, hi=16.76); - cylinder Rod(axis=2, centre=(7.469, 0.0, 16.76), r=2.07, lo=-71.20076056969948, hi=16.76); - cylinder Rod(axis=2, centre=(22.407, 0.0, 16.76), r=2.07, lo=-71.20076056969948, hi=16.76); - cylinder Rod(axis=1, centre=(8.38, 16.085, 16.76), r=1.81, lo=-71.87576056969948, hi=12.775); - cylinder Rod(axis=1, centre=(8.38, 16.085, 16.76), r=3.205, lo=12.775, hi=16.085); - cylinder Rod(axis=1, centre=(0.0, 16.085, 16.76), r=1.81, lo=-71.87576056969948, hi=12.775); - cylinder Rod(axis=1, centre=(0.0, 16.085, 16.76), r=3.205, lo=12.775, hi=16.085); - cylinder Rod(axis=1, centre=(-8.38, 16.085, 16.76), r=1.81, lo=-71.87576056969948, hi=12.775); - cylinder Rod(axis=1, centre=(-8.38, 16.085, 16.76), r=3.205, lo=12.775, hi=16.085); - cylinder Rod(axis=0, centre=(37.345, 16.085, 16.76), r=2.07, lo=-50.61576056969949, hi=37.345)",
+   "volume": 77971.45177344898
+  }
+ },
+ "manifold_block_007163_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 23243.673163421972,
+   "bounds": [
+    [
+     -40.99,
+     -26.165,
+     -19.75
+    ],
+    [
+     40.99,
+     26.165,
+     19.75
+    ]
+   ],
+   "centroid": [
+    7.225174893630012e-06,
+    -0.07503924380538599,
+    -0.228910590726221
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-40.99, -26.165, -19.75), hi=(40.99, 26.165, 19.75)); - cylinder Rod(axis=2, centre=(-20.495, 0.0, 19.75), r=6.01, lo=-85.2233266120494, hi=19.75); - cylinder Rod(axis=2, centre=(0.0, 0.0, 19.75), r=6.01, lo=-85.2233266120494, hi=19.75); - cylinder Rod(axis=2, centre=(20.495, 0.0, 19.75), r=6.01, lo=-85.2233266120494, hi=19.75); - cylinder Rod(axis=1, centre=(6.583, 26.165, 19.75), r=3.035, lo=-78.8083266120494, hi=19.294999999999998); - cylinder Rod(axis=1, centre=(6.583, 26.165, 19.75), r=5.725, lo=19.294999999999998, hi=26.165); - cylinder Rod(axis=1, centre=(-6.584, 26.165, 19.75), r=3.035, lo=-78.8083266120494, hi=19.294999999999998); - cylinder Rod(axis=1, centre=(-6.584, 26.165, 19.75), r=5.725, lo=19.294999999999998, hi=26.165)",
+   "volume": 154054.35598562204
+  }
+ },
+ "manifold_block_007661_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 13617.41740104624,
+   "bounds": [
+    [
+     -49.74,
+     -11.84,
+     -16.33
+    ],
+    [
+     49.74,
+     11.84,
+     16.33
+    ]
+   ],
+   "centroid": [
+    1.519479682465217e-16,
+    -0.2372567213510172,
+    -0.23299251285316036
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-49.74, -11.84, -16.33), hi=(49.74, 11.84, 16.33)); - cylinder Rod(axis=1, centre=(16.58, 11.84, 0.0), r=3.745, lo=-95.50844386389585, hi=11.84); - cylinder Rod(axis=1, centre=(-16.58, 11.84, 0.0), r=3.745, lo=-95.50844386389585, hi=11.84); - cylinder Rod(axis=2, centre=(0.0, 11.84, 16.33), r=3.275, lo=-91.01844386389585, hi=12.02); - cylinder Rod(axis=2, centre=(0.0, 11.84, 16.33), r=6.365, lo=12.02, hi=16.33); - cylinder Rod(axis=0, centre=(49.74, 11.84, 16.33), r=3.745, lo=-57.60844386389585, hi=49.74)",
+   "volume": 73136.14334913857
+  }
+ },
+ "manifold_block_008134_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 13974.770607203394,
+   "bounds": [
+    [
+     -44.46,
+     -18.39,
+     -12.355
+    ],
+    [
+     44.46,
+     18.39,
+     12.355
+    ]
+   ],
+   "centroid": [
+    5.392482696345935e-06,
+    -0.07759582349454527,
+    -0.10893312273611248
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-44.46, -18.39, -12.355), hi=(44.46, 18.39, 12.355)); - cylinder Rod(axis=2, centre=(-26.676, 0.0, 12.355), r=1.98, lo=-86.99347205669547, hi=12.355); - cylinder Rod(axis=2, centre=(-8.892, 0.0, 12.355), r=1.98, lo=-86.99347205669547, hi=12.355); - cylinder Rod(axis=2, centre=(8.892, 0.0, 12.355), r=1.98, lo=-86.99347205669547, hi=12.355); - cylinder Rod(axis=2, centre=(26.676, 0.0, 12.355), r=1.98, lo=-86.99347205669547, hi=12.355); - cylinder Rod(axis=1, centre=(6.177, 18.39, 12.355), r=1.51, lo=-80.95847205669547, hi=14.81); - cylinder Rod(axis=1, centre=(6.177, 18.39, 12.355), r=3.255, lo=14.81, hi=18.39); - cylinder Rod(axis=1, centre=(-0.001, 18.39, 12.355), r=1.51, lo=-80.95847205669547, hi=14.81); - cylinder Rod(axis=1, centre=(-0.001, 18.39, 12.355), r=3.255, lo=14.81, hi=18.39); - cylinder Rod(axis=1, centre=(-6.179, 18.39, 12.355), r=1.51, lo=-80.95847205669547, hi=14.81); - cylinder Rod(axis=1, centre=(-6.179, 18.39, 12.355), r=3.255, lo=14.81, hi=18.39); - cylinder Rod(axis=0, centre=(44.46, 18.39, 12.355), r=1.98, lo=-54.88847205669547, hi=44.46)",
+   "volume": 78847.75720236273
+  }
+ },
+ "manifold_block_008205_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 27839.508103883672,
+   "bounds": [
+    [
+     -65.505,
+     -16.735,
+     -24.58
+    ],
+    [
+     65.505,
+     16.735,
+     24.58
+    ]
+   ],
+   "centroid": [
+    -4.454142923306889e-05,
+    -0.2125417290056826,
+    -0.0410374468381929
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-65.505, -16.735, -24.58), hi=(65.505, 16.735, 24.58)); - cylinder Rod(axis=1, centre=(32.753, 16.735, 0.0), r=4.97, lo=-127.14191475702417, hi=16.735); - cylinder Rod(axis=1, centre=(0.001, 16.735, 0.0), r=4.97, lo=-127.14191475702417, hi=16.735); - cylinder Rod(axis=1, centre=(-32.751, 16.735, 0.0), r=4.97, lo=-127.14191475702417, hi=16.735); - cylinder Rod(axis=2, centre=(-5.578, 16.735, 24.58), r=4.2, lo=-119.29691475702417, hi=19.389999999999997); - cylinder Rod(axis=2, centre=(-5.578, 16.735, 24.58), r=6.515, lo=19.389999999999997, hi=24.58); - cylinder Rod(axis=2, centre=(5.579, 16.735, 24.58), r=4.2, lo=-119.29691475702417, hi=19.389999999999997); - cylinder Rod(axis=2, centre=(5.579, 16.735, 24.58), r=6.515, lo=19.389999999999997, hi=24.58)",
+   "volume": 204810.9078311191
+  }
+ },
+ "manifold_block_009323_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 7808.8677612615675,
+   "bounds": [
+    [
+     -23.22,
+     -16.1,
+     -12.95
+    ],
+    [
+     23.22,
+     16.1,
+     12.95
+    ]
+   ],
+   "centroid": [
+    -2.4590534289387892e-17,
+    -0.105703445659025,
+    -0.1319588546496645
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-23.22, -16.1, -12.95), hi=(23.22, 16.1, 12.95)); - cylinder Rod(axis=2, centre=(-7.74, 0.0, 12.95), r=2.53, lo=-49.21368393201935, hi=12.95); - cylinder Rod(axis=2, centre=(7.74, 0.0, 12.95), r=2.53, lo=-49.21368393201935, hi=12.95); - cylinder Rod(axis=1, centre=(0.0, 16.1, 12.95), r=1.705, lo=-46.063683932019345, hi=11.870000000000001); - cylinder Rod(axis=1, centre=(0.0, 16.1, 12.95), r=3.61, lo=11.870000000000001, hi=16.1); - cylinder Rod(axis=0, centre=(23.22, 16.1, 12.95), r=2.53, lo=-38.94368393201935, hi=23.22)",
+   "volume": 37274.510522778284
+  }
+ },
+ "manifold_block_010541_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 9919.968920631973,
+   "bounds": [
+    [
+     -27.53,
+     -16.15,
+     -12.97
+    ],
+    [
+     27.53,
+     16.15,
+     12.97
+    ]
+   ],
+   "centroid": [
+    -9.347576302219792e-17,
+    -0.04106304233019103,
+    -0.21929460359731537
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-27.53, -16.15, -12.97), hi=(27.53, 16.15, 12.97)); - cylinder Rod(axis=2, centre=(-16.518, 0.0, 12.97), r=2.92, lo=-55.9341159873632, hi=12.97); - cylinder Rod(axis=2, centre=(-5.506, 0.0, 12.97), r=2.92, lo=-55.9341159873632, hi=12.97); - cylinder Rod(axis=2, centre=(5.506, 0.0, 12.97), r=2.92, lo=-55.9341159873632, hi=12.97); - cylinder Rod(axis=2, centre=(16.518, 0.0, 12.97), r=2.92, lo=-55.9341159873632, hi=12.97); - cylinder Rod(axis=1, centre=(6.485, 16.15, 12.97), r=2.205, lo=-52.7541159873632, hi=12.969999999999999); - cylinder Rod(axis=1, centre=(6.485, 16.15, 12.97), r=3.64, lo=12.969999999999999, hi=16.15); - cylinder Rod(axis=1, centre=(0.0, 16.15, 12.97), r=2.205, lo=-52.7541159873632, hi=12.969999999999999); - cylinder Rod(axis=1, centre=(0.0, 16.15, 12.97), r=3.64, lo=12.969999999999999, hi=16.15); - cylinder Rod(axis=1, centre=(-6.485, 16.15, 12.97), r=2.205, lo=-52.7541159873632, hi=12.969999999999999); - cylinder Rod(axis=1, centre=(-6.485, 16.15, 12.97), r=3.64, lo=12.969999999999999, hi=16.15)",
+   "volume": 42567.60460261393
+  }
+ },
+ "manifold_block_010983_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6581.317155663933,
+   "bounds": [
+    [
+     -20.97,
+     -13.49,
+     -11.13
+    ],
+    [
+     20.97,
+     13.49,
+     11.13
+    ]
+   ],
+   "centroid": [
+    3.0375957401686257e-17,
+    -0.054719202596587226,
+    -0.20230290916370977
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-20.97, -13.49, -11.13), hi=(20.97, 13.49, 11.13)); - cylinder Rod(axis=2, centre=(-10.485, 0.0, 11.13), r=3.295, lo=-43.481277223665074, hi=11.13); - cylinder Rod(axis=2, centre=(0.0, 0.0, 11.13), r=3.295, lo=-43.481277223665074, hi=11.13); - cylinder Rod(axis=2, centre=(10.485, 0.0, 11.13), r=3.295, lo=-43.481277223665074, hi=11.13); - cylinder Rod(axis=1, centre=(3.71, 13.49, 11.13), r=2.09, lo=-41.121277223665075, hi=10.280000000000001); - cylinder Rod(axis=1, centre=(3.71, 13.49, 11.13), r=3.83, lo=10.280000000000001, hi=13.49); - cylinder Rod(axis=1, centre=(-3.71, 13.49, 11.13), r=2.09, lo=-41.121277223665075, hi=10.280000000000001); - cylinder Rod(axis=1, centre=(-3.71, 13.49, 11.13), r=3.83, lo=10.280000000000001, hi=13.49)",
+   "volume": 22455.951504983004
+  }
+ },
+ "manifold_block_012923_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8320.203939300303,
+   "bounds": [
+    [
+     -23.065,
+     -15.765,
+     -12.165
+    ],
+    [
+     23.065,
+     15.765,
+     12.165
+    ]
+   ],
+   "centroid": [
+    -2.8538801067120268e-05,
+    -0.16294656502642738,
+    -0.3683615039302733
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-23.065, -15.765, -12.165), hi=(23.065, 15.765, 12.165)); - cylinder Rod(axis=2, centre=(-13.839, 0.0, 12.165), r=2.92, lo=-48.77814317460169, hi=12.165); - cylinder Rod(axis=2, centre=(-4.613, 0.0, 12.165), r=2.92, lo=-48.77814317460169, hi=12.165); - cylinder Rod(axis=2, centre=(4.613, 0.0, 12.165), r=2.92, lo=-48.77814317460169, hi=12.165); - cylinder Rod(axis=2, centre=(13.839, 0.0, 12.165), r=2.92, lo=-48.77814317460169, hi=12.165); - cylinder Rod(axis=1, centre=(6.083, 15.765, 12.165), r=2.285, lo=-45.178143174601686, hi=11.775); - cylinder Rod(axis=1, centre=(6.083, 15.765, 12.165), r=4.135, lo=11.775, hi=15.765); - cylinder Rod(axis=1, centre=(0.001, 15.765, 12.165), r=2.285, lo=-45.178143174601686, hi=11.775); - cylinder Rod(axis=1, centre=(0.001, 15.765, 12.165), r=4.135, lo=11.775, hi=15.765); - cylinder Rod(axis=1, centre=(-6.081, 15.765, 12.165), r=2.285, lo=-45.178143174601686, hi=11.775); - cylinder Rod(axis=1, centre=(-6.081, 15.765, 12.165), r=4.135, lo=11.775, hi=15.765); - cylinder Rod(axis=0, centre=(23.065, 15.765, 12.165), r=2.92, lo=-37.87814317460169, hi=23.065)",
+   "volume": 31710.611330147058
+  }
+ },
+ "manifold_block_014835_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 7673.792819602503,
+   "bounds": [
+    [
+     -12.695,
+     -22.905,
+     -15.39
+    ],
+    [
+     12.695,
+     22.905,
+     15.39
+    ]
+   ],
+   "centroid": [
+    -0.21387297931621585,
+    -2.1948593515698845e-18,
+    -0.20149209520182762
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-12.695, -22.905, -15.39), hi=(12.695, 22.905, 15.39)); - cylinder Rod(axis=0, centre=(12.695, -7.635, 0.0), r=3.71, lo=-48.055445265857934, hi=12.695); - cylinder Rod(axis=0, centre=(12.695, 7.635, 0.0), r=3.71, lo=-48.055445265857934, hi=12.695); - cylinder Rod(axis=2, centre=(12.695, 0.0, 15.39), r=1.725, lo=-45.36044526585793, hi=11.940000000000001); - cylinder Rod(axis=2, centre=(12.695, 0.0, 15.39), r=3.045, lo=11.940000000000001, hi=15.39); - cylinder Rod(axis=1, centre=(12.695, 22.905, 15.39), r=3.71, lo=-37.84544526585793, hi=22.905)",
+   "volume": 32980.0363534845
+  }
+ },
+ "manifold_block_015813_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17942.251391117923,
+   "bounds": [
+    [
+     -15.185,
+     -44.17,
+     -20.76
+    ],
+    [
+     15.185,
+     44.17,
+     20.76
+    ]
+   ],
+   "centroid": [
+    -0.16758449853770194,
+    -9.249240557320218e-18,
+    -0.058690065058581604
+   ],
+   "kind": "closed_form",
+   "note": "boxes and cylinders on the axes, united (+) and cut (-) in order; volume and moments are the flux of x/3 and x_j^2/2 through the boundary (divergence theorem), each face's boundary patch exact interval arithmetic along lines on it and one integral across them (tools/cq_closed_forms.py, part_measures): + box Cuboid(lo=(-15.185, -44.17, -20.76), hi=(15.185, 44.17, 20.76)); - cylinder Rod(axis=0, centre=(15.185, -22.085, 0.0), r=4.25, lo=-87.0412339128269, hi=15.185); - cylinder Rod(axis=0, centre=(15.185, 0.0, 0.0), r=4.25, lo=-87.0412339128269, hi=15.185); - cylinder Rod(axis=0, centre=(15.185, 22.085, 0.0), r=4.25, lo=-87.0412339128269, hi=15.185); - cylinder Rod(axis=2, centre=(10.123000000000001, 0.0, 20.76), r=3.645, lo=-81.4662339128269, hi=16.450000000000003); - cylinder Rod(axis=2, centre=(10.123000000000001, 0.0, 20.76), r=6.295, lo=16.450000000000003, hi=20.76); - cylinder Rod(axis=2, centre=(20.246000000000002, 0.0, 20.76), r=3.645, lo=-81.4662339128269, hi=16.450000000000003); - cylinder Rod(axis=2, centre=(20.246000000000002, 0.0, 20.76), r=6.295, lo=16.450000000000003, hi=20.76)",
+   "volume": 104478.87669363945
   }
  },
  "shaft_collar_004211_s20260505": {

@@ -254,6 +254,138 @@ def test_the_crossing_cylinders_are_what_arris_builds() -> None:
     assert _agrees(ag.run(text, dialect="cq"), cf.crossing_closed_form(sha)) == []
 
 
+def test_a_part_of_boxes_and_cylinders_meets_its_textbook_figures() -> None:
+    # A 4 x 6 x 8 box less a through bore of radius 1 off its axis: V = 192 - 8 pi, the
+    # bore's side added and its two discs taken from the faces, the centroid opposite it.
+    box = cf.Cuboid((-2.0, -3.0, -4.0), (2.0, 3.0, 4.0))
+    bore = cf.Rod(2, (0.5, 0.0, 0.0), 1.0, -10.0, 10.0)
+    volume, area, centroid, bounds = cf.part_measures([("+", box), ("-", bore)])
+    assert volume == pytest.approx(192 - 8 * math.pi, rel=1e-14)
+    assert area == pytest.approx(208 - 2 * math.pi + 16 * math.pi, rel=1e-14)
+    assert centroid[0] == pytest.approx(-0.5 * 8 * math.pi / (192 - 8 * math.pi), rel=1e-13)
+    assert bounds == ((-2.0, -3.0, -4.0), (2.0, 3.0, 4.0))
+    # Two crossing cylinders of one radius r and length L: their union is twice a cylinder
+    # less the Steinmetz solid (16 r^3 / 3), each side losing 8 r^2 inside the other.
+    r, half = 1.5, 4.0
+    x = cf.Rod(0, (0.0, 0.0, 0.0), r, -half, half)
+    y = cf.Rod(1, (0.0, 0.0, 0.0), r, -half, half)
+    volume, area, _, _ = cf.part_measures([("+", x), ("+", y)])
+    assert volume == pytest.approx(2 * math.pi * r * r * 2 * half - 16 * r**3 / 3, rel=1e-14)
+    assert area == pytest.approx(
+        2 * (2 * math.pi * r * 2 * half + 2 * math.pi * r * r) - 16 * r * r
+    )
+    # The CAD-Recode crossing, worked out apart (`crossing_measures`), is the same figures.
+    p = next(iter(cf.CROSSING.values()))
+    a = cf.Rod(1, (p["xa"], 0.0, 0.0), p["a"], p["ya0"], p["ya1"])
+    b = cf.Rod(0, (0.0, p["yb"], 0.0), p["b"], p["xb0"], p["xb1"])
+    got = cf.part_measures([("+", a), ("+", b)])
+    want = cf.crossing_measures(p)
+    assert got[0] == pytest.approx(want[0], rel=1e-14)
+    assert got[1] == pytest.approx(want[1], rel=1e-14)
+    assert math.dist(got[2], want[2]) < 1e-12
+    assert got[3] == want[3]
+
+
+MANIFOLD = """import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .box(83.17, 41.3, 31.06)
+    .faces(">{f1}").workplane()
+    .pushPoints([(-24.95, 0.0), (0.0, 0.0), (24.95, 0.0)])
+    .hole(9.4)
+    .faces(">{f2}")
+    .faces(">{f2}").workplane()
+    .pushPoints([(-6.7, 0.0), (0.002, 0.0), (6.71, 0.0)])
+    .cboreHole(4.1, 7.6, 3.85)
+    .faces(">{f3}")
+    .faces(">{f3}").workplane()
+    .pushPoints([(0.0, 0.0)])
+    .hole(9.4)
+)
+"""
+
+ROD = """import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .cylinder(10.4, 16.2)
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(41.3, 0, 0), rotate=cq.Vector(0, 0, 0))
+            .box(52.9, 10.4, 9.7)
+    )
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(74.6, 0, {lift}), rotate=cq.Vector(0, 0, 0))
+            .cylinder(10.4, 9.1)
+    )
+    .faces(">{f1}").workplane()
+    .hole(19.6)
+    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(74.6, 0, {lift}), rotate=cq.Vector(0, 0, 0))
+            .cylinder(15.6, 4.9)
+    )
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(41.3, 0, 6.1), rotate=cq.Vector(0, 0, 0))
+            .box(42.32, 10.4, 3.3)
+    )
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(41.3, 0, -6.1), rotate=cq.Vector(0, 0, 0))
+            .box(42.32, 10.4, 3.3)
+    )
+    .faces(">{f2}")
+    .faces(">{f2}").workplane()
+    .pushPoints([(3.7, 0.0)])
+    .hole(2.4)
+)
+"""
+
+
+@pytest.mark.parametrize(("plane", "faces"), [("XY", "ZYX"), ("XZ", "YZX"), ("YZ", "XZY")])
+def test_a_manifold_block_is_what_arris_builds(plane: str, faces: str) -> None:
+    # The corpus's three bore directions on each plane: a row of holes, counterbores across
+    # them from a face whose origin is the first face's projected (so on its edge), and a
+    # hole of the first holes' size along the third axis, through the counterbores.
+    text = MANIFOLD.format(plane=plane, f1=faces[0], f2=faces[1], f3=faces[2])
+    assert _agrees(ag.run(text, dialect="cq"), cf.part_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(("plane", "faces"), [("XY", "ZY"), ("XZ", "YZ")])
+@pytest.mark.parametrize("lift", ["0.0", "2.7"])
+def test_a_connecting_rod_is_what_arris_builds(plane: str, faces: str, lift: str) -> None:
+    # Two rings joined by a web and two rails, the small ring lifted along its axis or not,
+    # and the cross hole on the rails' top face at the first hole's projected origin.
+    text = ROD.format(plane=plane, f1=faces[0], f2=faces[1], lift=lift)
+    assert _agrees(ag.run(text, dialect="cq"), cf.part_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        ((".hole(9.4)\n)", ".hole(9.4)\n    .fillet(1.0)\n)"), "does not read: fillet"),
+        (('.faces(">Y")\n', '.faces("<Y")\n'), "selector this tool does not read"),
+        ((".box(83.17, 41.3, 31.06)\n", ".box(83.17, 41.3, 31.06)\n    .box(1, 1, 1)\n"), "second"),
+    ],
+)
+def test_a_part_this_tool_does_not_read_is_refused(change: tuple[str, str], match: str) -> None:
+    text = MANIFOLD.format(plane="XY", f1="Z", f2="Y", f3="X").replace(*change)
+    with pytest.raises(ValueError, match=match):
+        cf.part_closed_form(text)
+
+
+def test_a_cut_that_takes_away_an_extreme_is_refused() -> None:
+    # A bore wider than the box's x extent removes its +x and -x faces: the box no longer
+    # gives the bounds, and the tool refuses rather than report them.
+    box = cf.Cuboid((-1.0, -5.0, -5.0), (1.0, 5.0, 5.0))
+    bore = cf.Rod(1, (0.0, 0.0, 0.0), 9.0, -6.0, 6.0)
+    with pytest.raises(ValueError, match="extreme"):
+        cf.part_measures([("+", box), ("-", bore)])
+
+
 @pytest.mark.parametrize("corpus", ["benchcad", "cadrecode"])
 def test_each_committed_verdict_rests_on_evidence_that_exists(corpus: str) -> None:
     raw = json.loads((C2 / corpus / "verdicts.json").read_text(encoding="utf-8"))
