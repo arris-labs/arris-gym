@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 24.78539816339745,
+    "area": 68.71238898038469,
+    "centroid": [
+      3.2277068729177127,
+      0,
+      0.7564491580199442
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1
+      ],
+      [
+        6,
+        1,
+        4
+      ]
+    ],
+    "faces": 15,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        14
+      ]
+    ],
+    "shells": 3,
+    "genus": 0
+  },
+  "note": "A 2 x 2 x 2 box A on the origin (z -1..1) and a 2 x 2 x 4 box B at (5, 0, 1) (z -1..3). `faces(\">Z\")` is B's top alone, the plane z = 3, so a circle of radius 1/2 at the plane's origin, extruded 1, stands in the air over nothing: a third piece. V = 8 + 16 + pi/4; A = 24 + 40 + pi + 2 (pi/4); the pieces' centroids are (0, 0, 0), (5, 0, 1) and (0, 0, 3.5)."
+}

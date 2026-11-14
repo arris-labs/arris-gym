@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 195.14159265358978,
+    "area": 220.5663706143592,
+    "centroid": [
+      -0.08049520891137406,
+      -0.01609904178227481,
+      0.01609904178227481
+    ],
+    "bounds": [
+      [
+        -5.5,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 9,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "`.faces(\"<X\").workplane(offset=2.5).moveTo(1, 1).circle(1).extrude(1)`. `<X` is the plane x = -2 with normal -x, x axis -y, y axis +z, so the offset puts it at x = -4.5 and (1, 1) at (y, z) = (-1, 1); the cylinder (r = 1) goes on along -x to x = -5.5: a second piece, V = 192 + pi, A = 208 + 4 pi, centroid (-5 pi, -pi, pi) / V."
+}

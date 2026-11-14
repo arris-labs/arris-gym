@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 70.38557044190524,
+    "area": 118.45771823237902,
+    "centroid": [
+      0.3333333333333333,
+      -0.07912963207692036,
+      0.0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -2
+      ],
+      [
+        4,
+        2,
+        2
+      ]
+    ],
+    "faces": 13,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A 4 x 4 x 4 box centred on the origin with a 2 x 2 x 2 box against its +x face, `hole(1)`. The small box is centred (3, 0, 1/2) on the plane's own axes, so the two fuse (V = 72, A = 96 + 24 - 2 4 = 112, one solid) and the centre of mass, where CadQuery puts the hole, is (1/3, 0, 1/18) on `XY`; on `XZ`, whose normal is -y and whose local y is world z, it is (1/3, -1/18, 0). The hole runs against the normal to the far face of the big box: length 37/18 = 2 + 1/18, so it removes pi r^2 37/18 and its wall is pi d 37/18. Neither hole's cap nor its end at the bottom changes the area."
+}

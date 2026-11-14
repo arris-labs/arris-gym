@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 16.78539816339745,
+    "area": 51.1415926535898,
+    "centroid": [
+      2.383023602456136,
+      0,
+      0.07018583852631825
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        -1
+      ],
+      [
+        6,
+        1,
+        2
+      ]
+    ],
+    "faces": 14,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        13
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "Two 2 x 2 x 2 boxes, on the origin and at (5, 0, 0): both tops are at z = 1. `faces(\">Z\")` keeps both faces, one on each piece, and the plane is z = 1 through the origin: a circle of radius 1/2, extruded 1, fuses with the first box's top. V = 16 + pi/4, A = 48 + pi, centroid x = 40 / V."
+}

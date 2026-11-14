@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 195.14159265358978,
+    "area": 220.5663706143592,
+    "centroid": [
+      0,
+      0,
+      0.08854472980251145
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        6
+      ]
+    ],
+    "faces": 9,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "`box(4, 6, 8)` `.faces(\">Z\").workplane(offset=1).circle(1).extrude(1)`: a disc over the top. The plane is z = 5, so the cylinder (r = 1, z 5..6) is a second piece in the air: V = 192 + pi, A = 208 + 4 pi, centroid z = 5.5 pi / V."
+}

@@ -142,11 +142,28 @@ within a given design; **[3]** unproven semantics, established here.
   A stack holding anything (a `moveTo` point, a solid) is refused until
   step 6 reads those contexts.
 
-- [ ] Step 6 **[2]** — contexts, read on the oracle: `faces` on an empty
+- [x] Step 6 **[2]** — contexts, read on the oracle: `faces` on an empty
   stack, a pending wire, a compound; `workplane()` then `offset=` on a face;
   `hole` on a solid's stack (no `workplane`), on a `moveTo` point, wider
   than the face. Each lifted when it agrees, else refused, with its
   `ok-`, `runtime-` or `unsupported-` fixture.
+  *Settled* (step 6): every context agreed with the oracle but the ones refused
+  below. `faces` on a stack with no faces (empty even with a solid in the
+  chain, a `moveTo` point, a path, a sketch) is `runtime` with CadQuery's
+  `ValueError` (`NO_FACES`); `workplane(offset=)` on faces moves the plane
+  along its normal; `hole` on a `moveTo` point and on a solid's stack
+  (centre of mass, all three coordinates) agree. Still refused: `hole` on
+  selected faces or a drawn path or sketch (their centres), `faces` on faces.
+  The battery also ran `polygon`, `box`, `cylinder` and `sphere` after a hole
+  and an offset plane, `cut`/`union` and `workplane()` after a hole:
+  all agree or were already refused. Found: a `cut` or `union` of a column
+  tangent to a bore is arris's `OpInternalError`
+  (`regression/cq-hole-tangent-column`, strict xfail, filed in
+  `../arris/docs/ideas/hole-tangent-column.md`), and a sphere tangent to the
+  offset plane's face ends in arris's point-contact refusal (a kernel
+  refusal, no fixture). A `faces` stack as the program's result is `runtime`
+  here but a Face to CadQuery: out of the subset's results, as before.
+
 - [ ] Step 7 **[2]** — the measurement. `cq_corpus.py --oracle-rows` on both
   corpora into a scratch out-dir, then `cq_diagnose.py`: in-subset rows by
   class, `cq_bug` and unclassified by family, recorded in *Open questions*.

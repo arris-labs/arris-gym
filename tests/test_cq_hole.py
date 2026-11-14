@@ -188,6 +188,82 @@ def zero_diameter() -> dict[str, object]:
     return measures(192, 208, (0, 0, 0), box, 6, [["plane", 6]])
 
 
+def on_a_move_point() -> dict[str, object]:
+    """`box(4, 6, 8)` `.faces(">Z").workplane().moveTo(1, 1).hole(1)`: a bore through at (1, 1).
+
+    The cylinder (r = 1/2) removes pi r^2 8 = 2 pi through all of z; two discs
+    go from the area and its wall, 2 pi r 8, is added. Its centroid is
+    (1, 1, 0), so the part's is -2 pi (1, 1, 0) / V.
+    """
+    r = 0.5
+    cut = math.pi * r * r * 8
+    volume = 192 - cut
+    return measures(
+        volume,
+        208 - 2 * math.pi * r * r + 2 * math.pi * r * 8,
+        (-cut / volume, -cut / volume, 0),
+        ((-2, -3, -4), (2, 3, 4)),
+        7,
+        KINDS["through"],
+        genus=1,
+    )
+
+
+def on_a_move_point_blind() -> dict[str, object]:
+    """`box(4, 6, 8)` `.moveTo(1, 1).hole(1)`: the plane is the box's own XY, z = 0.
+
+    The point is (1, 1, 0), so the cylinder (r = 1/2) bores the lower half, 4
+    deep: V = 192 - pi, A = 208 + 4 pi, and its centroid (1, 1, -2) gives the
+    part's -pi (1, 1, -2) / V.
+    """
+    cut = math.pi
+    volume = 192 - cut
+    return measures(
+        volume,
+        208 + 4 * math.pi,
+        (-cut / volume, -cut / volume, 2 * cut / volume),
+        ((-2, -3, -4), (2, 3, 4)),
+        8,
+        [["cylinder", 1], ["plane", 7]],
+    )
+
+
+def on_a_solid_stack(plane: str) -> dict[str, object]:
+    """A 4 x 4 x 4 box centred on the origin with a 2 x 2 x 2 box against its +x face, `hole(1)`.
+
+    The small box is centred (3, 0, 1/2) on the plane's own axes, so the two
+    fuse (V = 72, A = 96 + 24 - 2 4 = 112, one solid) and the centre of mass,
+    where CadQuery puts the hole, is (1/3, 0, 1/18) on `XY`; on `XZ`, whose
+    normal is -y and whose local y is world z, it is (1/3, -1/18, 0). The hole
+    runs against the normal to the far face of the big box: length
+    37/18 = 2 + 1/18, so it removes pi r^2 37/18 and its wall is pi d 37/18.
+    Neither hole's cap nor its end at the bottom changes the area.
+    """
+    length = 2 + 1 / 18
+    cut = math.pi * 0.25 * length
+    volume = 72 - cut
+    if plane == "XY":
+        union_moment = (24.0, 0.0, 4.0)
+        bore = (1 / 3, 0.0, (1 / 18 - 2) / 2)
+        bounds = ((-2, -2, -2), (4, 2, 2))
+    else:
+        union_moment = (24.0, -4.0, 0.0)
+        bore = (1 / 3, (-1 / 18 + 2) / 2, 0.0)
+        bounds = ((-2, -2, -2), (4, 2, 2))
+    return measures(
+        volume,
+        112 + math.pi * length,
+        (
+            (union_moment[0] - cut * bore[0]) / volume,
+            (union_moment[1] - cut * bore[1]) / volume,
+            (union_moment[2] - cut * bore[2]) / volume,
+        ),
+        bounds,
+        13,
+        [["cylinder", 1], ["plane", 12]],
+    )
+
+
 BASE = 'cq.Workplane("XY").box(4, 6, 8)'
 HEX_STANDOFF = """import cadquery as cq
 
@@ -256,6 +332,27 @@ def fixture_programs() -> dict[str, tuple[str, dict[str, object], str]]:
         hex_standoff(),
         hex_standoff.__doc__ or "",
     )
+    found["ok-hole-on-a-move-point"] = (
+        wrap(f'{BASE}.faces(">Z").workplane().moveTo(1, 1).hole(1)'),
+        on_a_move_point(),
+        on_a_move_point.__doc__ or "",
+    )
+    found["ok-hole-on-a-move-point-blind"] = (
+        wrap(f"{BASE}.moveTo(1, 1).hole(1)"),
+        on_a_move_point_blind(),
+        on_a_move_point_blind.__doc__ or "",
+    )
+    for plane in ("XY", "XZ"):
+        found[f"ok-hole-on-a-solid-stack-{plane.lower()}"] = (
+            wrap(
+                f'cq.Workplane("{plane}").box(4, 4, 4).union(\n'
+                f'        cq.Workplane("{plane}")'
+                ".transformed(offset=cq.Vector(3, 0, 0.5)).box(2, 2, 2)\n"
+                "    ).hole(1)"
+            ),
+            on_a_solid_stack(plane),
+            on_a_solid_stack.__doc__ or "",
+        )
     return found
 
 
@@ -325,20 +422,12 @@ def test_a_chain_without_a_solid_is_cadquerys_error() -> None:
             "Workplane.hole on a pending wire",
         ),
         (
-            lambda: cq.Workplane("XY").box(2, 2, 2).moveTo(1, 1).hole(1),
-            "Workplane.hole on a pending wire",
-        ),
-        (
-            lambda: cq.Workplane("XY").box(2, 2, 2).hole(1),
-            "Workplane.hole on a stack holding objects",
-        ),
-        (
             lambda: cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane().circle(1).hole(1),
             "Workplane.hole on a pending wire",
         ),
     ],
 )
-def test_a_hole_on_a_stack_holding_objects_is_unsupported_naming_it(
+def test_a_hole_where_cadquery_bores_at_a_centre_the_subset_lacks_is_unsupported(
     build: object, message: str
 ) -> None:
     assert callable(build)

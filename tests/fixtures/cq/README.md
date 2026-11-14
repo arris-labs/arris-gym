@@ -367,3 +367,20 @@ end in CadQuery's own errors, each with a recorded report saying so. A hole
 that leaves nothing (`hole(10)` on the same box) is an oracle `crash` row, not
 a report: its empty result has no bounding box to measure, so no fixture holds
 it against the oracle, and `tests/test_cq_hole.py` holds arris's refusal.
+
+Step 6 reads the contexts the bundle admits, each beside its recorded oracle
+report (`tests/test_cq_contexts.py` and `tests/test_cq_hole.py` write the
+expectations). `ok-faces-compound-*` select across a compound's pieces: `-tops`
+the taller piece's top alone (a circle stands in the air over it), `-bottoms`
+both pieces' coplanar bottoms, `-coplanar-tops` both tops, which `workplane()`
+reads as one plane. `ok-faces-workplane-offset-*` move a face's plane along its
+normal: above the top, into the box (flush, so arris keeps one face more than
+CadQuery's `clean`), off a `<X` face, and under a hole. `ok-hole-on-*` bore at a
+`moveTo` point (through and blind) and, with no `workplane`, at a solid's centre
+of mass on `XY` and on `XZ`, whose normal is -y. `runtime-faces-on-*`: `faces` on
+a stack that holds no face (CadQuery hands its selector an empty list, even with
+a solid higher in the chain). `unsupported-hole-on-*`: CadQuery bores at a
+selected face's centre and at a drawn path's, which the subset does not model;
+each has CadQuery's report of a part it builds.
+`tests/fixtures/regression/cq-hole-tangent-column` is arris's refusal of a cut
+tangent to a bore.

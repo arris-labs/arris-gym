@@ -15,7 +15,7 @@ import arris
 import arris.build
 
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
-from arris_gym.cq._selector import SELECTORS, Faces, plane_on_faces, select_faces
+from arris_gym.cq._selector import NO_FACES, SELECTORS, Faces, plane_on_faces, select_faces
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
 from arris_gym.cq._vector import Vector
 
@@ -328,9 +328,10 @@ class Workplane:
         offset give their one plane (rule 4); faces not all planar raise
         CadQuery's `ValueError` (`runtime`), and so do planar faces whose
         normals fail its co-planar test whichever face comes first. A curved
-        face, faces of one curved surface (rule 5), several faces whose plane
-        needs their areas or centres, and an `offset` on faces are
-        `UnsupportedApi`.
+        face, faces of one curved surface (rule 5) and several faces whose
+        plane needs their areas or centres are `UnsupportedApi`. An `offset`
+        on faces moves the plane that far along its normal, as it does on a
+        solid (read on the oracle: `ok-faces-workplane-offset-*`).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).workplane(offset=3)
@@ -339,14 +340,22 @@ class Workplane:
         >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane()
         >>> wp._plane.origin
         (0.0, 0.0, 1.0)
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane(offset=2)
+        >>> wp._plane.origin
+        (0.0, 0.0, 3.0)
         """
         kept = [o for o in self._stack if isinstance(o, Faces)]
         if kept:
             (selected,) = kept
             plane = plane_on_faces(selected.faces, self._plane, selected.solid.model)
-            if offset != 0.0:
-                raise UnsupportedApi("Workplane.workplane(offset) on a face")
-            return self._derive_on(plane)
+            # As on a solid below: moved along the unit normal, axes kept.
+            n = plane.z
+            at = (
+                plane.origin[0] + n[0] * offset,
+                plane.origin[1] + n[1] * offset,
+                plane.origin[2] + n[2] * offset,
+            )
+            return self._derive_on(arris.build.Workplane(at, plane.x, plane.y, plane.z))
         self._refuse_pending("Workplane.workplane")
         plane = self._plane
         o, n = plane.origin, plane.z
@@ -378,10 +387,12 @@ class Workplane:
         within CadQuery's `1e-4` of the first of its cluster. They are the one
         object on the new stack, in CadQuery's order, the solid stays in the
         chain, and `workplane()` places a plane on them (ADR-0017). Raises
-        `UnsupportedApi` for any other selector, for a stack that does not
-        hold exactly one solid (an empty stack, a pending wire, selected
-        faces) and for a selection that depends on a centre arris does not
-        give.
+        `UnsupportedApi` for any other selector, for selected faces and for a
+        selection that depends on a centre arris does not give. A stack with
+        no solid (empty, a `moveTo` point, a drawn path or a sketch, whose
+        objects have no faces) raises CadQuery's `ValueError` (`runtime`),
+        read on the oracle: `runtime-faces-on-*`. Where the solid is a compound
+        the faces of every piece are candidates (`ok-faces-compound-*`).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 4, 6).faces("<X")
@@ -390,12 +401,13 @@ class Workplane:
         """
         if selector not in SELECTORS:
             raise UnsupportedApi(f"Workplane.faces({selector!r})")
+        if any(isinstance(o, Faces) for o in self._stack):
+            raise UnsupportedApi("Workplane.faces on selected faces")
         solids = self._solids()
-        if len(self._stack) != 1 or not solids:
-            if not self._stack:
-                raise UnsupportedApi("Workplane.faces on an empty stack")
-            self._refuse_pending("Workplane.faces")
-            raise UnsupportedApi("Workplane.faces on a stack holding no solid")
+        if not solids:
+            # No object on the stack has a face: CadQuery's selector is handed
+            # an empty list, even where the chain holds a solid further up.
+            raise ValueError(NO_FACES)
         (solid,) = solids
         return self._derive(Faces(solid, select_faces(solid, selector)))
 
@@ -408,13 +420,15 @@ class Workplane:
         through any material below the plane and leaves what lies above it
         (CadQuery's `hole` with no depth: `cutEach` of a cylinder of
         `largestDimension()`, read on the oracle: `ok-hole-*`). The point is
-        the plane's origin, so the stack must be empty (after `workplane()`).
+        the plane's origin on an empty stack (after `workplane()`), the point
+        of a lone `moveTo` on that plane, or the centre of mass of a solid on
+        the stack, in all three coordinates (read on the oracle: `ok-hole-on-*`).
         The result is the one solid on the new stack, a compound where the hole
         splits the part (ADR-0016). A zero `diameter` cuts nothing, as in
         CadQuery. Raises `ValueError` (`runtime`) in CadQuery's words for a
         chain without a solid and for a negative diameter, and `UnsupportedApi`
-        for a stack that holds anything: CadQuery bores at each object's
-        centre.
+        for selected faces or a drawn path or sketch on the stack: CadQuery
+        bores at their centres.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane().hole(1)
@@ -424,13 +438,20 @@ class Workplane:
         base = self._base_solid()
         if base is None:
             raise ValueError("Cannot find a solid on the stack or in the parent chain")
-        if self._stack:
-            # CadQuery bores at each object's centre; the subset models the
-            # plane's own origin only.
-            self._refuse_pending("Workplane.hole")
-            raise UnsupportedApi("Workplane.hole on a stack holding objects")
         plane = self._plane
         at = plane.origin
+        if self._stack:
+            # CadQuery's `eachpoint` bores at each object's centre: a point is
+            # itself and a solid its centre of mass. Faces and drawn paths have
+            # centres the subset does not model.
+            (last,) = self._stack
+            if isinstance(last, _Path) and not last.segments:
+                at = plane.point(last.start[0], last.start[1], 0.0)
+            elif isinstance(last, arris.build.Solid):
+                at = last.measure().centroid
+            else:
+                self._refuse_pending("Workplane.hole")
+                raise UnsupportedApi("Workplane.hole on a stack holding objects")
         named = f"Workplane.hole({diameter})"
         if diameter < 0:
             raise ValueError(

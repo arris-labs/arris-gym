@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 188.85840734641022,
+    "area": 220.5663706143592,
+    "centroid": [
+      -0.01663464548775624,
+      -0.01663464548775624,
+      0.03326929097551248
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`box(4, 6, 8)` `.moveTo(1, 1).hole(1)`: the plane is the box's own XY, z = 0. The point is (1, 1, 0), so the cylinder (r = 1/2) bores the lower half, 4 deep: V = 192 - pi, A = 208 + 4 pi, and its centroid (1, 1, -2) gives the part's -pi (1, 1, -2) / V."
+}

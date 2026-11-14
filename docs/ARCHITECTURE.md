@@ -390,15 +390,19 @@ several planar faces with one normal and one offset it is their one plane.
 Several faces not all planar, or planar ones whose normals fail CadQuery's
 co-planar test whichever comes first, end `runtime` with CadQuery's
 `ValueError`. A curved face or faces of one curved surface, several faces
-whose plane needs their areas or centres (a near tie, other normals),
-`offset=` there and every other call on a stack of faces end
-`unsupported_api`, the last two until their steps land.
+whose plane needs their areas or centres (a near tie, other normals) and every
+call but `workplane` on a stack of faces end `unsupported_api`. `workplane(offset=)`
+on faces moves the plane along its normal, as on a solid. `faces` on a stack
+whose objects have no faces (an empty stack, a `moveTo` point, a drawn path, a
+sketch) is `runtime` with CadQuery's `ValueError`, even where the chain holds a
+solid; on a compound, the faces of every piece are candidates.
 `hole(diameter)` cuts CadQuery's cylinder from the chain's solid: it starts at
-the plane's origin, on an empty stack; it runs against the plane's normal
+the plane's origin on an empty stack, at a lone `moveTo` point on the plane, or
+at the centre of mass of a solid on the stack; it runs against the plane's normal
 for the diagonal of the solid's box (`cutEach` of `largestDimension()`), so it
 bores what lies below the plane and leaves what lies above. A zero diameter
-cuts nothing, a negative one is `runtime`, and a stack holding anything is
-`unsupported_api` (CadQuery bores at each object's centre) and a hole that leaves
+cuts nothing, a negative one is `runtime`, and selected faces and a drawn path
+or sketch on the stack are `unsupported_api` (CadQuery bores at their centres) and a hole that leaves
 nothing is the kernel's refusal (CadQuery's checker cannot measure its empty
 result, an oracle `crash` row).
 `polygon(nSides, diameter)` is a pending closed sketch centred as `circle`

@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Can not return the Nth element of an empty list",
+  "program_sha256": "aacf1a6f937ad8f1580f7687414bbf9410eb766dc2ca10830a41bd8592e0c613",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

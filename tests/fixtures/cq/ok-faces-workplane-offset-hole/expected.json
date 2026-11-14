@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 187.2876110196153,
+    "area": 226.84955592153875,
+    "centroid": [
+      0,
+      0,
+      0.025161242405356672
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`.faces(\">Z\").workplane(offset=-2).hole(1)`: the plane is z = 2. The cylinder (r = 1/2) runs from z = 2 against the normal, out of the bottom, so it bores z -4..2, 6 deep: V = 192 - 1.5 pi, A = 208 + 6 pi (the cap at z = 2 replaces the disc the bore takes from the bottom), centroid z = 1.5 pi / V (the bore's is -1)."
+}

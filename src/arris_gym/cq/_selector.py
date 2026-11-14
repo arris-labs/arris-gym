@@ -15,7 +15,15 @@ import arris.build
 
 from arris_gym.cq._unsupported import UnsupportedApi
 
-__all__ = ["CQ_TOLERANCE", "SELECTORS", "Faces", "plane_on", "plane_on_faces", "select_faces"]
+__all__ = [
+    "CQ_TOLERANCE",
+    "NO_FACES",
+    "SELECTORS",
+    "Faces",
+    "plane_on",
+    "plane_on_faces",
+    "select_faces",
+]
 
 # The axis selectors the subset admits: `DirectionMinMaxSelector` on one world
 # axis, `>` the furthest cluster and `<` the nearest (ADR-0017).
@@ -246,6 +254,9 @@ def plane_on(
     return arris.build.Workplane(at, x, y, (n[0], n[1], n[2]))
 
 
+# CadQuery 2.3.0's `DirectionMinMaxSelector.filter` on an empty list, which `faces`
+# hands it when no object on the stack has a face: raised as `ValueError`.
+NO_FACES = "Can not return the Nth element of an empty list"
 # CadQuery 2.3.0's `Workplane.workplane` on several objects: its words, raised
 # as `ValueError` (ADR-0017 rule 4).
 NOT_PLANAR = "If multiple objects selected, they all must be planar faces."

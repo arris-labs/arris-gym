@@ -177,6 +177,8 @@ def test_every_ok_faces_fixture_is_the_closed_form() -> None:
         for case in fixture_cases.load("cq")
         if case.slug.startswith("ok-faces-")
         and case.slug not in ("ok-faces-bolt-head", "ok-faces-coplanar-tops")
+        # Step 6's are written by tests/test_cq_contexts.py.
+        and not case.slug.startswith(("ok-faces-compound-", "ok-faces-workplane-offset-"))
     }
     assert sorted(committed) == sorted(fixture_programs())
     for slug, (program, expected) in fixture_programs().items():
@@ -293,11 +295,6 @@ def test_two_coplanar_faces_are_both_kept() -> None:
     [
         (lambda: cq.Workplane("XY").box(1, 1, 1).faces("|Z"), "Workplane.faces('|Z')"),
         (lambda: cq.Workplane("XY").box(1, 1, 1).faces(">Z or <Z"), "Workplane.faces('>Z or <Z')"),
-        (lambda: cq.Workplane("XY").faces(">Z"), "Workplane.faces on an empty stack"),
-        (
-            lambda: cq.Workplane("XY").moveTo(1, 1).faces(">Z"),
-            "Workplane.faces on a pending wire",
-        ),
         (
             lambda: cq.Workplane("XY").box(2, 2, 2).faces(">Z").faces(">Z"),
             "Workplane.faces on selected faces",
@@ -309,10 +306,6 @@ def test_two_coplanar_faces_are_both_kept() -> None:
         (
             lambda: cq.Workplane("XY").box(2, 2, 2).faces(">Z").extrude(1),
             "Workplane.extrude on selected faces",
-        ),
-        (
-            lambda: cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane(offset=1),
-            "Workplane.workplane(offset) on a face",
         ),
         (
             lambda: tops((-3, 1, 2), (4, 1.00005, 1)).faces(">Z").workplane(),

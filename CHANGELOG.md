@@ -12,8 +12,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   plane and leaves what lies above it. A hole that splits the part leaves a
   compound. A zero diameter changes nothing and a negative one ends `runtime`,
   as in CadQuery; a chain with no solid ends `runtime` too. A hole on a stack
-  that holds anything (a solid, selected faces, a point or a path) ends
-  `unsupported_api`, and a hole that leaves
+  that holds a `moveTo` point starts there, and on one that holds a solid at its
+  centre of mass, as CadQuery's does. A hole on selected faces or beside a
+  drawn path ends `unsupported_api`, and a hole that leaves
   nothing ends `arris_refusal`, where CadQuery's own checker cannot measure its
   empty result.
 
@@ -23,9 +24,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   outward normal, or the one plane of several coplanar faces. A circle,
   polygon or `moveTo` drawn there and extruded fuses with the solid, as in
   CadQuery. Several selected faces not all planar, or whose normals CadQuery
-  finds not co-planar, end `runtime` with CadQuery's `ValueError`. Any other
+  finds not co-planar, end `runtime` with CadQuery's `ValueError`.
+  `workplane(offset=…)` on them moves the plane along its normal. `faces` on a
+  stack with no faces (an empty stack, a point, a drawn path) ends `runtime` with
+  CadQuery's `ValueError`; on a compound it selects across its pieces. Any other
   selector, a curved face, several faces at slightly different offsets,
-  `workplane(offset=…)` on them, any other call on them, and a selection that
+  any other call on them, and a selection that
   depends on a face's centre of mass arris does not give (a cylinder's
   `">X"`) end `unsupported_api`.
 

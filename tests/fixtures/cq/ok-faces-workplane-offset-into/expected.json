@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 192,
+    "area": 208,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`offset=-1` puts the plane at z = 3: a cylinder (r = 1, z 3..4) inside the box. It lies wholly in the box and its top is flush with the box's: the union is the box, V = 192, A = 208. arris keeps the flush disc as a face of its own on the top, 7 faces where CadQuery's `clean` merges it back into 6."
+}

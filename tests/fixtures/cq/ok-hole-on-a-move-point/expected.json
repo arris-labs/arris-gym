@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 185.7168146928204,
+    "area": 231.56194490192345,
+    "centroid": [
+      -0.033832075558543846,
+      -0.033832075558543846,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "`box(4, 6, 8)` `.faces(\">Z\").workplane().moveTo(1, 1).hole(1)`: a bore through at (1, 1). The cylinder (r = 1/2) removes pi r^2 8 = 2 pi through all of z; two discs go from the area and its wall, 2 pi r 8, is added. Its centroid is (1, 1, 0), so the part's is -2 pi (1, 1, 0) / V."
+}

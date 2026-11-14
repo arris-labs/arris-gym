@@ -1,0 +1,14 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the cut, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a section edge of f9 ends at a node nothing else reaches\", of a box that holds a bore of diameter 1 by a 1 x 1 column tangent to the bore along four lines; CadQuery 2.3.0 builds the box less the column",
+  "measures": {
+    "volume": 184,
+    "area": 238,
+    "centroid": [0, 0, 0],
+    "bounds": [[-2, -3, -4], [2, 3, 4]],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "A 4 x 6 x 8 box centred on the origin, a bore of diameter 1 from its top along z, and a 1 x 1 x 20 box on the origin cut from it. The column holds the bore, tangent to its four sides, so what is left is the box less the column: V = 192 - 8 = 184, A = 208 - 2 + 4 8 = 238, centroid the origin, genus 1. Faces are carried, not judged (ADR-0005)."
+}
