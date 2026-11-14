@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 432.89259529440733,
+    "area": 466.8407867414279,
+    "centroid": [
+      0,
+      0,
+      16.31247751530614
+    ],
+    "bounds": [
+      [
+        -4.04,
+        -3.498742631289132,
+        0
+      ],
+      [
+        4.04,
+        3.498742631289132,
+        27.8
+      ]
+    ],
+    "faces": 10,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        9
+      ]
+    ]
+  },
+  "note": "BenchCAD bolt_000037_s20260505 as written (CC BY 4.0): a radius-2 shaft of 25 and a hexagonal head of circumdiameter 8.08 and height 2.8 on its top face; V = 100 pi + (3 sqrt 3 / 2) 4.04^2 2.8, A = 100 pi + 2 A_hex + 6 (4.04) 2.8 (the head's underside less the shaft's disc, plus the disc's base), the hexagon's first vertex on +x"
+}

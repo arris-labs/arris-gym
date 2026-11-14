@@ -92,13 +92,22 @@ within a given design; **[3]** unproven semantics, established here.
   near tie); its evidence is the probe's committed rows.
   Done: `tools/cq_selector_probe.py`, rows in `tests/fixtures/selectors/`; all
   950 keep planar faces normal to the axis (40 keep two), no near tie.
-- [ ] Step 3 **[2]** — `faces(sel)` and `workplane()` on one planar face.
+- [x] Step 3 **[2]** — `faces(sel)` and `workplane()` on one planar face.
   Declare `faces(str)` and the selectors; move the hits. Fixtures
   `cq/ok-faces-*`: each selector on a box, a transformed box and a
   cylinder, followed by `circle`/`polygon` and `extrude` (closed forms;
   `polygon` pins the x direction), one corpus program as written. A
   `hypothesis` property: a random box on a random named plane, every
   selector, the new plane's origin and axes against the closed form.
+  *Settled* (step 3): the stack object is `Faces` in `cq/_selector.py`
+  (private, not `_Faces`); the cylinder fixtures use the selectors along
+  the cylinder's own axis (`XY`, `YZ`, `XZ` planes), since its others end
+  `unsupported_api` (ADR-0017). The hits the plan said stay did not:
+  `test_reach.py` (three tests), `test_reach_curve.py` and
+  `reach/out-selector` read `cq.subset()`, so they moved to `|Z`/`edges`;
+  `fixture_cases.c1_subset()` and the new `c2_baseline_subset()` drop
+  `faces` and the selectors, and `tools/cq_selector_probe.py` reads its 950
+  against `before_subset()`.
 - [ ] Step 4 **[3]** — `workplane()` on a curved face and on several faces,
   as ADR-0017 says, with step 2's shapes as fixtures (closed forms where
   the centre has one, the oracle's plane otherwise, ADR-0005).

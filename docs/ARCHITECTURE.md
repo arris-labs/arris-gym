@@ -322,12 +322,13 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 18 API forms:
+the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 19 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
-`transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+`transformed`, `workplane` (with an optional `offset=`), `faces` with the six
+axis selectors `>X <X >Y <Y >Z <Z`, `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close` and `revolve`;
-selectors, `hole`, `chamfer` and STEP export wait for their bundle in C2's order.
+`hole`, `chamfer` and STEP export wait for their bundle in C2's order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
 form. A program's result is the last `show_object` argument, else
@@ -377,6 +378,16 @@ stack ends `unsupported_api` (CadQuery centres it on the object's
 raises `Standard_ConstructionError`; `sphere(0)` ends `runtime` by design,
 as `cylinder(h, 0)` does: CadQuery builds a zero-volume shape its checker
 rejects, and the row is `by_design` on this anchor.
+`faces(selector)` keeps the faces of the solid on the stack as
+CadQuery's `DirectionMinMaxSelector` does (ADR-0017): by centre of mass along
+the axis, greedy clusters of `1e-4`, `>` the last and `<` the first. A planar
+face normal to the axis is ranked by its exact plane offset, any other by its
+box where that settles it, else by a tessellation estimate trusted at a margin;
+a selection the margin cannot settle ends `unsupported_api`. `workplane()` on
+one planar face is that face's plane (x `(0, 0, 1)` crossed with the normal,
+the parent origin projected onto it) and keeps the solid in the chain; several
+faces, a curved face and `offset=` there, and every other call on a stack of
+faces, end `unsupported_api` until their steps land.
 `polygon(nSides, diameter)` is a pending closed sketch centred as `circle`
 is (the origin of an empty stack or a lone `moveTo` point): `nSides`
 vertices on the circle of `diameter`, the first on the plane's +x, the

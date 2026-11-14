@@ -314,3 +314,19 @@ refused. The corpus `u_bolt` and `j_hook` programs run as written (bounds
 tested in the same file); their volumes wait for step 4's hook closed form,
 the oracle's half torus being off by 1e-8 there. The other calls after the
 polyline meet the stack `polyline` alone leaves, so none changes.
+
+`ok-faces-box-*`, `-turned-box-*` and `-cylinder-*` select a face with each of
+`>X <X >Y <Y >Z <Z` (a cylinder only on its axis: its other selectors tie its
+side face with its discs, ADR-0017), put a plane on it with `workplane()` and
+stand a triangular prism of circumdiameter 1.5 and height 2 there, at
+(0.5, 0.25) of that plane, so the volume-weighted centroid pins the plane's
+x and y directions and its projected origin. The turned box is a 4 × 6 × 8 box
+at (1, 2, 3) turned 90 degrees about z, so the parent origin is not the world
+origin. The cylinders are 6 × radius 2 on `XY`, `YZ` and `XZ`. `ok-faces-bolt-head`
+is BenchCAD's `bolt_000037_s20260505` as written (CC BY 4.0): a shaft and a
+hexagonal head on its `>Z` face. Each has a recorded oracle report holding its
+closed form (`tests/test_cq_faces.py` writes the expectations, with
+properties over box and cylinder sizes, planes and origins for the plane
+itself) and an agreeing row in the same file. The oracle's face counts equal
+the closed form's here (10 for a box, 7 for a cylinder).
+

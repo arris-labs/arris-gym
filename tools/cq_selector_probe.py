@@ -277,19 +277,34 @@ def constructed_programs() -> dict[str, str]:
     return {name: _HEAD + body + _SHOW for name, body in sorted(CONSTRUCTED.items())}
 
 
-def bundle_subset() -> Subset:
-    """`cq.subset()` with this plan's declarations added."""
+def before_subset() -> Subset:
+    """`cq.subset()` less the bundle's forms and selectors: the subset it was planned against.
+
+    The plan lifted them, so today's subset holds them; the 950 are the programs
+    they admitted, which is what this subtracts to read them again.
+    """
     today = subset()
+    named = {form.name for form in BUNDLE}
     return Subset(
-        forms=today.forms + BUNDLE,
-        selectors=tuple(sorted({*today.selectors, *SELECTORS})),
+        forms=tuple(form for form in today.forms if form.name not in named),
+        selectors=tuple(sorted(set(today.selectors) - set(SELECTORS))),
         end_forms=today.end_forms,
     )
 
 
+def bundle_subset() -> Subset:
+    """`before_subset()` with this plan's declarations added."""
+    before = before_subset()
+    return Subset(
+        forms=before.forms + BUNDLE,
+        selectors=tuple(sorted({*before.selectors, *SELECTORS})),
+        end_forms=before.end_forms,
+    )
+
+
 def newly_reached(census: Sequence[ProgramCensus | Unparsable]) -> list[str]:
-    """The stems the bundle admits and today's subset does not, sorted."""
-    before = set(reach(census, subset()).stems)
+    """The stems the bundle admits and `before_subset()` does not, sorted."""
+    before = set(reach(census, before_subset()).stems)
     return sorted(set(reach(census, bundle_subset()).stems) - before)
 
 

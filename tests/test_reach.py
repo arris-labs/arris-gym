@@ -95,10 +95,9 @@ def test_admits_checks_literal_kinds_count_and_canonical_keywords(
 
 def test_selectors_are_required_even_after_a_call_form_is_admitted() -> None:
     p = program("import cadquery as cq\nresult = cq.Workplane('XY').faces('>Z')")
-    with_faces = replace(
-        SUBSET, forms=(*SUBSET.forms, cq.CensusForm("Workplane.faces", (("str",),)))
-    )
-    assert reach([p], with_faces).in_subset == 0
+    with_faces = SUBSET
+    assert with_faces.admits("Workplane.faces(str)")
+    assert reach([p], replace(with_faces, selectors=())).in_subset == 0
     assert reach([p], replace(with_faces, selectors=(">Z",))).in_subset == 1
     assert reach([p], replace(with_faces, selectors=("<Z",))).in_subset == 0
 
@@ -180,7 +179,7 @@ def test_records_and_nested_declarations_are_frozen() -> None:
 
 
 VALUES = {
-    "str": "'XY'",
+    "str": "'>Z'",
     "num": "2",
     "bool": "True",
     "none": "None",
@@ -197,8 +196,10 @@ def declared_programs(draw: st.DrawFn) -> tuple[CorpusProgram, cq.CensusForm]:
     chosen = draw(st.lists(st.sampled_from(SUBSET.forms), min_size=1, max_size=12))
     lines = ["import cadquery as cq", "dimension = 2", "wp = cq.Workplane('XY')"]
     for declaration in chosen:
+        # A selector is a literal for the census; a name or expression is no selector.
+        dynamic = () if declaration.name == "Workplane.faces" else ("name", "expr")
         args = [
-            VALUES[draw(st.sampled_from((*kinds, "name", "expr")))]
+            VALUES[draw(st.sampled_from((*kinds, *dynamic)))]
             for kinds in (slot or tuple(VALUES) for slot in declaration.positional)
         ]
         args += [

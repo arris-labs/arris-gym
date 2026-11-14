@@ -40,7 +40,8 @@ def c1_subset() -> cq.Subset:
     `Workplane.threePointArc` (plans/lift-three-point-arc),
     `Workplane.sphere` (plans/lift-sphere) and `Workplane.polygon`
     (plans/lift-polygon), and `Workplane.extrude`'s `both=`
-    (plans/lift-extrude-both).
+    (plans/lift-extrude-both), `Workplane.faces` with the six axis selectors
+    (plans/lift-face-selectors).
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
     extrude = cq.CensusForm("Workplane.extrude", (("num",),))
@@ -55,6 +56,7 @@ def c1_subset() -> cq.Subset:
             for form in cq.subset().forms
             if form.name
             not in (
+                "Workplane.faces",
                 "Workplane.workplane",
                 "Workplane.cylinder",
                 "Workplane.threePointArc",
@@ -62,7 +64,22 @@ def c1_subset() -> cq.Subset:
                 "Workplane.polygon",
             )
         ),
+        selectors=(),
         end_forms=("result = …", "show_object(…)"),
+    )
+
+
+def c2_baseline_subset() -> cq.Subset:
+    """`cq.subset()` less the declarations of plans/lift-face-selectors.
+
+    The committed C2 reports (`tests/fixtures/c2/`) were measured before
+    `Workplane.faces` and the six axis selectors; plans/lift-face-selectors
+    step 8 re-runs them and this goes back to `cq.subset()`.
+    """
+    return replace(
+        cq.subset(),
+        forms=tuple(form for form in cq.subset().forms if form.name != "Workplane.faces"),
+        selectors=(),
     )
 
 

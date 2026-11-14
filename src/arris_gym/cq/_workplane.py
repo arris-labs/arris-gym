@@ -15,6 +15,7 @@ import arris
 import arris.build
 
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
+from arris_gym.cq._selector import SELECTORS, Faces, plane_on, select_faces
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
 from arris_gym.cq._vector import Vector
 
@@ -206,6 +207,10 @@ class Workplane:
             solids = node._solids()
             if solids:
                 return solids[0]
+            # A `faces` stack keeps the solid they were selected from.
+            kept = [o for o in node._stack if isinstance(o, Faces)]
+            if kept:
+                return kept[0].solid
             node = node._parent
         return None
 
@@ -225,6 +230,8 @@ class Workplane:
 
         Raises `ValueError` (CadQuery's words, `runtime`) for any other stack.
         """
+        if any(isinstance(o, Faces) for o in self._stack):
+            raise UnsupportedApi("Workplane.extrude on selected faces")
         sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
         if len(sketches) != 1 or len(self._stack) != 1:
             raise ValueError("No pending wires present")
@@ -240,6 +247,8 @@ class Workplane:
         if not self._stack:
             return _Path((0.0, 0.0))
         last = self._stack[-1]
+        if isinstance(last, Faces):
+            raise UnsupportedApi("Workplane.lineTo on selected faces")
         if isinstance(last, _Path):
             return last
         raise RuntimeError(f"Cannot convert object type '{type(last).__name__}' to vector")
@@ -249,8 +258,12 @@ class Workplane:
 
         CadQuery keeps every pending wire in a context the whole chain
         shares and builds them together; the subset holds one on the stack,
-        so a call that would start a second beside it is outside it.
+        so a call that would start a second beside it is outside it. Faces a
+        selector kept are refused the same way: what a call does on them is
+        CadQuery's `eachpoint` or `_getFaces`, which the subset does not model.
         """
+        if any(isinstance(o, Faces) for o in self._stack):
+            raise UnsupportedApi(f"{form} on selected faces")
         if any(isinstance(o, (_Path, arris.build.Sketch)) for o in self._stack):
             raise UnsupportedApi(f"{form} on a pending wire")
 
@@ -258,6 +271,8 @@ class Workplane:
         """The solids of the workplane given to `union` or `cut`; `form` names the call."""
         if not isinstance(other, Workplane):
             raise UnsupportedApi(f"{form} with {type(other).__name__}")
+        if any(isinstance(o, Faces) for o in other._stack):
+            raise UnsupportedApi(f"{form} with selected faces")
         solids = other._solids()
         if not solids:
             raise ValueError(f"{form} was given a Workplane holding no solid")
@@ -305,11 +320,30 @@ class Workplane:
         oracle: `ok-workplane-on-compound`). Refuses, as `UnsupportedApi`, a
         pending wire on the stack.
 
+        On a stack `faces` made, one planar face gives the plane of that
+        face (ADR-0017 rule 3): its normal the face's outward normal, its x
+        `(0, 0, 1)` crossed with it (+x for a normal along z), its origin
+        this workplane's origin projected onto the face's plane. The solid
+        stays in the chain. Several faces and a curved face are
+        `UnsupportedApi`, and so is an `offset` there.
+
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).workplane(offset=3)
         >>> wp._plane.origin
         (0.0, 0.0, 3.0)
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane()
+        >>> wp._plane.origin
+        (0.0, 0.0, 1.0)
         """
+        kept = [o for o in self._stack if isinstance(o, Faces)]
+        if kept:
+            (selected,) = kept
+            if len(selected.faces) != 1:
+                raise UnsupportedApi("Workplane.workplane on several faces")
+            if offset != 0.0:
+                raise UnsupportedApi("Workplane.workplane(offset) on a face")
+            plane = plane_on(selected.faces[0], self._plane, selected.solid.model)
+            return self._derive_on(plane)
         self._refuse_pending("Workplane.workplane")
         plane = self._plane
         o, n = plane.origin, plane.z
@@ -331,6 +365,36 @@ class Workplane:
             projected[2] + n[2] * offset,
         )
         return self._derive_on(arris.build.Workplane(at, plane.x, plane.y, plane.z))
+
+    @census_form("Workplane.faces", [("str",)])
+    def faces(self, selector: str) -> Workplane:
+        """The faces of the solid on the stack that CadQuery's `selector` keeps.
+
+        `selector` is one of `>X <X >Y <Y >Z <Z`: the faces whose centre of
+        mass lies furthest along (`>`) or least along (`<`) the axis, every one
+        within CadQuery's `1e-4` of the first of its cluster. They are the one
+        object on the new stack, in CadQuery's order, the solid stays in the
+        chain, and `workplane()` places a plane on them (ADR-0017). Raises
+        `UnsupportedApi` for any other selector, for a stack that does not
+        hold exactly one solid (an empty stack, a pending wire, selected
+        faces) and for a selection that depends on a centre arris does not
+        give.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 4, 6).faces("<X")
+        >>> len(wp._stack[0].faces)
+        1
+        """
+        if selector not in SELECTORS:
+            raise UnsupportedApi(f"Workplane.faces({selector!r})")
+        solids = self._solids()
+        if len(self._stack) != 1 or not solids:
+            if not self._stack:
+                raise UnsupportedApi("Workplane.faces on an empty stack")
+            self._refuse_pending("Workplane.faces")
+            raise UnsupportedApi("Workplane.faces on a stack holding no solid")
+        (solid,) = solids
+        return self._derive(Faces(solid, select_faces(solid, selector)))
 
     @census_form("Workplane.box", [("num",)] * 3)
     def box(self, length: float, width: float, height: float) -> Workplane:

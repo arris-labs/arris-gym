@@ -59,6 +59,18 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   by `tests/fixtures/cq/ok-cylinder-*` whose programs call `cylinder`: on each
   named plane, with `origin=`, after `transformed` and `workplane(offset=…)`,
   on a `moveTo` point and with a solid in the chain.
+- `Workplane.faces`, `_selectObjects`, `StringSyntaxSelector` and
+  `DirectionMinMaxSelector` (`cadquery/cq.py`, `cadquery/selectors.py`),
+  `Workplane.workplane` with `centerOption="ProjectedOrigin"`, `_computeXdir`
+  and `_isCoPlanar` (`cadquery/cq.py`), `Face.Center` and `Face.normalAt`
+  (`cadquery/occ_impl/shapes.py`): `>X <X >Y <Y >Z <Z` rank a solid's faces by
+  centre of mass along the axis, cluster keys within 1e-4 of the cluster's first
+  and keep the last (`>`) or first (`<`); `workplane()` on one planar face
+  places a plane through the face with its outward normal, x `(0, 0, 1)` crossed
+  with it (+x when shorter than 1e-4) and the parent's origin projected onto it.
+  Read in cadquery 2.3.0 and confirmed on the oracle: ADR-0017,
+  `tests/fixtures/selectors/` for the 950 BenchCAD programs and the
+  constructions, `tests/fixtures/cq/ok-faces-*` for the planes.
 - `Workplane.sphere` and `Solid.makeSphere` (`cadquery/cq.py`,
   `cadquery/occ_impl/shapes.py`): one sphere at each point of the stack
   (`eachpoint`, in the plane's own axes, the origin on an empty stack),
