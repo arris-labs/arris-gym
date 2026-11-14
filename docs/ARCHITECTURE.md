@@ -322,12 +322,12 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in census order. Today it is the census's 18 API forms:
+the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 18 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close` and `revolve`;
-selectors, `hole`, `chamfer` and STEP export wait for C2's census order.
+selectors, `hole`, `chamfer` and STEP export wait for their bundle in C2's order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
 form. A program's result is the last `show_object` argument, else

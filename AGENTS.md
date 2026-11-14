@@ -40,7 +40,7 @@ against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 85% on BenchCAD and 100% on CAD-Recode with no in-subset `cq_bug`. Now
 (2026-11-14): reach 4,345/17,900 on BenchCAD and 104/968 on CAD-Recode
 (`extrude(both=)` lifted), in-subset `cq_bug` 0 on both.
-**Next:** C2's growth: lift end forms, forms and selectors in reach-curve order
+**Next:** C2's growth: lift the knee's items in bundles, riskiest first (ADR-0014)
 (`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code

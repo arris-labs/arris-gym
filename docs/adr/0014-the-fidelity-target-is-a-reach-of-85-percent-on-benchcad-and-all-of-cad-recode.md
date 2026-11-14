@@ -116,3 +116,20 @@ calls may expose further causes after a lift. The kind-gap hypothesis above
 was not confirmed: the constructor's string values and the circle's stack
 context account for every measured first failure. The target and static
 membership rule are unchanged.
+
+## Amendment (2026-11-14): the order is the knee's items, riskiest bundle first
+
+The Decision's target and the Consequences' "in census order" are amended:
+the subset grows in **the knee's items, riskiest bundle first**. The items up
+to the knee (for BenchCAD, items 1 to 35; the **Knee** of `GLOSSARY.md`) are
+lifted in bundles of three or four items that share semantics, one plan and
+one corpus re-run per bundle, in this order: (1) selectors,
+`workplane()` on a face and `hole(num)`; (2) the other holes and point
+stacks; (3) `edges`, `fillet`, `chamfer`, the parallel selectors and
+`>Z or <Z`; (4) CAD-Recode's sketch API; (5) the head (`slot2D`, `rect`,
+`mirrorY`, `cutThruAll`, `loft(combine=)`, `extrude(taper=)`). The order is
+decided in `docs/ideas/next-lift.md` (absorbed by `plans/lift-face-selectors`),
+for riskiness: a bundle with new semantics is lifted before one that only
+adds forms. The reach curve still measures what each item unlocks; it no
+longer sets the order of lifts. T, the static membership rule and the
+Consequences' other points are unchanged.

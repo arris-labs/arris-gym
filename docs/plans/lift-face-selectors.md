@@ -81,7 +81,7 @@ Both tables are re-run with the oracle's committed rows and committed, with
 Grades are tiers (`.agents/tiers.md`): **[1]** routine; **[2]** careful
 within a given design; **[3]** unproven semantics, established here.
 
-- [ ] Step 1 **[1]** — ADR-0014's dated amendment, and the order's wording
+- [x] Step 1 **[1]** — ADR-0014's dated amendment, and the order's wording
   in ROADMAP §C2, AGENTS.md and ARCHITECTURE §Dialects.
 - [ ] Step 2 **[3]** — what the 950 select, on the oracle. A probe under
   `tools/` runs each program cut after its `.faces(sel)` in the oracle

@@ -125,9 +125,9 @@ training.
 the tables are in `docs/ARCHITECTURE.md` §Fidelity): BenchCAD reach
 4,345/17,900 and CAD-Recode 104/968, in-subset `cq_bug` 0 and nothing
 unclassified in the subset on both. Next:
-lifting forms, selectors and end forms in reach-curve order.
+lifting the knee's items in bundles, riskiest first (ADR-0014).
 
-**Goal.** The `cq` subset grows in census order over BenchCAD and the
+**Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified
 and a fidelity target is met. M3 reported agreement (200 of 300) without
 targeting it; this cycle sets the target by ADR from the reach curves over both corpora,
@@ -136,7 +136,7 @@ before the subset grows: T = 85% on BenchCAD, 100% on CAD-Recode (ADR-0014).
 **In:**
 - the fidelity target, by ADR;
 - the CAD-Recode validation split pinned by revision, and a census over it;
-- the `cq` forms the two censuses rank next, in census order only: selectors,
+- the `cq` forms the two censuses rank next, in the knee's bundle order only: selectors,
   `hole`, `chamfer`, `fillet`, the bare `cq.Workplane()` and `centered=False`
   (the backlog's open `cq` lines); each lifted form a fixture by construction;
 - the fidelity table over both corpora, every disagreement classed;
