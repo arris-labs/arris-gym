@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 624.2920367320511,
+    "area": 667.6902604182061,
+    "centroid": [
+      9.999999999999998,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        25,
+        4,
+        2
+      ]
+    ],
+    "faces": 14,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 2,
+    "genus": 2
+  },
+  "note": "The pair, `faces(\">X\").faces(\"<Z\").workplane().hole(1)`: a bore along x through both.\n\n    `>X` is B's face at x = 25 alone; `<Z` of that one face keeps it, so the\n    plane is x = 25 with its origin at (25, 0, 0) and the bore, as long as the\n    pair's diagonal, runs back along x through B (10), the gap, and A (10).\n    V = 640 - 2 pi r^2 10; each wall adds 2 pi r 10 and each end takes two discs\n    r^2 pi, A = 608 + 2 (2 pi r 10 - 2 pi r^2); B's bore is at x = 20, A's at 0.\n    "
+}

@@ -296,10 +296,6 @@ def test_two_coplanar_faces_are_both_kept() -> None:
         (lambda: cq.Workplane("XY").box(1, 1, 1).faces("|Z"), "Workplane.faces('|Z')"),
         (lambda: cq.Workplane("XY").box(1, 1, 1).faces(">Z or <Z"), "Workplane.faces('>Z or <Z')"),
         (
-            lambda: cq.Workplane("XY").box(2, 2, 2).faces(">Z").faces(">Z"),
-            "Workplane.faces on selected faces",
-        ),
-        (
             lambda: cq.Workplane("XY").box(2, 2, 2).faces(">Z").box(1, 1, 1),
             "Workplane.box on selected faces",
         ),

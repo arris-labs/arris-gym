@@ -195,8 +195,14 @@ def _estimates(
     return found
 
 
-def select_faces(solid: arris.build.Solid, selector: str) -> tuple[arris.Face, ...]:
-    """The faces of `solid` that CadQuery's `selector` keeps (ADR-0017).
+def select_faces(
+    solid: arris.build.Solid, selector: str, among: Sequence[arris.Face] | None = None
+) -> tuple[arris.Face, ...]:
+    """The faces of `solid`, or of `among` them, that CadQuery's `selector` keeps (ADR-0017).
+
+    `among` are faces of `solid` a selector kept before (a `faces` on a stack
+    of faces, ADR-0018 rule 5): CadQuery ranks those only. The solid still
+    gives the part's box, the scale of the margin.
 
     `selector` is one of `SELECTORS`. A face's key is its centre of mass
     along the axis: its plane's offset where it is a plane normal to the axis
@@ -214,7 +220,7 @@ def select_faces(solid: arris.build.Solid, selector: str) -> tuple[arris.Face, .
     axis = _AXIS[selector[1]]
     unit = tuple(1.0 if i == axis else 0.0 for i in range(3))
     model = solid.model
-    faces = model.faces(solid.body)
+    faces = list(model.faces(solid.body) if among is None else among)
     exact: dict[int, float] = {}
     loose: list[int] = []
     for i, face in enumerate(faces):

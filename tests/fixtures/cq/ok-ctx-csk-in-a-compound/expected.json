@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 636.3348085708119,
+    "area": 618.4007456741958,
+    "centroid": [
+      10.057598474573787,
+      0,
+      -0.0015171026785059725
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        25,
+        4,
+        2
+      ]
+    ],
+    "faces": 14,
+    "face_kinds": [
+      [
+        "cone",
+        1
+      ],
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        12
+      ]
+    ],
+    "shells": 2,
+    "genus": 1
+  },
+  "note": "The pair, `faces(\">Z\").workplane().cskHole(1, 2, 90)`: the plane is z = 2 with its origin at (0, 0), over A. The pair (A and B above) with a sink cut from A's top at its origin.\n\n    A is bored down from z = 2 at (0, 0), `sink`'s closed form: V = 640 - V_sink,\n    the area gains the sink's walls and floors and loses its mouth (and its exit\n    where it is through), B is untouched. The part's x moment is B's, 320 * 20,\n    and its z moment is minus the sink's, V_sink * c / 2 - m_sink about A's middle\n    (c = 4). The sink goes through A: genus 1, two shells (A and B).\n    "
+}

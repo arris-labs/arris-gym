@@ -5,6 +5,14 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs a second `faces(selector)` on the faces a first one
+  kept (`faces(">Z").faces(">Z")`): as in CadQuery it ranks those faces only,
+  so a single face stays whatever the second selector is. `circle(radius)` on
+  the points of a `pushPoints` draws a circle at each, and `extrude` builds a
+  post on each and fuses them with the part. Circles that would overlap or
+  touch (a duplicate point included), a point with an offset along the normal,
+  and a ring of circles at points end `unsupported_api`.
+
 - `dialect="cq"` now runs `cskHole(diameter, cskDiameter, cskAngle)`: a
   countersunk hole at the plane's origin or at every point of a `pushPoints`,
   as CadQuery builds it (a bore through, under a cone of `cskDiameter` at the

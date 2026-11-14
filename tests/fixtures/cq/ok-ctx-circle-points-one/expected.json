@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 320.7853981633975,
+    "area": 307.1415926535898,
+    "centroid": [
+      0.004896720161791108,
+      0.002448360080895554,
+      0.006120900202238885
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        5,
+        4,
+        3.0
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        7
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`pushPoints([(2, 1)]).circle(0.5).extrude(1)` on the top of a 10 x 8 x 4 box. Posts of `radius` and `height` at each of `points`, on the 10 x 8 x 4 box's top or alone.\n\n    On the box, each post is fused with it: V = 320 + n pi r^2 h, A = 304 + n 2 pi r\n    h (its cap replaces the disc it stands on), the posts' centroids at z = 2 + h/2:\n    one cylinder and one cap plane each. With no box (a workplane's own origin), the\n    posts stand from z = 0 and are n solids that do not meet: V = n pi r^2 h,\n    A = n (2 pi r h + 2 pi r^2), centroid at z = h/2, a cylinder and two planes each.\n    "
+}

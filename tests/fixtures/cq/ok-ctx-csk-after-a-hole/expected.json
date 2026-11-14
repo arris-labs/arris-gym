@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 314.764012244017,
+    "area": 325.3963199617601,
+    "centroid": [
+      -0.029744446548535475,
+      -0.019829631032356985,
+      0.005250309982073063
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        5,
+        4,
+        2
+      ]
+    ],
+    "faces": 11,
+    "face_kinds": [
+      [
+        "cone",
+        1
+      ],
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "`pushPoints([(3, 2)]).hole(1)` on the 10 x 8 x 4 box's top, then a second bore at its centre.\n\n    The first hole is a bore of r = 1/2 through at (3, 2), V = pi r^2 4 = pi. The second\n    call finds the solid on the stack, so it bores at the solid's centroid, in the middle\n    plane z = 0 at (-3 pi, -2 pi) / (320 - pi), and down: a cavity from z = 0 that leaves by the\n    bottom face, `second`. V = 320 - pi - V_cavity; the area gains the first bore's\n    wall less its two discs, and the cavity's walls and floors, its top a cap and its\n    exit a disc taken off the bottom; the centroid is minus the two bores' moments.\n    The cap at z = 0 is the counterbore's or the cone's disc with the bore's inside it:\n    arris keeps it as two faces (a plane more than CadQuery's `clean` leaves).\n    "
+}

@@ -117,6 +117,18 @@ class _Points:
 
 
 @dataclass(frozen=True)
+class _Discs:
+    """The circles `circle` drew on a stack of points, one at each, all of one radius.
+
+    They wait for `extrude`, which builds each and fuses it with the chain's
+    solid (ADR-0018 rule 5). No two overlap or touch: `circle` refuses a stack
+    where they would, as CadQuery's wires then nest or merge.
+    """
+
+    sketches: tuple[_Disc, ...]
+
+
+@dataclass(frozen=True)
 class _Path:
     """A pending path in plane coordinates: its start and the segments drawn from it.
 
@@ -273,6 +285,8 @@ class Workplane:
             raise UnsupportedApi("Workplane.extrude on selected faces")
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi("Workplane.extrude on a point stack")
+        if any(isinstance(o, _Discs) for o in self._stack):
+            raise UnsupportedApi("Workplane.revolve on circles at points")
         sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
         if len(sketches) != 1 or len(self._stack) != 1:
             raise ValueError("No pending wires present")
@@ -292,6 +306,8 @@ class Workplane:
             raise UnsupportedApi("Workplane.lineTo on selected faces")
         if isinstance(last, _Points):
             raise UnsupportedApi("Workplane.lineTo on a point stack")
+        if isinstance(last, _Discs):
+            raise UnsupportedApi("Workplane.lineTo on circles at points")
         if isinstance(last, _Path):
             return last
         kind = "Sketch" if isinstance(last, arris.build.Sketch) else type(last).__name__
@@ -310,7 +326,7 @@ class Workplane:
             raise UnsupportedApi(f"{form} on selected faces")
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi(f"{form} on a point stack")
-        if any(isinstance(o, (_Path, arris.build.Sketch)) for o in self._stack):
+        if any(isinstance(o, (_Path, _Discs, arris.build.Sketch)) for o in self._stack):
             raise UnsupportedApi(f"{form} on a pending wire")
 
     def _operand(self, other: object, form: str) -> tuple[arris.build.Solid, ...]:
@@ -437,9 +453,11 @@ class Workplane:
         mass lies furthest along (`>`) or least along (`<`) the axis, every one
         within CadQuery's `1e-4` of the first of its cluster. They are the one
         object on the new stack, in CadQuery's order, the solid stays in the
-        chain, and `workplane()` places a plane on them (ADR-0017). Raises
-        `UnsupportedApi` for any other selector, for selected faces and for a
-        selection that depends on a centre arris does not give: an estimated
+        chain, and `workplane()` places a plane on them (ADR-0017). On a stack
+        of selected faces a selector ranks those faces only, as CadQuery's does
+        (ADR-0018 rule 5; `ok-ctx-faces-on-faces-*`): a single face stays
+        whatever the second selector. Raises `UnsupportedApi` for any other
+        selector and for a selection that depends on a centre arris does not give: an estimated
         centre is trusted to `1e-4` of the solid's box diagonal, so a tie on
         one is kept only on a small part (a diagonal under 1, under 0.5 for
         two estimated centres) and is `UnsupportedApi` on a larger one, where
@@ -456,8 +474,13 @@ class Workplane:
         """
         if selector not in SELECTORS:
             raise UnsupportedApi(f"Workplane.faces({selector!r})")
-        if any(isinstance(o, Faces) for o in self._stack):
-            raise UnsupportedApi("Workplane.faces on selected faces")
+        kept = [o for o in self._stack if isinstance(o, Faces)]
+        if kept:
+            # CadQuery ranks the stacked faces only (ADR-0018 rule 5).
+            (prior,) = kept
+            return self._derive(
+                Faces(prior.solid, select_faces(prior.solid, selector, prior.faces))
+            )
         solids = self._solids()
         if not solids:
             # No object on the stack has a face: CadQuery's selector is handed
@@ -891,7 +914,14 @@ class Workplane:
         stack holding only a `moveTo` point, on that point, in the plane's
         own axes (CadQuery's `eachpoint` over one point). On a stack holding
         one circle, a second `circle` is concentric with it and the two make
-        a ring for `extrude` or `revolve` (the larger circle outside). Refuses, as
+        a ring for `extrude` or `revolve` (the larger circle outside). On a
+        stack of points (`pushPoints`) it draws one circle at each, and
+        `extrude` builds a post on each and fuses them with the chain's solid
+        (ADR-0018 rule 5, read on the oracle: `ok-ctx-circle-points-*`); the circles
+        are not drawn where two would overlap or touch, a duplicate point
+        included, nor on a point with an offset along the normal, nor a ring
+        of them: `UnsupportedApi`, where CadQuery nests or merges the wires
+        or draws on another plane (`unsupported-circle-points-*`). Refuses, as
         `UnsupportedApi`, any other stack: CadQuery centres a circle on each
         object there, which the subset does not model (`transformed` leaves
         a stack empty).
@@ -909,6 +939,8 @@ class Workplane:
         """
         if len(self._stack) == 1 and isinstance(self._stack[0], _Disc):
             return self._derive(self._ring(self._stack[0], radius))
+        if len(self._stack) == 1 and isinstance(self._stack[0], _Points):
+            return self._derive(self._discs(self._stack[0], radius))
         centre = (0.0, 0.0)
         if self._stack:
             point = self._stack[0] if len(self._stack) == 1 else None
@@ -916,6 +948,22 @@ class Workplane:
                 raise UnsupportedApi("Workplane.circle on a non-empty stack")
             centre = point.start
         return self._derive(self._disc(radius, centre))
+
+    def _discs(self, stacked: _Points, radius: float) -> _Discs:
+        """One circle of `radius` at each point of `stacked`, as CadQuery's `eachpoint` draws them.
+
+        Refuses, as `UnsupportedApi`, a point with an offset along the normal
+        (its circle is on another plane) and a stack where two circles overlap
+        or touch, a pair of points no further apart than two radii and a
+        point twice among them: CadQuery nests or merges the wires there.
+        """
+        if any(w != 0.0 for _, _, w in stacked.points):
+            raise UnsupportedApi("Workplane.circle on a point with an offset")
+        for i, (u, v, _) in enumerate(stacked.points):
+            for u2, v2, _ in stacked.points[i + 1 :]:
+                if math.hypot(u - u2, v - v2) <= 2 * abs(radius):
+                    raise UnsupportedApi("Workplane.circle on points no further apart than 2 radii")
+        return _Discs(tuple(self._disc(radius, (u, v)) for u, v, _ in stacked.points))
 
     def _disc(self, radius: float, centre: tuple[float, float]) -> _Disc:
         """The pending circle of `radius` about `centre`, in the plane's own axes."""
@@ -1005,7 +1053,8 @@ class Workplane:
         """The pending sketch extruded `distance` along the plane's normal.
 
         The solid grows from the plane, not about it, and is fused with the
-        chain's solid if there is one (CadQuery's `combine=True`). With
+        chain's solid if there is one (CadQuery's `combine=True`); on circles
+        drawn at a stack of points (`circle`) it builds a post at each. With
         `both`, it grows `distance` to each side of the plane: CadQuery fuses
         the two sweeps and cleans away the seam, which is the one prism of
         height `2|distance|` that arris sweeps in one go: the same volume,
@@ -1024,13 +1073,21 @@ class Workplane:
         >>> round(wp._solids()[0].measure().centroid[2], 9)
         0.0
         """
-        sketch = self._pending_sketch()
+        discs = [o for o in self._stack if isinstance(o, _Discs)]
+        sketches: Sequence[arris.build.Sketch]
+        if discs and len(self._stack) == 1:
+            sketches = discs[0].sketches
+        else:
+            sketches = (self._pending_sketch(),)
         if distance == 0:
             raise ValueError(
                 f"Workplane.extrude({distance}, both={both}): a zero distance "
                 "(CadQuery's Standard_ConstructionError)"
             )
-        return self._combined(sketch.extrude(distance, both=both))
+        result = self._combined(sketches[0].extrude(distance, both=both))
+        for sketch in sketches[1:]:
+            result = result._combined(sketch.extrude(distance, both=both))
+        return result
 
     @census_form("Workplane.moveTo", [("num",)] * 2)
     def moveTo(self, x: float = 0, y: float = 0) -> Workplane:

@@ -446,3 +446,26 @@ plate's side, which arris refuses (`regression/cq-tangent-cylinder-and-box`).
 zero, a zero or negative countersink diameter, an angle of 180 and one below
 zero), its words recorded beside ours.
 
+`ok-ctx-faces-on-faces-*` (step 6, `tests/test_cq_point_contexts.py`) run a second
+`faces` on the faces the first kept, each beside its recorded oracle report: the
+same selector, the opposite one and one along another axis on a box (the one
+face stays, so the hole is the one `ok-hole-box-*` bores), and on a pair of
+boxes `>X` then `<Z` (B's end face alone, so a bore along x through both).
+`ok-ctx-circle-points-*` draw a circle at each of a stack of points and `extrude`:
+posts on a box's top face (one point, several, `both=True`) and posts of
+`cq.Workplane("XY")` alone, two solids that do not meet. `ok-ctx-cbore-in-a-compound`
+and `ok-ctx-csk-in-a-compound` bore the pair's first box from the top plane;
+`ok-ctx-cbore-after-a-hole` and `ok-ctx-csk-after-a-hole` call them on the stack a
+`hole` left, which bores at the solid's centroid in the middle plane (a cavity
+that leaves by the bottom face). The calls the subset refuses in these
+contexts (overlapping or touching circles, a duplicate point, a point with an
+offset, a ring of circles at points, a hole or a revolve on the circles) are held
+in the test file as calls, not as fixtures. `manifold_block_000049_s20260505`
+as written ends `ok` on both sides with every measure equal but volume and area
+(1.1e-8 and 2.9e-8 relative, over the 1e-9 tolerance): its volume by
+quadrature over x (the cross-section is a rectangle less rectangles) is
+80766.0861318698, arris's 80766.0861318263 and the oracle's 80766.0852197574,
+Open CASCADE's cylinder-cylinder section again. It has no fixture here:
+`compare` needs a closed form of all four figures to class it, which step 7's
+diagnosis writes.
+

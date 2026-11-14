@@ -105,7 +105,7 @@ within a given design; **[3]** unproven semantics, established here.
   arguments CadQuery refuses; a property over random bores.
 - [x] Step 5 **[2]** — `cskHole` per ADR-0018, as step 4 (`ok-csk-*`, a
   `hinge` as written, the cone's volume by closed form).
-- [ ] Step 6 **[2]** — the contexts, read on the oracle: `faces` on faces,
+- [x] Step 6 **[2]** — the contexts, read on the oracle: `faces` on faces,
   `circle` on points then `extrude`, each hole on a compound and after a
   hole; lifted where they agree, else refused, each with its `ok-`,
   `runtime-` or `unsupported-` fixture.
@@ -140,6 +140,27 @@ within a given design; **[3]** unproven semantics, established here.
   line loses `circle` on points.
 
 ## Open questions
+
+- *Settled* (step 6): the contexts read on the oracle (`ok-ctx-*`: faces on faces,
+  circle on points, `cboreHole` and `cskHole` in a compound and after a hole) agree with it, each held to a closed form; 40 probes of
+  the others, and the corpus's `mounting_plate`, `pcb_standoff_plate`, `cruciform`,
+  `star_blank`, `ratchet_sector` and `manifold_block` programs, ran with ours and
+  the oracle agreeing. Three findings. (1) `hole(1).cboreHole(1, 2, 0.5)` (a bore
+  as wide as a hole already on the axis, with a wider tool from one plane) is an
+  arris refusal where CadQuery builds it: `regression/cq-bore-over-a-bore-of-its-width`,
+  strict `xfail`, to be filed with arris in step 7. (2) `manifold_block` as written
+  is `ok` on both sides, every figure within 1e-9 but volume and area (1.1e-8, 2.9e-8):
+  a quadrature of the cross-section gives arris's volume to 5e-13 and the oracle's is
+  off, as on the other cylinder-cylinder sections. `compare` leaves it `unclassified`
+  until a verdict with a closed form of all four figures (area and centroid included,
+  which no quadrature here gives) classes it `occt_wrong`: step 7's, no fixture in
+  step 6. (3) A `hinge` and a `connecting_rod` in the `hh` family end elsewhere
+  (`hinge`'s tangent cylinder, `regression/cq-tangent-cylinder-and-box`; `connecting_rod`
+  asks `workplane()` on a cylinder face, refused as it was). `circle` on points
+  refuses what the oracle builds differently (overlapping circles: `invalid`; a
+  point offset: `runtime`) and the ring of circles (it builds rings), the hole and
+  the revolve on circles (it builds them): `unsupported_api`, each a call in the
+  test file.
 
 - *Settled* (step 5): no `hinge` is runnable as written: all 93 that write
   `cskHole` then `union` a knuckle cylinder tangent to the plate's side, which

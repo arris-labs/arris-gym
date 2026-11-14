@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the cut, OpDegenerateError \"degenerate result: the faces touch along a curve interior to both result faces\", of a bore cylinder whose wall is the wall of the through hole already there, and a wider cylinder from the same plane; CadQuery 2.3.0 builds the chamber",
+  "measures": {
+    "volume": 315.68031010131403,
+    "area": 321.27875959474386,
+    "centroid": [
+      0,
+      0,
+      0.0009329828369071193
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        5,
+        4,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "a 10 x 8 x 4 box centred on the origin, `faces(\">Z\").workplane().hole(1)` a through bore of r = 1/2 at the origin, then `cboreHole(1, 2, 0.5)`, which bores at the solid's centroid (0, 0, 0): from z = 0 down, a bore of r = 1/2 over the existing wall and a cylinder of r = 1 for z -0.5..0. The part is the through hole with an annular chamber of r = 1 at z -0.5..0: V = 320 - pi - 0.375 pi (the chamber's ring pi (1 - 1/4) 0.5), A = 304 + 5.5 pi (the hole's wall 2 pi 0.5 3.5, the chamber's wall 2 pi 0.5 and its two rings 2 pi 0.75, less the two mouths pi/2), centroid (0, 0, 0.375 pi 0.25 / V), 1 shell, genus 1"
+}

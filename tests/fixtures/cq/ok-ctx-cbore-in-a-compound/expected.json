@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 635.680310101314,
+    "area": 620.5663706143591,
+    "centroid": [
+      10.067953809958302,
+      0,
+      -0.003243250020737174
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        25,
+        4,
+        2
+      ]
+    ],
+    "faces": 15,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        13
+      ]
+    ],
+    "shells": 2,
+    "genus": 1
+  },
+  "note": "The pair, `faces(\">Z\").workplane().cboreHole(1, 2, 0.5)`: the plane is z = 2 with its origin at (0, 0), over A. The pair (A and B above) with a sink cut from A's top at its origin.\n\n    A is bored down from z = 2 at (0, 0), `sink`'s closed form: V = 640 - V_sink,\n    the area gains the sink's walls and floors and loses its mouth (and its exit\n    where it is through), B is untouched. The part's x moment is B's, 320 * 20,\n    and its z moment is minus the sink's, V_sink * c / 2 - m_sink about A's middle\n    (c = 4). The sink goes through A: genus 1, two shells (A and B).\n    "
+}
