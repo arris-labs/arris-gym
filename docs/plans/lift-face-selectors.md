@@ -164,12 +164,44 @@ within a given design; **[3]** unproven semantics, established here.
   refusal, no fixture). A `faces` stack as the program's result is `runtime`
   here but a Face to CadQuery: out of the subset's results, as before.
 
-- [ ] Step 7 **[2]** — the measurement. `cq_corpus.py --oracle-rows` on both
+- [x] Step 7 **[2]** — the measurement. `cq_corpus.py --oracle-rows` on both
   corpora into a scratch out-dir, then `cq_diagnose.py`: in-subset rows by
   class, `cq_bug` and unclassified by family, recorded in *Open questions*.
   Each cause becomes a step 7a, 7b … before step 8, largest first, shrunk
   to `regression/` fixtures (the 25 known `bearing_retainer_cap`
   `OpInternalError` rows among them, filed with arris).
+  *Settled* (step 7): the conductor's run and `cq_diagnose.py` on its
+  outputs; the causes and their steps are 7a to 7c below and the figures
+  in *Open questions*.
+- [ ] Step 7a **[2]** — `impeller`, 105 `cq_bug` (`unsupported_api` for
+  "`Workplane.circle` on a non-empty stack"): the program writes
+  `.circle(R).circle(r).extrude(h)`, a second `circle` on the stack the
+  first left. Read it on the oracle (ADR-0005; CadQuery's `circle` goes
+  through `eachpoint`, so a wire on the stack is a point at its centre)
+  and lift it where it agrees (a concentric ring, closed-form volume
+  `π(R²−r²)h`, `ok-circle-circle-*` fixtures plus the corpus program as
+  written), else refuse it with its fixture and a narrower message; either
+  way the 105 leave `cq_bug`. Run the subset's other operations on that
+  stack on both sides and refuse each that disagrees (*Do* step 2).
+- [ ] Step 7b **[3]** — `bearing_retainer_cap`, 37 `arris_bug`
+  (`checker_fail`: 22 "L5 f10: loops 1 and 2 intersect", 10 "f18/f19: loop
+  0 intersects itself", 5 "f16/f17: loop 0 intersects itself"); every program ends in a `faces(sel).workplane().hole(d)`
+  (e.g. `_000183`: a cylinder united with a slotted plate, cut by two
+  cylinders). Shrink to the smallest program, commit it as
+  `regression/cq-hole-after-slotted-union` (desired assertion `ok`, strict
+  xfail), and file `../arris/docs/ideas/` as a fixture candidate. Check first
+  that our `hole` does not build the cylinder wrongly (its `cut` against a
+  hand-built cylinder of the same size); if it does, fix it here. The 28
+  `OpInternalError` rows of this family (`arris_refusal`, 25 known at
+  planning) are shrunk to a fixture and filed in the same idea, one more
+  `regression/` fixture if their cause is not the same.
+- [ ] Step 7c **[3]** — `shaft_collar`, 5 in-subset `unclassified` (`ok` on
+  both sides, bounds delta 5e-4 to 1e-3, volume delta 3e-6 to 1e-5): a
+  `.faces(">Y").workplane().hole(d)` then a `cut` of a `cylinder` through
+  it. Shrink; read which kernel is off by a closed form (the bore and cut
+  analytic), then class it (`occt_wrong`, `arris_bug` or the tolerance
+  ADR-0005 allows) with a fixture. Unclassified in the subset is a red
+  cycle, so this step ends at a class, never a footnote.
 - [ ] Step 8 **[2]** — commit the re-run: `tests/fixtures/c2/*` as
   `fixtures:` with the new figures, both READMEs, `test_c2_baseline`'s
   figures, its subset back to `cq.subset()`.
@@ -209,4 +241,28 @@ within a given design; **[3]** unproven semantics, established here.
   estimate trusted at a margin; a plane on a curved face is `unsupported_api`.
   The exact per-face area and centre are asked of arris
   (`../arris/docs/ideas/face-surface-properties.md`, BACKLOG).
-- ⚠ OPEN: step 7's figures and causes — the agent, step 7.
+- *Settled* (step 7): BenchCAD reach 5,295/17,900; whole-table classes
+  `cq_bug` 12,215, `arris_refusal` 1,174, `arris_bug` 137, `occt_wrong`
+  450, 209 unclassified (204 outside the subset, so 5 in it); oracle digest
+  `e9925835…73157` unchanged, table digest `13ec73cd…`. CAD-Recode reach
+  104/968, both digests unchanged. In-subset (5,295) rows by class:
+  `agree` 3,715; `arris_refusal` 883 (724 oracle `ok`, 159 oracle
+  `invalid`); `occt_wrong` 450 (`j_hook` 184, `u_bolt` 202,
+  `t_pipe_fitting` 64); `cq_bug` 105 (`impeller` 105); `arris_bug` 137
+  (`lobed_knob` 100 `arris_refusal`, `bearing_retainer_cap` 37
+  `checker_fail`); `unclassified` 5 (`shaft_collar`). All 105 `cq_bug`
+  are one cause ("Workplane.circle on a non-empty stack", step 7a); every
+  `checker_fail` of the table is `bearing_retainer_cap` (step 7b, three
+  signatures); the 5 unclassified are step 7c. The in-subset
+  `arris_refusal` rows by family and kernel message: `pull_handle` 176
+  (`OpInternalError`, face arrangement not a subdivision), `cotter_pin` 159
+  (`OpDegenerateError`, faces touch along a curve), `wall_anchor` 81
+  (same), `torus_link` 80 (`OpUnsupportedError`, plane against point),
+  `lobed_knob` 68 and `hinge` 61 (touch along a curve), `ball_knob` 153
+  (`OpUnsupportedError`, plane against sphere, point or face), `dome_cap` 36
+  and `rivet` 32 (spindle torus), `bearing_retainer_cap` 30 (28
+  `OpInternalError`, 2 unsupported), `bucket` 6, `shaft_collar` 1. They are
+  refusals, counted and outside the fidelity target's gate; the ones that
+  are an arris bug are the kernel's to answer, the `OpInternalError`
+  families (`pull_handle`, `bearing_retainer_cap`, `bucket`) fixture
+  candidates for arris.
