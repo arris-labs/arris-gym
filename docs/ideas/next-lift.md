@@ -1,6 +1,6 @@
 # Idea: next-lift
 
-- Status: Open
+- Status: Open (round 1 decided: bundles, riskiest first)
 - Raised: 2026-11-14
 - Prompt (verbatim from the human): "next-lift"
 
@@ -162,8 +162,36 @@ An ADR: if Q2 is B, ADR-0014 gets a dated amendment ("census order" →
 "the knee's items, riskiest bundle first"), and the first plan writes the
 selector ADR that closes the ⚠ OPEN in `docs/ARCHITECTURE.md`.
 
-*Later*: Q4 — the first plan's bundle exactly (which selectors, whether
-`center`/`rect` join it), once Q1 and Q2 are answered; Q5 — where
-CAD-Recode's sketch bundle goes among the others.
+Round 2, measured against `cq.subset()` (BenchCAD gains over 4,345):
+
+❓ **Q4 — The first plan's bundle**: (A) `faces(str)`, `workplane()` on a
+face, the six axis selectors `>Z <Z >X <X >Y <Y` (one parser) and
+`hole(num)`: +950, reach 5,295; the unlocked programs write `>Z` 351,
+`>Y` 295, `>X` 275 and each `<` about 10 times (`bearing_retainer_cap`
+160, `impeller` 105, `connecting_rod` 94, …); (B) A and `cutThruAll()`:
++1,221; (C) the selectors and `workplane()` alone: +162, only `>Z`,
+`>Y`, `>X` written.
+➡️ A: `hole` on a selected face is what the selectors are for in this
+corpus (+162 → +950), and it is the same machinery (a face, a workplane on
+it, a cut); `cutThruAll` waits for the head bundle to keep the plan under
+ten steps. `bearing_retainer_cap`'s 25 known `OpInternalError` rows
+(BACKLOG) will land in its measurement as `arris_refusal`, to be shrunk.
+
+❓ **Q5 — Where CAD-Recode's sketch bundle goes**: (A) after
+`edges`/`fillet`/`chamfer` and before the head; (B) second, right after
+the selector plan; (C) last, after BenchCAD's knee.
+➡️ A: it is new semantics (`mode` booleans, faces from edges), riskier
+than the head and less urgent for arris than `fillet`/`chamfer`; it also
+settles the `.sketch().rect` key before the head lifts `rect`, so `rect`
+is lifted once, knowing both receivers.
 
 ## Decision
+
+Round 1 (2026-11-14), the human: "yes".
+- Q1: B, a bundle of 3–4 items sharing semantics per plan, one corpus
+  re-run each.
+- Q2: B, riskiest bundle first: selectors and `workplane()` on a face,
+  holes, `edges`/`fillet`/`chamfer`, then the head. ADR-0014 gets a dated
+  amendment ("census order" → "the knee's items, riskiest bundle first"),
+  written by the first plan with the selector ADR.
+- Q3: yes; **Knee** and **Lift** added to `GLOSSARY.md`.

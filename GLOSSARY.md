@@ -317,6 +317,15 @@ Zero-gain items stay in the curve; unknown receivers and foreign calls
 outside the admitted list stay fixed. Every count uses all corpus programs
 as its denominator.
 
+**Knee**:
+The reach curve's item at which a corpus's reach first clears its T; the
+items up to it are those C2 must lift (ADR-0014).
+
+**Lift**:
+Admitting a census item to the subset: `cq` runs it as CadQuery 2.3.0 does,
+its `census_form` declares it, its fixtures come from closed forms, and both
+corpora are re-run with every new in-subset row classed.
+
 **Reach report**:
 One corpus's fidelity table joined with its reach: reach, agreement over all
 programs, timeouts, and the in-subset rows by outcome and class, with
