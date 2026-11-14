@@ -139,7 +139,7 @@ within a given design; **[3]** unproven semantics, established here.
   conductor's) to commit the verdicts; if it is judged too dear, the alternative
   is to narrow the declaration (`cboreHole`'s and `hole`'s use across a crossing
   bore), an ADR-0014 amendment: the human's choice.
-- [ ] Step 7b **[3]** — 7 in-subset `cq_bug`, all `connecting_rod`
+- [x] Step 7b **[3]** — *Parked, blocked on arris (the human, 2026-11-14: kept as `cq_bug`, not narrowed)*: 7 in-subset `cq_bug`, all `connecting_rod`
   (`unsupported_api`, the oracle `ok`): `faces(">Z").faces(">Z").workplane()`
   where the kept face is a cylinder's (6: "Workplane.workplane on a cylinder
   face"; 1: `faces(">Y")` "the selection depends on the centre of a face that
@@ -164,8 +164,11 @@ within a given design; **[3]** unproven semantics, established here.
   properties of steps 2 to 4.
 - Committed tables: BenchCAD reach 6,154/17,900 (or the step-7 figure, with
   its reason, if a declaration had to narrow), CAD-Recode 104/968;
-  `in_subset_cq_bug` 0, `in_subset_by_design` 0 and no in-subset row
-  unclassified on both; each new `arris_bug` row a `regression/` fixture.
+  `in_subset_cq_bug` 0 on CAD-Recode and 7 on BenchCAD (amended by the human,
+  2026-11-14: the 7 `connecting_rod` rows of step 7b, blocked on arris's
+  per-face surface properties, `face-surface-properties.md`; the count stays
+  visible rather than the declaration narrowed), `in_subset_by_design` 0 and no
+  in-subset row unclassified on both; each new `arris_bug` row a `regression/` fixture.
 
 ## Docs to update on completion
 
