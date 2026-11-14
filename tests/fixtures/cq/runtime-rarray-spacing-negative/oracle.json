@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Spacing and count must be > 0 ",
+  "program_sha256": "5bc22ff7482fffa309cfd6271c3bfece82c83edfa5201da505c0a62a1c73cdb1",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

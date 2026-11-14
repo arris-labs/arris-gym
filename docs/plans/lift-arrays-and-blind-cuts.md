@@ -89,7 +89,7 @@ within a given design; **[3]** unproven semantics, established here.
   constructions; arris cut every flush case to its closed form in one call;
   the refusals and their order (a float count `TypeError`; `cutBlind`: no
   pending wire, then zero depth, then no solid) are ADR-0019's.
-- [ ] Step 2 **[2]** — `rarray` and a bore on its points: `cq/ok-rarray-*`,
+- [x] Step 2 **[2]** — `rarray` and a bore on its points: `cq/ok-rarray-*`,
   `runtime-` fixtures for the refused values, one `vented_panel` as written;
   `hypothesis`: a random grid of non-overlapping holes through a box, volume
   `V − n·π d²/4·h`.
@@ -114,7 +114,9 @@ within a given design; **[3]** unproven semantics, established here.
   shrunk to `regression/` fixtures and filed with arris where the kernel is at
   fault, or classed by a closed form (`tools/cq_closed_forms.py`).
 - [ ] Step 7 **[1, conductor-run]** — the committed re-run of both tables
-  (`tests/fixtures/c2/*`, the READMEs' figures and digests).
+  (`tests/fixtures/c2/*`, the READMEs' figures and digests); it deletes
+  `fixture_cases.c2_baseline_subset()` (step 2 added it, as step 2 of
+  plans/lift-holes-and-points did) and the selector probe's `later` forms.
 
 ## Acceptance
 

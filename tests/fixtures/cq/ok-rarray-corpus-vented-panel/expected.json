@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 132165.80084583795,
+    "area": 33166.80355402382,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -70.335,
+        -5.38,
+        -47.075
+      ],
+      [
+        70.335,
+        5.38,
+        47.075
+      ]
+    ],
+    "faces": 15,
+    "face_kinds": [
+      [
+        "cylinder",
+        9
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 9
+  },
+  "note": "BenchCAD's `vented_panel_000225_s20260505`: a 140.67 x 94.15 x 10.76 panel, nine holes.\n\n    On `XZ` the box's local z is world -y, so its thickness 10.76 is along y and\n    `>Y` is the 140.67 x 94.15 face. A 3 x 3 grid at 54.35 by 33.58 is centred\n    on its origin: the holes (r = 5.83) reach 54.35 + 5.83 < 70.335 in x and\n    33.58 + 5.83 < 47.075 in z, and 33.58 > 11.66 keeps them apart. All nine go\n    through: V = a b t - 9 pi r^2 t; each takes two discs and adds its wall,\n    A = 2 (a b + a t + b t) - 9 2 pi r^2 + 9 2 pi r t. The grid is symmetric\n    about the face's centre: the centroid is the origin. 6 planes and 9\n    cylinders, genus 9.\n    "
+}

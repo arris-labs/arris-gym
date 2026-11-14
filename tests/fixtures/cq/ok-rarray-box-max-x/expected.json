@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 288.58407346410206,
+    "area": 423.38052083641213,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 4
+  },
+  "note": "a 2 x 2 grid on `>X`, in that face's own x and y (ADR-0017)"
+}

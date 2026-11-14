@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "TypeError: 'float' object cannot be interpreted as an integer",
+  "program_sha256": "35369ee93876662ed5158b58e99c8b1221a0285e77133c084175b9b0f1e3f417",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

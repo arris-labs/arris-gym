@@ -284,9 +284,16 @@ def before_subset() -> Subset:
     they admitted, which is what this subtracts to read them again.
     """
     today = subset()
-    # Forms plans/lift-holes-and-points added after this bundle: they admit
+    # Forms plans/lift-holes-and-points and plans/lift-arrays-and-blind-cuts added later: they admit
     # programs the 950 do not include.
-    later = {"Workplane.pushPoints", "Workplane.cboreHole", "Workplane.cskHole"}
+    later = {
+        "Workplane.pushPoints",
+        "Workplane.cboreHole",
+        "Workplane.cskHole",
+        "Workplane.rarray",
+        "Workplane.polarArray",
+        "Workplane.cutBlind",
+    }
     named = {form.name for form in BUNDLE} | later
     return Subset(
         forms=tuple(form for form in today.forms if form.name not in named),

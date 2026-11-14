@@ -110,7 +110,7 @@ class _Disc(arris.build.Sketch):
 
 @dataclass(frozen=True)
 class _Points:
-    """A stack of points `pushPoints` put on the plane, in its local coordinates.
+    """A stack of points `pushPoints` or `rarray` put on the plane, in its local coordinates.
 
     Each is `(u, v, w)`: x and y in the plane's own axes, `w` the offset along
     its normal (0 when the program gave two numbers). Never empty: CadQuery's
@@ -530,6 +530,40 @@ class Workplane:
         if not points:
             return self._derive()
         return self._derive(_Points(tuple(points)))
+
+    @census_form("Workplane.rarray", [("num",)] * 4)
+    def rarray(self, xSpacing: float, ySpacing: float, xCount: int, yCount: int) -> Workplane:
+        """A stack of the points of a grid, centred on this workplane's origin.
+
+        CadQuery's points in its order, by its expressions: `xSpacing * i`
+        plus `-xSpacing * (xCount - 1) * 0.5` for `i` in `range(xCount)`
+        (the outer loop) and the same in y for `j` in `range(yCount)`, in the
+        plane's own axes. The solid stays in the chain for the next call to
+        act on, as after `pushPoints` (ADR-0019 rule 1): a bore at every
+        point, `circle` at every point. A spacing of zero or less or a count
+        under 1 raises `ValueError` (`runtime`) in CadQuery's words; a count
+        that is not an `int` passes that check and raises `TypeError` from
+        `range`, as CadQuery's does (`runtime-rarray-*`). A stack that holds
+        selected faces, a pending wire or a drawn path is outside the subset,
+        as for `pushPoints`; a stack of points is replaced.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane()
+        >>> wp.rarray(1, 2, 2, 2)._stack[0].points
+        ((-0.5, -1.0, 0.0), (-0.5, 1.0, 0.0), (0.5, -1.0, 0.0), (0.5, 1.0, 0.0))
+        """
+        if xSpacing <= 0 or ySpacing <= 0 or xCount < 1 or yCount < 1:
+            raise ValueError("Spacing and count must be > 0 ")
+        if not any(isinstance(o, _Points) for o in self._stack):
+            self._refuse_pending("Workplane.rarray")
+        x_offset = -xSpacing * (xCount - 1) * 0.5
+        y_offset = -ySpacing * (yCount - 1) * 0.5
+        points = tuple(
+            (float(xSpacing * i + x_offset), float(ySpacing * j + y_offset), 0.0)
+            for i in range(xCount)
+            for j in range(yCount)
+        )
+        return self._derive(_Points(points))
 
     @census_form("Workplane.hole", [("num",)], keywords={"depth": ("num",)})
     def hole(self, diameter: float, depth: float | None = None) -> Workplane:

@@ -475,3 +475,11 @@ Open CASCADE's cylinder-cylinder section again. It has no fixture here:
 `compare` needs a closed form of all four figures to class it, which step 7's
 diagnosis writes.
 
+`ok-rarray-*` (plans/lift-arrays-and-blind-cuts step 2, `tests/test_cq_rarray.py`)
+put a grid of bores or posts on a box's face with `rarray`: a 1 x 1 grid, 3 x 2 on
+`>Z`, 2 x 2 on `>X`, 3 x 2 on `<Y` and posts of `circle(1).extrude(1)` at 2 x 2, and
+a BenchCAD `vented_panel` as written (nine holes on an `XZ` box's `>Y`), each beside
+the oracle's recorded report and held to the closed form of how it is built.
+`runtime-rarray-*` are the values CadQuery refuses (a spacing of zero or less, a count
+of zero, a float count), its words verbatim; `unsupported-rarray-center` is the
+`center=` keyword no corpus program writes, which the oracle builds.

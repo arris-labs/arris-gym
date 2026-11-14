@@ -5,6 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `rarray(xSpacing, ySpacing, xCount, yCount)`: a grid
+  of points centred on the workplane's origin, at which `hole`, `cboreHole`,
+  `cskHole` and `circle` act as at the points of a `pushPoints`. A spacing of
+  zero or less or a count under 1 ends `runtime`, as does a count that is not
+  an integer, in CadQuery's words; `center=` ends `unsupported_api`.
+
 - `dialect="cq"` now runs a second `faces(selector)` on the faces a first one
   kept (`faces(">Z").faces(">Z")`): as in CadQuery it ranks those faces only,
   so a single face stays whatever the second selector is. `circle(radius)` on

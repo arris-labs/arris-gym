@@ -43,7 +43,8 @@ def c1_subset() -> cq.Subset:
     (plans/lift-extrude-both), `Workplane.faces` with the six axis selectors
     (plans/lift-face-selectors), `Workplane.hole`, and
     plans/lift-holes-and-points' forms: `Workplane.pushPoints`, `Workplane.cboreHole`,
-    `Workplane.cskHole`.
+    `Workplane.cskHole`; plans/lift-arrays-and-blind-cuts' forms:
+    `Workplane.rarray`.
 
     A frozen record, never widened to admit a lifted form: `reach.json` is the
     C1 curve and `test_committed_benchcad_curve_repeats_offline` holds it.
@@ -66,6 +67,7 @@ def c1_subset() -> cq.Subset:
                 "Workplane.pushPoints",
                 "Workplane.cboreHole",
                 "Workplane.cskHole",
+                "Workplane.rarray",
                 "Workplane.workplane",
                 "Workplane.cylinder",
                 "Workplane.threePointArc",
@@ -75,6 +77,20 @@ def c1_subset() -> cq.Subset:
         ),
         selectors=(),
         end_forms=("result = …", "show_object(…)"),
+    )
+
+
+def c2_baseline_subset() -> cq.Subset:
+    """`cq.subset()` less the declarations of plans/lift-arrays-and-blind-cuts.
+
+    The committed C2 reports (`tests/fixtures/c2/`) were measured before
+    `Workplane.rarray`, `polarArray` and `cutBlind`; that plan's step 7 re-runs
+    them and this goes back to `cq.subset()` (and is deleted).
+    """
+    later = ("Workplane.rarray", "Workplane.polarArray", "Workplane.cutBlind")
+    return replace(
+        cq.subset(),
+        forms=tuple(form for form in cq.subset().forms if form.name not in later),
     )
 
 

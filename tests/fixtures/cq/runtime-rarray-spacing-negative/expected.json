@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Spacing and count must be > 0 "
+}
