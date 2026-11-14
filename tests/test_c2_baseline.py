@@ -132,16 +132,24 @@ def test_the_published_figures_are_the_committed_tables(corpus: str) -> None:
     assert table.oracle_statuses["ok"] == figures["oracle_ok"]
 
 
-def test_benchcads_arris_bugs_are_lobed_knob_verdicts_and_two_checker_fail_families() -> None:
+def test_benchcads_arris_bugs_are_two_verdict_families_and_checker_fail_caps() -> None:
     entries = table_of("benchcad").entries
     bugs = [e for e in entries if e.row.disagreement is DisagreementClass.ARRIS_BUG]
+    families = {e.name.rsplit("_", 2)[0] for e in bugs}
     assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == {
         "lobed_knob": 100,
-        "bearing_retainer_cap": 37,
         "shaft_collar": 5,
+        "bearing_retainer_cap": 37,
     }
-    # Only the lobed_knob rows are verdicts; the other 42 are checker_fail rows the rule classes.
-    assert all(e.row.verdict is not None for e in bugs if e.name.startswith("lobed_knob"))
+    assert families == {"lobed_knob", "shaft_collar", "bearing_retainer_cap"}
+    # The lobed_knob and shaft_collar rows are ok/ok with a verdict; the 37
+    # bearing_retainer_cap rows are checker_fail rows the rule classes, with none.
+    for e in bugs:
+        if e.name.startswith("bearing_retainer_cap"):
+            assert e.row.verdict is None
+            assert e.row.status is Status.CHECKER_FAIL
+        else:
+            assert e.row.verdict is not None
 
 
 def test_cadrecodes_agreements_are_not_two_failures() -> None:
