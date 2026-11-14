@@ -120,12 +120,25 @@ within a given design; **[3]** unproven semantics, established here.
   (42 of 202 `bellows`; a profile vertex splits it; `hole` and a fused post
   across it are refused the same, so it is not `cutBlind`'s). Step 6 counts them
   as `arris_refusal` rows.
-- [ ] Step 6 **[2, conductor-run]** — the measurement: `cq_corpus.py
+- [x] Step 6 **[2, conductor-run]** — the measurement: `cq_corpus.py
   --oracle-rows` on both corpora into a scratch out-dir, then `cq_diagnose.py`;
   in-subset rows by class, `cq_bug` and unclassified by family, recorded
   here. Each cause becomes a step 6a, 6b … before step 7, largest first,
   shrunk to `regression/` fixtures and filed with arris where the kernel is at
   fault, or classed by a closed form (`tools/cq_closed_forms.py`).
+  *Measured* (2026-11-15, scratch out-dir, oracle rows reused): BenchCAD reach
+  6,565/17,900, in-subset `arris_bug` 142 and `cq_bug` 7 (unchanged),
+  `arris_refusal` 1,137 (+95: the 44 refusals of step 5's two fixtures and the
+  51 `dome_cap` spindle-torus ones), `occt_wrong` 482, **102 unclassified**
+  (77 `t_pipe_fitting`, 25 `bellows`: Open CASCADE's error, volume delta up
+  to 9.5e-5 and 2.2e-6); CAD-Recode 104/968, `cq_bug` 0, 0 unclassified;
+  31 timeouts as before. The two causes are steps 6a and 6b.
+- [ ] Step 6a **[3]** — `tools/cq_closed_forms.py` `_tee` reads `polarArray`
+  and the flange holes: the 77 `t_pipe_fitting` rows classed `occt_wrong` by a
+  closed form, arris within the ADR-0005 constants; a test on one.
+- [ ] Step 6b **[3]** — the same tool reads the 25 `bellows` rows (Pappus for
+  the revolved profile, the rim sliver by quadrature, as
+  `ok-cut-blind-corpus-bellows`'s test does) and classes them `occt_wrong`.
 - [ ] Step 7 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests); it deletes
   `fixture_cases.c2_baseline_subset()` (step 2 added it, as step 2 of
