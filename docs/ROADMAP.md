@@ -121,11 +121,11 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status: `extrude(both=)` lifted 2026-11-14** (target set 2026-11-12, ADR-0014;
-the tables are in `docs/ARCHITECTURE.md` §Fidelity): BenchCAD reach
-4,345/17,900 and CAD-Recode 104/968, in-subset `cq_bug` 0 and nothing
+**Status: face selectors and `hole` lifted 2026-11-14** (target set 2026-11-12,
+ADR-0014; the tables are in `docs/ARCHITECTURE.md` §Fidelity): BenchCAD reach
+5,295/17,900 and CAD-Recode 104/968, in-subset `cq_bug` 0 and nothing
 unclassified in the subset on both. Next:
-lifting the knee's items in bundles, riskiest first (ADR-0014).
+the knee's bundle 2, the other holes and point stacks (ADR-0014).
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified

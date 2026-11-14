@@ -488,7 +488,7 @@ module keeps `UnsupportedApi`, `Vector` and `Workplane`. The metadata uses
 frozen standard-library dataclasses to keep `cq`'s import boundary.
 
 CadQuery's axis selectors (`>X <X >Y <Y >Z <Z`) map onto arris as ADR-0017
-decides; plans/lift-face-selectors builds them. `cq` ranks faces by CadQuery's
+decides. `cq` ranks faces by CadQuery's
 centre of mass and greedy 1e-4 clusters, not by `Selection.extreme`'s box
 centre. A planar face normal to the axis has its exact key, its plane's offset;
 another face is settled by its box or by a tessellation estimate trusted only
@@ -733,9 +733,9 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 4,345 (24.3%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 2,943 (16.4%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 13,030 / 1,173 / 100 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| reach | 5,295 (29.6%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 3,820 (21.3%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 12,110 / 1,174 / 142 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
 | `occt_wrong` (all, in the subset) | 450 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
@@ -805,6 +805,29 @@ the hook closed form, which gained the nut's prism, so `occt_wrong` is 450
 (`Workplane.polyline on a pending wire`). In-subset `cq_bug` stays 0, the
 refusals 852, and the oracle rows were the committed bytes, the digest
 unchanged.
+
+The face selectors (`faces(sel)` for `>X <X >Y <Y >Z <Z`, `workplane()` on
+the faces kept) and `hole(diameter)` took BenchCAD from 4,345 to 5,295 reached
+and CAD-Recode not at all (it writes no selector). Each of the 950 newly
+reached programs writes one `.faces(sel).workplane()`, followed by `hole`,
+`circle` or `polygon`; every selection keeps planar faces normal to the axis
+(`tests/fixtures/selectors/`). 877 agree, among them the 105 `impeller`
+programs once a second `circle` makes a ring with the first. 37
+`bearing_retainer_cap` programs end `checker_fail` and 30 are refusals (28
+`OpInternalError`, 2 `OpUnsupportedError`), from a `union` whose
+operand touches the other's face from inside, the hole playing no part
+(`regression/cq-union-cylinder-tangent-inside`, `-end-cylinders-tangent`,
+`-arc-tangent-inside-cylinder`); the 37 are `arris_bug` by the checker. 5
+`shaft_collar` programs agree in volume but arris's box is 5e-4 to 1e-3 wide
+(it boxes a NURBS edge by its control hull), `arris_bug` by
+`regression/cq-cross-hole-bounds`, where Open CASCADE's volume is off the
+closed form too; one more `shaft_collar` program is a refusal. `arris_bug` is
+142 (100 `lobed_knob`, 37 `bearing_retainer_cap`, 5 `shaft_collar`).
+In-subset `cq_bug` stays 0, and the oracle rows were the committed bytes, the
+digest unchanged. BenchCAD's 883 in-subset refusals by family: `pull_handle`
+176 (`OpInternalError`), `cotter_pin` 159, `ball_knob` 153, `wall_anchor` 81,
+`torus_link` 80, `lobed_knob` 68, `hinge` 61, `dome_cap` 36, `rivet` 32,
+`bearing_retainer_cap` 30, `bucket` 6, `shaft_collar` 1.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

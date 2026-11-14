@@ -219,7 +219,8 @@ A call with its argument form, the kinds of its arguments:
 _Avoid_: signature, overload
 
 **Subset**:
-The calls and API forms `cq` implements, grown in census order; a call
+The calls and API forms `cq` implements, grown in the knee's bundle order
+(ADR-0014); a call
 outside it ends `unsupported_api` naming it (ADR-0007). `cq.Subset` exposes
 its declarations, selectors and end forms as frozen data (ADR-0012).
 _Avoid_: coverage
