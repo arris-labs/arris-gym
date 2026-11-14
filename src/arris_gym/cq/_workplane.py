@@ -15,7 +15,7 @@ import arris
 import arris.build
 
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
-from arris_gym.cq._selector import SELECTORS, Faces, plane_on, select_faces
+from arris_gym.cq._selector import SELECTORS, Faces, plane_on_faces, select_faces
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
 from arris_gym.cq._vector import Vector
 
@@ -324,8 +324,13 @@ class Workplane:
         face (ADR-0017 rule 3): its normal the face's outward normal, its x
         `(0, 0, 1)` crossed with it (+x for a normal along z), its origin
         this workplane's origin projected onto the face's plane. The solid
-        stays in the chain. Several faces and a curved face are
-        `UnsupportedApi`, and so is an `offset` there.
+        stays in the chain. Several planar faces with one normal and one
+        offset give their one plane (rule 4); faces not all planar raise
+        CadQuery's `ValueError` (`runtime`), and so do planar faces whose
+        normals fail its co-planar test whichever face comes first. A curved
+        face, faces of one curved surface (rule 5), several faces whose plane
+        needs their areas or centres, and an `offset` on faces are
+        `UnsupportedApi`.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).workplane(offset=3)
@@ -338,11 +343,9 @@ class Workplane:
         kept = [o for o in self._stack if isinstance(o, Faces)]
         if kept:
             (selected,) = kept
-            if len(selected.faces) != 1:
-                raise UnsupportedApi("Workplane.workplane on several faces")
+            plane = plane_on_faces(selected.faces, self._plane, selected.solid.model)
             if offset != 0.0:
                 raise UnsupportedApi("Workplane.workplane(offset) on a face")
-            plane = plane_on(selected.faces[0], self._plane, selected.solid.model)
             return self._derive_on(plane)
         self._refuse_pending("Workplane.workplane")
         plane = self._plane

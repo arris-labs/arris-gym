@@ -108,7 +108,7 @@ within a given design; **[3]** unproven semantics, established here.
   `fixture_cases.c1_subset()` and the new `c2_baseline_subset()` drop
   `faces` and the selectors, and `tools/cq_selector_probe.py` reads its 950
   against `before_subset()`.
-- [ ] Step 4 **[3]** — `workplane()` on a curved face and on several faces,
+- [x] Step 4 **[3]** — `workplane()` on a curved face and on several faces,
   as ADR-0017 says, with step 2's shapes as fixtures (closed forms where
   the centre has one, the oracle's plane otherwise, ADR-0005).
   *Settled* (step 2): ADR-0017 rules 4 and 5 make this step coplanar faces
@@ -118,6 +118,16 @@ within a given design; **[3]** unproven semantics, established here.
   fixtures, each beside its oracle record in `tests/fixtures/selectors/
   constructed.json`); no curved-face plane is built. None of the 950 is
   affected, so the acceptance stands.
+  *Settled* (step 4): `cq/_selector.plane_on_faces`. At their recorded
+  size the cylinder's `>X` and the triangular prism end at `faces` (the
+  estimate's margin), so the two `runtime-faces-workplane-*` fixtures are
+  small variants (0.2 × r 0.1 cylinder; 0.4 × 0.3 prism turned 30° about x)
+  with their own oracle reports, CadQuery's words matched. The half
+  cylinder is rewritten in the subset (`box(centered=)`, `mirror` outside
+  it). `near-tie-outside` and `-chain` keep one face on both sides and are
+  held as plane tests against their records. Curved faces of one kind and
+  size are refused even where they are two faces in both kernels (CadQuery
+  would raise): an arris split cannot be told from them.
 - [ ] Step 5 **[2]** — `hole(d)`. Fixtures `cq/ok-hole-*`: through a box
   from each selector, from a face with material above its plane, through a
   compound, a corpus program as written; `runtime-hole-*` for `d ≤ 0`. A

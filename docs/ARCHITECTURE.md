@@ -385,9 +385,14 @@ face normal to the axis is ranked by its exact plane offset, any other by its
 box where that settles it, else by a tessellation estimate trusted at a margin;
 a selection the margin cannot settle ends `unsupported_api`. `workplane()` on
 one planar face is that face's plane (x `(0, 0, 1)` crossed with the normal,
-the parent origin projected onto it) and keeps the solid in the chain; several
-faces, a curved face and `offset=` there, and every other call on a stack of
-faces, end `unsupported_api` until their steps land.
+the parent origin projected onto it) and keeps the solid in the chain; on
+several planar faces with one normal and one offset it is their one plane.
+Several faces not all planar, or planar ones whose normals fail CadQuery's
+co-planar test whichever comes first, end `runtime` with CadQuery's
+`ValueError`. A curved face or faces of one curved surface, several faces
+whose plane needs their areas or centres (a near tie, other normals),
+`offset=` there and every other call on a stack of faces end
+`unsupported_api`, the last two until their steps land.
 `polygon(nSides, diameter)` is a pending closed sketch centred as `circle`
 is (the origin of an empty stack or a lone `moveTo` point): `nSides`
 vertices on the circle of `diameter`, the first on the plane's +x, the

@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "unsupported_api",
+  "message": "Workplane.faces('>X'): the selection depends on the centre of a face that arris does not give"
+}

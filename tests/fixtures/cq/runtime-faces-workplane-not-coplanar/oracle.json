@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Selected faces must be co-planar.",
+  "program_sha256": "9a393e055e689669d989d9f421ff812387861bb15af921ad5a617350d58e32db",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

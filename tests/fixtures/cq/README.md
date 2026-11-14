@@ -330,3 +330,24 @@ properties over box and cylinder sizes, planes and origins for the plane
 itself) and an agreeing row in the same file. The oracle's face counts equal
 the closed form's here (10 for a box, 7 for a cylinder).
 
+`ok-faces-coplanar-tops` is ADR-0017's `coplanar-tops>Z` construction
+(`tests/fixtures/selectors/constructed.json`): two boxes fused on a slab, their
+tops two faces at z = 1.5 that `faces(">Z")` keeps together, and `workplane()`
+their one plane, as in the 40 `connecting_rod` programs; a triangular prism
+stands at (-3, 0.25) of it. Its closed form is `coplanar_tops_expected` in
+`tests/test_cq_faces.py` (22 faces: arris keeps apart the coplanar side faces
+CadQuery's `clean` merges, 18), with a recorded oracle report and an agreeing
+row. `runtime-faces-workplane-mixed-surfaces` (a 0.2 × radius 0.1 cylinder's
+`>X`: its side and both discs tie) and `runtime-faces-workplane-not-coplanar`
+(a small triangular prism turned 30° about x, `>X` keeping two faces whose
+normals differ in every component) end in CadQuery's own `ValueError`, each
+with a recorded oracle report saying the same. They are small so the
+estimate's margin (ADR-0017 rule 2) settles the selection; at the
+constructions' size it does not, and `unsupported-faces-cylinder-side` and
+`unsupported-faces-triangular-prism`, the constructions as recorded, end at
+`faces`. `unsupported-faces-near-tie` is `near-tie-inside>Z` (tops 5e-5
+apart, the oracle's plane at their area-weighted offset), and
+`unsupported-faces-half-cylinder` is `half-cylinder>Z` rewritten in the
+subset (the record's `box(centered=)` and `mirror` are outside it): one
+curved face kept, a plane arris cannot place (rule 5).
+`tests/test_cq_faces.py` holds each against its record.

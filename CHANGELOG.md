@@ -7,12 +7,15 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 - `dialect="cq"` now runs `faces(selector)` for `">X"`, `"<X"`, `">Y"`,
   `"<Y"`, `">Z"` and `"<Z"` on the solid a chain holds, and `workplane()` on
-  the one planar face it keeps: the plane of that face, its normal the face's
-  outward normal. A circle, polygon or `moveTo` drawn there and extruded
-  fuses with the solid, as in CadQuery. Any other selector, selected faces
-  that are several or curved, `workplane(offset=…)` on them, any other call on
-  them, and a selection that depends on a face's centre of mass arris does not
-  give (a cylinder's `">X"`) end `unsupported_api`.
+  the planar faces it keeps: the plane of that face, its normal the face's
+  outward normal, or the one plane of several coplanar faces. A circle,
+  polygon or `moveTo` drawn there and extruded fuses with the solid, as in
+  CadQuery. Several selected faces not all planar, or whose normals CadQuery
+  finds not co-planar, end `runtime` with CadQuery's `ValueError`. Any other
+  selector, a curved face, several faces at slightly different offsets,
+  `workplane(offset=…)` on them, any other call on them, and a selection that
+  depends on a face's centre of mass arris does not give (a cylinder's
+  `">X"`) end `unsupported_api`.
 
 - `dialect="cq"` now runs `polyline` after a lone `moveTo` point, as CadQuery
   does: the polyline starts at its own first point and the `moveTo` point is
