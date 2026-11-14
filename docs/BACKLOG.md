@@ -7,6 +7,7 @@ ideas keep one line below with the reason, so the same idea is not
 re-brainstormed. A *measured* defect is not a raw idea: it goes under
 [Findings](#findings) below, in the fixed shape.
 
+- `tools/cq_closed_forms.py`'s hook is an untyped `dict[str, object]` read back through `# type: ignore[assignment]` casts, and `_check_prisms` builds `_segments` only to raise while `hook_measures` builds it again; give the hook a frozen type and compute each once (found by the `lift-extrude-both` review)
 - Possible: an oracle zygote killed by its warden or a timeout may leave itself orphaned (its child or the exec'd interpreter outliving the kill); reproduce on a killed zygote and check `/proc` for survivors (ADR-0013)
 - `readable_roots` includes `sys.prefix`: for a system interpreter that is all of `/usr`, wider than the interpreter's own files; narrow it when a consumer runs a system Python
 - BenchCAD 2.0 (`BenchCAD/benchcad-2.0-public` and `-core`, drawing → STEP, gated, licence "other") is not in the survey: read its terms before C3 and decide if it belongs among the re-scored benchmarks
