@@ -235,7 +235,7 @@ def test_two_sketches_are_refused_where_the_second_is_drawn() -> None:
     distance=st.integers(-8, 8),
     both=st.booleans(),
 )
-def test_an_extrusion_with_no_pending_sketch_or_no_distance_ends_runtime(
+def test_an_extrusion_with_no_pending_sketch_ends_runtime(
     plane: str, stack: str, distance: int, both: bool
 ) -> None:
     program = (
