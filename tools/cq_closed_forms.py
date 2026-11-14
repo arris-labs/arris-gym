@@ -23,6 +23,12 @@ one of them raises, never guessed):
   overlap, a cylinder with the torus's first r/2 of height, is
   an integral over a height h of the intersection's cross-section
   `2 min(wC, wT)`, and its boundary patches are one-dimensional integrals (`_hook`).
+  Under the box, a nut under each cylinder: a convex polygon prism, `extrude(e,
+  both=True)` of `polygon(n, d)` or of `moveTo(p).polyline([...]).close()` (whose lone
+  `moveTo` point CadQuery drops, so the corpus's nut is a pentagon), its top inside the
+  box. It adds `A·depth` below the box and `P·depth` of wall (its bottom takes the place
+  of the box-bottom patch it covers), `A` and `P` by the shoelace formula; a cylinder
+  foot just below the box adds only its disc's circular segments beyond the nut's edges.
 
 - **crossing cylinders**: the one CAD-Recode program whose row nothing classes (`CROSSING`).
 
@@ -38,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import itertools
 import json
 import math
 import re
@@ -307,8 +314,16 @@ def _hook(text: str) -> dict[str, object]:
         rf"\.box\({_NUMBER}, {_NUMBER}, {_NUMBER}\)",
         text,
     )
+    prisms_found = list(_PRISM.finditer(text))
+    solids = len(cyl) + 1 + (box is not None) + len(prisms_found)
     if torus is None or not 1 <= len(cyl) <= 2 or 'Workplane("XY")' not in text:
         raise ValueError("not the half-torus hook this tool reads")
+    if (
+        text.count(".union(") != solids - 1
+        or ".cut(" in text
+        or text.count(".extrude(") != len(prisms_found)
+    ):
+        raise ValueError("a hook with a solid this tool does not read")
     z0, big_r, r = (_num(g) for g in torus.groups())
     if not big_r > r > 0:
         raise ValueError("a hook whose minor radius is not under its major")
@@ -331,7 +346,144 @@ def _hook(text: str) -> dict[str, object]:
             if abs(x - cx) + r > bx / 2 or r > by / 2 or not low < cz + bz / 2:
                 raise ValueError("a hook box that does not cover the cylinders' footprints")
         out["box"] = (cx, cz, bx, by, bz)
+    out["prisms"] = [_prism(m) for m in prisms_found]
+    _check_prisms(out)
     return out
+
+
+# A nut under a hook's box: `extrude(e, both=True)` of a closed polygon on a plane offset
+# (x, y, z), written as `polygon(n, d)` or as `moveTo(p).polyline([...]).close()`, whose lone
+# `moveTo` point CadQuery drops (plans/lift-extrude-both Q2a).
+_PRISM = re.compile(
+    rf"offset=cq\.Vector\({_NUMBER}, {_NUMBER}, {_NUMBER}\), rotate=cq\.Vector\(0, 0, 0\)\)"
+    rf"\n\s*(?:\.moveTo\({_NUMBER}, {_NUMBER}\)\n\s*\.polyline\((\[[^\n]*\])\)\n\s*\.close\(\)"
+    rf"|\.polygon\((\d+), {_NUMBER}\))\n\s*\.extrude\({_NUMBER}, both=True\)"
+)
+
+Prism = tuple[list[tuple[float, float]], float, float]  # CCW vertices (global x, y), bottom, top
+
+
+def _prism(m: re.Match[str]) -> Prism:
+    """A nut's vertices in global x, y (counter-clockwise) and its bottom and top heights."""
+    x, y, z, _, _, polyline, sides, diameter, e = m.groups()
+    ox, oy, oz, depth = _num(x), _num(y), _num(z), abs(_num(e))
+    local: list[tuple[float, float]]
+    if polyline is not None:
+        local = [(float(a), float(b)) for a, b in json.loads(polyline)]
+    else:
+        n, radius = int(sides), _num(diameter) / 2
+        step = 2.0 * math.pi / n  # CadQuery's `Workplane.polygon`: the angle i * 2 pi / n
+        local = [(radius * math.cos(step * i), radius * math.sin(step * i)) for i in range(n)]
+    vertices = [(ox + a, oy + b) for a, b in local]
+    if len(vertices) < 3 or depth == 0:
+        raise ValueError("a hook nut that is not a prism")
+    if _shoelace(vertices)[0] < 0:
+        vertices.reverse()
+    return vertices, oz - depth, oz + depth
+
+
+def _shoelace(vertices: Sequence[tuple[float, float]]) -> tuple[float, float, float, float]:
+    """A polygon's signed area, its x and y moments, and its perimeter (the shoelace formula)."""
+    area = m_x = m_y = perimeter = 0.0
+    for (x0, y0), (x1, y1) in zip(vertices, [*vertices[1:], vertices[0]], strict=True):
+        cross = x0 * y1 - x1 * y0
+        area += cross / 2
+        m_x += (x0 + x1) * cross / 6
+        m_y += (y0 + y1) * cross / 6
+        perimeter += math.hypot(x1 - x0, y1 - y0)
+    return area, m_x, m_y, perimeter
+
+
+def _check_prisms(hook: dict[str, object]) -> None:
+    """Refuse nuts outside the shape `hook_measures` handles.
+
+    Each nut is a convex polygon inside the box's footprint, its top between the box's faces
+    and its bottom below them, and no two nuts' footprints meet. A cylinder whose foot is below
+    the box's bottom stands on a nut whose polygon holds the cylinder's axis and no vertex
+    inside its disc, and which runs below the foot; its disc is then the polygon plus the
+    circular segments beyond each edge, which `_segments` reads.
+    """
+    prisms: list[Prism] = hook["prisms"]  # type: ignore[assignment]
+    if not prisms:
+        return
+    box: tuple[float, float, float, float, float] | None = hook["box"]  # type: ignore[assignment]
+    if box is None:
+        raise ValueError("a hook nut with no box above it")
+    cx, cz, bx, by, bz = box
+    bottom, top = cz - bz / 2, cz + bz / 2
+    for vertices, low, high in prisms:
+        n = len(vertices)
+        for i in range(n):
+            (x0, y0), (x1, y1), (x2, y2) = vertices[i], vertices[(i + 1) % n], vertices[(i + 2) % n]
+            if (x1 - x0) * (y2 - y1) - (y1 - y0) * (x2 - x1) <= 0:
+                raise ValueError("a hook nut that is not a convex polygon")
+        if any(abs(x - cx) >= bx / 2 or abs(y) >= by / 2 for x, y in vertices):
+            raise ValueError("a hook nut outside the box's footprint")
+        if not (low < bottom < high < top):
+            raise ValueError("a hook nut whose top is not inside the box")
+    spans = sorted((min(x for x, _ in v), max(x for x, _ in v)) for v, _, _ in prisms)
+    if any(a[1] >= b[0] for a, b in itertools.pairwise(spans)):
+        raise ValueError("two hook nuts that may meet")
+    r = float(hook["r"])  # type: ignore[arg-type]
+    cylinders: list[tuple[float, float, float]] = hook["cylinders"]  # type: ignore[assignment]
+    for x, low, _ in cylinders:
+        under = [p for p in prisms if _inside(p[0], (x, 0.0))]
+        near = [
+            p for p in prisms if min(v[0] for v in p[0]) < x + r and max(v[0] for v in p[0]) > x - r
+        ]
+        if bottom - low <= FOOT_TOL:
+            continue
+        if len(under) != 1 or len(near) != 1 or not under[0][1] < low:
+            raise ValueError("a hook cylinder below the box that does not stand on one nut")
+        if any(math.hypot(vx - x, vy) < r for vx, vy in under[0][0]):
+            raise ValueError("a nut vertex inside a hook cylinder's disc")
+        _segments(under[0][0], (x, 0.0), r)
+
+
+def _inside(vertices: Sequence[tuple[float, float]], point: tuple[float, float]) -> bool:
+    """Whether `point` is strictly inside a counter-clockwise convex polygon."""
+    n = len(vertices)
+    for i in range(n):
+        (x0, y0), (x1, y1) = vertices[i], vertices[(i + 1) % n]
+        if (x1 - x0) * (point[1] - y0) - (y1 - y0) * (point[0] - x0) <= 0:
+            return False
+    return True
+
+
+def _segments(
+    vertices: Sequence[tuple[float, float]], centre: tuple[float, float], r: float
+) -> tuple[float, float, float, float, float]:
+    """What a disc (centre, r) has beyond a convex polygon holding its centre.
+
+    Returns the area, x and y moments of the circular segments beyond the edges, the length of
+    their arcs and of their chords. Each edge closer than r cuts one segment of half-angle
+    `a = acos(h / r)`: area `r^2 (a - sin a cos a)`, moment `2/3 r^3 sin^3 a` along the edge's
+    outward normal. The segments are disjoint when no vertex is inside the disc; a chord that
+    runs past its edge's ends raises.
+    """
+    area = m_x = m_y = arcs = chords = 0.0
+    n = len(vertices)
+    for i in range(n):
+        (x0, y0), (x1, y1) = vertices[i], vertices[(i + 1) % n]
+        length = math.hypot(x1 - x0, y1 - y0)
+        tx, ty = (x1 - x0) / length, (y1 - y0) / length
+        nx, ny = ty, -tx  # outward, the polygon being counter-clockwise
+        h = (x0 - centre[0]) * nx + (y0 - centre[1]) * ny
+        if h >= r:
+            continue
+        a = math.acos(h / r)
+        foot = (centre[0] - x0) * tx + (centre[1] - y0) * ty
+        half = r * math.sin(a)
+        if foot - half < 0 or foot + half > length:
+            raise ValueError("a hook cylinder's disc crosses a nut's corner")
+        seg = r * r * (a - math.sin(a) * math.cos(a))
+        moment = 2 / 3 * r**3 * math.sin(a) ** 3
+        area += seg
+        m_x += seg * centre[0] + moment * nx
+        m_y += seg * centre[1] + moment * ny
+        arcs += 2 * r * a
+        chords += 2 * half
+    return area, m_x, m_y, arcs, chords
 
 
 def _overlap_slice(big_r: float, r: float, h: float) -> tuple[float, float]:
@@ -380,6 +532,7 @@ def hook_measures(p: dict[str, object]) -> tuple[float, float, Vec, Box]:
     r = float(p["r"])  # type: ignore[arg-type]
     cylinders: list[tuple[float, float, float]] = p["cylinders"]  # type: ignore[assignment]
     box: tuple[float, float, float, float, float] | None = p["box"]  # type: ignore[assignment]
+    prisms: list[Prism] = p.get("prisms", [])  # type: ignore[assignment]
     ht = cylinders[0][2] - z0
     if any(abs(top - z0 - ht) > PLACEMENT_TOL for _, _, top in cylinders):
         raise ValueError("cylinders of different height above the torus")
@@ -418,7 +571,7 @@ def hook_measures(p: dict[str, object]) -> tuple[float, float, Vec, Box]:
     # cylinder, the part of its end cap outside the torus.
     area = 2 * pi * pi * r * big_r + (2 - nc) * pi * r * r
     volume = v_torus
-    m_x = 0.0
+    m_x = m_y = 0.0
     m_z = m_torus_z
     box_top = 0.0
     if box is not None:
@@ -428,6 +581,16 @@ def hook_measures(p: dict[str, object]) -> tuple[float, float, Vec, Box]:
         m_x += bx * by * bz * cx
         m_z += bx * by * bz * cz
         area += 2 * (bx * by + bx * bz + by * bz)
+        # A nut adds its prism below the box: its walls, and its bottom in place of the patch
+        # of the box's bottom face it covers.
+        for vertices, low, _ in prisms:
+            a, ax, ay, perimeter = _shoelace(vertices)
+            depth = cz - bz / 2 - low
+            volume += a * depth
+            m_x += ax * depth
+            m_y += ay * depth
+            m_z += a * depth * (cz - bz / 2 + low) / 2
+            area += perimeter * depth
     for x, low, top in cylinders:
         sign = 1.0 if x > 0 else -1.0
         v_cyl = pi * r * r * (top - low)
@@ -448,15 +611,25 @@ def hook_measures(p: dict[str, object]) -> tuple[float, float, Vec, Box]:
             # disc outside the box; one below it leaves a band of wall, its disc taking the
             # place of the footprint it cuts from the box's bottom face.
             below = bottom - low if bottom - low > FOOT_TOL else 0.0
-            kept = max(low, bottom) if below else low
+            nut = [v for v, _, _ in prisms if _inside(v, (x, 0.0))]
+            kept = max(low, bottom) if below and not nut else low
             volume -= pi * r * r * (box_top - kept)
             m_x -= pi * r * r * (box_top - kept) * x
             m_z -= pi * r * r * (box_top - kept) * (box_top + kept) / 2
             area -= pi * r * r  # the footprint on the box's top face
-            if below:
+            if below and nut:
+                # Standing on a nut, the band below the box is the nut's prism plus the disc's
+                # segments beyond its edges: their arcs of wall less the nut's chords of wall.
+                seg, sx, sy, arcs, chords = _segments(nut[0], (x, 0.0), r)
+                volume += seg * below
+                m_x += sx * below
+                m_y += sy * below
+                m_z += seg * below * (low + bottom) / 2
+                area += (arcs - chords) * below
+            elif below:
                 area += 2 * pi * r * below
-    centroid = (m_x / volume, 0.0, m_z / volume)
-    low_all = [low for _, low, _ in cylinders]
+    centroid = (m_x / volume, m_y / volume, m_z / volume)
+    low_all = [low for _, low, _ in cylinders] + [low for _, low, _ in prisms]
     top_all = [top for _, _, top in cylinders]
     xs = [(-(big_r + r), big_r + r)]
     ys = [(-r, r)]
@@ -489,6 +662,12 @@ def hook_closed_form(text: str) -> dict[str, object]:
             "and the surface patches either side of it are integrals "
             f"(tools/cq_closed_forms.py): z0={p['z0']}, R={p['R']}, r={p['r']}, "
             f"cylinders={p['cylinders']}, box={p['box']}"
+            + (
+                ", and a polygon nut's prism under the box (shoelace area A and perimeter P: "
+                f"V = A d, S = P d): {p['prisms']}"
+                if p["prisms"]
+                else ""
+            )
         ),
     }
 

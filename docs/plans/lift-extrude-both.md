@@ -104,7 +104,7 @@ a given design; **[3]** unproven semantics, established here.
   programs as written; each from closed forms. Then re-run BenchCAD (scratch
   out-dir, `--oracle-rows`) and record the new in-subset `cq_bug` and
   unclassified counts in Q2 for step 4.
-- [ ] Step 4 **[3]** — the hook rows. If step 3 leaves `u_bolt`/`j_hook`
+- [x] Step 4 **[3]** — the hook rows. If step 3 leaves `u_bolt`/`j_hook`
   rows unclassified, extend the hook closed form with the hexagonal prism
   (Design deltas). `tests/test_cq_closed_forms.py` holds it to arris's
   measures on constructed programs (`polygon` and `polyline` hexagons, one
@@ -195,7 +195,19 @@ a given design; **[3]** unproven semantics, established here.
   Table digest `8783fb62…1992` (not yet committed; step 5 re-runs it with
   step 4's verdicts). The hook's "hexagon" is a pentagon (the `moveTo` point
   is dropped), so step 4's prism takes any simple polygon's vertices.
-- ⚠ OPEN: Q3 — whether every new hook row fits step 4's shape. The agent
-  decides by step 4. A program outside the shape (the hexagon not inside
-  the box, or a third solid) is named here with its count, and gets its own
-  closed form or a step before step 5. It is never left unclassified.
+- Settled: Q3 (step 4, 2026-11-14) — every one of the 125 new hook rows fits
+  the shape: 59 one cylinder on one nut, 27 two cylinders on two nuts, both
+  nuts `moveTo(p).polyline([...]).close()` pentagons (the `moveTo` point
+  dropped), and 39 two cylinders on two `polygon(6, d)` hexagons; each nut's
+  top inside the box, its bottom below it. 25 of them have a cylinder foot
+  0.00025 under the box's bottom: that band stands on the nut, and the
+  pentagon's long edge is 4.5 from the axis, inside the cylinder's radius,
+  so the closed form adds the disc's circular segments beyond the nut's
+  edges (and their arcs less the nut's chords of wall). The tool takes any
+  convex nut and raises on anything else (a nut outside the box's footprint
+  or not reaching into the box, a cylinder below the box on no nut, a vertex
+  inside a cylinder's disc, a solid it does not read). Run on the post-3a
+  table, it wrote 125 `occt_wrong` verdicts (66 `u_bolt`, 59 `j_hook`), each
+  checked by `compare` (arris on the closed form, Open CASCADE off it), and
+  appended to `verdicts.json` (484 to 609); it re-derives the 325 committed
+  closed forms unchanged. None outside the shape.

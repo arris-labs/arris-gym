@@ -173,6 +173,73 @@ def test_a_hook_is_what_arris_builds(shape: str) -> None:
     assert _agrees(ag.run(text, dialect="cq"), closed) == []
 
 
+NUT_POLYGON = """
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector({x}, 0.0, {z}), rotate=cq.Vector(0, 0, 0))
+            .polygon(6, 18.0)
+            .extrude({e}, both=True)
+    )"""
+# The corpus's nut as written: the lone `moveTo` point is dropped, so a pentagon (one edge
+# 4.5 from the axis, inside a cylinder of radius 4.97: a proud foot meets its segment).
+NUT_POLYLINE = """
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector({x}, 0.0, {z}), rotate=cq.Vector(0, 0, 0))
+            .moveTo(7.7942, 4.5)
+            .polyline([[0.0, 9.0], [-7.7942, 4.5], [-7.7942, -4.5], [-0.0, -9.0], [7.7942, -4.5]])
+            .close()
+            .extrude({e}, both=True)
+    )"""
+
+
+def _hook_with_nuts(cylinders: int, nut: str, proud: bool, z: float = -5.97) -> str:
+    """A hook (one or two cylinders) on a box, a nut under each cylinder."""
+    big_r, r, z0 = 27.32, 4.97, 59.62
+    top = z0 + r / 2
+    bottom = -3.97 - (0.00025 if proud else 0.0)
+    parts = {"R": big_r, "r": r, "z0": z0, "zc": (top + bottom) / 2, "h": top - bottom}
+    more = ""
+    if cylinders == 2:
+        more += SECOND.format(mR=-big_r, **{k: parts[k] for k in ("zc", "h", "r")})
+    more += BOX.format(bx=84.46, by=21.86, bz=3.97, bz2=-1.985)
+    template = NUT_POLYGON if nut == "polygon" else NUT_POLYLINE
+    for x in [big_r, -big_r][:cylinders]:
+        more += template.format(x=x, z=z, e=2.4)
+    return HOOK.format(more=more, **parts)
+
+
+@pytest.mark.parametrize("cylinders", [1, 2])
+@pytest.mark.parametrize("nut", ["polygon", "polyline"])
+@pytest.mark.parametrize("proud", [False, True])
+def test_a_hook_on_nuts_is_what_arris_builds(cylinders: int, nut: str, proud: bool) -> None:
+    text = _hook_with_nuts(cylinders, nut, proud)
+    closed = cf.hook_closed_form(text)
+    assert _agrees(ag.run(text, dialect="cq"), closed) == []
+
+
+def test_the_pentagon_nut_moves_the_centroid_off_the_hook_plane() -> None:
+    # The pentagon is not symmetric in y, so the closed form's y moment is not zero.
+    closed = cf.hook_closed_form(_hook_with_nuts(1, "polyline", proud=False))
+    assert isinstance(closed["centroid"], list)
+    assert closed["centroid"][1] < 0
+
+
+@pytest.mark.parametrize(
+    ("text", "match"),
+    [
+        (_hook_with_nuts(1, "polygon", False, z=-1.0), "top is not inside the box"),
+        (_hook_with_nuts(1, "polygon", False).replace("0.0, -5.97", "6.0, -5.97"),
+         "outside the box's footprint"),
+        (_hook_with_nuts(1, "polygon", False).replace("show_object", "x = cq.Workplane().union(\n"
+         ")\nshow_object"), "a solid this tool does not read"),
+    ],
+)  # fmt: skip
+def test_a_hook_nut_outside_the_shape_is_refused(text: str, match: str) -> None:
+    with pytest.raises(ValueError, match=match):
+        cf.hook_closed_form(text)
+
+
 def test_the_crossing_cylinders_are_what_arris_builds() -> None:
     # CAD-Recode's 550 on its own: the program's text is not committed (licence), so the same
     # two cylinders are written on the XY plane's axes. A along y at x = -42, B along x.
