@@ -133,9 +133,20 @@ within a given design; **[3]** unproven semantics, established here.
   (77 `t_pipe_fitting`, 25 `bellows`: Open CASCADE's error, volume delta up
   to 9.5e-5 and 2.2e-6); CAD-Recode 104/968, `cq_bug` 0, 0 unclassified;
   31 timeouts as before. The two causes are steps 6a and 6b.
-- [ ] Step 6a **[3]** — `tools/cq_closed_forms.py` `_tee` reads `polarArray`
+- [x] Step 6a **[3]** — `tools/cq_closed_forms.py` `_tee` reads `polarArray`
   and the flange holes: the 77 `t_pipe_fitting` rows classed `occt_wrong` by a
   closed form, arris within the ADR-0005 constants; a test on one.
+  *Settled*: a flanged tee of its own (`_flanged_tee`, `flanged_tee_measures`):
+  the end flanges, the bolt holes at CadQuery's face frames (mirrored on XZ and
+  YZ, so an odd count's second set falls between; every corpus odd count is on
+  XY, one set), and a branch flange that in 48 of the 77 is wider than M or
+  starts inside M's wall (7, one with the branch bore ending in it), so the
+  branch side is integrated by (x, z) column rather than added to `_tee`'s.
+  On the step-6 table (scratch `--out`, the committed verdicts' invocation),
+  723 verdicts each checked by `compare`: the 646 committed unchanged, 77
+  `t_pipe_fitting` `occt_wrong`, arris within 5e-11 in volume and area of the
+  closed form. Tests: three corpus tees on their planes and two on YZ, and
+  t_pipe_fitting_000436 against its committed oracle row.
 - [ ] Step 6b **[3]** — the same tool reads the 25 `bellows` rows (Pappus for
   the revolved profile, the rim sliver by quadrature, as
   `ok-cut-blind-corpus-bellows`'s test does) and classes them `occt_wrong`.

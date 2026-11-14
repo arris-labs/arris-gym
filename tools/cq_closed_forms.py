@@ -22,7 +22,10 @@ one of them raises, never guessed):
   a bore D through B (radius s, from y = 0), and a through bore C of M (radius q),
   as ((M united with B) less D) less C. Volume, moment and area are one-dimensional integrals
   over the part's cross-sections and surface patches (each patch's formula is in
-  `_tee`).
+  `_tee`). The flanged tee (`_flanged_tee`) adds a flange on each end of M, a
+  `polarArray` of bolt holes through both by CadQuery's face frames, and a flange
+  flush with B's end that may start inside M's wall (D then may end inside it too):
+  the same integrals over each (x, z) column's y-extent (`flanged_tee_measures`).
 - **u_bolt / j_hook**: one or two vertical cylinders (radius r) joined to a half
   torus (major radius R = the cylinder's offset, minor radius r) at its end disc
   z0, with an optional box under the cylinders. Pappus gives the torus; the only
@@ -293,12 +296,255 @@ def box_to_global(plane: str, box: Box) -> Box:
     )
 
 
+def _dot(u: Vec, v: Vec) -> float:
+    return u[0] * v[0] + u[1] * v[1] + u[2] * v[2]
+
+
+_BOLTS = re.compile(
+    rf'\.faces\("([<>])([XYZ])"\)\.workplane\(\)\s*'
+    rf"\.polarArray\({_NUMBER}, 0, 360, (\d+)\)\s*\.hole\({_NUMBER}\)"
+)
+
+
+def _bolt_centres(plane: str, text: str) -> tuple[float, list[tuple[float, float]]]:
+    """The bolt holes' diameter and their centres in the plane's local (x, y), each once.
+
+    Each `faces(">A" | "<A").workplane().polarArray(rp, 0, 360, n).hole(d)` puts `n`
+    points `rp (cos θ, sin θ)`, θ = 360° k / n, in the face's frame by CadQuery's rules
+    (ADR-0017, ADR-0019): its origin the parent's projected onto the face, so on the
+    main axis; its x `Z cross normal`, or global X when the normal is ±Z; its y `normal cross x`.
+    The two faces' frames are mirrored on XZ and YZ, so an odd `n` puts its second set
+    between the first's holes. Each hole is a through bore of both flanges
+    (`depth=None` is the part's diagonal). A centre met twice is one hole; two holes
+    that overlap are not a part this tool reads.
+    """
+    xd, yd, _ = _FRAMES[plane]
+    sets = _BOLTS.findall(text)
+    if len(sets) != 2 or {s[0] for s in sets} != {"<", ">"}:
+        raise ValueError("a flanged tee's bolt holes are not one polar array on each end")
+    if len({(s[2], s[3], s[4]) for s in sets}) != 1:
+        raise ValueError("a flanged tee's two bolt circles differ")
+    centres: list[tuple[float, float]] = []
+    for sign, axis, rp, n, _ in sets:
+        out = 1.0 if sign == ">" else -1.0
+        normal: Vec = (out * (axis == "X"), out * (axis == "Y"), out * (axis == "Z"))
+        x_dir = _cross((0.0, 0.0, 1.0), normal)
+        if math.hypot(*x_dir) == 0.0:
+            x_dir = (1.0, 0.0, 0.0)
+        y_dir = _cross(normal, x_dir)
+        for k in range(int(n)):
+            a = math.radians(360 / int(n) * k)
+            c, s = _num(rp) * math.cos(a), _num(rp) * math.sin(a)
+            g = (
+                c * x_dir[0] + s * y_dir[0],
+                c * x_dir[1] + s * y_dir[1],
+                c * x_dir[2] + s * y_dir[2],
+            )
+            local = (_dot(g, xd), _dot(g, yd))
+            if all(math.dist(local, old) > PLACEMENT_TOL for old in centres):
+                centres.append(local)
+    d = _num(sets[0][4])
+    for one, two in itertools.combinations(centres, 2):
+        if math.dist(one, two) <= d:
+            raise ValueError("a flanged tee's bolt holes overlap")
+    return d, centres
+
+
+@dataclass(frozen=True)
+class FlangedTee:
+    """A flanged tee: the bare tee `tee` (`_tee`'s parameters) with a flange (t, Rf) on
+    each end of M, bolt holes of diameter `d` at `centres` (the plane's local x, y)
+    through both, and a flange (t2, rf2) flush with the branch's end."""
+
+    tee: dict[str, float]
+    t: float
+    rf: float
+    t2: float
+    rf2: float
+    d: float
+    centres: tuple[tuple[float, float], ...]
+
+
+def _flanged_tee(text: str) -> FlangedTee:
+    """The flanged tee's parameters, refusing a program that is not the one shape this reads.
+
+    Seven cylinders in the program's order: the main M (h, R), a flange (t, Rf) on each
+    end centred on M's end discs, the bolt holes through both flanges, then the branch B
+    (hb, r) on y from 0, its flange (t2, rf2) flush with B's end, the branch bore D and
+    the through bore C (as `_tee`'s).
+    """
+    plane = re.search(r'cq\.Workplane\("(XY|XZ|YZ)"\)', text)
+    cyl = _cylinders(text)
+    if plane is None or len(cyl) != 7 or text.count("-90.0, 0.0, 0.0") != 3:
+        raise ValueError("not the flanged tee this tool reads")
+    (om, h, big_r), (of1, t, rf), (of2, t_, rf_), (ob, hb, r) = cyl[:4]
+    (obf, t2, rf2), (od, hd, s), (oc, hc, q) = cyl[4:]
+    if (om, oc) != ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0)) or (t, rf) != (t_, rf_):
+        raise ValueError("a flanged tee's main cylinder, bore or flanges are not centred")
+    if any(o[0] or o[1] for o in (of1, of2)) or any(o[0] or o[2] for o in (ob, obf, od)):
+        raise ValueError("a flanged tee's offsets are not along the expected axes")
+    if (
+        abs(of1[2] + h / 2) > PLACEMENT_TOL
+        or abs(of2[2] - h / 2) > PLACEMENT_TOL
+        or abs(ob[1] - hb / 2) > PLACEMENT_TOL
+        or abs(obf[1] - (hb - t2 / 2)) > PLACEMENT_TOL
+        or abs(od[1] - hd / 2) > PLACEMENT_TOL
+    ):
+        raise ValueError("a flanged tee's flange, branch or bore is not where it is assumed")
+    d, centres = _bolt_centres(plane.group(1), text)
+    rp = math.hypot(*centres[0])
+    if not (
+        s < q < big_r < rf
+        and s < r < min(rf2, big_r)
+        and big_r < rp - d / 2
+        and rp + d / 2 < rf
+        and rf2 < h / 2 - t / 2
+        and 0 < t2 < hb <= hd
+        and hc >= h + t
+    ):
+        raise ValueError("a flanged tee outside the ordering the closed form assumes")
+    tee = {"R": big_r, "h": h, "r": r, "hb": hb, "s": s, "q": q, "hd": hd}
+    return FlangedTee(tee, t, rf, t2, rf2, d, tuple(centres))
+
+
+def _pieces(f: Callable[[float], float], a: float, b: float, cuts: Sequence[float]) -> float:
+    """The integral of `f` over `[a, b]`, split at each cut inside it (where `f` jumps,
+    kinks or has a square-root end), each piece by tanh-sinh."""
+    ends = [a, *sorted(c for c in cuts if a < c < b), b]
+    return sum(tanh_sinh(f, lo, hi) for lo, hi in itertools.pairwise(ends))
+
+
+def flanged_tee_measures(f: FlangedTee) -> tuple[float, float, Vec, Box]:
+    """Volume, area, centroid and bounds of the flanged tee in the plane's local frame.
+
+    The part is ((M with its flanges, less the bolt holes) united with the branch B and
+    its flange BF) less D less C. Everything off the y = 0 side of the branch is
+    elementary: M less C over h, each flange an annulus Rf - R over t plus the half t/2
+    past M's end, its faces, rim and bolt-hole walls. The branch side is integrated over
+    x with each (x, z) column's y-extent, where M's wall is at y = w(x) = sqrt(R^2 - x^2)
+    and C's at b(x) = sqrt(q^2 - x^2): B and BF outside M less D add
+    (hb - w)+ over s < rho < r and (hb - max(w, hb - t2))+ over r < rho < rf2 (w = 0 past
+    |x| = R, where M ends), and D takes
+    (min(w, hd) - b)+ of M's wall over rho < s (rho^2 = x^2 + z^2; BF may start inside M,
+    D may end inside M's wall). Each surface patch is a one-dimensional integral of the
+    same column lengths, on its cylinder by angle or on its plane by x, split where a
+    level (hb, hb - t2, hd) meets M's wall or a radius (s, r, rf2) is reached.
+    """
+    big_r, h, r, hb, s, q = (f.tee[k] for k in ("R", "h", "r", "hb", "s", "q"))
+    hd = f.tee["hd"]
+    t, rf, t2, rf2, d = f.t, f.rf, f.t2, f.rf2, f.d
+    low = hb - t2  # BF's inner face
+    pi = math.pi
+
+    def wall(x: float) -> float:
+        return math.sqrt(max(big_r * big_r - x * x, 0.0))
+
+    def bore(x: float) -> float:
+        return math.sqrt(max(q * q - x * x, 0.0))
+
+    def ch(radius: float, x: float) -> float:
+        return 2 * math.sqrt(max(radius * radius - x * x, 0.0))
+
+    # The |x| beyond which M's wall is under each level (at y = 0, where M ends: R itself).
+    crossings = [math.sqrt(big_r**2 - lv**2) for lv in (0.0, hb, low, hd) if 0 <= lv < big_r]
+    x_cuts = [s, r, rf2, *crossings]
+
+    def over_x(g: Callable[[float], float], upto: float) -> float:
+        return 2 * _pieces(g, 0.0, upto, x_cuts)  # every integrand is even in x
+
+    def around(radius: float, g: Callable[[float], float]) -> float:
+        """A patch of a branch-axis cylinder: radius times the y-length g(x) over its turn."""
+        cuts = [math.acos(c / radius) for c in crossings if c < radius]
+        return 4 * radius * _pieces(lambda u: g(radius * math.cos(u)), 0.0, pi / 2, cuts)
+
+    def b_col(x: float) -> tuple[float, float, float, float]:
+        """B and BF outside M less D at x: (s..r column, r..rf2 column) as (bottom, top)."""
+        w = wall(x)
+        return w, max(w, hb), max(w, low), max(w, low, hb)
+
+    def vb(x: float) -> float:
+        lo1, hi1, lo2, hi2 = b_col(x)
+        return (ch(r, x) - ch(s, x)) * (hi1 - lo1) + (ch(rf2, x) - ch(r, x)) * (hi2 - lo2)
+
+    def mb(x: float) -> float:
+        lo1, hi1, lo2, hi2 = b_col(x)
+        return (ch(r, x) - ch(s, x)) * (hi1**2 - lo1**2) / 2 + (ch(rf2, x) - ch(r, x)) * (
+            hi2**2 - lo2**2
+        ) / 2
+
+    def vd(x: float) -> float:
+        return ch(s, x) * max(min(wall(x), hd) - bore(x), 0.0)
+
+    def md(x: float) -> float:
+        top = max(min(wall(x), hd), bore(x))
+        return ch(s, x) * (top**2 - bore(x) ** 2) / 2
+
+    disc = pi * d * d / 4
+    n = len(f.centres)
+    main = pi * (big_r**2 - q**2) * h
+    flanges = 2 * (pi * (rf**2 - big_r**2) * t + pi * (big_r**2 - q**2) * t / 2 - n * disc * t)
+    volume = main + flanges + over_x(vb, rf2) - over_x(vd, s)
+    moment_x = -2 * t * disc * sum(c[0] for c in f.centres)
+    moment_y = over_x(mb, rf2) - over_x(md, s) - 2 * t * disc * sum(c[1] for c in f.centres)
+
+    # M's side under the branch, by angle a (x = R cos a, y = R sin a): what B, BF and D
+    # cover there is not boundary.
+    def m_cover(a: float) -> float:
+        x, y = big_r * math.cos(a), big_r * math.sin(a)
+        if y < low:
+            return ch(r, x)
+        if y < hb:
+            return ch(rf2, x)
+        return ch(s, x) if y < hd else 0.0
+
+    a_cuts = [math.acos(c / big_r) for c in (s, r, rf2) if c < big_r]
+    a_cuts += [math.asin(lv / big_r) for lv in (hb, low, hd) if 0 <= lv < big_r]
+    m_side = 2 * pi * big_r * (h - t) - 2 * big_r * _pieces(
+        m_cover, math.acos(min(rf2 / big_r, 1.0)), pi / 2, a_cuts
+    )
+    c_cuts = [math.asin(hd / q)] if hd < q else []
+    c_side = 2 * pi * q * (h + t) - 2 * q * _pieces(
+        lambda a: ch(s, q * math.cos(a)) if q * math.sin(a) < hd else 0.0,
+        math.acos(s / q),
+        pi / 2,
+        c_cuts,
+    )
+    area = (
+        m_side
+        + c_side
+        + 2 * (pi * (rf**2 - q**2) - n * disc)  # the flanges' outer faces
+        + 2 * (pi * (rf**2 - big_r**2) - n * disc)  # their inner faces
+        + 2 * (2 * pi * rf * t + n * pi * d * t)  # their rims and bolt-hole walls
+        + around(r, lambda x: max(low - wall(x), 0.0))  # B's side outside M, below BF
+        + around(rf2, lambda x: max(hb - max(wall(x), low), 0.0))  # BF's rim outside M
+        + around(s, lambda x: max(min(max(wall(x), hb), hd) - bore(x), 0.0))  # D's side
+        + over_x(lambda x: ch(s, x) if wall(x) > hd else 0.0, s)  # D's end inside M's wall
+        + over_x(lambda x: ch(rf2, x) - ch(r, x) if wall(x) < low else 0.0, rf2)  # BF's inner
+        + over_x(lambda x: ch(rf2, x) - ch(s, x) if wall(x) < hb else 0.0, rf2)  # the end
+    )
+    centroid = (moment_x / volume, moment_y / volume, 0.0)
+    wide = max(rf, rf2)
+    bounds = ((-wide, -rf, -(h + t) / 2), (wide, max(hb, rf), (h + t) / 2))
+    return volume, area, centroid, bounds
+
+
 def tee_closed_form(text: str) -> dict[str, object]:
-    """The `ClosedForm` JSON of a tee program, in global coordinates."""
+    """The `ClosedForm` JSON of a tee program, flanged or bare, in global coordinates."""
     plane = re.search(r'cq\.Workplane\("(XY|XZ|YZ)"\)', text)
     assert plane is not None
-    p = _tee(text)
-    volume, area, centroid, bounds = tee_measures(p)
+    if "polarArray" in text:
+        f = _flanged_tee(text)
+        p = f.tee
+        volume, area, centroid, bounds = flanged_tee_measures(f)
+        shape = (
+            f"a flanged tee: a flange Rf, t centred on each end of M, {len(f.centres)} bolt "
+            "holes d through both, a flange rf2, t2 flush with the branch's end, each adding "
+            f"elementary terms (Rf={f.rf}, t={f.t}, rf2={f.rf2}, t2={f.t2}, d={f.d}) to "
+        )
+    else:
+        p = _tee(text)
+        volume, area, centroid, bounds = tee_measures(p)
+        shape = ""
     lo, hi = box_to_global(plane.group(1), bounds)
     return {
         "kind": "closed_form",
@@ -307,7 +553,8 @@ def tee_closed_form(text: str) -> dict[str, object]:
         "centroid": list(to_global(plane.group(1), centroid)),
         "bounds": [list(lo), list(hi)],
         "note": (
-            "a tee on the "
+            shape
+            + "a tee on the "
             + plane.group(1)
             + " plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) "
             "cut by a branch bore s and a through bore q; volume, y moment and area "

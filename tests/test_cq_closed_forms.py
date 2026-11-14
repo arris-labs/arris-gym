@@ -122,6 +122,126 @@ def test_a_tee_whose_ordering_the_closed_form_does_not_hold_is_refused() -> None
         cf.tee_closed_form(text)
 
 
+FLANGED_TEE = """import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .union(
+        cq.Workplane("{plane}")
+            .cylinder({h}, {R})
+    )
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0.0, 0.0, -{h2}), rotate=cq.Vector(0.0, 0.0, 0.0))
+            .cylinder({t}, {Rf})
+    )
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0.0, 0.0, {h2}), rotate=cq.Vector(0.0, 0.0, 0.0))
+            .cylinder({t}, {Rf})
+    )
+    .faces(">{axis}").workplane()
+    .polarArray({rp}, 0, 360, {n})
+    .hole({d})
+    .faces("<{axis}").workplane()
+    .polarArray({rp}, 0, 360, {n})
+    .hole({d})
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0.0, {hb2}, 0.0), rotate=cq.Vector(-90.0, 0.0, 0.0))
+            .cylinder({hb}, {r})
+    )
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0.0, {bf}, 0.0), rotate=cq.Vector(-90.0, 0.0, 0.0))
+            .cylinder({t2}, {rf2})
+    )
+    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0.0, {hd2}, 0.0), rotate=cq.Vector(-90.0, 0.0, 0.0))
+            .cylinder({hd}, {s})
+    )
+    .cut(
+        cq.Workplane("{plane}")
+            .cylinder({hc}, {q})
+    )
+)
+
+# Export
+show_object(result)"""
+
+# BenchCAD's flanged tees as written, by the corpus's literals: t_pipe_fitting_000436 (the
+# branch flange clear of M), _017687 (the branch inside M's wall, its flange half in it, the
+# branch bore ending in the wall) and _001101 (a branch flange wider than M, three bolts).
+FLANGED_TEES = {
+    "000436": dict(
+        plane="XZ", axis="Y", h="336.07", R="62.91", h2="168.035", t="9.91", Rf="102.85",
+        rp="75.3", n="6", d="8.81", hb2="42.325", hb="84.65", r="13.35", bf="78.705",
+        t2="11.89", rf2="21.35", hd2="42.825", hd="85.65", s="6.72", hc="356.89", q="56.28",
+    ),
+    "017687": dict(
+        plane="XZ", axis="Y", h="210.41", R="33.92", h2="105.205", t="7.16", Rf="65.7",
+        rp="49.15", n="4", d="7.43", hb2="15.565", hb="31.13", r="10.65", bf="26.81",
+        t2="8.64", rf2="17.05", hd2="16.065", hd="32.13", s="5.85", hc="225.73", q="29.12",
+    ),
+    "001101": dict(
+        plane="XY", axis="Z", h="171.63", R="27.05", h2="85.815", t="5.29", Rf="54.25",
+        rp="41.15", n="3", d="7.18", hb2="40.685", hb="81.37", r="21.1", bf="78.23",
+        t2="6.28", rf2="33.75", hd2="41.185", hd="82.37", s="17.59", hc="183.21", q="23.54",
+    ),
+}  # fmt: skip
+
+
+@pytest.mark.parametrize(
+    ("stem", "plane", "holes"),
+    [
+        ("000436", "XZ", 6),
+        ("017687", "XZ", 4),
+        ("001101", "XY", 3),  # XY's two end frames give one set of three
+        ("001101", "YZ", 6),  # YZ's are mirrored: an odd count's second set falls between
+        ("000436", "YZ", 6),
+    ],
+)
+def test_a_flanged_tee_is_what_arris_builds(stem: str, plane: str, holes: int) -> None:
+    axis = {"XY": "Z", "XZ": "Y", "YZ": "X"}[plane]
+    text = FLANGED_TEE.format(**{**FLANGED_TEES[stem], "plane": plane, "axis": axis})
+    assert len(cf._flanged_tee(text).centres) == holes
+    closed = cf.tee_closed_form(text)
+    assert _agrees(ag.run(text, dialect="cq"), closed) == []
+
+
+def test_a_corpus_flanged_tee_is_occt_wrong_by_its_closed_form() -> None:
+    """t_pipe_fitting_000436 as written: arris is within ADR-0005's constants of the closed
+    form, the recorded oracle report is not, and the rule alone leaves the row unclassified."""
+    import gzip
+    import hashlib
+
+    from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+
+    stem = "t_pipe_fitting_000436_s20260505"
+    text = FLANGED_TEE.format(**FLANGED_TEES["000436"])
+    rows = gzip.decompress((C2 / "benchcad" / "oracle.jsonl.gz").read_bytes()).splitlines()
+    row = next(json.loads(line) for line in rows if json.loads(line)["stem"] == stem)
+    report = OracleReport.model_validate(row["report"])
+    assert hashlib.sha256(text.encode()).hexdigest() == report.program_sha256
+    result = ag.run(text, dialect="cq")
+    assert compare(result, report).outcome is FidelityOutcome.UNCLASSIFIED
+    verdict = Verdict.model_validate(
+        {"disagreement": "occt_wrong", "evidence": cf.tee_closed_form(text)}
+    )
+    row_classed = compare(result, report, verdict)
+    assert row_classed.disagreement is DisagreementClass.OCCT_WRONG
+
+
+def test_a_flanged_tee_this_tool_does_not_read_is_refused() -> None:
+    overlap = FLANGED_TEE.format(**{**FLANGED_TEES["000436"], "n": "60"})
+    with pytest.raises(ValueError, match="overlap"):
+        cf.tee_closed_form(overlap)
+    into_main = FLANGED_TEE.format(**{**FLANGED_TEES["000436"], "rp": "64.0"})
+    with pytest.raises(ValueError, match="ordering"):
+        cf.tee_closed_form(into_main)
+
+
 HOOK = """import cadquery as cq
 
 result = (
