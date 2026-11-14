@@ -234,7 +234,8 @@ runtime decorator and static form matching (ADR-0012).
 A `cq` `Workplane`'s objects, the ones its call made, newest last; its
 result is the one solid on it (ADR-0007), never more than one. `pushPoints`
 puts a **stack of points** on it, in the plane's local coordinates, which a
-bore (`hole`, `cboreHole`) cuts at each of (ADR-0018).
+bore (`hole`, `cboreHole`, `cskHole`) cuts at each of and `circle` draws a
+circle at each of (ADR-0018).
 
 **Compound**:
 CadQuery's several solids that do not meet, held as one value. In `cq` it

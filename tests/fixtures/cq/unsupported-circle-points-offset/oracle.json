@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Cannot build face(s): wires not planar",
+  "program_sha256": "958b9b3c4db894ecbd8dbc161aa08036c576b761247d11029f3f8e7bb6c63798",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

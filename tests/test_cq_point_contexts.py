@@ -367,6 +367,68 @@ def test_a_context_cadquery_reads_differently_is_unsupported(chain: str, message
     assert message in result.message
 
 
+# The refusals of `circle` on a stack of points committed as fixtures, each beside
+# the oracle's recorded report: slug -> (chain after the plane, our message, the
+# oracle's status). CadQuery merges or nests the wires (overlapping circles and a
+# duplicate point: a shape its checker calls invalid), draws a point's circle on
+# another plane (an offset: its face builder refuses the wires as not planar) or
+# builds a ring at each point; none is the subset's reading.
+UNSUPPORTED: dict[str, tuple[str, str, str]] = {
+    "unsupported-circle-points-overlapping": (
+        "pushPoints([(0, 0), (0.5, 0)]).circle(0.5).extrude(1)",
+        PIN,
+        "invalid",
+    ),
+    "unsupported-circle-points-duplicate": (
+        "pushPoints([(1, 1), (1, 1)]).circle(0.5).extrude(1)",
+        PIN,
+        "invalid",
+    ),
+    "unsupported-circle-points-offset": (
+        "pushPoints([(2, 1, 1), (-2, -1, 0)]).circle(0.5).extrude(1)",
+        "Workplane.circle on a point with an offset",
+        "runtime",
+    ),
+    "unsupported-circle-points-ring": (
+        "pushPoints([(2, 1), (-2, -1)]).circle(0.5).circle(0.25).extrude(1)",
+        "Workplane.circle on a non-empty stack",
+        "ok",
+    ),
+}
+
+
+def test_every_unsupported_circle_points_fixture_is_its_refusal() -> None:
+    found = {
+        case.slug: case
+        for case in fixture_cases.load("cq")
+        if case.slug.startswith("unsupported-circle-points-")
+    }
+    assert sorted(found) == sorted(UNSUPPORTED)
+    for slug, (chain, message, _) in UNSUPPORTED.items():
+        assert found[slug].program == wrap(f"{TOP}.{chain}"), slug
+        assert found[slug].expected == {
+            "dialect": "cq",
+            "status": "unsupported_api",
+            "message": message,
+        }, slug
+        result = fixture_cases.run(found[slug])
+        assert result.status is ag.Status.UNSUPPORTED_API, slug
+        assert result.message == message, slug
+
+
+@pytest.mark.parametrize("slug", sorted(UNSUPPORTED))
+def test_cadquery_reads_the_refused_circles_otherwise(slug: str) -> None:
+    assert recorded(slug).status.value == UNSUPPORTED[slug][2]
+
+
+def test_the_oracles_ring_at_each_point_is_two_annular_posts() -> None:
+    """V = 320 + 2 pi (0.5^2 - 0.25^2): a ring of radii 0.5 and 0.25 extruded 1 at each point."""
+    report = recorded("unsupported-circle-points-ring")
+    assert report.measures is not None
+    want = BOX_VOLUME + 2 * math.pi * (0.5**2 - 0.25**2)
+    assert fixture_cases.close(report.measures.volume, want)
+
+
 def test_posts_over_no_points_are_one_circle_at_the_origin() -> None:
     """`pushPoints([])` leaves an empty stack: `circle` draws at the plane's origin."""
     result = ag.run(wrap(f"{TOP}.pushPoints([]).circle(0.5).extrude(1)"), dialect="cq")

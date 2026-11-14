@@ -463,7 +463,10 @@ and `ok-ctx-csk-in-a-compound` bore the pair's first box from the top plane;
 that leaves by the bottom face). The calls the subset refuses in these
 contexts (overlapping or touching circles, a duplicate point, a point with an
 offset, a ring of circles at points, a hole or a revolve on the circles) are held
-in the test file as calls, not as fixtures. `manifold_block_000049_s20260505`
+in the test file as calls; four are fixtures, each beside the oracle's report:
+`unsupported-circle-points-overlapping` and `-duplicate` (a shape its checker
+calls invalid), `-offset` (`runtime`, its wires not planar) and `-ring` (it
+builds a ring at each point). `manifold_block_000049_s20260505`
 as written ends `ok` on both sides with every measure equal but volume and area
 (1.1e-8 and 2.9e-8 relative, over the 1e-9 tolerance): its volume by
 quadrature over x (the cross-section is a rectangle less rectangles) is

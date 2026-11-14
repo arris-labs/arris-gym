@@ -1,0 +1,34 @@
+{
+  "measures": {
+    "area": 313.4247779607694,
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        3.0
+      ]
+    ],
+    "centroid": [
+      0.004884760509156149,
+      0.004884760509155849,
+      0.012211901272889434
+    ],
+    "faces": 12,
+    "solids": 2,
+    "volume": 321.570796326795
+  },
+  "message": "BRepCheck_Analyzer: shape is not valid",
+  "program_sha256": "1d31b94843d6356596d4e5a2891bdcdc0b62c943138ebf466a985afe1ee0e504",
+  "status": "invalid",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}
