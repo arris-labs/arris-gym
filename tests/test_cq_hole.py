@@ -358,7 +358,9 @@ def fixture_programs() -> dict[str, tuple[str, dict[str, object], str]]:
 
 def cases() -> dict[str, fixture_cases.Case]:
     return {
-        case.slug: case for case in fixture_cases.load("cq") if case.slug.startswith("ok-hole-")
+        case.slug: case
+        for case in fixture_cases.load("cq")
+        if case.slug.startswith("ok-hole-") and not case.slug.startswith("ok-hole-depth-")
     }
 
 

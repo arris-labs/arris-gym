@@ -896,7 +896,7 @@ def test_chains_of_census_forms_run_or_end_in_a_kernel_refusal(
 BAD_CALLS: list[Callable[[cq.Workplane], object]] = [
     lambda wp: wp.text("a", 5, 1),
     lambda wp: wp.faces("|Z"),
-    lambda wp: wp.hole(1, 2),  # type: ignore[call-arg]
+    lambda wp: wp.hole(1, 2),
     lambda wp: wp.box(1, 2, 3, centered=False),  # type: ignore[call-arg]
     lambda wp: wp.box(1, 2),  # type: ignore[call-arg]
     lambda wp: wp.circle(1, 2),  # type: ignore[call-arg]

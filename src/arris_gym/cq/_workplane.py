@@ -494,15 +494,18 @@ class Workplane:
             return self._derive()
         return self._derive(_Points(tuple(points)))
 
-    @census_form("Workplane.hole", [("num",)])
-    def hole(self, diameter: float) -> Workplane:
+    @census_form("Workplane.hole", [("num",)], keywords={"depth": ("num",)})
+    def hole(self, diameter: float, depth: float | None = None) -> Workplane:
         """The chain's solid with a hole of `diameter` bored from the plane, as CadQuery bores it.
 
         The hole is a cylinder that starts at one point and runs against the
-        plane's normal for the diagonal of the solid's box, so it reaches
-        through any material below the plane and leaves what lies above it
-        (CadQuery's `hole` with no depth: `cutEach` of a cylinder of
-        `largestDimension()`, read on the oracle: `ok-hole-*`). The point is
+        plane's normal for `depth`, or with none for the diagonal of the
+        solid's box, so it reaches through any material below the plane and
+        leaves what lies above it (CadQuery's `hole`: `cutEach` of a cylinder
+        of `depth` or `largestDimension()`, read on the oracle: `ok-hole-*`).
+        A `depth` short of the part's thickness bores a blind hole, and one at
+        or past it a through one (`ok-hole-depth-*`); `depth` is the keyword
+        only, as the census writes it. The point is
         the plane's origin on an empty stack (after `workplane()`), the point
         of a lone `moveTo` on that plane, or the centre of mass of a solid on
         the stack, in all three coordinates (read on the oracle: `ok-hole-on-*`).
@@ -512,13 +515,19 @@ class Workplane:
         stack, a compound where the hole splits the part (ADR-0016). A zero
         `diameter` cuts nothing, as in CadQuery. Raises `ValueError`
         (`runtime`) in CadQuery's words for a chain without a solid and for a
-        negative diameter, and `UnsupportedApi` for selected faces or a drawn
-        path or sketch on the stack: CadQuery bores at their centres.
+        negative diameter, for a `depth` of zero or less (CadQuery's
+        `Standard_ConstructionError`, which it raises before a zero diameter
+        cuts nothing: `runtime-hole-depth-*`), and `UnsupportedApi` for
+        selected faces or a drawn path or sketch on the stack: CadQuery bores
+        at their centres.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane().hole(1)
         >>> round(wp._solids()[0].measure().volume, 6)
         6.429204
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane().hole(1, depth=1)
+        >>> round(wp._solids()[0].measure().volume, 6)
+        7.214602
         """
         base = self._base_solid()
         if base is None:
@@ -539,17 +548,26 @@ class Workplane:
             else:
                 self._refuse_pending("Workplane.hole")
                 raise UnsupportedApi("Workplane.hole on a stack holding objects")
-        named = f"Workplane.hole({diameter})"
+        named = (
+            f"Workplane.hole({diameter})"
+            if depth is None
+            else (f"Workplane.hole({diameter}, depth={depth})")
+        )
+        if depth is not None and depth <= 0:
+            raise ValueError(
+                f"{named}: a depth not positive (CadQuery's Standard_ConstructionError)"
+            )
         if diameter < 0:
             raise ValueError(
                 f"{named}: a negative diameter (CadQuery's Standard_ConstructionError)"
             )
         if diameter == 0:
             return self._derive(base)
-        box = base.model.bounds(base.body)
-        if box is None:
-            raise UnsupportedApi("Workplane.hole on a solid without a box")
-        depth = math.sqrt(sum((box[1][k] - box[0][k] - 2 * _BOUNDS_PAD) ** 2 for k in range(3)))
+        if depth is None:
+            box = base.model.bounds(base.body)
+            if box is None:
+                raise UnsupportedApi("Workplane.hole on a solid without a box")
+            depth = math.sqrt(sum((box[1][k] - box[0][k] - 2 * _BOUNDS_PAD) ** 2 for k in range(3)))
         down = (-plane.z[0], -plane.z[1], -plane.z[2])
         tools = [
             arris.build.Solid.cylinder(at, down, diameter / 2.0, depth, model=base.model)

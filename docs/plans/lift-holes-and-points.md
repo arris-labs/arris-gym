@@ -97,7 +97,7 @@ within a given design; **[3]** unproven semantics, established here.
   `cq/ok-push-points-*` (one point, several, lists, after each selector),
   one corpus program as written (`dog_bone`); `hypothesis`: a random box,
   face and non-overlapping points, volume `V − n·π d²/4·h`.
-- [ ] Step 3 **[2]** — `hole(d, depth=)`: blind, past the part, on points;
+- [x] Step 3 **[2]** — `hole(d, depth=)`: blind, past the part, on points;
   `runtime-` fixtures for the depths CadQuery refuses (step 1); the corpus
   `hex_standoff` as written; the property gains a depth.
 - [ ] Step 4 **[2]** — `cboreHole` per ADR-0018: `ok-cbore-*` with closed-form

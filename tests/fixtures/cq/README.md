@@ -413,3 +413,12 @@ above it (the bore starts in the air and ends inside, a diagonal long), a point
 off the part (the box unchanged) and `dog_bone_000282_s20260505` as the corpus
 writes it. `unsupported-*` programs for the points and stacks the subset
 refuses are held in `tests/test_cq_push_points.py` as calls, not as fixtures.
+
+`ok-hole-depth-*` (step 3, the same test file) bore `hole(1, depth=)`: blind from
+the top at one point, at several, at the plane's origin and `0.25` deep; a depth
+of the box's thickness and one past it, which leave it as `hole(1)` does; and
+`hex_standoff_001194_s20260505` as the corpus writes it, a blind bore from a
+hexagonal prism's bottom under a stud. `runtime-hole-depth-*`: a depth of 0 and
+of -1 (CadQuery's `Standard_ConstructionError`, the zero one from
+`gp_Vec::Normalize()`), raised before a zero diameter would cut nothing, and a
+negative diameter with a depth; each has its recorded oracle report.

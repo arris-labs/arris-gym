@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.hole(0, depth=0): a depth not positive (CadQuery's Standard_ConstructionError)"
+}

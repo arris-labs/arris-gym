@@ -5,6 +5,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `hole(diameter, depth=depth)`: a bore `depth` long
+  from the workplane, blind where it ends inside the part and through where it
+  reaches the far face, at the plane's origin or at every point of a
+  `pushPoints`. A `depth` of zero or less ends `runtime`, as in CadQuery, which
+  raises for it even beside a zero diameter. `depth` is the keyword only: a
+  second positional argument still ends `unsupported_api`.
+
 - `dialect="cq"` now runs `pushPoints(list)`: a stack of points, each a tuple
   or list of two numbers (the plane's own x and y) or three (the third along
   the normal), and `hole(diameter)` after it bores at every one in a single cut,

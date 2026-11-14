@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.hole(-1, depth=3): a negative diameter (CadQuery's Standard_ConstructionError)"
+}

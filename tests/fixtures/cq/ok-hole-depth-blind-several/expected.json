@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 184.93141652942296,
+    "area": 236.27433388230813,
+    "centroid": [
+      -0.006370454881086875,
+      -0.0025481819524347522,
+      -0.09555682321630313
+    ],
+    "bounds": [
+      [
+        -2,
+        -3,
+        -4
+      ],
+      [
+        2,
+        3,
+        4
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        9
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`.faces(\">Z\").workplane().pushPoints([(-1.0, -2.0), (1.0, 0.0), (0.5, 2.2)]).hole(1, depth=3)`. A 4 x 6 x 8 box centred on the origin, a blind hole of diameter 1 from its top at each point. Each cylinder (r = 1/2) runs `depth` down from z = 4, ending inside the box: it removes pi r^2 depth, takes a disc from the top, and adds its wall 2 pi r depth and the cap disc at its end, so A = 208 + n 2 pi r depth. Its centroid is the point at z = 4 - depth / 2, so the part's is -(pi r^2 depth) sum(point, 4 - depth / 2) / V. The part has 6 planes and a cap and a wall for each hole, and no hole goes through: genus 0."
+}
