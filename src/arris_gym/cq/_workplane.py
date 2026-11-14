@@ -45,9 +45,16 @@ _RADIANS_PER_DEGREE = math.pi / 180.0
 # `2 * pi / 360.0` (`occ_impl/shapes.py`), kept apart from `transformed`'s
 # so each call rounds as CadQuery's does: not a tolerance.
 _REVOLVE_RADIANS_PER_DEGREE = 2 * math.pi / 360.0
-# One whole turn in radians, the angle `sphere`'s half disc is revolved by:
-# not a tolerance.
+# One whole turn in radians, the angle `sphere`'s half disc and `cskHole`'s
+# cone's triangle are revolved by: not a tolerance.
 _FULL_TURN = 2 * math.pi
+# `cskHole`'s angle, in degrees: from the first to the second CadQuery's
+# `tan(angle / 2)` is one branch of the cone's height; outside it the
+# tangent repeats and the cone is one no program asks for (ADR-0018 rule 4).
+_CSK_ANGLES = (-180.0, 360.0)
+# From this angle up, to the top of `_CSK_ANGLES`, the cone's height is
+# negative, as it is below zero (the oracle's "negative or null height").
+_CSK_NO_HEIGHT = 180.0
 # CadQuery's `close` adds a segment back to the path's first point only when
 # the gap is wider than this, its numerical-error threshold (`cq.py`); a
 # narrower gap is no segment. In plane units.
@@ -598,6 +605,62 @@ class Workplane:
             raise ValueError(f"{named}: no bore and no counterbore (CadQuery's Null TopoDS_Shape)")
         return self._cut_bores(base, centres, pieces)
 
+    @census_form("Workplane.cskHole", [("num",)] * 3)
+    def cskHole(self, diameter: float, cskDiameter: float, cskAngle: float) -> Workplane:
+        """The chain's solid with a countersunk hole bored from the plane, as CadQuery bores it.
+
+        The hole is a cylinder of `diameter` as long as the solid's box
+        diagonal, under a cone whose base, of `cskDiameter`, is at the
+        starting point and whose tip is `cskDiameter / 2 / tan(cskAngle / 2)`
+        below it, at the points `hole` uses (ADR-0018 rules 2 and 3; read on
+        the oracle: `ok-csk-*`). CadQuery fuses the two; `cq` cuts them as
+        separate tools of one call, the cone a right triangle revolved a
+        full turn (arris has no cone), which is the cut by their union. A
+        cone no wider than the bore leaves the bore, and a zero `diameter`
+        leaves the cone alone. Raises `ValueError` (`runtime`) for what
+        CadQuery refuses, in its order: a negative diameter, an angle of zero,
+        a zero or negative `cskDiameter`, and an angle that gives the cone no
+        height (from -180 to 0 and from 180 to 360); `UnsupportedApi` for an
+        angle outside -180 to 360, where CadQuery's tangent repeats
+        (`runtime-csk-*`, `unsupported-csk-*`), and otherwise as `hole` does.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(4, 4, 2).faces(">Z").workplane()
+        >>> cut = wp.cskHole(1, 2, 90)
+        >>> round(4 * 4 * 2 - cut._solids()[0].measure().volume, 6)
+        2.094395
+        """
+        base, centres = self._bore_sites("Workplane.cskHole")
+        named = f"Workplane.cskHole({diameter}, {cskDiameter}, {cskAngle})"
+        if diameter < 0:
+            raise ValueError(
+                f"{named}: a negative diameter (CadQuery's Standard_ConstructionError)"
+            )
+        if cskAngle == 0:
+            raise ValueError(f"{named}: an angle of zero (CadQuery's ZeroDivisionError)")
+        if cskDiameter == 0:
+            raise ValueError(
+                f"{named}: a zero countersink diameter (CadQuery's Standard_DomainError)"
+            )
+        if cskDiameter < 0:
+            raise ValueError(
+                f"{named}: a negative countersink diameter (CadQuery's Standard_DomainError)"
+            )
+        if not _CSK_ANGLES[0] <= cskAngle <= _CSK_ANGLES[1]:
+            raise UnsupportedApi(f"Workplane.cskHole with an angle outside {_CSK_ANGLES}")
+        if cskAngle < 0 or cskAngle >= _CSK_NO_HEIGHT:
+            raise ValueError(
+                f"{named}: an angle that gives the cone no height (CadQuery's Standard_DomainError)"
+            )
+        radius = cskDiameter / 2.0
+        height = radius / math.tan((cskAngle / 2.0) * _RADIANS_PER_DEGREE)
+        return self._cut_bores(
+            base,
+            centres,
+            [(diameter / 2.0, self._bore_length(base))],
+            [(radius, height)],
+        )
+
     def _bore_sites(self, form: str) -> tuple[arris.build.Solid, list[tuple[float, float, float]]]:
         """The solid a bore cuts and the points it is bored at, in world coordinates.
 
@@ -639,20 +702,35 @@ class Workplane:
         base: arris.build.Solid,
         centres: Sequence[tuple[float, float, float]],
         cylinders: Sequence[tuple[float, float]],
+        cones: Sequence[tuple[float, float]] = (),
     ) -> Workplane:
-        """`base` less one cylinder per `(radius, length)` at every centre, cut in one call.
+        """`base` less a tool per piece at every centre, all cut in one call.
 
-        Each runs from its centre against the plane's normal (ADR-0018 rules 2
-        and 3). A cylinder of zero radius is left out, as the oracle leaves it.
+        A cylinder is `(radius, length)`, a cone `(radius at the top, height)`
+        with its tip below; each runs from its centre against the plane's
+        normal (ADR-0018 rules 2 and 3). A cylinder of zero radius is left
+        out, as the oracle leaves it. A cone is a right triangle on a plane
+        through its axis (the plane's x and its normal), revolved a full turn.
         """
         plane = self._plane
         down = (-plane.z[0], -plane.z[1], -plane.z[2])
+        # The triangle's plane: its y is the workplane's normal, so the axis is y.
+        meridian_normal = (-plane.y[0], -plane.y[1], -plane.y[2])
         tools = [
             arris.build.Solid.cylinder(at, down, radius, length, model=base.model)
             for at in centres
             for radius, length in cylinders
             if radius > 0
         ]
+        for at in centres:
+            meridian = arris.build.Workplane.of(at, meridian_normal, plane.x)
+            for radius, height in cones:
+                triangle = arris.Loop.polygon([(0.0, 0.0), (radius, 0.0), (0.0, -height)])
+                tools.append(
+                    arris.build.Sketch(meridian, triangle).revolve(
+                        "y", _FULL_TURN, model=base.model
+                    )
+                )
         return self._derive(base.cut(*tools))
 
     @census_form("Workplane.box", [("num",)] * 3)

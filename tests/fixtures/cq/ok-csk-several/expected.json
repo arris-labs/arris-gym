@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 308.768227570707,
+    "area": 335.27146616020957,
+    "centroid": [
+      -0.0060626771293045886,
+      -0.0024250708517218364,
+      -0.010652620016006543
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cone",
+        3
+      ],
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 3
+  },
+  "note": "A 10 x 8 x 4 box, `.faces(\">Z\").workplane().pushPoints([(-1.0, -2.0), (1.0, 0.0), (0.5, 2.2)]).cskHole(1, 2, 82)`. A `box` (sizes along x, y, z) about the origin, a sink from face `selector` at each point.\n\n    V = abc - n V_sink, the sink a frustum under the face and a cylinder below\n    it (or one alone); the area gains n times its walls and loses its mouth\n    and its exit where it is through. Its centroid is its point and `c / 2 -\n    m / V_sink` along the normal for a sink of moment `m` about the face: the\n    part's is -n times that over V. 6 planes (a cone ends in its tip and needs\n    no cap), a cone face and a cylinder face for each point that has them.\n    "
+}

@@ -103,7 +103,7 @@ within a given design; **[3]** unproven semantics, established here.
 - [x] Step 4 **[2]** — `cboreHole` per ADR-0018: `ok-cbore-*` with closed-form
   volume and centroid, a `manifold_block` as written, `runtime-` for the
   arguments CadQuery refuses; a property over random bores.
-- [ ] Step 5 **[2]** — `cskHole` per ADR-0018, as step 4 (`ok-csk-*`, a
+- [x] Step 5 **[2]** — `cskHole` per ADR-0018, as step 4 (`ok-csk-*`, a
   `hinge` as written, the cone's volume by closed form).
 - [ ] Step 6 **[2]** — the contexts, read on the oracle: `faces` on faces,
   `circle` on points then `extrude`, each hole on a compound and after a
@@ -141,6 +141,18 @@ within a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
+- *Settled* (step 5): no `hinge` is runnable as written: all 93 that write
+  `cskHole` then `union` a knuckle cylinder tangent to the plate's side, which
+  arris refuses with or without the holes (`regression/cq-tangent-cylinder-and-box`,
+  already filed with arris). Step 5's fixture is the plate up to the first
+  `union` (`ok-csk-hinge-plate`, closed form, the oracle's report beside it);
+  the whole program stays that regression's. ADR-0018 rule 4 reads the angle
+  range as [-180, 360): the oracle refuses 360 as it refuses 180 (a negative
+  height), so `cq` raises `runtime` for 360 and `unsupported_api` only outside
+  [-180, 360]. A negative bore diameter is read on the oracle too: its
+  `Standard_ConstructionError` comes before every other check, an angle of
+  zero's `ZeroDivisionError` next, then a zero cone diameter, a negative one,
+  and last the height.
 - *Settled* (step 4): no `manifold_block` is runnable as written yet: all 28
   that write `cboreHole` write `faces(">Z").faces(">Z")` (step 6's context) and
   bore along y first, a crossing no closed form states. Step 4's fixture is the

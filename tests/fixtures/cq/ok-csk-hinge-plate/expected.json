@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 37267.69362513492,
+    "area": 20543.352768647914,
+    "centroid": [
+      -0.1564660367397528,
+      -0.004343724224314921,
+      -0.0
+    ],
+    "bounds": [
+      [
+        -39.71,
+        -1.985,
+        -59.565
+      ],
+      [
+        39.71,
+        1.985,
+        59.565
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cone",
+        3
+      ],
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 3
+  },
+  "note": "The plate of BenchCAD's `hinge_000040_s20260506` before its first union (the unions touch a cylinder to the plate's side, which arris refuses: `regression/cq-tangent-cylinder-and-box`). `hinge_000040_s20260506` before its unions: three countersinks of 82 degrees in a plate.\n\n    The plate is 79.42 along x, 3.97 along y and 119.13 along z (`box(79.42,\n    119.13, 3.97)` on `XZ`), bored from its `>Y` face. Each sink is a bore of\n    4.17 under a cone of 8.34: the frustum meets the bore 2.40 below the face,\n    the rest of the plate is a through bore. The closed form is\n    `countersunk_box`'s.\n    "
+}

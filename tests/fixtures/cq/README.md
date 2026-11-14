@@ -433,3 +433,16 @@ counterbores as `manifold_block_000049_s20260505` writes it less its other
 holes: that program also writes `faces(">Z").faces(">Z")`, a context step 6
 lifts, with its holes along y that cross these bores. `runtime-cbore-*`: the
 arguments CadQuery refuses, its words recorded beside ours.
+
+`ok-csk-*` (step 5, `tests/test_cq_csk.py`) countersink the same box from its top
+face, each beside its recorded oracle report: one point at 82 and at 90 degrees,
+several, none (the plane's origin), a wide angle (170), a cone no wider than the
+bore and one of its width (the bore alone), a zero bore (the cone alone, blind,
+ending in its tip), a cone whose frustum has not met the bore at the far face
+(the cone alone, through), and the plate of `hinge_000040_s20260506` as the
+corpus writes it up to its first `union`: that union touches a cylinder to the
+plate's side, which arris refuses (`regression/cq-tangent-cylinder-and-box`).
+`runtime-csk-*`: the arguments CadQuery refuses (a negative diameter, an angle of
+zero, a zero or negative countersink diameter, an angle of 180 and one below
+zero), its words recorded beside ours.
+

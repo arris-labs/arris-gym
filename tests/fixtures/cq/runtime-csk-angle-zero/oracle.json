@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ZeroDivisionError: float division by zero",
+  "program_sha256": "49566ee10e055ac71c7e473c38938f44d77a74e66cab894c7f12ffcd0e17243f",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

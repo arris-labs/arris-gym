@@ -5,6 +5,16 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `cskHole(diameter, cskDiameter, cskAngle)`: a
+  countersunk hole at the plane's origin or at every point of a `pushPoints`,
+  as CadQuery builds it (a bore through, under a cone of `cskDiameter` at the
+  face and `cskAngle` degrees across). A cone no wider than the bore leaves
+  the bore, and a zero `diameter` leaves the cone alone. A negative diameter,
+  an angle of zero, a zero or negative `cskDiameter`, and an angle that gives
+  the cone no height (from -180 to 0 and from 180 to 360) end `runtime`, as in
+  CadQuery; an angle outside -180 to 360, `clean=` and a depth end
+  `unsupported_api`.
+
 - `dialect="cq"` now runs `cboreHole(diameter, cboreDiameter, cboreDepth)`: a
   counterbored hole at the plane's origin or at every point of a `pushPoints`,
   as CadQuery builds it (a bore through, a wider counterbore from the face).

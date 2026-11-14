@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.cskHole(1, -2, 82): a negative countersink diameter (CadQuery's Standard_DomainError)"
+}

@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "OCP.OCP.Standard.Standard_DomainError: cone with two identic radii",
+  "program_sha256": "80f77fe44dc8285cfecfaa80b7b04ca61d8ba6dc79f9a534b370141580c3b700",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}
