@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 310.5752220392306,
+    "area": 336.98672286269283,
+    "centroid": [
+      -0.0518042046701801,
+      -0.051804204670180085,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 9,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 3
+  },
+  "note": "`polarArray(3, 0, 90, 3)`: a quarter turn split in two, both ends bored"
+}

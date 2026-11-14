@@ -93,7 +93,7 @@ within a given design; **[3]** unproven semantics, established here.
   `runtime-` fixtures for the refused values, one `vented_panel` as written;
   `hypothesis`: a random grid of non-overlapping holes through a box, volume
   `V − n·π d²/4·h`.
-- [ ] Step 3 **[2]** — `polarArray`: `cq/ok-polar-array-*` (holes, circles
+- [x] Step 3 **[2]** — `polarArray`: `cq/ok-polar-array-*` (holes, circles
   then `extrude`), `runtime-` fixtures, one `motor_end_cap` as written;
   `hypothesis`: each point at radius `r` within the tolerance, the volume of
   `n` holes on a disc's face.

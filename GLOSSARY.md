@@ -236,7 +236,7 @@ result is the one solid on it (ADR-0007), never more than one. `pushPoints`
 puts a **stack of points** on it, in the plane's local coordinates, which a
 bore (`hole`, `cboreHole`, `cskHole`) cuts at each of and `circle` draws a
 circle at each of (ADR-0018); `rarray` puts one too, a grid about the plane's
-origin (ADR-0019).
+origin, and `polarArray` one on a circle about it (ADR-0019).
 
 **Compound**:
 CadQuery's several solids that do not meet, held as one value. In `cq` it

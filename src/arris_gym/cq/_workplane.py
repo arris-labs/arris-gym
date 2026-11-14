@@ -70,6 +70,9 @@ _CLOSE_GAP = 1e-6
 # takes the padding off before it measures one: a bore that ends inside the
 # part is as long as CadQuery's (`ok-push-points-3-tuple-above`).
 _BOUNDS_PAD = 2e-7
+# CadQuery's `polarArray` takes the angle for a full turn when it is within this
+# many degrees of a multiple of 360 (its `TOL`, `cq.py`, read in ADR-0019).
+_FULL_TURN_TOLERANCE = 1e-6
 _ZERO = Vector(0, 0, 0)
 
 
@@ -110,7 +113,9 @@ class _Disc(arris.build.Sketch):
 
 @dataclass(frozen=True)
 class _Points:
-    """A stack of points `pushPoints` or `rarray` put on the plane, in its local coordinates.
+    """A stack of points `pushPoints`, `rarray` or `polarArray` put on the plane.
+
+    The points are in its local coordinates.
 
     Each is `(u, v, w)`: x and y in the plane's own axes, `w` the offset along
     its normal (0 when the program gave two numbers). Never empty: CadQuery's
@@ -564,6 +569,43 @@ class Workplane:
             for j in range(yCount)
         )
         return self._derive(_Points(points))
+
+    @census_form("Workplane.polarArray", [("num",)] * 4)
+    def polarArray(self, radius: float, startAngle: float, angle: float, count: int) -> Workplane:
+        """A stack of the points of a polar array on a circle about this workplane's origin.
+
+        CadQuery's points by its expressions (ADR-0019 rule 2): the step is
+        `angle / count` on a full turn (`angle` within `_FULL_TURN_TOLERANCE`
+        degrees of a multiple of 360, of either sign), else `angle / (count -
+        1)`; point `i` is at `phi = math.radians(startAngle + step * i)`,
+        `(radius * cos(phi), radius * sin(phi))`, in the plane's own axes. So
+        a partial turn has both its ends, one point sits at `startAngle`, and
+        a negative radius puts each point across the centre. CadQuery's turn
+        of each point is dropped: a bore and a circle are round. The stack
+        acts as `pushPoints`' (`hole` at each point, `circle` at each, and
+        the contexts `rarray` refuses). A `count` under 1 raises `ValueError`
+        (`runtime`) with the count verbatim, as in CadQuery; one that is not an
+        `int` raises `TypeError` from `range`, as there
+        (`runtime-polar-array-*`). `fill=` and `rotate=` end `unsupported_api`.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane()
+        >>> [round(u, 9) + 0.0 for u, _, _ in wp.polarArray(1, 0, 360, 4)._stack[0].points]
+        [1.0, 0.0, -1.0, 0.0]
+        """
+        if count < 1:
+            raise ValueError(f"At least 1 element required, requested {count}")
+        if not any(isinstance(o, _Points) for o in self._stack):
+            self._refuse_pending("Workplane.polarArray")
+        if abs(math.remainder(angle, 360.0)) < _FULL_TURN_TOLERANCE:
+            step = angle / count
+        else:
+            step = angle / (count - 1) if count > 1 else 0.0
+        points = []
+        for i in range(count):
+            phi = math.radians(startAngle + step * i)
+            points.append((float(radius * math.cos(phi)), float(radius * math.sin(phi)), 0.0))
+        return self._derive(_Points(tuple(points)))
 
     @census_form("Workplane.hole", [("num",)], keywords={"depth": ("num",)})
     def hole(self, diameter: float, depth: float | None = None) -> Workplane:

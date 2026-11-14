@@ -5,6 +5,15 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `polarArray(radius, startAngle, angle, count)`:
+  points on a circle about the workplane's origin, at which `hole`,
+  `cboreHole`, `cskHole` and `circle` act as at the points of a `pushPoints`.
+  A full turn is split in `count` and a partial one in `count - 1` with both
+  ends included; one point sits at `startAngle`; a negative radius puts each
+  point across the centre. A count under 1 ends `runtime` with CadQuery's
+  words, as does a count that is not an integer; `fill=` and `rotate=` end
+  `unsupported_api`.
+
 - `dialect="cq"` now runs `rarray(xSpacing, ySpacing, xCount, yCount)`: a grid
   of points centred on the workplane's origin, at which `hole`, `cboreHole`,
   `cskHole` and `circle` act as at the points of a `pushPoints`. A spacing of

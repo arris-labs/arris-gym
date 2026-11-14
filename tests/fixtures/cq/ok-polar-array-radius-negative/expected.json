@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 313.71681469282044,
+    "area": 325.99114857512853,
+    "centroid": [
+      0.030042310514971162,
+      0.030042310514971162,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 2
+  },
+  "note": "`polarArray(-3, 0, 90, 2)`: each point across the centre, at 180 and 270 degrees"
+}

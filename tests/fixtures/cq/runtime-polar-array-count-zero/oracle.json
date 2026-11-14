@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: At least 1 element required, requested 0",
+  "program_sha256": "0a688dc5a2ddced8124631bc384d0534e8a7024b93754249eba7972bac177a95",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 301.15044407846125,
+    "area": 369.97344572538566,
+    "centroid": [
+      -2.9492847749834986e-18,
+      -9.731213462430763e-18,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cylinder",
+        6
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 6
+  },
+  "note": "`polarArray(3, 0, 360, 6)` on `>Z`: a full turn split in six, a bore through at each"
+}

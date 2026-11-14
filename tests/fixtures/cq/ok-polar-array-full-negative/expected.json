@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 307.4336293856408,
+    "area": 347.98229715025707,
+    "centroid": [
+      3.754314121521356e-18,
+      3.754314121521355e-18,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 4
+  },
+  "note": "`polarArray(3, 0, -360, 4)`: a full turn the other way, the same four points"
+}

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 309.94690350851266,
+    "area": 352.25486315913923,
+    "centroid": [
+      0.0,
+      -0.024326174203603307,
+      -0.024326174203603307
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 2
+  },
+  "note": "`polarArray(1.5, 0, 90, 2)` on `>X`, in that face's own x and y (ADR-0017)"
+}

@@ -483,3 +483,14 @@ the oracle's recorded report and held to the closed form of how it is built.
 `runtime-rarray-*` are the values CadQuery refuses (a spacing of zero or less, a count
 of zero, a float count), its words verbatim; `unsupported-rarray-center` is the
 `center=` keyword no corpus program writes, which the oracle builds.
+
+`ok-polar-array-*` (plans/lift-arrays-and-blind-cuts step 3, `tests/test_cq_polar_array.py`)
+bore a box's `>Z` and `>X` faces, a revolved cylinder's `<Y` end and BenchCAD's
+`motor_end_cap` (as written: a bore, then six holes) at the points of a `polarArray`:
+a full turn of either sign, from a start angle, a partial turn of either sign, one point
+(at the start angle), a negative radius and a zero one (three bores at the centre, one
+hole); `circle(0.5).extrude(1)` at a full turn of four draws a post at each. Each is
+beside the oracle's recorded report and held to the closed form of how it is built.
+`runtime-polar-array-*` are the counts CadQuery refuses (zero, negative, a float), its
+words verbatim; `unsupported-polar-array-*` are the `fill=` and `rotate=` keywords no
+corpus program writes, which the oracle builds.

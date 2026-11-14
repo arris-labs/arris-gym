@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 524290.7931153298,
+    "area": 62423.235383041756,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -85.015,
+        -85.015,
+        -12.575
+      ],
+      [
+        85.015,
+        85.015,
+        12.575
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        8
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 7
+  },
+  "note": "BenchCAD's `motor_end_cap_000016_s20260505`: a disc of 85.015 by 25.15, a bore and six holes.\n\n    `cylinder` is centred on the origin, z from -12.575 to 12.575. The bore of\n    44.58 (r = 22.29) goes through, and so do six of 7.96 (r = 3.98) on a circle\n    of 31.43: they reach 27.45 to 35.41 from the axis, clear of the bore (22.29)\n    and the rim (85.015), 31.43 > 7.96 apart. V = pi h (R^2 - r1^2 - 6 r2^2); each\n    bore takes two discs and adds its wall, A = 2 pi (R^2 - r1^2 - 6 r2^2) + 2 pi\n    h (R + r1 + 6 r2). The six points cancel: the centroid is the origin. 2\n    planes, the rim, the bore and six holes: 10 faces, genus 7.\n    "
+}

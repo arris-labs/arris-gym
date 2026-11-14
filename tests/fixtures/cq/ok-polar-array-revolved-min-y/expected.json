@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 301.59289474462014,
+    "area": 326.7256359733385,
+    "centroid": [
+      0,
+      2,
+      0
+    ],
+    "bounds": [
+      [
+        -5,
+        0,
+        -5
+      ],
+      [
+        5,
+        4,
+        5
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        5
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 4
+  },
+  "note": "The probe's cylinder (radius 5, y 0 to 4), four bores of 1 on a circle of 3 in its `<Y` end.\n\n    A turn of 90 degrees puts them at (3, 0), (0, 3), (-3, 0), (0, -3) of the\n    end face, 3 > 1 apart and 3.5 < 5 from the axis. Each goes through the 4:\n    V = pi 25 4 - 4 pi r^2 4, r = 1/2; each bore takes two discs off the faces\n    and adds its wall, A = 2 pi 25 + 2 pi 5 4 - 4 2 pi r^2 + 4 2 pi r 4. The\n    four points cancel about the axis: the centroid is (0, 2, 0). 2 planes, the\n    wall and four bores: 7 faces, genus 4.\n    "
+}

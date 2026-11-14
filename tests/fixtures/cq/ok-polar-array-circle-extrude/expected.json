@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 323.1415926535898,
+    "area": 316.5663706143592,
+    "centroid": [
+      -8.929540814871112e-19,
+      8.92954081487111e-19,
+      0.02430507806029789
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        3.0
+      ]
+    ],
+    "faces": 14,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        10
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`circle(0.5).extrude(1)` at a full turn of four: a post at each point"
+}
