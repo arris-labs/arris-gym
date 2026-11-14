@@ -35,3 +35,4 @@ training cycle starts from.
 | [0016](0016-a-cq-compound-is-one-solid-whose-body-holds-a-shell-per-piece.md) | A `cq` compound is one solid whose body holds a shell per piece | accepted |
 | [0017](0017-a-cq-axis-selector-ranks-faces-by-their-centre-of-mass-and-places-a-plane-only-on-a-planar-face.md) | A `cq` axis selector ranks faces by their centre of mass, and places a plane only on a planar face | accepted |
 | [0018](0018-a-cq-bore-cuts-cadquerys-pieces-at-every-point-in-one-call.md) | A `cq` bore cuts CadQuery's pieces at every point, in one call | accepted |
+| [0019](0019-a-cq-array-stacks-cadquerys-points-and-a-blind-cut-extrudes-the-pending-sketch-and-cuts-it-in-one-call.md) | A `cq` array stacks CadQuery's points, and a blind cut extrudes the pending sketch and cuts it in one call | accepted |
