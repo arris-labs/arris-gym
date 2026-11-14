@@ -577,7 +577,10 @@ class Workplane:
         chain's solid if there is one (CadQuery's `combine=True`). With
         `both`, it grows `distance` to each side of the plane: CadQuery fuses
         the two sweeps and cleans away the seam, which is the one prism of
-        height `2|distance|` that arris sweeps in one go. Raises `ValueError`
+        height `2|distance|` that arris sweeps in one go: the same volume,
+        centroid and bounds, and the same faces for a polygon profile, while
+        a full circle's glued halves leave the oracle one face more (face
+        counts are carried, never judged). Raises `ValueError`
         (`runtime`) when the stack holds no pending sketch, and for a zero
         `distance` with or without `both` (CadQuery's
         `Standard_ConstructionError` from the zero-length sweep).

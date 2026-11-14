@@ -399,8 +399,10 @@ back along one diameter into a zero-volume solid its checker passes: a
 side of its plane: CadQuery's `_extrude` fuses the sweep of `distance` with
 that of `-distance` and `clean()` merges the side faces, which is arris's one
 `Sketch.extrude(distance, both=True)` prism of height `2 * |distance|` (the
-same volume, centroid, bounds and face count on the oracle,
-`ok-extrude-both-*`); a negative distance is the same prism, `both=False` is
+same volume, centroid and bounds on the oracle, `ok-extrude-both-*`, and the
+same faces for a polygon profile, while a full circle's glued halves leave the
+oracle one face more, 4 against 3: face counts are carried, never judged,
+ADR-0005); a negative distance is the same prism, `both=False` is
 plain `extrude`. A zero distance, `both` or not, ends `runtime`
 (`ValueError`), where CadQuery raises `Standard_ConstructionError`; `both` on
 a stack with no pending sketch is `No pending wires present` on both sides.
