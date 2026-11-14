@@ -263,7 +263,10 @@ def test_each_committed_verdict_rests_on_evidence_that_exists(corpus: str) -> No
         if verdict.disagreement is DisagreementClass.OCCT_WRONG:
             assert isinstance(verdict.evidence, ClosedForm), stem
         else:
-            assert verdict.disagreement is DisagreementClass.ARRIS_REFUSAL, stem
+            assert verdict.disagreement in (
+                DisagreementClass.ARRIS_REFUSAL,
+                DisagreementClass.ARRIS_BUG,
+            ), stem
             assert isinstance(verdict.evidence, RegressionFixture), stem
             fixture = REGRESSION / Path(verdict.evidence.path).name
             expected = json.loads((fixture / "expected.json").read_text(encoding="utf-8"))

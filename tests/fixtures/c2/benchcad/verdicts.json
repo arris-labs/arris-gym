@@ -5896,6 +5896,41 @@
    "volume": 5828.778944135409
   }
  },
+ "shaft_collar_004211_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_004399_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_007583_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_017335_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_017997_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
  "t_pipe_fitting_000075_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {

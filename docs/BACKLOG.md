@@ -156,6 +156,14 @@ A defect a run measured, one block each:
 - Measured: 62 of 160 `bearing_retainer_cap` rows, all in the subset: 22 `checker_fail` slotted plates whose middle arc's rounded ends fall outside the cylinder, 25 `OpInternalError` whose ends fall inside it, 15 `checker_fail` and 3 `OpInternalError` bars with tangent end bosses (2 more of those `OpUnsupportedError`, 21 `ok`); the oracle's volume, area and centroid equal each fixture's closed form
 - State: regression/cq-union-cylinder-tangent-inside, cq-union-end-cylinders-tangent, cq-union-arc-tangent-inside-cylinder (strict `xfail`); reported in `../arris/docs/ideas/union-tangent-inside.md`
 
+### cross-hole-bounds
+- What: arris's body box reaches past the part where a NURBS edge is its extent: a cylinder of radius 2 drilled across by a hole of radius 0.5 is boxed to y = +-2.0012, the hole's two side-wall edges boxed by their control hulls; volume, area and centroid are the closed form's. Open CASCADE gives the tight box but a volume 3e-5 off the closed form on the same part
+- Where: arris 0.10.0 `Model.bounds(body)` (an outer bound over a NURBS curve, arris `DATA-MODEL.md` `Curve::bounds`), read by the sandbox's `Measures.bounds`; ADR-0005 holds a box to the part's extent plus 2e-7
+- Seen: plans/lift-face-selectors step 7c, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, `shaft_collar` `_004211`, `_004399`, `_007583`, `_017335`, `_017997` (`_s20260505`), 2026-11-14
+- Reproduce: `uv run pytest --runxfail tests/test_regression.py -k cross-hole-bounds`
+- Measured: those 5 rows, all in the subset, bounds 5e-4 to 1e-3 past the closed form along the set screw's axis; the oracle's volume 3e-6 to 1e-5 off it where computed (`_004211`, quadrature at 30 digits: arris 1.3e-10, the oracle 7.0e-6)
+- State: regression/cq-cross-hole-bounds (strict `xfail`); the 5 rows `arris_bug` by it (`tests/fixtures/c2/benchcad/verdicts.json`), `occt_wrong` by a closed form once arris's box is tight; reported in `../arris/docs/ideas/tight-body-bounds.md`
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)

@@ -1,0 +1,14 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 reports the body's box 1.23e-3 past the cylinder along y (y -2.0012288786 to 2.0012288786) on a cylinder of radius 2 drilled across by a hole of radius 0.5: the box of each of the hole's two NURBS edges on the side wall is its control hull's; volume, area and centroid are the closed form's, and CadQuery 2.3.0's box is the cylinder's",
+  "measures": {
+    "volume": 22.015887866296808,
+    "area": 61.049774974859034,
+    "centroid": [0, 0, 1],
+    "bounds": [[-2, -2, 0], [2, 2, 2]],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "A cylinder of radius R = 2 on the XY plane, z 0..2, less a cylinder of radius a = 0.5 along y through (0, 0, 1), 6 long (past both walls). By the hole's cross-section x: V = 2 pi R^2 - int_{-a}^{a} 4 sqrt(a^2 - x^2) sqrt(R^2 - x^2) dx; A = 4 pi R + 2 pi R^2 - int_{-a}^{a} 4 sqrt(a^2 - x^2) R / sqrt(R^2 - x^2) dx (the two patches the side wall loses) + int_0^{2 pi} 2 a sqrt(R^2 - a^2 cos^2 phi) dphi (the hole's wall, 8 a R E(a^2 / R^2)), the integrals by tanh-sinh quadrature at 40 digits (estimated error below 1e-48). Centroid (0, 0, 1) by the two mirror planes x = 0, y = 0 and z = 1; bounds the cylinder's (the side wall at x = 0 reaches y = +-2 outside the hole, z 0..0.5 and 1.5..2); one shell, genus 1. Faces are carried, not judged (ADR-0005)."
+}

@@ -222,13 +222,32 @@ within a given design; **[3]** unproven semantics, established here.
   Filed in `../arris/docs/ideas/union-tangent-inside.md`; BACKLOG §Findings
   `union-tangent-inside`. The 37 rows stay `arris_bug` and the 28
   `arris_refusal` until arris answers.
-- [ ] Step 7c **[3]** — `shaft_collar`, 5 in-subset `unclassified` (`ok` on
+- [x] Step 7c **[3]** — `shaft_collar`, 5 in-subset `unclassified` (`ok` on
   both sides, bounds delta 5e-4 to 1e-3, volume delta 3e-6 to 1e-5): a
   `.faces(">Y").workplane().hole(d)` then a `cut` of a `cylinder` through
   it. Shrink; read which kernel is off by a closed form (the bore and cut
   analytic), then class it (`occt_wrong`, `arris_bug` or the tolerance
   ADR-0005 allows) with a fixture. Unclassified in the subset is a red
   cycle, so this step ends at a class, never a footnote.
+  *Settled* (step 7c): both kernels miss the closed form, on different
+  measures. Shrunk to a cylinder of radius 2 drilled across by a hole of
+  radius 0.5 (no bore, no `hole`: the cross hole alone).
+  arris's volume, area and centroid are the closed form's (quadrature, 3e-10
+  on the fixture, 1.3e-10 on `_004211`), but its body box is 1.2e-3 wide: the
+  hole's two NURBS edges on the side wall are boxed by their control hulls
+  (arris `DATA-MODEL.md`, `Curve::bounds`, an outer bound; a tessellation
+  reaches |y| = 2 + 3e-9). Open CASCADE's box is tight but its volume is
+  3e-5 off (7e-6 on `_004211`), as on `t_pipe_fitting`. No closed-form verdict
+  passes `compare` when both sides miss it, and no ADR allows a looser box, so
+  the 5 rows are `arris_bug` by `regression/cq-cross-hole-bounds` (strict
+  xfail, failing on bounds alone), hand-added to
+  `tests/fixtures/c2/benchcad/verdicts.json` (`tools/cq_closed_forms.py` writes
+  only `occt_wrong` and `arris_refusal`; a re-run of it would drop them);
+  `test_cq_closed_forms` now accepts an `arris_bug` fixture verdict. Filed as
+  `../arris/docs/ideas/tight-body-bounds.md`, BACKLOG §Findings
+  `cross-hole-bounds`. Step 8: BenchCAD's `arris_bug` becomes 100
+  `lobed_knob` + 37 `bearing_retainer_cap` + 5 `shaft_collar`
+  (`test_benchcads_arris_bugs_are_the_100_lobed_knob_verdicts`).
 - [ ] Step 8 **[2]** — commit the re-run: `tests/fixtures/c2/*` as
   `fixtures:` with the new figures, both READMEs, `test_c2_baseline`'s
   figures, its subset back to `cq.subset()`.
