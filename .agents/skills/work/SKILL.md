@@ -59,7 +59,11 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    checked against the fixture that proves it, and a fixture a README says
    has a recorded oracle report has its `oracle.json`; a doc that says a
    file is tool-written is checked by regenerating the file byte-identical,
-   and a hand edit becomes a tool option.
+   and a hand edit becomes a tool option. Every boundary value, refusal
+   message or "see fixture X" the diff states names the fixture that
+   exercises it (`tools/check-fixtures.sh` catches a missing slug cited under
+   `src/`), and new message text is grepped against `GLOSSARY.md`'s _Avoid_
+   words.
 5. Commit `type(scope): summary (plans/<slug> step N)` with the box ticked
    in the same commit; the body says why, cites docs/ADRs, names any
    public type or signature changed. A commit that repairs an earlier
@@ -109,7 +113,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    poll. Its prompt: "Work step N (or steps N-M, in order) of
    `docs/plans/<slug>.md` in this checkout by *Do* in
    `.agents/skills/work/SKILL.md`, only those steps, one commit per step
-   (each step's box ticked in its own commit). A run
+   (each step's box ticked in its own commit). The commit is `timeout 300
+   git commit …` with the Bash tool's timeout 300000, and staging is `git add
+   <paths>`, never `-A` (`tools/bash-guard.sh` refuses both otherwise). A run
    whose result you need goes in the foreground under `timeout`, never
    backgrounded and polled. You answer to the conductor, never the human:
    hand back the commit id and anything surprising, or the question that
