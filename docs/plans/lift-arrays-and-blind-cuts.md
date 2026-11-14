@@ -147,9 +147,22 @@ within a given design; **[3]** unproven semantics, established here.
   `t_pipe_fitting` `occt_wrong`, arris within 5e-11 in volume and area of the
   closed form. Tests: three corpus tees on their planes and two on YZ, and
   t_pipe_fitting_000436 against its committed oracle row.
-- [ ] Step 6b **[3]** — the same tool reads the 25 `bellows` rows (Pappus for
+- [x] Step 6b **[3]** — the same tool reads the 25 `bellows` rows (Pappus for
   the revolved profile, the rim sliver by quadrature, as
   `ok-cut-blind-corpus-bellows`'s test does) and classes them `occt_wrong`.
+  *Settled*: `_bellows`, `bellows_measures`. 16 of the 25 widen the inner wall
+  with a `hole` from the top, and in 10 the holes' circle runs past the rim (a
+  notch through it), so each hole's part inside the rim is integrated by radius
+  (the disc's angular width at each radius), the rim losing its arc in the
+  bottom flange; on `ok-cut-blind-corpus-bellows` the tool equals that test's
+  closed form to 3e-16. The 42 refused `bellows` rows are already
+  `arris_refusal` by the rule (`regression/cq-cut-blind-across-a-split-end-face`
+  holds the cause), so no `--refusal` is given: it would class the family's 25
+  ok rows too. On the step-6 table (the committed verdicts' invocation, scratch
+  `--out`), 748 verdicts each checked by `compare`: step 6a's 723 unchanged and
+  25 `bellows` `occt_wrong`, arris within 1.7e-10 in volume and 7.2e-11 in area
+  of the closed form. Tests: the fixture's closed form, `bellows_011847` as
+  written and with its holes inside the rim, and its committed oracle row.
 - [ ] Step 7 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests); it deletes
   `fixture_cases.c2_baseline_subset()` (step 2 added it, as step 2 of

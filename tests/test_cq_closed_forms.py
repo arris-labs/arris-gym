@@ -242,6 +242,88 @@ def test_a_flanged_tee_this_tool_does_not_read_is_refused() -> None:
         cf.tee_closed_form(into_main)
 
 
+# BenchCAD's bellows_011847_s20260505 as written: a bore widening the inner wall, and holes
+# whose circle runs past the rim (19.925 + 1.18 > 21.09), so each takes a notch out of it.
+BELLOWS = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .polyline([(5.135, 0.0), (18.5, 0.0), (21.09, 0.0), (21.09, 3.18), (18.5, 3.18), (8.6, 10.25), (18.5, 17.32), (8.6, 24.39), (18.5, 31.46), (8.6, 38.53), (18.5, 45.6), (8.6, 52.67), (18.5, 59.74), (21.09, 62.92), (18.5, 62.92), (5.135, 62.92), (5.135, 0.0)])
+    .close()
+    .revolve(360, (0, 0, 0), (0, 1, 0))
+    .faces(">Y").workplane()
+    .hole({bore})
+    .faces(">Y").workplane()
+    .polarArray({rp}, 0, 360, 6)
+    .circle(1.18)
+    .cutBlind(-3.18)
+    .faces("<Y").workplane()
+    .polarArray({rp}, 0, 360, 6)
+    .circle(1.18)
+    .cutBlind(-3.18)
+)
+
+# Export
+show_object(result)"""  # noqa: E501
+
+
+def test_the_bellows_closed_form_is_the_cut_blind_fixtures() -> None:
+    """The tool's bellows is `ok-cut-blind-corpus-bellows`'s closed form, worked out apart
+    (`test_cq_cut_blind.bellows`: the sliver by columns of a disc, not by radius)."""
+    from test_cq_cut_blind import bellows, corpus_program
+
+    want = bellows()
+    got = cf.bellows_closed_form(corpus_program("ok-cut-blind-corpus-bellows"))
+    for key in ("volume", "area"):
+        assert float(str(got[key])) == pytest.approx(float(str(want[key])), rel=1e-13), key
+    assert got["centroid"] == pytest.approx(want["centroid"], rel=1e-13)
+    bounds = want["bounds"]
+    assert isinstance(bounds, (list, tuple))
+    assert got["bounds"] == [list(corner) for corner in bounds]
+
+
+@pytest.mark.parametrize(("bore", "rp"), [("14.14", "19.925"), ("10.5", "19.8")])
+def test_a_bellows_is_what_arris_builds(bore: str, rp: str) -> None:
+    """As written (holes past the rim) and with the holes inside it, a narrower bore."""
+    text = BELLOWS.format(bore=bore, rp=rp)
+    assert _agrees(ag.run(text, dialect="cq"), cf.bellows_closed_form(text)) == []
+
+
+def test_a_corpus_bellows_is_occt_wrong_by_its_closed_form() -> None:
+    """bellows_011847 as written: arris is within ADR-0005's constants of the closed form, the
+    recorded oracle report is not, and the rule alone leaves the row unclassified."""
+    import gzip
+    import hashlib
+
+    from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+
+    stem = "bellows_011847_s20260505"
+    text = BELLOWS.format(bore="14.14", rp="19.925")
+    rows = gzip.decompress((C2 / "benchcad" / "oracle.jsonl.gz").read_bytes()).splitlines()
+    row = next(json.loads(line) for line in rows if json.loads(line)["stem"] == stem)
+    report = OracleReport.model_validate(row["report"])
+    assert hashlib.sha256(text.encode()).hexdigest() == report.program_sha256
+    result = ag.run(text, dialect="cq")
+    assert compare(result, report).outcome is FidelityOutcome.UNCLASSIFIED
+    verdict = Verdict.model_validate(
+        {"disagreement": "occt_wrong", "evidence": cf.bellows_closed_form(text)}
+    )
+    assert compare(result, report, verdict).disagreement is DisagreementClass.OCCT_WRONG
+
+
+@pytest.mark.parametrize(
+    ("bore", "rp", "match"),
+    [
+        ("14.14", "19.5", "holes are not where"),  # across the end faces' split at 18.5
+        ("18.0", "19.925", "bore"),  # wider than the convolutions' 8.6
+        ("14.14", "19.91", "holes are not where"),  # tangent to the rim
+    ],
+)
+def test_a_bellows_this_tool_does_not_read_is_refused(bore: str, rp: str, match: str) -> None:
+    with pytest.raises(ValueError, match=match):
+        cf.bellows_closed_form(BELLOWS.format(bore=bore, rp=rp))
+
+
 HOOK = """import cadquery as cq
 
 result = (

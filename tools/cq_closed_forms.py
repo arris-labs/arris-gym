@@ -14,7 +14,7 @@ the tool reads a table run with or without `--verdicts` alike; a row arris ended
 `unsupported_api` is outside the subset and gets no verdict. A family given by
 `--refusal` or `--arris-bug` is classed by that regression fixture rather than a closed form.
 
-Three part shapes, each read from its program's text (a program that is not exactly
+The part shapes, each read from its program's text (a program that is not exactly
 one of them raises, never guessed):
 
 - **t_pipe_fitting**: a main cylinder M (axis = the plane's normal, radius R,
@@ -46,6 +46,12 @@ one of them raises, never guessed):
   theorem), and along a line on any face each solid is one exact interval, so what is
   left is one integral across the lines per face, split where its formula changes
   (`part_measures`).
+
+- **bellows**: a closed profile turned about y (Pappus), an optional `hole` from the top
+  widening its inner wall, and a `polarArray` of circles `cutBlind` from each end face:
+  through the bottom flange, and from the top face down to the cone under it (a sliver).
+  A hole may run past the rim; what it takes is integrated by radius over its disc's
+  part inside the rim (`bellows_measures`).
 
 - **crossing cylinders**: the one CAD-Recode program whose row nothing classes (`CROSSING`).
 
@@ -561,6 +567,180 @@ def tee_closed_form(text: str) -> dict[str, object]:
             "are one-dimensional integrals over the cross-section and each cylinder's "
             f"surface patch (tools/cq_closed_forms.py): R={p['R']}, h={p['h']}, "
             f"r={p['r']}, hb={p['hb']}, s={p['s']}, q={p['q']}"
+        ),
+    }
+
+
+_BELLOWS = re.compile(
+    r'cq\.Workplane\("XY"\)\s*\.polyline\((\[[^\]]*\])\)\s*\.close\(\)\s*'
+    r"\.revolve\(360, \(0, 0, 0\), \(0, 1, 0\)\)\s*"
+    rf'(?:\.faces\(">Y"\)\.workplane\(\)\s*\.hole\({_NUMBER}\)\s*)?'
+    rf'\.faces\(">Y"\)\.workplane\(\)\s*\.polarArray\({_NUMBER}, 0, 360, (\d+)\)\s*'
+    rf"\.circle\({_NUMBER}\)\s*\.cutBlind\({_NUMBER}\)\s*"
+    rf'\.faces\("<Y"\)\.workplane\(\)\s*\.polarArray\({_NUMBER}, 0, 360, (\d+)\)\s*'
+    rf"\.circle\({_NUMBER}\)\s*\.cutBlind\({_NUMBER}\)\s*\)"
+)
+_PAIR = re.compile(rf"\({_NUMBER}, {_NUMBER}\)")
+
+
+@dataclass(frozen=True)
+class Bellows:
+    """A bellows: the closed profile `pts` (x the radius, y the height, a bore D/2 already
+    in place of the inner wall) turned about y, and `n` holes of radius `r` on a circle of
+    radius `rp` cut from each end face: through the bottom flange (thickness `d`), and from
+    the top face down to the cone `cone` = ((x_k, y_k), (R, H)) under it."""
+
+    pts: tuple[tuple[float, float], ...]
+    n: int
+    rp: float
+    r: float
+    d: float
+    cone: tuple[tuple[float, float], tuple[float, float]]
+
+
+def _bellows(text: str) -> Bellows:
+    """The bellows's parameters, refusing a program that is not the one shape this reads.
+
+    The profile, counter-clockwise from the inner bottom corner: (x_in, 0), (a, 0), (R, 0),
+    (R, d), (a', d), the convolutions with every y strictly between d and y_k, (x_k, y_k),
+    (R, H), (a'', H), (x_in, H), closed. An optional `hole(D)` from the top widens the inner
+    wall to D/2, below every other radius. The two `polarArray(rp, 0, 360, n).circle(r)
+    .cutBlind(-depth)` are alike: the bottom one `d` deep, through the flange (a hole
+    clear of a and a', inside R, the edge after (a', d) going inward); the top one `H -
+    y_k` deep, its floor on the cone's lower end, the holes clear of a'' and x_k (so under
+    the top face, over the band, is only the cone). The holes do not overlap.
+    """
+    m = _BELLOWS.search(text)
+    if m is None:
+        raise ValueError("not the bellows this tool reads")
+    pts = [(_num(x), _num(y)) for x, y in _PAIR.findall(m.group(1))]
+    hole, rp, n, r, top, rp2, n2, r2, bottom = m.groups()[1:]
+    if (rp, n, r) != (rp2, n2, r2):
+        raise ValueError("a bellows's two hole circles differ")
+    if len(pts) < 10 or pts[0] != pts[-1]:
+        raise ValueError("a bellows's profile is not closed")
+    x_in, big_r = pts[0][0], pts[2][0]
+    d, (x_k, y_k), big_h = pts[3][1], pts[-5], pts[-4][1]
+    if not (
+        pts[0][1] == pts[1][1] == pts[2][1] == 0.0
+        and pts[3] == (big_r, d)
+        and pts[4][1] == d
+        and pts[-4] == (big_r, big_h)
+        and pts[-3][1] == pts[-2][1] == big_h
+        and pts[-2][0] == x_in
+        and all(d < p[1] < y_k for p in pts[5:-5])
+        and y_k < big_h
+        and pts[5][0] < pts[4][0]
+        and max(p[0] for p in pts) == big_r
+    ):
+        raise ValueError("a bellows's profile is not the shape the closed form assumes")
+    if hole is not None:
+        bore = _num(hole) / 2
+        if not x_in < bore < min(p[0] for p in pts[1:-2]):
+            raise ValueError("a bellows's bore does not only widen its inner wall")
+        x_in = bore
+        pts = [(x_in, 0.0), *pts[1:-2], (x_in, big_h), (x_in, 0.0)]
+    elif min(p[0] for p in pts[1:-2]) <= x_in:
+        raise ValueError("a bellows's inner wall is not its least radius")
+    rp_, r_, count = _num(rp), _num(r), int(n)
+    lo, hi = rp_ - r_, rp_ + r_
+    if not (
+        max(pts[1][0], pts[4][0], pts[-3][0], x_k) < lo
+        and lo < big_r
+        and abs(hi - big_r) > PLACEMENT_TOL
+        and abs(-_num(bottom) - d) <= PLACEMENT_TOL
+        and abs(big_h + _num(top) - y_k) <= PLACEMENT_TOL
+    ):
+        raise ValueError("a bellows's holes are not where the closed form assumes")
+    if count < 2 or 2 * rp_ * math.sin(math.pi / count) <= 2 * r_:
+        raise ValueError("a bellows's holes overlap or do not balance about the axis")
+    area2 = sum(a[0] * b[1] - b[0] * a[1] for a, b in itertools.pairwise(pts))
+    if area2 <= 0:
+        raise ValueError("a bellows's profile is not counter-clockwise")
+    return Bellows(tuple(pts), count, rp_, r_, d, ((x_k, y_k), (big_r, big_h)))
+
+
+def bellows_measures(b: Bellows) -> tuple[float, float, Vec, Box]:
+    """Volume, area, centroid and bounds of the bellows, in global coordinates.
+
+    The revolved profile by Pappus: V0 = 2 pi sum (x_i + x_j)(x_i y_j - x_j y_i) / 6, the y
+    moment 2 pi times the profile's integral of x y, A0 = pi sum (x_i + x_j) |edge| (each
+    edge a cone, a cylinder or a disc). A hole may run past the rim R: what it takes is its
+    disc's part inside rho < R, integrated by rho with the disc's angular width 2 phi(rho)
+    at that radius, cos phi = (rho^2 + rp^2 - r^2) / (2 rho rp) (tanh-sinh, for the square
+    roots at rp - r and rp + r). Each bottom hole goes through the flange: that area Ac
+    times d off, its wall (the hole's circle inside rho < R) times d on, Ac taken twice
+    from the end faces and the rim's arc inside the disc, 2 phi(R) R, times d from the rim.
+    Each top hole is the sliver over the cone c(rho) = y_k + k (rho - x_k): depth h(rho) =
+    H - c(rho) = B - k rho (0 at R, so the rim loses nothing), its volume B Ac - k I1 and
+    its y moment H V - (integral of h^2) / 2, I1 and I2 the integrals of rho and rho^2
+    over the part of the disc; its wall the integral of h along the hole's circle inside
+    rho < R, and it takes Ac from the top face and sqrt(1 + k^2) Ac from the cone. The n
+    holes balance about the axis (n >= 2).
+    """
+    pts, n, rp, r, d = b.pts, b.n, b.rp, b.r, b.d
+    (x_k, y_k), (big_r, big_h) = b.cone
+    pi = math.pi
+    edges = list(itertools.pairwise(pts))
+    cross = [a[0] * c[1] - c[0] * a[1] for a, c in edges]
+    v0 = 2 * pi * sum((a[0] + c[0]) * w for (a, c), w in zip(edges, cross, strict=True)) / 6
+    a0 = pi * sum((a[0] + c[0]) * math.dist(a, c) for a, c in edges)
+    xy = sum(
+        w * (a[0] * c[1] + 2 * a[0] * a[1] + 2 * c[0] * c[1] + c[0] * a[1])
+        for (a, c), w in zip(edges, cross, strict=True)
+    )
+    m0 = 2 * pi * xy / 24
+
+    def phi(rho: float) -> float:
+        """Half the angle the hole's disc spans at radius rho about the axis."""
+        return math.acos(max(-1.0, min(1.0, (rho * rho + rp * rp - r * r) / (2 * rho * rp))))
+
+    def over_disc(power: int) -> float:
+        """The integral of rho^power over the hole's disc inside rho < R."""
+        return tanh_sinh(lambda rho: 2 * phi(rho) * rho ** (power + 1), rp - r, min(rp + r, big_r))
+
+    k = (big_h - y_k) / (big_r - x_k)
+    big_b = big_h - y_k + k * x_k
+    # The hole's circle (rp + r cos t, r sin t) lies inside rho < R for t from t0 to pi.
+    t0 = math.acos(max(-1.0, min(1.0, (big_r**2 - rp * rp - r * r) / (2 * rp * r))))
+
+    def h_on_circle(t: float) -> float:
+        return big_b - k * math.sqrt(rp * rp + r * r + 2 * rp * r * math.cos(t))
+
+    a_c, i1, i2 = over_disc(0), over_disc(1), over_disc(2)
+    wall = 2 * r * (pi - t0)
+    sliver_wall = 2 * r * tanh_sinh(h_on_circle, t0, pi)
+    rim = 2 * phi(big_r) * big_r if big_r < rp + r else 0.0
+    sliver = big_b * a_c - k * i1
+    squares = big_b * big_b * a_c - 2 * big_b * k * i1 + k * k * i2
+    volume = v0 - n * (a_c * d + sliver)
+    moment = m0 - n * (a_c * d * d / 2 + big_h * sliver - squares / 2)
+    area = (
+        a0
+        + n * (wall * d - 2 * a_c - rim * d)
+        + n * (sliver_wall - a_c * (1 + math.sqrt(1 + k * k)))
+    )
+    bounds = ((-big_r, 0.0, -big_r), (big_r, big_h, big_r))
+    return volume, area, (0.0, moment / volume, 0.0), bounds
+
+
+def bellows_closed_form(text: str) -> dict[str, object]:
+    """The `ClosedForm` JSON of a bellows program (on XY, turned about y: global already)."""
+    b = _bellows(text)
+    volume, area, centroid, (lo, hi) = bellows_measures(b)
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": list(centroid),
+        "bounds": [list(lo), list(hi)],
+        "note": (
+            "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp "
+            "cut from each end, through the bottom flange d and from the top face down to "
+            "the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall "
+            "integrals of its depth over the disc and around it (tools/cq_closed_forms.py, "
+            f"bellows_measures): n={b.n}, rp={b.rp}, r={b.r}, d={b.d}, cone={b.cone}, "
+            f"profile={b.pts}"
         ),
     }
 
@@ -1648,7 +1828,14 @@ def part_closed_form(text: str) -> dict[str, object]:
     }
 
 
-FORM_FAMILIES = ("t_pipe_fitting_", "u_bolt_", "j_hook_", "manifold_block_", "connecting_rod_")
+FORM_FAMILIES = (
+    "t_pipe_fitting_",
+    "u_bolt_",
+    "j_hook_",
+    "manifold_block_",
+    "connecting_rod_",
+    "bellows_",
+)
 
 
 def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | None:
@@ -1661,6 +1848,8 @@ def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | No
         return hook_closed_form(text)
     if stem.startswith(("manifold_block_", "connecting_rod_")):
         return part_closed_form(text)
+    if stem.startswith("bellows_"):
+        return bellows_closed_form(text)
     return None
 
 
