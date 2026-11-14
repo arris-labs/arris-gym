@@ -93,7 +93,7 @@ a given design; **[3]** unproven semantics, established here.
   than agreement or step 4's hook rows becomes a step before step 5,
   largest first, shrunk to `regression/` fixtures, or becomes Q2 with the
   reach it costs.
-- [ ] Step 3a **[2]** — `polyline` after `moveTo`. Step 3 found it (Q2): 86 rows
+- [x] Step 3a **[2]** — `polyline` after `moveTo`. Step 3 found it (Q2): 86 rows
   refused `Workplane.polyline on a pending wire`. A lone `moveTo` point is no
   pending wire: `includeCurrent=False` drops it, so `polyline` after it is
   `polyline` alone. Read on the oracle `polyline`, `box`, `circle` and the
@@ -178,6 +178,18 @@ a given design; **[3]** unproven semantics, established here.
   a lone `moveTo` point, which CadQuery ignores. Step 3a lifts it; step 4's
   count is re-read after it. CAD-Recode: reach 104/968, table digest
   `24c2f92a…3448` unchanged (run with its own `verdicts.json` only).
+- Settled: Q2a (step 3a, 2026-11-14) — read on the oracle: `moveTo(p).polyline(pts)`
+  is `polyline(pts)` (same volume, centroid, faces), so the lone point is
+  dropped and the stack after it is the one `polyline` alone leaves; every
+  later call meets a stack the subset already runs or refuses, so no other
+  operation moved. `moveTo(p).lineTo(q).polyline(pts)` and `polyline.polyline`
+  are `invalid` on the oracle (CadQuery joins the edges), so they stay
+  refused (`unsupported-polyline-after-drawn-path`). The two corpus programs
+  are not fixtures of their own: their half torus is off on the oracle by
+  1e-8 (step 4's hook closed form), so `u-bolt-base` (plate and two nuts,
+  closed form) is the fixture, and the full programs are run in
+  `test_cq_polyline_after_moveto.py` for status and bounds. The BenchCAD
+  re-run follows (conductor); its `cq_bug` and unclassified counts go here.
 - ⚠ OPEN: Q3 — whether every new hook row fits step 4's shape. The agent
   decides by step 4. A program outside the shape (the hexagon not inside
   the box, or a third solid) is named here with its count, and gets its own

@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `polyline` after a lone `moveTo` point, as CadQuery
+  does: the polyline starts at its own first point and the `moveTo` point is
+  dropped. `polyline` after a drawn path or another polyline still ends
+  `unsupported_api`.
+
 - `dialect="cq"` now runs `extrude(distance, both=True)`: the pending sketch
   grows `distance` to each side of its plane, one prism of height
   `2 * |distance|`, fused with or cut from the chain's solid as `extrude`'s

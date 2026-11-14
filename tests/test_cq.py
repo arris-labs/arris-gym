@@ -512,15 +512,32 @@ def test_line_to_goes_on_from_a_point_or_a_path_only() -> None:
 def test_a_second_pending_wire_is_unsupported(
     form: str, call: Callable[[cq.Workplane], cq.Workplane]
 ) -> None:
+    # A lone `moveTo` point is no pending wire: `polyline` drops it (below).
     pending = [
-        cq.Workplane("XY").moveTo(1, 1),
+        *([] if form == "polyline" else [cq.Workplane("XY").moveTo(1, 1)]),
+        cq.Workplane("XY").moveTo(1, 1).lineTo(2, 1),
         cq.Workplane("XY").lineTo(1, 1),
+        cq.Workplane("XY").polyline(TRIANGLE),
         cq.Workplane("XY").polyline(TRIANGLE).close(),
         cq.Workplane("XY").circle(1),
     ]
     for wp in pending:
         with pytest.raises(cq.UnsupportedApi, match=rf"^Workplane\.{form} on a pending wire$"):
             call(wp)
+
+
+def test_a_polyline_after_a_lone_move_to_point_is_the_polyline_alone() -> None:
+    # CadQuery's `polyline` starts at its first point (`includeCurrent=False`),
+    # so the `moveTo` point is dropped: the same body, wherever the point was.
+    def body(chain: str) -> str:
+        result = ag.run(f"import cadquery as cq\nshow_object({chain})\n", dialect="cq")
+        assert result.body is not None, result.message
+        return result.body.sha256
+
+    tri = "polyline([(0, 0), (3, 0), (0, 4)]).close().extrude(2)"
+    alone = body(f'cq.Workplane("XY").{tri}')
+    for at in ["5, 5", "0, 0", "-3, 2.5"]:
+        assert body(f'cq.Workplane("XY").moveTo({at}).{tri}') == alone
 
 
 def test_move_to_and_polyline_leave_a_solid_in_the_chain() -> None:

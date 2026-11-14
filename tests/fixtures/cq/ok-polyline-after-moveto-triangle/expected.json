@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 12,
+    "area": 36,
+    "centroid": [
+      1,
+      1.3333333333333333,
+      1
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        4,
+        2
+      ]
+    ],
+    "faces": 5,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        5
+      ]
+    ]
+  },
+  "note": "A 3-4-5 right triangle (0,0), (3,0), (0,4) extruded 2 after moveTo(5, 5): CadQuery's polyline starts at its first point, so the moveTo point is dropped and the part is the polyline alone. V = 6 * 2 = 12, A = 2 * 6 + 12 * 2 = 36, centroid (1, 4/3, 1) (the triangle's centroid, half the height); 5 planar faces (2 caps, 3 sides)."
+}

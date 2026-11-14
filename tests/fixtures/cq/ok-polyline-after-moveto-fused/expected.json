@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 12.875,
+    "area": 40.5,
+    "centroid": [
+      0.9296116504854369,
+      1.2402912621359223,
+      0.9296116504854369
+    ],
+    "bounds": [
+      [
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      [
+        3,
+        4,
+        2
+      ]
+    ],
+    "faces": 11,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        11
+      ]
+    ]
+  },
+  "note": "A unit cube centred on the origin fused with the triangle prism of ok-polyline-after-moveto-triangle (moveTo dropped); they share the cube's corner block [0, 1/2]^3, volume 1/8. V = 1 + 12 - 1/8; A = 6 + 36 - 3/4 - 3/4 (each solid's surface inside the other: three 1/2 by 1/2 patches); centroid by moments (the cube at the origin, the prism at (1, 4/3, 1), less the overlap at (1/4, 1/4, 1/4)); 11 planar faces (the oracle counts 11 too)."
+}

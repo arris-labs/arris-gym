@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 1683.5472000000002,
+    "area": 845.9873381536688,
+    "centroid": [
+      -1.0392266666666667,
+      -0.6000000000000001,
+      0
+    ],
+    "bounds": [
+      [
+        -7.7942,
+        -9,
+        -4.8
+      ],
+      [
+        7.7942,
+        9,
+        4.8
+      ]
+    ],
+    "faces": 7,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        7
+      ]
+    ]
+  },
+  "note": "BenchCAD u_bolt's nut as written: moveTo(7.7942, 4.5) then a five-point polyline closed back to its first point (0, 9): the moveTo point is dropped, so the profile is a pentagon, not the hexagon the moveTo point suggests. Extruded 4.8 to each side: V = A * 9.6, area 2A + P * 9.6, A by the shoelace formula, P the sum of its sides, the centroid (the polygon centroid by the shoelace formula, z = 0 on the plane); 7 planar faces (2 caps, 5 sides)."
+}

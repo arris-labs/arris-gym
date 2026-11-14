@@ -660,17 +660,30 @@ class Workplane:
         """A pending path through the points of `listOfXYTuple`, in order.
 
         It starts at the first point, not at the current one, as CadQuery's
-        `includeCurrent=False` does. Refuses, as `UnsupportedApi`, a stack
-        that holds a pending wire already and a list of fewer than two
-        points: CadQuery's one-point polyline is no `moveTo` point (read on
-        the oracle: `unsupported-polyline-one-point-*`).
+        `includeCurrent=False` does, so a lone `moveTo` point on the stack is
+        dropped and `polyline` after it is `polyline` alone (read on the
+        oracle: `ok-polyline-after-moveto-*`). Refuses, as `UnsupportedApi`, a
+        stack that holds any other pending wire (a drawn path, which
+        CadQuery joins to the polyline's edges, or a sketch) and a list of
+        fewer than two points: CadQuery's one-point polyline is no `moveTo`
+        point (read on the oracle: `unsupported-polyline-one-point-*`,
+        `unsupported-polyline-after-drawn-path`).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").polyline([(0, 0), (3, 0), (0, 4)]).close()
         >>> round(wp.extrude(1)._solids()[0].measure().volume, 9)
         6.0
+        >>> wp = cq.Workplane("XY").moveTo(5, 5).polyline([(0, 0), (3, 0), (0, 4)]).close()
+        >>> round(wp.extrude(1)._solids()[0].measure().volume, 9)
+        6.0
         """
-        self._refuse_pending("Workplane.polyline")
+        lone_point = (
+            len(self._stack) == 1
+            and isinstance(self._stack[0], _Path)
+            and not self._stack[0].segments
+        )
+        if not lone_point:
+            self._refuse_pending("Workplane.polyline")
         points = tuple(_uv(p, "Workplane.polyline(list with a point of {})") for p in listOfXYTuple)
         if len(points) < 2:
             # CadQuery leaves no `moveTo` point here: a box or a circle after

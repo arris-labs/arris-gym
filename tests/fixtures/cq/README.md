@@ -297,3 +297,20 @@ extrusion: the oracle extrudes both (`ok`), the subset refuses `circle` on
 a pending wire before `extrude` is reached. `test_cq_extrude_both.py` holds
 the failing rows as agreeing, with properties over stacks, planes and
 distances.
+
+`ok-polyline-after-moveto-triangle`, `-fused`, `-pentagon-both` and
+`-u-bolt-base` read `polyline` after a lone `moveTo` point on the oracle
+(2026-11-14): the point is dropped, the polyline starts at its own first
+point. The triangle is the 3-4-5 prism (V = 12, A = 36); `-fused` shares a
+corner block of 1/8 with a unit cube (V = 12.875, A = 40.5); `-pentagon-both`
+is BenchCAD's nut as written, five points closed to the first, so a pentagon
+and not the hexagon the `moveTo` point suggests; `-u-bolt-base` is its plate
+and two such nuts. Each has a recorded oracle report holding its closed form
+and an agreeing row in `test_cq_polyline_after_moveto.py`, with a property
+that the `moveTo` point leaves no trace. The oracle answers `invalid` for a
+polyline after a drawn path (`moveTo(...).lineTo(...).polyline(...)`) or
+after another polyline, so `unsupported-polyline-after-drawn-path` keeps it
+refused. The corpus `u_bolt` and `j_hook` programs run as written (bounds
+tested in the same file); their volumes wait for step 4's hook closed form,
+the oracle's half torus being off by 1e-8 there. The other calls after the
+polyline meet the stack `polyline` alone leaves, so none changes.

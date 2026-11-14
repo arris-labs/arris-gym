@@ -111,7 +111,7 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   coordinates on the stack; `lineTo` goes on from the last object only (an
   edge's end, a point, or the plane's origin on an empty stack, any other
   object an error); `polyline` starts at its first point, not the current
-  one; `close` adds a segment back to the first point only when the gap is
+  one (so a lone `moveTo` point before it is dropped: `includeCurrent=False`); `close` adds a segment back to the first point only when the gap is
   over 1e-6, and with nothing drawn is an error.
 - `Workplane.threePointArc` and `Edge.makeThreePointArc` (`cadquery/cq.py`,
   `cadquery/occ_impl/shapes.py`): an arc from `_findFromPoint`'s pen (as

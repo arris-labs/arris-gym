@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 18623.52765,
+    "area": 8776.428507749664,
+    "centroid": [
+      -0.17810404618718909,
+      -0.10282879677739253,
+      -3.596957135977942
+    ],
+    "bounds": [
+      [
+        -60.625,
+        -13.23,
+        -13.91
+      ],
+      [
+        60.625,
+        13.23,
+        0.0
+      ]
+    ],
+    "faces": 18,
+    "shells": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        18
+      ]
+    ]
+  },
+  "note": "BenchCAD u_bolt's plate and two nuts as written (its cylinders and torus left out): a 121.25 by 26.46 by 4.81 plate (z -4.81..0) and, at x = +-42.59, the pentagonal prism of ok-polyline-after-moveto-pentagon-both (the moveTo point dropped), z -13.91..-4.31, so each sticks 9.1 below the plate and 0.5 into it, inside its footprint. V = plate + 2 A 9.1; area = plate - 2A (the patches the prisms cover) + 2 (A + P 9.1); centroid by moments (A, P and the pentagon's centroid by the shoelace formula); 18 planar faces (6 + 2 * 6)."
+}

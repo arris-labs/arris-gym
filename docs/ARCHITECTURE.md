@@ -397,6 +397,11 @@ back along one diameter into a zero-volume solid its checker passes: a
 `xfail` `regression/cq-polygon-two-sides`.
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
+A `polyline` after a lone `moveTo` point is `polyline` alone: it starts at its
+first point and the `moveTo` point, no pending wire, is dropped (read on the
+oracle: `ok-polyline-after-moveto-*`). After a drawn path or a polyline
+CadQuery joins the edges into an invalid part, so the call stays
+`unsupported_api` on a pending wire.
 A pending path is its start and its segments, each a line to a point or a
 circular arc to a point through a middle one. `threePointArc(point1,
 point2)` goes on from where `lineTo` would (the path's end, a `moveTo`
