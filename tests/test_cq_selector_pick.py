@@ -20,6 +20,14 @@ def test_two_estimated_keys_moved_in_opposite_directions_are_refused() -> None:
     assert _pick_within(keys, [True, True], MARGIN, True) is None
 
 
+def test_a_margin_that_reaches_the_tolerance_in_floats_is_refused() -> None:
+    """Two equal keys, one estimated at exactly `CQ_TOLERANCE`: moved up, the float
+    difference is a ulp over it and the keys tie no more, so the tie is not kept."""
+    keys = [0.00056, 0.00056]
+    assert _pick([keys[0], keys[1] + CQ_TOLERANCE], False) == [0]
+    assert _pick_within(keys, [False, True], CQ_TOLERANCE, False) is None
+
+
 def test_a_selection_clear_of_the_margin_is_kept() -> None:
     assert _pick_within([0.0, 1.0], [True, True], MARGIN, True) == [1]
     assert _pick_within([0.0, 1.0], [True, True], MARGIN, False) == [0]

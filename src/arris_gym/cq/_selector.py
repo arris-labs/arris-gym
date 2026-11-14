@@ -36,6 +36,12 @@ _AXIS = {"X": 0, "Y": 1, "Z": 2}
 # of a cluster's first key tie, and a normal shorter than it is no direction.
 # ADR-0017 rule 1. In model units.
 CQ_TOLERANCE = 1e-4
+# `_pick` compares keys after summing and subtracting them in floats, so a
+# difference worked out one way can fall a few ulps (of keys under 1) on the
+# other side of `CQ_TOLERANCE` from the same difference worked out another.
+# `_pick_within` keeps this much clear of that edge: a selection within it is
+# refused, as one the margin could change. In model units.
+_FLOAT_SLACK = 1e-12
 # The chord a face's tessellation is cut at when its centre is estimated, as a
 # fraction of the solid's box diagonal (ADR-0017 rule 2). The estimate's error
 # is about 0.4 chords.
@@ -127,7 +133,7 @@ def _pick_within(
         """The comparisons of `keys[j] - keys[i]` if no shift changes them."""
         d = keys[j] - keys[i]
         reach = width[i] + width[j]
-        low, high = _cell(d - reach), _cell(d + reach)
+        low, high = _cell(d - reach - _FLOAT_SLACK), _cell(d + reach + _FLOAT_SLACK)
         return low if low == high else None
 
     parent = {i: i for i in near}
@@ -148,7 +154,7 @@ def _pick_within(
         if len(members) == 1:
             continue
         for i, j in itertools.permutations(members, 2):
-            if abs(keys[j] - keys[i]) + width[i] + width[j] > CQ_TOLERANCE:
+            if abs(keys[j] - keys[i]) + width[i] + width[j] > CQ_TOLERANCE - _FLOAT_SLACK:
                 return None
         for k in near:
             if k not in members and len({cell(m, k) for m in members}) != 1:
