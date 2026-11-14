@@ -75,5 +75,6 @@ ADR-0017, ADR-0018), in-subset `cq_bug` 0 on CAD-Recode and 7 on BenchCAD
   or publish unasked: `.agents/rules/git.md`. `main` carries the next
   version with `.dev0`. A change a consumer would notice writes its
   `CHANGELOG.md` bullet under `Unreleased` in the same commit.
-- arris asks go to `../arris/docs/ideas/`; no arris code is edited from here.
+- arris asks go to `../arris/docs/ideas/` (relative to this repo's root,
+  not to the shell's cwd); no arris code is edited from here.
   Do not read `../arrix` for anything in this project.

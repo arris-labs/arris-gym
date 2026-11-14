@@ -58,7 +58,11 @@ and the human can read in two minutes: under ~150 lines and ~10 steps.
      [3]. A step that adds a public operation or a path program text reaches
      brings its `hypothesis` property. A step whose only test is a CI run
      (another runner, a workflow) carries **[CI]** after its grade: it needs
-     a push, so the plan's header says it runs on `plan/<slug>`.
+     a push, so the plan's header says it runs on `plan/<slug>`. A step
+     that needs a run past 110 s (a corpus-wide pass, a tool over every
+     row) carries **[conductor-run]**: the conductor runs it in the
+     background and a subagent's step records its outputs (`/work`), or the
+     tool takes a `--stem` filter in an earlier step.
    - *Acceptance* is an executable fixture run, ideally the milestone's own:
      which fixtures, which numbers (statuses, measures, rewards, fidelity
      rows, digests), which property tests.
