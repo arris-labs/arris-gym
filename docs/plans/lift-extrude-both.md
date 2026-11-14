@@ -189,7 +189,12 @@ a given design; **[3]** unproven semantics, established here.
   1e-8 (step 4's hook closed form), so `u-bolt-base` (plate and two nuts,
   closed form) is the fixture, and the full programs are run in
   `test_cq_polyline_after_moveto.py` for status and bounds. The BenchCAD
-  re-run follows (conductor); its `cq_bug` and unclassified counts go here.
+  re-run (2026-11-14): reach 4,345/17,900, in-subset `cq_bug` 0, oracle digest
+  unchanged, unclassified 204 to 329: the 125 new `u_bolt`/`j_hook` rows
+  (66 + 59) are all step 4's hook rows, the 261 committed ones as before.
+  Table digest `8783fb62…1992` (not yet committed; step 5 re-runs it with
+  step 4's verdicts). The hook's "hexagon" is a pentagon (the `moveTo` point
+  is dropped), so step 4's prism takes any simple polygon's vertices.
 - ⚠ OPEN: Q3 — whether every new hook row fits step 4's shape. The agent
   decides by step 4. A program outside the shape (the hexagon not inside
   the box, or a third solid) is named here with its count, and gets its own
