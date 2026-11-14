@@ -1,4 +1,4 @@
-"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-face-selectors step 8).
+"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-holes-and-points step 8).
 
 `tools/cq_corpus.py` wrote `tests/fixtures/c2/<corpus>/` (network, the oracle
 environment, outside the gate). This reads the committed rows only: the table
@@ -21,8 +21,8 @@ from pathlib import Path
 import pytest
 
 import fixture_cases
-from arris_gym import Status
-from arris_gym.census import ProgramCensus, Unparsable
+from arris_gym import Status, cq
+from arris_gym.census import ProgramCensus, Unparsable, reach
 from arris_gym.fidelity import (
     DisagreementClass,
     FidelityOutcome,
@@ -38,17 +38,17 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 5_295,
-        "agree": 3_820,
-        "in_subset_cq_bug": 0,
+        "in_subset": 6_154,
+        "agree": 4_481,
+        "in_subset_cq_bug": 7,
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
             "arris_bug": 142,
-            "arris_refusal": 1_174,
+            "arris_refusal": 1_335,
             "by_design": 0,
-            "cq_bug": 12_110,
-            "occt_wrong": 450,
+            "cq_bug": 11_256,
+            "occt_wrong": 482,
         },
         "unclassified": 204,
         "oracle_ok": 17_537,
@@ -89,6 +89,11 @@ def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
     return rows
 
 
+def reach_stems(corpus: str) -> list[str]:
+    """The stems `cq.subset()` admits, sorted (`reach`'s own census reading)."""
+    return sorted(reach(census_rows(corpus), cq.subset()).stems)
+
+
 def table_of(corpus: str) -> FidelityTable:
     return FidelityTable.from_json(
         gzip.decompress((C2 / corpus / "fidelity.json.gz").read_bytes()).decode("utf-8")
@@ -110,7 +115,7 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), fixture_cases.c2_baseline_subset()) == committed
+    assert reach_report(table, census_rows(corpus), cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, census_rows(corpus), fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]
@@ -150,6 +155,28 @@ def test_benchcads_arris_bugs_are_two_verdict_families_and_checker_fail_caps() -
             assert e.row.status is Status.CHECKER_FAIL
         else:
             assert e.row.verdict is not None
+
+
+def test_benchcads_in_subset_cq_bugs_are_the_seven_parked_connecting_rods() -> None:
+    """The 7 in-subset `cq_bug` rows are step 7b's, blocked on arris (the human's amendment).
+
+    Each is a `connecting_rod` that `cq` refuses with `unsupported_api` while the oracle
+    builds it: `faces(">Z").faces(">Z").workplane()` on a cylinder face, the plane's normal
+    being CadQuery's `normalAt()` there (`face-surface-properties.md` in arris's ideas).
+    The count stays visible in FIGURES rather than the declaration being narrowed.
+    """
+    table = table_of("benchcad")
+    committed = ReachReport.model_validate_json((C2 / "benchcad" / "reach-report.json").read_text())
+    inside = set(reach_stems("benchcad"))
+    parked = [
+        e
+        for e in table.entries
+        if e.name in inside and e.row.disagreement is DisagreementClass.CQ_BUG
+    ]
+    assert len(parked) == committed.in_subset_cq_bug == 7
+    assert Counter(e.name.rsplit("_", 2)[0] for e in parked) == {"connecting_rod": 7}
+    assert all(e.row.status is Status.UNSUPPORTED_API for e in parked)
+    assert all(e.row.oracle_status is OracleStatus.OK for e in parked)
 
 
 def test_cadrecodes_agreements_are_not_two_failures() -> None:

@@ -156,9 +156,9 @@ within a given design; **[3]** unproven semantics, established here.
 - [x] Step 7c **[1]** — the `cq-bore-over-a-bore-of-its-width` refusal filed
   with arris as item 8 of `../arris/docs/ideas/fuse-contact-refusals.md`
   (README of the fixture updated to say so).
-- [ ] Step 8 **[1]** — the committed re-run of both tables
+- [x] Step 8 **[1]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, READMEs' figures and digests); `c1_subset()`
-  takes the four forms back.
+  keeps the four forms out (see *Settled* below).
 
 ## Acceptance
 
@@ -186,6 +186,16 @@ within a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
+- *Settled* (step 8): the plan's "`c1_subset()` takes the four forms back"
+  was wrong. `c1_subset()` is the record of the C1 curve: the committed
+  `reach.json` enumerates `pushPoints`, `cboreHole` and `cskHole` as missing
+  items, so admitting them changes the curve (54 steps, not 57). Earlier lifts
+  (face selectors, `hole`) were held out of `c1_subset()` the same way, and
+  step 8 keeps that: `c1_subset()` stays at HEAD's text and `reach.json` is not
+  regenerated. `c2_baseline_subset()` is deleted (nothing uses it; the C2
+  reports are measured under `cq.subset()`). It narrows no acceptance. The
+  selector probe's `before_subset()` keeps its `later` exclusion: it is the
+  planning-time subset ADR-0017's 950 rows need (without it the count is 1,755).
 - *Settled* (step 6): the contexts read on the oracle (`ok-ctx-*`: faces on faces,
   circle on points, `cboreHole` and `cskHole` in a compound and after a hole) agree with it, each held to a closed form; 40 probes of
   the others, and the corpus's `mounting_plate`, `pcb_standoff_plate`, `cruciform`,

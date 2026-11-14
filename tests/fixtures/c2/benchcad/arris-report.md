@@ -1,13 +1,13 @@
 # arris report
 
-Over 17900 programs: 1174 arris refusals, 142 arris bugs.
+Over 17900 programs: 1335 arris refusals, 142 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 
-### ` "OpDegenerateError" ` (654)
+### ` "OpDegenerateError" ` (815)
 
 - 281x ` "degenerate result: an arc's circle crosses the revolve axis: a spindle torus" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f81, +f82)" `
@@ -33,6 +33,10 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 65x ` "degenerate result: the faces touch along a curve interior to both result faces (+f15, +f6, +f7)" `
 - 159x ` "degenerate result: the faces touch along a curve interior to both result faces (+f2, +f5)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f27, +f21, +f22)" `
+- 32x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f18)" `
+- 34x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f22)" `
+- 46x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f24)" `
+- 47x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f31)" `
 - 61x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f8)" `
 - 11x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f27)" `
 - 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f36)" `
@@ -53,6 +57,7 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f96, +f79, +f80)" `
 - 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f96, +f79, +f89)" `
 - 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f99, +f80, +f81)" `
+- 2x ` "degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold (+e8, +e9, +e10, +e11)" `
 - 3x ` "degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold (+v1)" `
 
 ### ` "OpInternalError" ` (207)

@@ -75,25 +75,6 @@ def c1_subset() -> cq.Subset:
     )
 
 
-def c2_baseline_subset() -> cq.Subset:
-    """`cq.subset()` less the declarations of plans/lift-holes-and-points.
-
-    The committed C2 reports (`tests/fixtures/c2/`) were measured before
-    `Workplane.pushPoints`, `cboreHole`, `cskHole` and `hole`'s `depth=`;
-    plans/lift-holes-and-points step 8 re-runs them and this goes back to
-    `cq.subset()`.
-    """
-    hole = cq.CensusForm("Workplane.hole", (("num",),))
-    return replace(
-        cq.subset(),
-        forms=tuple(
-            hole if form.name == "Workplane.hole" else form
-            for form in cq.subset().forms
-            if form.name not in ("Workplane.pushPoints", "Workplane.cboreHole", "Workplane.cskHole")
-        ),
-    )
-
-
 @dataclass(frozen=True)
 class Case:
     """One fixture: its directory name, program text and expected JSON."""
