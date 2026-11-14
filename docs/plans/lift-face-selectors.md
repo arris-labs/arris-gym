@@ -83,13 +83,15 @@ within a given design; **[3]** unproven semantics, established here.
 
 - [x] Step 1 **[1]** — ADR-0014's dated amendment, and the order's wording
   in ROADMAP §C2, AGENTS.md and ARCHITECTURE §Dialects.
-- [ ] Step 2 **[3]** — what the 950 select, on the oracle. A probe under
+- [x] Step 2 **[3]** — what the 950 select, on the oracle. A probe under
   `tools/` runs each program cut after its `.faces(sel)` in the oracle
   worker and records the selected faces (count, surface type, centre,
   normal at the centre) and the new plane (origin, x, normal). Commit its
   counts by family and write ADR-0017 from them and from constructed cases
   (a box, a cylinder's side, a partial cylinder, two coplanar faces, a
   near tie); its evidence is the probe's committed rows.
+  Done: `tools/cq_selector_probe.py`, rows in `tests/fixtures/selectors/`; all
+  950 keep planar faces normal to the axis (40 keep two), no near tie.
 - [ ] Step 3 **[2]** — `faces(sel)` and `workplane()` on one planar face.
   Declare `faces(str)` and the selectors; move the hits. Fixtures
   `cq/ok-faces-*`: each selector on a box, a transformed box and a
@@ -100,6 +102,13 @@ within a given design; **[3]** unproven semantics, established here.
 - [ ] Step 4 **[3]** — `workplane()` on a curved face and on several faces,
   as ADR-0017 says, with step 2's shapes as fixtures (closed forms where
   the centre has one, the oracle's plane otherwise, ADR-0005).
+  *Settled* (step 2): ADR-0017 rules 4 and 5 make this step coplanar faces
+  at one offset (the 40 `connecting_rod` shape) as `ok-`, and as refusals or
+  CadQuery's `ValueError` the half cylinder, the full cylinder's `>X`, the
+  triangular prism and the near ties (`unsupported-` / `runtime-`
+  fixtures, each beside its oracle record in `tests/fixtures/selectors/
+  constructed.json`); no curved-face plane is built. None of the 950 is
+  affected, so the acceptance stands.
 - [ ] Step 5 **[2]** — `hole(d)`. Fixtures `cq/ok-hole-*`: through a box
   from each selector, from a face with material above its plane, through a
   compound, a corpus program as written; `runtime-hole-*` for `d ≤ 0`. A
@@ -150,7 +159,9 @@ within a given design; **[3]** unproven semantics, established here.
 
 ## Open questions
 
-- ⚠ OPEN: how a curved face's centre of mass is computed (an exact form,
-  a quadrature over arris's surface, or an arris ask) — the agent, step 2,
-  in ADR-0017.
+- *Settled* (step 2, ADR-0017): a curved face's centre of mass is not
+  computed. A ranking takes exact plane offsets, box bounds or a tessellation
+  estimate trusted at a margin; a plane on a curved face is `unsupported_api`.
+  The exact per-face area and centre are asked of arris
+  (`../arris/docs/ideas/face-surface-properties.md`, BACKLOG).
 - ⚠ OPEN: step 7's figures and causes — the agent, step 7.

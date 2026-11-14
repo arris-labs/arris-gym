@@ -33,3 +33,4 @@ training cycle starts from.
 | [0014](0014-the-fidelity-target-is-a-reach-of-85-percent-on-benchcad-and-all-of-cad-recode.md) | The fidelity target is a reach of 85% on BenchCAD and all of CAD-Recode | accepted |
 | [0015](0015-a-cq-result-is-the-last-shown-value-then-result-then-r.md) | A `cq` result is the last shown value, then `result`, then `r` | accepted |
 | [0016](0016-a-cq-compound-is-one-solid-whose-body-holds-a-shell-per-piece.md) | A `cq` compound is one solid whose body holds a shell per piece | accepted |
+| [0017](0017-a-cq-axis-selector-ranks-faces-by-their-centre-of-mass-and-places-a-plane-only-on-a-planar-face.md) | A `cq` axis selector ranks faces by their centre of mass, and places a plane only on a planar face | accepted |

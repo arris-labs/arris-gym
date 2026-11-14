@@ -1,0 +1,4392 @@
+[
+ {
+  "name": "box-centre-not-mass>X",
+  "program": "import cadquery as cq\n\nresult = (cq.Workplane(\"XY\").polyline([(0, 0), (4, 0), (0, 3)]).close().extrude(1).faces(\">X\").workplane())\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": false,
+   "box_centre_selection": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "cadquery_order": [
+    1,
+    0
+   ],
+   "candidate_faces": [
+    {
+     "high": 4.0,
+     "key": 2.0,
+     "low": 0.0,
+     "plane_normal": [
+      0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 4.0,
+     "key": 1.9999999999999996,
+     "low": 0.0,
+     "plane_normal": [
+      0.6,
+      0.8,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.0,
+     "key": 0.0,
+     "low": 0.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 4.0,
+     "key": 1.3333333333333333,
+     "low": 0.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 4.0,
+     "key": 1.3333333333333333,
+     "low": 0.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 5,
+   "error": "ValueError: Selected faces must be co-planar.",
+   "gap": 0.6666666666666663,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "selected": [
+    {
+     "area": 4.0,
+     "box_centre": [
+      2.0,
+      0.0,
+      0.5
+     ],
+     "centre": [
+      2.0,
+      0.0,
+      0.5
+     ],
+     "centre_to_surface": 0.0,
+     "index": 0,
+     "normal_at_centre": [
+      0.0,
+      -1.0,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "area": 4.999999999999999,
+     "box_centre": [
+      2.0,
+      1.5,
+      0.5
+     ],
+     "centre": [
+      1.9999999999999996,
+      1.5,
+      0.5
+     ],
+     "centre_to_surface": 0.0,
+     "index": 1,
+     "normal_at_centre": [
+      0.6,
+      0.8,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      0.6,
+      0.8,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">X",
+   "spread": 4.440892098500626e-16,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-off-origin<X",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(offset=cq.Vector(5, -6, 7)).box(2, 3, 4).faces(\"<X\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    0
+   ],
+   "cadquery_order": [
+    0
+   ],
+   "candidate_faces": [
+    {
+     "high": 4.0,
+     "key": 4.0,
+     "low": 4.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 6.0,
+     "low": 6.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.0,
+   "parent_origin": [
+    5.0,
+    -6.0,
+    7.0
+   ],
+   "plane": {
+    "origin": [
+     4.0,
+     -6.0,
+     7.0
+    ],
+    "x": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "z": [
+     -1.0,
+     -0.0,
+     0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 12.0,
+     "box_centre": [
+      4.0,
+      -6.0,
+      7.0
+     ],
+     "centre": [
+      4.0,
+      -6.0,
+      7.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 0,
+     "normal_at_centre": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "normal_at_mid_uv": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<X",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-off-origin<Y",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(offset=cq.Vector(5, -6, 7)).box(2, 3, 4).faces(\"<Y\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    2
+   ],
+   "cadquery_order": [
+    2
+   ],
+   "candidate_faces": [
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -7.5,
+     "key": -7.5,
+     "low": -7.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -4.5,
+     "low": -4.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.5,
+   "parent_origin": [
+    5.0,
+    -6.0,
+    7.0
+   ],
+   "plane": {
+    "origin": [
+     5.0,
+     -7.5,
+     7.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     -0.0,
+     -1.0,
+     -0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 8.0,
+     "box_centre": [
+      5.0,
+      -7.5,
+      7.0
+     ],
+     "centre": [
+      5.0,
+      -7.5,
+      7.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 2,
+     "normal_at_centre": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<Y",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-off-origin<Z",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(offset=cq.Vector(5, -6, 7)).box(2, 3, 4).faces(\"<Z\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    4
+   ],
+   "cadquery_order": [
+    4
+   ],
+   "candidate_faces": [
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 5.0,
+     "key": 5.0,
+     "low": 5.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 9.0,
+     "low": 9.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 2.0,
+   "parent_origin": [
+    5.0,
+    -6.0,
+    7.0
+   ],
+   "plane": {
+    "origin": [
+     5.0,
+     -6.0,
+     5.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     -0.0,
+     -0.0,
+     -1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 6.0,
+     "box_centre": [
+      5.0,
+      -6.0,
+      5.0
+     ],
+     "centre": [
+      5.0,
+      -6.0,
+      5.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 4,
+     "normal_at_centre": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "normal_at_mid_uv": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<Z",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-off-origin>X",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(offset=cq.Vector(5, -6, 7)).box(2, 3, 4).faces(\">X\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    1
+   ],
+   "cadquery_order": [
+    1
+   ],
+   "candidate_faces": [
+    {
+     "high": 4.0,
+     "key": 4.0,
+     "low": 4.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 6.0,
+     "low": 6.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 6.0,
+     "key": 5.0,
+     "low": 4.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.0,
+   "parent_origin": [
+    5.0,
+    -6.0,
+    7.0
+   ],
+   "plane": {
+    "origin": [
+     6.0,
+     -6.0,
+     7.0
+    ],
+    "x": [
+     -0.0,
+     1.0,
+     0.0
+    ],
+    "z": [
+     1.0,
+     0.0,
+     -0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 12.0,
+     "box_centre": [
+      6.0,
+      -6.0,
+      7.0
+     ],
+     "centre": [
+      6.0,
+      -6.0,
+      7.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 1,
+     "normal_at_centre": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">X",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-off-origin>Y",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(offset=cq.Vector(5, -6, 7)).box(2, 3, 4).faces(\">Y\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    3
+   ],
+   "cadquery_order": [
+    3
+   ],
+   "candidate_faces": [
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -7.5,
+     "key": -7.5,
+     "low": -7.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -4.5,
+     "low": -4.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -4.5,
+     "key": -6.0,
+     "low": -7.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.5,
+   "parent_origin": [
+    5.0,
+    -6.0,
+    7.0
+   ],
+   "plane": {
+    "origin": [
+     5.0,
+     -4.5,
+     7.0
+    ],
+    "x": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     1.0,
+     0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 8.0,
+     "box_centre": [
+      5.0,
+      -4.5,
+      7.0
+     ],
+     "centre": [
+      5.0,
+      -4.5,
+      7.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 3,
+     "normal_at_centre": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Y",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-off-origin>Z",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(offset=cq.Vector(5, -6, 7)).box(2, 3, 4).faces(\">Z\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    5
+   ],
+   "cadquery_order": [
+    5
+   ],
+   "candidate_faces": [
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 7.0,
+     "low": 5.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 5.0,
+     "key": 5.0,
+     "low": 5.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 9.0,
+     "key": 9.0,
+     "low": 9.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 2.0,
+   "parent_origin": [
+    5.0,
+    -6.0,
+    7.0
+   ],
+   "plane": {
+    "origin": [
+     5.0,
+     -6.0,
+     9.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 6.0,
+     "box_centre": [
+      5.0,
+      -6.0,
+      9.0
+     ],
+     "centre": [
+      5.0,
+      -6.0,
+      9.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 5,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-turned<X",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(rotate=cq.Vector(0, 0, 30)).box(2, 3, 4).faces(\"<X\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    0
+   ],
+   "cadquery_order": [
+    0
+   ],
+   "candidate_faces": [
+    {
+     "high": -0.11602540378443882,
+     "key": -0.8660254037844387,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 0.8660254037844387,
+     "low": 0.11602540378443882,
+     "plane_normal": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 0.7499999999999999,
+     "low": -0.11602540378443882,
+     "plane_normal": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.11602540378443882,
+     "key": -0.7499999999999999,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 6.938893903907228e-18,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 6.938893903907228e-18,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 0.11602540378443882,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     -0.8660254037844387,
+     -0.49999999999999994,
+     0.0
+    ],
+    "x": [
+     0.49999999999999994,
+     -0.8660254037844387,
+     0.0
+    ],
+    "z": [
+     -0.8660254037844387,
+     -0.49999999999999994,
+     0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 12.0,
+     "box_centre": [
+      -0.8660254037844387,
+      -0.5,
+      0.0
+     ],
+     "centre": [
+      -0.8660254037844387,
+      -0.5,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 0,
+     "normal_at_centre": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "normal_at_mid_uv": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<X",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-turned<Y",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(rotate=cq.Vector(0, 0, 30)).box(2, 3, 4).faces(\"<Y\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    2
+   ],
+   "cadquery_order": [
+    2
+   ],
+   "candidate_faces": [
+    {
+     "high": 0.799038105676658,
+     "key": -0.5,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 0.5,
+     "low": -0.799038105676658,
+     "plane_normal": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -0.799038105676658,
+     "key": -1.299038105676658,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 1.299038105676658,
+     "low": 0.799038105676658,
+     "plane_normal": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 6.938893903907228e-17,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 6.938893903907228e-17,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 0.799038105676658,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.7499999999999999,
+     -1.299038105676658,
+     0.0
+    ],
+    "x": [
+     0.8660254037844387,
+     0.49999999999999994,
+     -0.0
+    ],
+    "z": [
+     0.49999999999999994,
+     -0.8660254037844387,
+     -0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 8.0,
+     "box_centre": [
+      0.7499999999999999,
+      -1.299038105676658,
+      0.0
+     ],
+     "centre": [
+      0.7499999999999999,
+      -1.299038105676658,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 2,
+     "normal_at_centre": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<Y",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-turned<Z",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(rotate=cq.Vector(0, 0, 30)).box(2, 3, 4).faces(\"<Z\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    4
+   ],
+   "cadquery_order": [
+    4
+   ],
+   "candidate_faces": [
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -2.0,
+     "key": -2.0,
+     "low": -2.0,
+     "plane_normal": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 2.0,
+     "low": 2.0,
+     "plane_normal": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 2.0,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     -2.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     -0.0,
+     0.0,
+     -1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 6.0,
+     "box_centre": [
+      0.0,
+      0.0,
+      -2.0
+     ],
+     "centre": [
+      6.938893903907228e-18,
+      6.938893903907228e-17,
+      -2.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 4,
+     "normal_at_centre": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "normal_at_mid_uv": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<Z",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-turned>X",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(rotate=cq.Vector(0, 0, 30)).box(2, 3, 4).faces(\">X\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    1
+   ],
+   "cadquery_order": [
+    1
+   ],
+   "candidate_faces": [
+    {
+     "high": -0.11602540378443882,
+     "key": -0.8660254037844387,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 0.8660254037844387,
+     "low": 0.11602540378443882,
+     "plane_normal": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 0.7499999999999999,
+     "low": -0.11602540378443882,
+     "plane_normal": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.11602540378443882,
+     "key": -0.7499999999999999,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 6.938893903907228e-18,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.6160254037844386,
+     "key": 6.938893903907228e-18,
+     "low": -1.6160254037844386,
+     "plane_normal": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 0.11602540378443882,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.8660254037844387,
+     0.49999999999999994,
+     0.0
+    ],
+    "x": [
+     -0.49999999999999994,
+     0.8660254037844387,
+     0.0
+    ],
+    "z": [
+     0.8660254037844387,
+     0.49999999999999994,
+     -0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 12.0,
+     "box_centre": [
+      0.8660254037844387,
+      0.5,
+      0.0
+     ],
+     "centre": [
+      0.8660254037844387,
+      0.5,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 1,
+     "normal_at_centre": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">X",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-turned>Y",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(rotate=cq.Vector(0, 0, 30)).box(2, 3, 4).faces(\">Y\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    3
+   ],
+   "cadquery_order": [
+    3
+   ],
+   "candidate_faces": [
+    {
+     "high": 0.799038105676658,
+     "key": -0.5,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 0.5,
+     "low": -0.799038105676658,
+     "plane_normal": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -0.799038105676658,
+     "key": -1.299038105676658,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 1.299038105676658,
+     "low": 0.799038105676658,
+     "plane_normal": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 6.938893903907228e-17,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.799038105676658,
+     "key": 6.938893903907228e-17,
+     "low": -1.799038105676658,
+     "plane_normal": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 0.799038105676658,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     -0.7499999999999999,
+     1.299038105676658,
+     0.0
+    ],
+    "x": [
+     -0.8660254037844387,
+     -0.49999999999999994,
+     0.0
+    ],
+    "z": [
+     -0.49999999999999994,
+     0.8660254037844387,
+     0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 8.0,
+     "box_centre": [
+      -0.7499999999999999,
+      1.299038105676658,
+      0.0
+     ],
+     "centre": [
+      -0.7499999999999999,
+      1.299038105676658,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 3,
+     "normal_at_centre": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "normal_at_mid_uv": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Y",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box-turned>Z",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").transformed(rotate=cq.Vector(0, 0, 30)).box(2, 3, 4).faces(\">Z\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    5
+   ],
+   "cadquery_order": [
+    5
+   ],
+   "candidate_faces": [
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -0.8660254037844387,
+      -0.49999999999999994,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      0.8660254037844387,
+      0.49999999999999994,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      0.49999999999999994,
+      -0.8660254037844387,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -0.49999999999999994,
+      0.8660254037844387,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -2.0,
+     "key": -2.0,
+     "low": -2.0,
+     "plane_normal": [
+      -0.0,
+      0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 2.0,
+     "low": 2.0,
+     "plane_normal": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 2.0,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     2.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     -0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 6.0,
+     "box_centre": [
+      0.0,
+      0.0,
+      2.0
+     ],
+     "centre": [
+      6.938893903907228e-18,
+      6.938893903907228e-17,
+      2.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 5,
+     "normal_at_centre": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      -0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box<X",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(2, 3, 4).faces(\"<X\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    0
+   ],
+   "cadquery_order": [
+    0
+   ],
+   "candidate_faces": [
+    {
+     "high": -1.0,
+     "key": -1.0,
+     "low": -1.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 1.0,
+     "low": 1.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.0816681711721685e-17,
+     "low": -1.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.0816681711721685e-17,
+     "low": -1.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.42861286636753e-17,
+     "low": -1.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.42861286636753e-17,
+     "low": -1.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.0,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "x": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "z": [
+     -1.0,
+     -0.0,
+     0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 12.0,
+     "box_centre": [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "centre": [
+      -1.0,
+      2.7755575615628914e-17,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 0,
+     "normal_at_centre": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "normal_at_mid_uv": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<X",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box<Y",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(2, 3, 4).faces(\"<Y\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    2
+   ],
+   "cadquery_order": [
+    2
+   ],
+   "candidate_faces": [
+    {
+     "high": 1.5,
+     "key": 2.7755575615628914e-17,
+     "low": -1.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 2.7755575615628914e-17,
+     "low": -1.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -1.5,
+     "key": -1.5,
+     "low": -1.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.5,
+     "low": 1.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.0,
+     "low": -1.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.0,
+     "low": -1.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.5,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     -1.5,
+     0.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     -0.0,
+     -1.0,
+     -0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 8.0,
+     "box_centre": [
+      0.0,
+      -1.5,
+      0.0
+     ],
+     "centre": [
+      2.0816681711721685e-17,
+      -1.5,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 2,
+     "normal_at_centre": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<Y",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box<Z",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(2, 3, 4).faces(\"<Z\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    4
+   ],
+   "cadquery_order": [
+    4
+   ],
+   "candidate_faces": [
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -2.0,
+     "key": -2.0,
+     "low": -2.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 2.0,
+     "low": 2.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 2.0,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     -2.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     -0.0,
+     -0.0,
+     -1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 6.0,
+     "box_centre": [
+      0.0,
+      0.0,
+      -2.0
+     ],
+     "centre": [
+      2.42861286636753e-17,
+      0.0,
+      -2.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 4,
+     "normal_at_centre": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "normal_at_mid_uv": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": "<Z",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box>X",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(2, 3, 4).faces(\">X\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    1
+   ],
+   "cadquery_order": [
+    1
+   ],
+   "candidate_faces": [
+    {
+     "high": -1.0,
+     "key": -1.0,
+     "low": -1.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 1.0,
+     "low": 1.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.0816681711721685e-17,
+     "low": -1.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.0816681711721685e-17,
+     "low": -1.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.42861286636753e-17,
+     "low": -1.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 2.42861286636753e-17,
+     "low": -1.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.0,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "x": [
+     -0.0,
+     1.0,
+     0.0
+    ],
+    "z": [
+     1.0,
+     0.0,
+     -0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 12.0,
+     "box_centre": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "centre": [
+      1.0,
+      2.7755575615628914e-17,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 1,
+     "normal_at_centre": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "normal_at_mid_uv": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">X",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box>Y",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(2, 3, 4).faces(\">Y\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    3
+   ],
+   "cadquery_order": [
+    3
+   ],
+   "candidate_faces": [
+    {
+     "high": 1.5,
+     "key": 2.7755575615628914e-17,
+     "low": -1.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 2.7755575615628914e-17,
+     "low": -1.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -1.5,
+     "key": -1.5,
+     "low": -1.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.5,
+     "low": 1.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.0,
+     "low": -1.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.0,
+     "low": -1.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 1.5,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     1.5,
+     0.0
+    ],
+    "x": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     1.0,
+     0.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 8.0,
+     "box_centre": [
+      0.0,
+      1.5,
+      0.0
+     ],
+     "centre": [
+      2.0816681711721685e-17,
+      1.5,
+      4.85722573273506e-17
+     ],
+     "centre_to_surface": 0.0,
+     "index": 3,
+     "normal_at_centre": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Y",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "box>Z",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(2, 3, 4).faces(\">Z\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    5
+   ],
+   "cadquery_order": [
+    5
+   ],
+   "candidate_faces": [
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 4.85722573273506e-17,
+     "low": -2.0,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -2.0,
+     "key": -2.0,
+     "low": -2.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 2.0,
+     "key": 2.0,
+     "low": 2.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 6,
+   "gap": 2.0,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     2.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 6.0,
+     "box_centre": [
+      0.0,
+      0.0,
+      2.0
+     ],
+     "centre": [
+      2.42861286636753e-17,
+      0.0,
+      2.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 5,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "coplanar-tops>Z",
+  "program": "import cadquery as cq\n\nresult = (cq.Workplane(\"XY\").box(10, 2, 1).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(-3, 0, 1)).box(2, 2, 1)).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(4, 0, 1)).box(1, 2, 1)).faces(\">Z\").workplane())\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    6,
+    13
+   ],
+   "cadquery_order": [
+    6,
+    13
+   ],
+   "candidate_faces": [
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.23076923076923084,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.23076923076923084,
+     "low": -0.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -0.5,
+     "key": -0.5,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.5,
+     "low": 1.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.5,
+     "low": 1.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 14,
+   "gap": 0.5,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     1.5
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 4.0,
+     "box_centre": [
+      -3.0,
+      0.0,
+      1.5
+     ],
+     "centre": [
+      -3.0,
+      2.0816681711721685e-17,
+      1.5
+     ],
+     "centre_to_surface": 0.0,
+     "index": 6,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "area": 2.0,
+     "box_centre": [
+      4.0,
+      0.0,
+      1.5
+     ],
+     "centre": [
+      4.0,
+      2.0816681711721685e-17,
+      1.5
+     ],
+     "centre_to_surface": 0.0,
+     "index": 13,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Compound"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "cylinder>X",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").cylinder(4, 1).faces(\">X\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    0,
+    1,
+    2
+   ],
+   "cadquery_order": [
+    0,
+    1,
+    2
+   ],
+   "candidate_faces": [
+    {
+     "high": 1.0,
+     "key": -2.220446049250313e-16,
+     "low": -1.0,
+     "plane_normal": null,
+     "type": "CYLINDER"
+    },
+    {
+     "high": 1.0,
+     "key": 0.0,
+     "low": -1.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 0.0,
+     "low": -1.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "CYLINDER",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 3,
+   "error": "ValueError: If multiple objects selected, they all must be planar faces.",
+   "gap": null,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "selected": [
+    {
+     "area": 25.132741228718345,
+     "box_centre": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "centre": [
+      -2.220446049250313e-16,
+      -5.481450888413742e-17,
+      -1.766974823035287e-17
+     ],
+     "centre_to_surface": "StdFail_NotDone: GeomAPI_ProjectPointOnSurf::LowerDistance",
+     "index": 0,
+     "normal_at_centre": "StdFail_NotDone: GeomAPI_ProjectPointOnSurf::LowerDistanceParameters",
+     "normal_at_mid_uv": [
+      -1.0,
+      1.2246467991473532e-16,
+      0.0
+     ],
+     "type": "CYLINDER"
+    },
+    {
+     "area": 3.141592653589792,
+     "box_centre": [
+      0.0,
+      0.0,
+      2.0
+     ],
+     "centre": [
+      0.0,
+      -5.73623839894783e-17,
+      2.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 1,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "area": 3.141592653589792,
+     "box_centre": [
+      0.0,
+      0.0,
+      -2.0
+     ],
+     "centre": [
+      0.0,
+      -5.73623839894783e-17,
+      -2.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 2,
+     "normal_at_centre": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "normal_at_mid_uv": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">X",
+   "spread": 2.220446049250313e-16,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "cylinder>Z",
+  "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").cylinder(4, 1).faces(\">Z\").workplane()\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    1
+   ],
+   "cadquery_order": [
+    1
+   ],
+   "candidate_faces": [
+    {
+     "high": 2.0,
+     "key": -1.766974823035287e-17,
+     "low": -2.0,
+     "plane_normal": null,
+     "type": "CYLINDER"
+    },
+    {
+     "high": 2.0,
+     "key": 2.0,
+     "low": 2.0,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -2.0,
+     "key": -2.0,
+     "low": -2.0,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "CYLINDER",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 3,
+   "gap": 2.0,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     2.0
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 3.141592653589792,
+     "box_centre": [
+      0.0,
+      0.0,
+      2.0
+     ],
+     "centre": [
+      0.0,
+      -5.73623839894783e-17,
+      2.0
+     ],
+     "centre_to_surface": 0.0,
+     "index": 1,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Solid"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "half-cylinder>Z",
+  "program": "import cadquery as cq\n\nresult = (cq.Workplane(\"YZ\").cylinder(4, 1).cut(cq.Workplane(\"XY\").box(10, 10, 10, centered=(True, True, False)).mirror(\"XY\")).faces(\">Z\").workplane())\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": false,
+   "box_centre_selection": [
+    0,
+    1,
+    3
+   ],
+   "cadquery_order": [
+    0
+   ],
+   "candidate_faces": [
+    {
+     "high": 1.0,
+     "key": 0.6366197723675814,
+     "low": -2.4492935982947064e-16,
+     "plane_normal": null,
+     "type": "CYLINDER"
+    },
+    {
+     "high": 1.0,
+     "key": 0.4244131815783876,
+     "low": 0.0,
+     "plane_normal": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.0,
+     "key": 0.0,
+     "low": -2.4492935982947064e-16,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.0,
+     "key": 0.4244131815783876,
+     "low": 0.0,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "CYLINDER",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 4,
+   "gap": 0.2122065907891938,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     3.8981718325193755e-17,
+     0.6366197723675814
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     -0.0,
+     6.123233995736766e-17,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 12.566370614359172,
+     "box_centre": [
+      0.0,
+      0.0,
+      0.4999999999999999
+     ],
+     "centre": [
+      -1.766974823035287e-17,
+      2.8948198005362975e-17,
+      0.6366197723675814
+     ],
+     "centre_to_surface": 0.3633802276324186,
+     "index": 0,
+     "normal_at_centre": [
+      -0.0,
+      6.123233995736766e-17,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      -0.0,
+      6.123233995736766e-17,
+      1.0
+     ],
+     "type": "CYLINDER"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Compound"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "near-tie-chain>Z",
+  "program": "import cadquery as cq\n\nresult = (cq.Workplane(\"XY\").box(10, 2, 1).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(-3, 0, 1)).box(2, 2, 1)).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(0, 0, 1.00008)).box(1, 2, 1)).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(4, 0, 1.00016)).box(1, 2, 1)).faces(\">Z\").workplane())\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    5
+   ],
+   "cadquery_order": [
+    5
+   ],
+   "candidate_faces": [
+    {
+     "high": 1.50016,
+     "key": 1.00016,
+     "low": 0.5001599999999999,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50016,
+     "key": 1.00016,
+     "low": 0.5001599999999999,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50016,
+     "key": 1.00016,
+     "low": 0.5001599999999999,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50016,
+     "key": 1.00016,
+     "low": 0.5001599999999999,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5001599999999999,
+     "key": 0.5001599999999999,
+     "low": 0.5001599999999999,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50016,
+     "key": 1.50016,
+     "low": 1.50016,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50008,
+     "key": 1.00008,
+     "low": 0.5000800000000001,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50008,
+     "key": 1.00008,
+     "low": 0.5000800000000001,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50008,
+     "key": 1.00008,
+     "low": 0.5000800000000001,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50008,
+     "key": 1.00008,
+     "low": 0.5000800000000001,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5000800000000001,
+     "key": 0.5000800000000001,
+     "low": 0.5000800000000001,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50008,
+     "key": 1.50008,
+     "low": 1.50008,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.16666666666666666,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.16666666666666666,
+     "low": -0.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -0.5,
+     "key": -0.5,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.5,
+     "low": 1.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 22,
+   "gap": 7.999999999985796e-05,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     1.50016
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 2.0,
+     "box_centre": [
+      4.0,
+      0.0,
+      1.50016
+     ],
+     "centre": [
+      4.0,
+      2.0816681711721685e-17,
+      1.50016
+     ],
+     "centre_to_surface": 0.0,
+     "index": 5,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Compound"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "near-tie-inside>Z",
+  "program": "import cadquery as cq\n\nresult = (cq.Workplane(\"XY\").box(10, 2, 1).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(-3, 0, 1)).box(2, 2, 1)).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(4, 0, 1.00005)).box(1, 2, 1)).faces(\">Z\").workplane())\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    5,
+    15
+   ],
+   "cadquery_order": [
+    15,
+    5
+   ],
+   "candidate_faces": [
+    {
+     "high": 1.50005,
+     "key": 1.00005,
+     "low": 0.5000500000000001,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50005,
+     "key": 1.00005,
+     "low": 0.5000500000000001,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50005,
+     "key": 1.00005,
+     "low": 0.5000500000000001,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50005,
+     "key": 1.00005,
+     "low": 0.5000500000000001,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5000500000000001,
+     "key": 0.5000500000000001,
+     "low": 0.5000500000000001,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50005,
+     "key": 1.50005,
+     "low": 1.50005,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.16666666666666666,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.16666666666666666,
+     "low": -0.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -0.5,
+     "key": -0.5,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.5,
+     "low": 1.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 16,
+   "gap": 0.4999499999999999,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     1.5000166666666666
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 2.0,
+     "box_centre": [
+      4.0,
+      0.0,
+      1.50005
+     ],
+     "centre": [
+      4.0,
+      2.0816681711721685e-17,
+      1.50005
+     ],
+     "centre_to_surface": 0.0,
+     "index": 5,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "area": 4.0,
+     "box_centre": [
+      -3.0,
+      0.0,
+      1.5
+     ],
+     "centre": [
+      -3.0,
+      2.0816681711721685e-17,
+      1.5
+     ],
+     "centre_to_surface": 0.0,
+     "index": 15,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 5.0000000000105516e-05,
+   "stack": [
+    "Compound"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ },
+ {
+  "name": "near-tie-outside>Z",
+  "program": "import cadquery as cq\n\nresult = (cq.Workplane(\"XY\").box(10, 2, 1).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(-3, 0, 1)).box(2, 2, 1)).union(cq.Workplane(\"XY\").transformed(offset=cq.Vector(4, 0, 1.00015)).box(1, 2, 1)).faces(\">Z\").workplane())\nshow_object(result)\n",
+  "record": {
+   "box_centre_agrees": true,
+   "box_centre_selection": [
+    5
+   ],
+   "cadquery_order": [
+    5
+   ],
+   "candidate_faces": [
+    {
+     "high": 1.50015,
+     "key": 1.00015,
+     "low": 0.5001500000000001,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50015,
+     "key": 1.00015,
+     "low": 0.5001500000000001,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50015,
+     "key": 1.00015,
+     "low": 0.5001500000000001,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50015,
+     "key": 1.00015,
+     "low": 0.5001500000000001,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5001500000000001,
+     "key": 0.5001500000000001,
+     "low": 0.5001500000000001,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.50015,
+     "key": 1.50015,
+     "low": 1.50015,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.16666666666666666,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -1.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 0.16666666666666666,
+     "low": -0.5,
+     "plane_normal": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": -0.5,
+     "key": -0.5,
+     "low": -0.5,
+     "plane_normal": [
+      -0.0,
+      -0.0,
+      -1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 1.214306433183765e-17,
+     "low": -0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 0.5,
+     "key": 0.5,
+     "low": 0.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      -1.0,
+      -0.0,
+      0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.0,
+     "low": 0.5,
+     "plane_normal": [
+      1.0,
+      0.0,
+      -0.0
+     ],
+     "type": "PLANE"
+    },
+    {
+     "high": 1.5,
+     "key": 1.5,
+     "low": 1.5,
+     "plane_normal": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "candidate_types": [
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE",
+    "PLANE"
+   ],
+   "candidates": 16,
+   "gap": 0.0001500000000000945,
+   "parent_origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "plane": {
+    "origin": [
+     0.0,
+     0.0,
+     1.50015
+    ],
+    "x": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "z": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "selected": [
+    {
+     "area": 2.0,
+     "box_centre": [
+      4.0,
+      0.0,
+      1.50015
+     ],
+     "centre": [
+      4.0,
+      2.0816681711721685e-17,
+      1.50015
+     ],
+     "centre_to_surface": 0.0,
+     "index": 5,
+     "normal_at_centre": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "normal_at_mid_uv": [
+      0.0,
+      0.0,
+      1.0
+     ],
+     "type": "PLANE"
+    }
+   ],
+   "selector": ">Z",
+   "spread": 0.0,
+   "stack": [
+    "Compound"
+   ],
+   "workplane_args": [],
+   "workplane_kwargs": []
+  },
+  "status": "record"
+ }
+]

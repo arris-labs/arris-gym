@@ -452,8 +452,14 @@ metadata exports belong to the caller's `arris_gym.cq`; the program-facing
 module keeps `UnsupportedApi`, `Vector` and `Workplane`. The metadata uses
 frozen standard-library dataclasses to keep `cq`'s import boundary.
 
-⚠ OPEN: how CadQuery's string selectors map onto arris's selection when they
-are ambiguous on curved faces.
+CadQuery's axis selectors (`>X <X >Y <Y >Z <Z`) map onto arris as ADR-0017
+decides; plans/lift-face-selectors builds them. `cq` ranks faces by CadQuery's
+centre of mass and greedy 1e-4 clusters, not by `Selection.extreme`'s box
+centre. A planar face normal to the axis has its exact key, its plane's offset;
+another face is settled by its box or by a tessellation estimate trusted only
+at a margin, else `unsupported_api`. `workplane()` follows CadQuery's
+`ProjectedOrigin` rule on planar faces, and a selection kept on one curved
+surface ends `unsupported_api`.
 
 ## The reward
 

@@ -1,0 +1,102 @@
+{
+ "families": {
+  "bearing_retainer_cap": {
+   ">X 1 PLANE plane, box-centre agrees": 55,
+   ">Y 1 PLANE plane, box-centre agrees": 48,
+   ">Z 1 PLANE plane, box-centre agrees": 57
+  },
+  "bolt": {
+   ">X 1 PLANE plane, box-centre agrees": 15,
+   ">Y 1 PLANE plane, box-centre agrees": 16,
+   ">Z 1 PLANE plane, box-centre agrees": 15
+  },
+  "cam": {
+   ">X 1 PLANE plane, box-centre agrees": 8,
+   ">Y 1 PLANE plane, box-centre agrees": 6,
+   ">Z 1 PLANE plane, box-centre agrees": 7
+  },
+  "connecting_rod": {
+   ">X 1 PLANE plane, box-centre agrees": 22,
+   ">X 2 PLANE+PLANE plane, box-centre agrees": 15,
+   ">Y 1 PLANE plane, box-centre agrees": 19,
+   ">Y 2 PLANE+PLANE plane, box-centre agrees": 14,
+   ">Z 1 PLANE plane, box-centre agrees": 13,
+   ">Z 2 PLANE+PLANE plane, box-centre agrees": 11
+  },
+  "hex_standoff": {
+   ">X 1 PLANE plane, box-centre agrees": 11,
+   ">Y 1 PLANE plane, box-centre agrees": 19,
+   ">Z 1 PLANE plane, box-centre agrees": 18
+  },
+  "impeller": {
+   ">X 1 PLANE plane, box-centre agrees": 28,
+   ">Y 1 PLANE plane, box-centre agrees": 42,
+   ">Z 1 PLANE plane, box-centre agrees": 35
+  },
+  "pan_head_screw": {
+   ">Z 1 PLANE plane, box-centre agrees": 51
+  },
+  "pipe_flange": {
+   ">X 1 PLANE plane, box-centre agrees": 16,
+   ">Y 1 PLANE plane, box-centre agrees": 18,
+   ">Z 1 PLANE plane, box-centre agrees": 25
+  },
+  "round_flange": {
+   ">X 1 PLANE plane, box-centre agrees": 20,
+   ">Y 1 PLANE plane, box-centre agrees": 18,
+   ">Z 1 PLANE plane, box-centre agrees": 19
+  },
+  "shaft_collar": {
+   ">X 1 PLANE plane, box-centre agrees": 8,
+   ">Y 1 PLANE plane, box-centre agrees": 8,
+   ">Z 1 PLANE plane, box-centre agrees": 8
+  },
+  "spacer_ring": {
+   ">X 1 PLANE plane, box-centre agrees": 19,
+   ">Y 1 PLANE plane, box-centre agrees": 19,
+   ">Z 1 PLANE plane, box-centre agrees": 24
+  },
+  "spur_gear": {
+   ">X 1 PLANE plane, box-centre agrees": 8,
+   ">Y 1 PLANE plane, box-centre agrees": 7,
+   ">Z 1 PLANE plane, box-centre agrees": 1
+  },
+  "standoff": {
+   ">X 1 PLANE plane, box-centre agrees": 12,
+   ">Y 1 PLANE plane, box-centre agrees": 15,
+   ">Z 1 PLANE plane, box-centre agrees": 16
+  },
+  "stepped_shaft": {
+   ">X 1 PLANE plane, box-centre agrees": 16,
+   ">Y 1 PLANE plane, box-centre agrees": 18,
+   ">Z 1 PLANE plane, box-centre agrees": 31
+  },
+  "t_slot_rail": {
+   "<X 1 PLANE plane, box-centre agrees": 10,
+   "<Y 1 PLANE plane, box-centre agrees": 10,
+   "<Z 1 PLANE plane, box-centre agrees": 9
+  },
+  "threaded_adapter": {
+   ">X 1 PLANE plane, box-centre agrees": 18,
+   ">Y 1 PLANE plane, box-centre agrees": 19,
+   ">Z 1 PLANE plane, box-centre agrees": 15
+  },
+  "washer": {
+   ">X 1 PLANE plane, box-centre agrees": 4,
+   ">Y 1 PLANE plane, box-centre agrees": 9,
+   ">Z 1 PLANE plane, box-centre agrees": 5
+  }
+ },
+ "outcomes": {
+  "<X 1 PLANE plane, box-centre agrees": 10,
+  "<Y 1 PLANE plane, box-centre agrees": 10,
+  "<Z 1 PLANE plane, box-centre agrees": 9,
+  ">X 1 PLANE plane, box-centre agrees": 260,
+  ">X 2 PLANE+PLANE plane, box-centre agrees": 15,
+  ">Y 1 PLANE plane, box-centre agrees": 281,
+  ">Y 2 PLANE+PLANE plane, box-centre agrees": 14,
+  ">Z 1 PLANE plane, box-centre agrees": 340,
+  ">Z 2 PLANE+PLANE plane, box-centre agrees": 11
+ },
+ "programs": 950
+}
