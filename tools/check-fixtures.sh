@@ -4,6 +4,10 @@
 # `expected.json` outside tests/fixtures/regression/ carries a "tolerance"
 # key and its fixture directory has no README.md citing the ADR that decided
 # it. A regression fixture may name one: it records the desired assertion.
+# Also red when a docstring under src/ cites a fixture slug (`ok-…`,
+# `runtime-…`, `unsupported-…`) that has no directory under tests/fixtures: a
+# claim in prose is backed by the fixture that proves it (plans/lift-holes-and-points
+# review). ADRs are append-only and may name fixtures that were since renamed.
 # Also red when an `expected.json` declares its message per machine
 # ("message_by_machine") and its fixture directory has no README.md saying why.
 set -uo pipefail
@@ -20,7 +24,16 @@ per_machine=()
 while IFS= read -r f; do
   [ -s "$(dirname "$f")/README.md" ] || per_machine+=("$f")
 done < <(grep -rlEs '"message_by_machine"[[:space:]]*:' tests/fixtures --include=expected.json | sort)
+cited=()
+while IFS= read -r slug; do
+  [ -n "$(find tests/fixtures -type d -name "$slug" -print -quit)" ] || cited+=("$slug")
+done < <(grep -rhoE '`(ok|runtime|unsupported)-[a-z0-9-]+`' src --include=*.py | tr -d '`' | sort -u)
 status=0
+if [ ${#cited[@]} -gt 0 ]; then
+  echo "check-fixtures: a docstring under src/ cites a fixture that does not exist:" >&2
+  printf '  %s\n' "${cited[@]}" >&2
+  status=1
+fi
 if [ ${#bad[@]} -gt 0 ]; then
   echo "check-fixtures: a tolerance key outside regression/ needs a README.md citing its ADR;" >&2
   echo "  a case that fails at the default is an xfail regression fixture instead:" >&2
