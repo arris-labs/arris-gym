@@ -86,13 +86,24 @@ a given design; **[3]** unproven semantics, established here.
   today (empty, a solid, a drawn path, two sketches). Each case is lifted
   when it agrees and refused otherwise, with an `ok-`, `runtime-` or
   `unsupported-` fixture. Settle Q1.
-- [ ] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows` on
+- [x] Step 3 **[2]** — the measurement. Run `cq_corpus.py --oracle-rows` on
   both corpora into a scratch out-dir, then `cq_diagnose.py` over the new
   BenchCAD table, to get the in-subset rows by class and the `cq_bug` and
   unclassified rows by family. Record the figures in Q2. Any cause other
   than agreement or step 4's hook rows becomes a step before step 5,
   largest first, shrunk to `regression/` fixtures, or becomes Q2 with the
   reach it costs.
+- [ ] Step 3a **[2]** — `polyline` after `moveTo`. Step 3 found it (Q2): 86 rows
+  refused `Workplane.polyline on a pending wire`. A lone `moveTo` point is no
+  pending wire: `includeCurrent=False` drops it, so `polyline` after it is
+  `polyline` alone. Read on the oracle `polyline`, `box`, `circle` and the
+  other drawing calls after a lone `moveTo` and after a drawn path; lift
+  `polyline` after the lone point, run the subset's other operations in that
+  context on both sides and refuse each that disagrees, with its fixture.
+  Fixtures `cq/ok-polyline-after-moveto-*` and the corpus `u_bolt` and `j_hook`
+  programs as written; each from closed forms. Then re-run BenchCAD (scratch
+  out-dir, `--oracle-rows`) and record the new in-subset `cq_bug` and
+  unclassified counts in Q2 for step 4.
 - [ ] Step 4 **[3]** — the hook rows. If step 3 leaves `u_bolt`/`j_hook`
   rows unclassified, extend the hook closed form with the hexagonal prism
   (Design deltas). `tests/test_cq_closed_forms.py` holds it to arris's
@@ -157,9 +168,16 @@ a given design; **[3]** unproven semantics, established here.
   a solid, an open path or a point is `No pending wires present` on both
   sides (`runtime-extrude-both-on-*`); two sketches are unreachable, as
   `circle` after `circle` is refused first (`unsupported-extrude-both-two-sketches`).
-- ⚠ OPEN: Q2 — what the re-run finds. The agent records it by step 3: the
-  in-subset rows by class, which rows step 4 must class, and any other
-  cause with the reach it costs.
+- Settled: Q2 (step 3, 2026-11-14) — BenchCAD against today's subset: reach
+  4,345/17,900 as planned; oracle digest `e9925835…73157` unchanged, no
+  timeout re-ran beyond the 31 committed sprocket rows. The 242 new rows are
+  117 `hex_key_organizer` agree, 39 `u_bolt`/`j_hook` unclassified (step 4's
+  hook rows) and 86 `u_bolt`/`j_hook` in-subset `cq_bug` (27 `u_bolt`, 59
+  `j_hook`), every one `Workplane.polyline on a pending wire`: the programs
+  write `moveTo(x, y).polyline([...]).close()` and `cq` refuses `polyline` on
+  a lone `moveTo` point, which CadQuery ignores. Step 3a lifts it; step 4's
+  count is re-read after it. CAD-Recode: reach 104/968, table digest
+  `24c2f92a…3448` unchanged (run with its own `verdicts.json` only).
 - ⚠ OPEN: Q3 — whether every new hook row fits step 4's shape. The agent
   decides by step 4. A program outside the shape (the hexagon not inside
   the box, or a third solid) is named here with its count, and gets its own
