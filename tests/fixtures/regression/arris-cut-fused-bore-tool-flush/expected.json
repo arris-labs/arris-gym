@@ -1,0 +1,29 @@
+{
+  "dialect": "arris",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the cut, OpDegenerateError (\"degenerate result: the faces touch along a curve interior to both result faces\"): the fused tool's end is split by the bore's circle and lies on the box's top face; the same tool started above the face, or revolved from one profile, cuts",
+  "measures": {
+    "volume": 315.68031010131403,
+    "area": 316.5663706143592,
+    "centroid": [
+      -0.027367496549275495,
+      -0.013683748274637747,
+      -0.0065308798583498355
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -2
+      ],
+      [
+        5,
+        4,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "a 10 x 8 x 4 box about the origin less a counterbore (r = 1, 0.5 deep) over a through bore (r = 1/2) at (2, 1) from the top: V = 320 - (pi 0.5 + pi/4 3.5) = 320 - 11 pi/8; A = 304 - pi - pi/4 (the openings) + pi (counterbore wall) + 3 pi/4 (the step) + 7 pi/2 (bore wall) = 304 + 4 pi; the cavity's moment is pi/2 at z = 1.75 and 7 pi/8 at z = -0.25 and its centroid at (2, 1) across; faces carried, not judged (ADR-0005)"
+}

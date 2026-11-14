@@ -34,3 +34,4 @@ training cycle starts from.
 | [0015](0015-a-cq-result-is-the-last-shown-value-then-result-then-r.md) | A `cq` result is the last shown value, then `result`, then `r` | accepted |
 | [0016](0016-a-cq-compound-is-one-solid-whose-body-holds-a-shell-per-piece.md) | A `cq` compound is one solid whose body holds a shell per piece | accepted |
 | [0017](0017-a-cq-axis-selector-ranks-faces-by-their-centre-of-mass-and-places-a-plane-only-on-a-planar-face.md) | A `cq` axis selector ranks faces by their centre of mass, and places a plane only on a planar face | accepted |
+| [0018](0018-a-cq-bore-cuts-cadquerys-pieces-at-every-point-in-one-call.md) | A `cq` bore cuts CadQuery's pieces at every point, in one call | accepted |
