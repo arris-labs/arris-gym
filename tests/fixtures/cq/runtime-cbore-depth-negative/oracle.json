@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Null TopoDS_Shape object",
+  "program_sha256": "ff1c15b5e3a83b6002da365c809275e5e667650a06106c99e9323fd652986543",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

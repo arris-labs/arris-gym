@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "OCP.OCP.Standard.Standard_ConstructionError: gp_Vec::Normalize() - vector has zero norm",
+  "program_sha256": "8c2535be13c87eea81573ccb796058d6ee421d5216c960dc6d5980ce9cbcdca7",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

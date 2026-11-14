@@ -5,6 +5,15 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `cboreHole(diameter, cboreDiameter, cboreDepth)`: a
+  counterbored hole at the plane's origin or at every point of a `pushPoints`,
+  as CadQuery builds it (a bore through, a wider counterbore from the face).
+  A counterbore no wider than the bore leaves the bore, one deeper than the
+  part makes a through hole of its own width, and a zero diameter leaves the
+  other piece alone. A negative diameter or counterbore diameter, a
+  counterbore depth of zero or less, and both diameters zero end `runtime`, as
+  in CadQuery; `clean=` and a depth still end `unsupported_api`.
+
 - `dialect="cq"` now runs `hole(diameter, depth=depth)`: a bore `depth` long
   from the workplane, blind where it ends inside the part and through where it
   reaches the far face, at the plane's origin or at every point of a

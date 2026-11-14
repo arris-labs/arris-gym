@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.cboreHole(0, 0, 0.5): no bore and no counterbore (CadQuery's Null TopoDS_Shape)"
+}

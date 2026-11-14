@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Workplane.cboreHole(1, 2, 0): a counterbore depth of zero (CadQuery's Standard_ConstructionError)"
+}

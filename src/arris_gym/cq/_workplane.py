@@ -529,25 +529,7 @@ class Workplane:
         >>> round(wp._solids()[0].measure().volume, 6)
         7.214602
         """
-        base = self._base_solid()
-        if base is None:
-            raise ValueError("Cannot find a solid on the stack or in the parent chain")
-        plane = self._plane
-        centres = [plane.origin]
-        if self._stack:
-            # CadQuery's `eachpoint` bores at each object's centre: a point is
-            # itself and a solid its centre of mass. Faces and drawn paths have
-            # centres the subset does not model.
-            (last,) = self._stack
-            if isinstance(last, _Points):
-                centres = [plane.point(*point) for point in last.points]
-            elif isinstance(last, _Path) and not last.segments:
-                centres = [plane.point(last.start[0], last.start[1], 0.0)]
-            elif isinstance(last, arris.build.Solid):
-                centres = [last.measure().centroid]
-            else:
-                self._refuse_pending("Workplane.hole")
-                raise UnsupportedApi("Workplane.hole on a stack holding objects")
+        base, centres = self._bore_sites("Workplane.hole")
         named = (
             f"Workplane.hole({diameter})"
             if depth is None
@@ -564,14 +546,112 @@ class Workplane:
         if diameter == 0:
             return self._derive(base)
         if depth is None:
-            box = base.model.bounds(base.body)
-            if box is None:
-                raise UnsupportedApi("Workplane.hole on a solid without a box")
-            depth = math.sqrt(sum((box[1][k] - box[0][k] - 2 * _BOUNDS_PAD) ** 2 for k in range(3)))
+            depth = self._bore_length(base)
+        return self._cut_bores(base, centres, [(diameter / 2.0, depth)])
+
+    @census_form("Workplane.cboreHole", [("num",)] * 3)
+    def cboreHole(self, diameter: float, cboreDiameter: float, cboreDepth: float) -> Workplane:
+        """The chain's solid with a counterbored hole bored from the plane, as CadQuery bores it.
+
+        The hole is a cylinder of `diameter` as long as the solid's box
+        diagonal, under a counterbore, a cylinder of `cboreDiameter` and
+        `cboreDepth`, both starting at the same point and running against the
+        plane's normal, at the points `hole` uses (ADR-0018 rules 2 and 3;
+        read on the oracle: `ok-cbore-*`). CadQuery fuses the two cylinders;
+        `cq` cuts them as separate tools of one call, which is the cut by
+        their union. Whichever is wider or deeper, the union is what is cut: a
+        counterbore no wider than the bore leaves the bore alone, and one
+        deeper than the part makes a through hole of its own diameter. A zero
+        `diameter` leaves the counterbore alone and a zero `cboreDiameter` the
+        bore. Raises `ValueError` (`runtime`) for a negative diameter or
+        counterbore diameter and a `cboreDepth` of zero or less (CadQuery's
+        `Standard_ConstructionError`, and for a negative depth its
+        `Null TopoDS_Shape object`) and for both diameters zero, which leaves
+        no tool (`runtime-cbore-*`), and otherwise as `hole` does.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(4, 4, 2).faces(">Z").workplane()
+        >>> cut = wp.cboreHole(1, 2, 0.5)
+        >>> round(4 * 4 * 2 - cut._solids()[0].measure().volume, 6)
+        2.748894
+        """
+        base, centres = self._bore_sites("Workplane.cboreHole")
+        named = f"Workplane.cboreHole({diameter}, {cboreDiameter}, {cboreDepth})"
+        if diameter < 0:
+            raise ValueError(
+                f"{named}: a negative diameter (CadQuery's Standard_ConstructionError)"
+            )
+        if cboreDiameter < 0:
+            raise ValueError(
+                f"{named}: a negative counterbore diameter (CadQuery's Standard_ConstructionError)"
+            )
+        if cboreDepth == 0:
+            raise ValueError(
+                f"{named}: a counterbore depth of zero (CadQuery's Standard_ConstructionError)"
+            )
+        if cboreDepth < 0:
+            raise ValueError(
+                f"{named}: a negative counterbore depth (CadQuery's Null TopoDS_Shape object)"
+            )
+        pieces = [(diameter / 2.0, self._bore_length(base)), (cboreDiameter / 2.0, cboreDepth)]
+        if all(radius == 0 for radius, _ in pieces):
+            raise ValueError(f"{named}: no bore and no counterbore (CadQuery's Null TopoDS_Shape)")
+        return self._cut_bores(base, centres, pieces)
+
+    def _bore_sites(self, form: str) -> tuple[arris.build.Solid, list[tuple[float, float, float]]]:
+        """The solid a bore cuts and the points it is bored at, in world coordinates.
+
+        CadQuery's `eachpoint` bores at each object's centre: a point is itself,
+        a solid its centre of mass, and an empty stack the plane's origin. Faces
+        and drawn paths have centres the subset does not model. Raises
+        `ValueError` (`runtime`, CadQuery's words) for a chain with no solid and
+        `UnsupportedApi` naming `form` for a stack the subset does not bore on.
+        """
+        base = self._base_solid()
+        if base is None:
+            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+        plane = self._plane
+        if not self._stack:
+            return base, [plane.origin]
+        (last,) = self._stack
+        if isinstance(last, _Points):
+            return base, [plane.point(*point) for point in last.points]
+        if isinstance(last, _Path) and not last.segments:
+            return base, [plane.point(last.start[0], last.start[1], 0.0)]
+        if isinstance(last, arris.build.Solid):
+            return base, [last.measure().centroid]
+        self._refuse_pending(form)
+        raise UnsupportedApi(f"{form} on a stack holding objects")
+
+    @staticmethod
+    def _bore_length(base: arris.build.Solid) -> float:
+        """CadQuery's `largestDimension()`: the diagonal of the solid's tight box.
+
+        `arris`'s box is padded by `_BOUNDS_PAD` on every side; that goes first.
+        """
+        box = base.model.bounds(base.body)
+        if box is None:
+            raise UnsupportedApi("a bore on a solid without a box")
+        return math.sqrt(sum((box[1][k] - box[0][k] - 2 * _BOUNDS_PAD) ** 2 for k in range(3)))
+
+    def _cut_bores(
+        self,
+        base: arris.build.Solid,
+        centres: Sequence[tuple[float, float, float]],
+        cylinders: Sequence[tuple[float, float]],
+    ) -> Workplane:
+        """`base` less one cylinder per `(radius, length)` at every centre, cut in one call.
+
+        Each runs from its centre against the plane's normal (ADR-0018 rules 2
+        and 3). A cylinder of zero radius is left out, as the oracle leaves it.
+        """
+        plane = self._plane
         down = (-plane.z[0], -plane.z[1], -plane.z[2])
         tools = [
-            arris.build.Solid.cylinder(at, down, diameter / 2.0, depth, model=base.model)
+            arris.build.Solid.cylinder(at, down, radius, length, model=base.model)
             for at in centres
+            for radius, length in cylinders
+            if radius > 0
         ]
         return self._derive(base.cut(*tools))
 

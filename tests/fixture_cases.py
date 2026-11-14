@@ -42,7 +42,7 @@ def c1_subset() -> cq.Subset:
     (plans/lift-polygon), and `Workplane.extrude`'s `both=`
     (plans/lift-extrude-both), `Workplane.faces` with the six axis selectors
     (plans/lift-face-selectors), `Workplane.hole`, and
-    plans/lift-holes-and-points' forms: `Workplane.pushPoints`.
+    plans/lift-holes-and-points' forms: `Workplane.pushPoints`, `Workplane.cboreHole`.
     """
     constructor = cq.CensusForm("cq.Workplane", (("str",),))
     extrude = cq.CensusForm("Workplane.extrude", (("num",),))
@@ -60,6 +60,7 @@ def c1_subset() -> cq.Subset:
                 "Workplane.faces",
                 "Workplane.hole",
                 "Workplane.pushPoints",
+                "Workplane.cboreHole",
                 "Workplane.workplane",
                 "Workplane.cylinder",
                 "Workplane.threePointArc",

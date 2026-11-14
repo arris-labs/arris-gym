@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 307.0409303039421,
+    "area": 341.6991118430775,
+    "centroid": [
+      -0.007034387718943321,
+      -0.002813755087577331,
+      -0.020143928467883133
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 15,
+    "face_kinds": [
+      [
+        "cylinder",
+        6
+      ],
+      [
+        "plane",
+        9
+      ]
+    ],
+    "shells": 1,
+    "genus": 3
+  },
+  "note": "A 10 x 8 x 4 box, `.faces(\">Z\").workplane().pushPoints([(-1.0, -2.0), (1.0, 0.0), (0.5, 2.2)]).cboreHole(1, 2, 0.5)`. A `box` about the origin, a stepped bore of `cylinders` from its top face at each point. V = abc - n V_bore; the area gains n times the bore's walls and floors and loses its mouth, and its exit where it is through. The bore's centroid is its point and `c / 2 - m / V_bore` along the normal for a bore of moment `m` about the face: the part's is -n times that over V. 6 planes, a cylinder for each step and a plane for each floor and a cap. Where two pieces have one radius (`equal`) arris keeps a wall for each: one cylinder face more than CadQuery's `clean` leaves (the oracle's report counts 7)."
+}

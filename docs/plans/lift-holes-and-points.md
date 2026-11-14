@@ -100,7 +100,7 @@ within a given design; **[3]** unproven semantics, established here.
 - [x] Step 3 **[2]** — `hole(d, depth=)`: blind, past the part, on points;
   `runtime-` fixtures for the depths CadQuery refuses (step 1); the corpus
   `hex_standoff` as written; the property gains a depth.
-- [ ] Step 4 **[2]** — `cboreHole` per ADR-0018: `ok-cbore-*` with closed-form
+- [x] Step 4 **[2]** — `cboreHole` per ADR-0018: `ok-cbore-*` with closed-form
   volume and centroid, a `manifold_block` as written, `runtime-` for the
   arguments CadQuery refuses; a property over random bores.
 - [ ] Step 5 **[2]** — `cskHole` per ADR-0018, as step 4 (`ok-csk-*`, a
@@ -140,6 +140,13 @@ within a given design; **[3]** unproven semantics, established here.
   line loses `circle` on points.
 
 ## Open questions
+
+- *Settled* (step 4): no `manifold_block` is runnable as written yet: all 28
+  that write `cboreHole` write `faces(">Z").faces(">Z")` (step 6's context) and
+  bore along y first, a crossing no closed form states. Step 4's fixture is the
+  block's row of three counterbores alone (`ok-cbore-block-row`); the program as
+  written is step 6's, held against the oracle's report where no closed form
+  runs. The acceptance (`ok-cbore-*`, closed-form volume and centroid) is met.
 
 - ⚠ OPEN: bundle 2 split. The idea's bundle 2 (`docs/ideas/next-lift.md`,
   git) listed `hole(depth=)`, `pushPoints`, `rarray`, `center`, `cutBlind`,

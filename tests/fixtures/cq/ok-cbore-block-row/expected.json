@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 81675.10645017045,
+    "area": 13158.021549365396,
+    "centroid": [
+      -1.4358316956039738e-05,
+      -0.0,
+      -0.05319622945334757
+    ],
+    "bounds": [
+      [
+        -33.945,
+        -16.245,
+        -18.78
+      ],
+      [
+        33.945,
+        16.245,
+        18.78
+      ]
+    ],
+    "faces": 15,
+    "face_kinds": [
+      [
+        "cylinder",
+        6
+      ],
+      [
+        "plane",
+        9
+      ]
+    ],
+    "shells": 1,
+    "genus": 3
+  },
+  "note": "A manifold block's row of three counterbores (`manifold_block_000049_s20260505` less its other holes). The block is 67.89 along x, 32.49 along y and 37.56 along z, bored from the `>Z` face. A `box` about the origin, a stepped bore of `cylinders` from its top face at each point. V = abc - n V_bore; the area gains n times the bore's walls and floors and loses its mouth, and its exit where it is through. The bore's centroid is its point and `c / 2 - m / V_bore` along the normal for a bore of moment `m` about the face: the part's is -n times that over V. 6 planes, a cylinder for each step and a plane for each floor and a cap. Where two pieces have one radius (`equal`) arris keeps a wall for each: one cylinder face more than CadQuery's `clean` leaves (the oracle's report counts 7)."
+}

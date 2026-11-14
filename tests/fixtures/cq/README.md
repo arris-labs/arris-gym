@@ -422,3 +422,14 @@ hexagonal prism's bottom under a stud. `runtime-hole-depth-*`: a depth of 0 and
 of -1 (CadQuery's `Standard_ConstructionError`, the zero one from
 `gp_Vec::Normalize()`), raised before a zero diameter would cut nothing, and a
 negative diameter with a depth; each has its recorded oracle report.
+
+`ok-cbore-*` (step 4, `tests/test_cq_cbore.py`) counterbore a 10 x 8 x 4 box
+from its top face, each beside its recorded oracle report: one point, several,
+none (the plane's origin), a counterbore deeper than the part and one exactly
+as deep (a through hole of the counterbore's width), a counterbore narrower than
+the bore and one of its width (the bore alone), a zero bore (the counterbore
+alone, blind) and a zero counterbore, and a manifold block's row of three
+counterbores as `manifold_block_000049_s20260505` writes it less its other
+holes: that program also writes `faces(">Z").faces(">Z")`, a context step 6
+lifts, with its holes along y that cross these bores. `runtime-cbore-*`: the
+arguments CadQuery refuses, its words recorded beside ours.
