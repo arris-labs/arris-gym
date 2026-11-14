@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 50.26548245743669,
+    "area": 100.53096491487338,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -3,
+        -3,
+        0
+      ],
+      [
+        3,
+        3,
+        2
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "The same ring with the larger circle drawn second: CadQuery sorts the pending wires by size, so the program of ok-circle-circle-ring's solid."
+}

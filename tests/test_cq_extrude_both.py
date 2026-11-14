@@ -207,17 +207,14 @@ def test_the_closed_path_agrees_with_the_recorded_oracle() -> None:
     assert compare(result, report).outcome is FidelityOutcome.AGREE
 
 
-def test_two_sketches_are_refused_where_the_second_is_drawn() -> None:
+def test_two_circles_extrude_as_a_ring_on_both_sides() -> None:
     # CadQuery extrudes both circles (a pending wire each, the oracle answers
-    # `ok`, an annulus, V = 6 pi in `oracle.json`); the subset holds one
-    # sketch on a stack, so `circle` after `circle` is refused before
-    # `extrude` is reached.
-    case = next(
-        c for c in fixture_cases.load("cq") if c.slug == "unsupported-extrude-both-two-sketches"
-    )
+    # `ok`, an annulus, V = 6 pi in `oracle.json`); `circle` after `circle`
+    # is a ring (plans/lift-face-selectors step 7a).
+    case, report = _recorded("ok-extrude-both-circle-circle")
     result = fixture_cases.run(case)
-    assert result.status is ag.Status.UNSUPPORTED_API
-    assert result.message == "Workplane.circle on a non-empty stack"
+    assert fixture_cases.check(result, case.expected) == []
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
 
 
 @settings(max_examples=30, deadline=None)

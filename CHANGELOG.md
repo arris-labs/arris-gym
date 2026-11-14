@@ -5,6 +5,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs a second `circle` after a first one, as CadQuery
+  does: it is drawn about the first circle's centre and the two make a ring
+  that `extrude` (with or without `both=True`) or `revolve` builds, the larger
+  circle outside whichever was drawn first. A second circle of the same radius
+  or of radius 0, a third circle, and `polyline`, `box` or `union` on the ring
+  still end `unsupported_api`.
+
 - `dialect="cq"` now runs `hole(diameter)` as CadQuery does with no depth: a
   cylinder bored from the workplane's origin (after `workplane()` on a face or
   on a solid), against the plane's normal and as long as the solid's

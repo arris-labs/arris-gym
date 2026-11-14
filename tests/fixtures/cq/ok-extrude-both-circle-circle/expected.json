@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 18.84955592153876,
+    "area": 56.548667764616276,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -1
+      ],
+      [
+        2,
+        2,
+        1
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "circle(1).circle(2) is the ring of radii 1 and 2, extruded 1 to each side of the plane: height 2. V=pi*(4-1)*2=6*pi, A=2*pi*(4-1)+2*pi*(2+1)*2=18*pi, centroid (0,0,0), z -1 to 1. The oracle glues the two sweeps and keeps the seam, 6 faces where cq builds one prism of 4 (face counts are carried, never judged)."
+}

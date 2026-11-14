@@ -78,6 +78,19 @@ class _Segment:
 
 
 @dataclass(frozen=True)
+class _Disc(arris.build.Sketch):
+    """The sketch of one `circle`: a `Sketch` that also knows its centre and radius.
+
+    A second `circle` on a stack holding one is CadQuery's `eachpoint` over
+    the first wire, whose `Center()` is this centre: a concentric circle, and
+    `extrude` builds both pending wires as a ring.
+    """
+
+    center: tuple[float, float] = (0.0, 0.0)
+    radius: float = 0.0
+
+
+@dataclass(frozen=True)
 class _Path:
     """A pending path in plane coordinates: its start and the segments drawn from it.
 
@@ -251,7 +264,8 @@ class Workplane:
             raise UnsupportedApi("Workplane.lineTo on selected faces")
         if isinstance(last, _Path):
             return last
-        raise RuntimeError(f"Cannot convert object type '{type(last).__name__}' to vector")
+        kind = "Sketch" if isinstance(last, arris.build.Sketch) else type(last).__name__
+        raise RuntimeError(f"Cannot convert object type '{kind}' to vector")
 
     def _refuse_pending(self, form: str) -> None:
         """Raise `UnsupportedApi` naming `form` when the stack holds a pending wire.
@@ -624,24 +638,54 @@ class Workplane:
         The circle is the one sketch on the new stack, waiting for `extrude`
         or `revolve`. On an empty stack it is centred on the origin; on a
         stack holding only a `moveTo` point, on that point, in the plane's
-        own axes (CadQuery's `eachpoint` over one point). Refuses, as
+        own axes (CadQuery's `eachpoint` over one point). On a stack holding
+        one circle, a second `circle` is concentric with it and the two make
+        a ring for `extrude` or `revolve` (the larger circle outside). Refuses, as
         `UnsupportedApi`, any other stack: CadQuery centres a circle on each
         object there, which the subset does not model (`transformed` leaves
         a stack empty).
 
+        >>> import math
         >>> import arris_gym.cq as cq
         >>> round(cq.Workplane("XY").circle(1).extrude(2)._solids()[0].measure().volume, 9)
         6.283185307
         >>> wp = cq.Workplane("XY").moveTo(2, 0).circle(1).extrude(1)
         >>> [round(c, 9) + 0.0 for c in wp._solids()[0].measure().centroid]
         [2.0, 0.0, 0.5]
+        >>> ring = cq.Workplane("XY").circle(3).circle(1).extrude(2)
+        >>> round(ring._solids()[0].measure().volume / math.pi, 9)
+        16.0
         """
-        if not self._stack:
-            return self._derive(self._plane.circle(radius))
-        point = self._stack[0] if len(self._stack) == 1 else None
-        if not isinstance(point, _Path) or point.segments:
-            raise UnsupportedApi("Workplane.circle on a non-empty stack")
-        return self._derive(self._plane.circle(radius, center=point.start))
+        if len(self._stack) == 1 and isinstance(self._stack[0], _Disc):
+            return self._derive(self._ring(self._stack[0], radius))
+        centre = (0.0, 0.0)
+        if self._stack:
+            point = self._stack[0] if len(self._stack) == 1 else None
+            if not isinstance(point, _Path) or point.segments:
+                raise UnsupportedApi("Workplane.circle on a non-empty stack")
+            centre = point.start
+        return self._derive(self._disc(radius, centre))
+
+    def _disc(self, radius: float, centre: tuple[float, float]) -> _Disc:
+        """The pending circle of `radius` about `centre`, in the plane's own axes."""
+        sketch = self._plane.circle(radius, center=centre)
+        return _Disc(sketch.plane, sketch.outer, sketch.holes, centre, radius)
+
+    def _ring(self, first: _Disc, radius: float) -> arris.build.Sketch:
+        """The two concentric circles as one ring sketch: the larger outside, the smaller its hole.
+
+        CadQuery sorts the pending wires into outer and inner by size
+        (read on the oracle: `ok-circle-circle-*`). Two radii of one size
+        make a shape the oracle calls invalid; a radius of zero is not a
+        circle. Both are refused, `UnsupportedApi`, where the radii meet
+        there.
+        """
+        if radius == first.radius or radius <= 0 or first.radius <= 0:
+            raise UnsupportedApi("Workplane.circle on a circle of the same size or no size")
+        second = self._disc(radius, first.center)
+        outer, inner = (first, second) if radius < first.radius else (second, first)
+        # `Sketch.cut` of a `_Disc` is a `_Disc` still: a plain sketch ends the chain of circles.
+        return arris.build.Sketch(outer.plane, outer.outer, (inner.outer,))
 
     @census_form("Workplane.polygon", [("num",)] * 2)
     def polygon(self, nSides: int, diameter: float) -> Workplane:

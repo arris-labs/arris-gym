@@ -55,6 +55,21 @@ stack were rerun against their baseline oracle reports on 2026-11-12: 70
 `ok` and agree, 43 `arris_refusal` (a box touching the torus at its seam
 vertex, BACKLOG `torus-box-point-contact`), no `cq_bug` or timeout.
 
+`ok-circle-circle-ring`, `-larger-second`, `-at-point` and `-revolve` fix a
+second `circle` on a stack holding one circle (plans/lift-face-selectors
+step 7a): CadQuery centres it on the first wire's centre and builds both
+pending wires as a ring, the larger outside whichever was drawn first. V =
+16π for radii 3 and 1 and height 2; the revolve (V = 80π², Pappus) is two
+tori, two shells. Each has a recorded oracle report and an agreeing row in
+`test_cq_circle.py`. The 105 BenchCAD `impeller` programs that ended
+`circle` on a non-empty stack ran against the oracle's recorded reports on
+2026-11-14: 105 `ok` and agree. `unsupported-circle-circle-same-radius`
+(CadQuery's checker calls the shape invalid) and `-circle-circle-circle` (a
+third wire inside the ring, invalid on the oracle) are refused, as are
+`polyline`, `box` and `union` on the pending ring, which the oracle
+accepts: they are refused on a single pending circle too. A radius-0 second
+circle is the strict `xfail` `regression/cq-circle-circle-zero-radius`.
+
 `ok-origin-box-xy`, `-yz`, `-xz` and `-zx` put a 2 × 4 × 6 box on each
 admitted plane with `origin=(3, -5, 7)`: the centroid is that world point
 on every plane, and the bounds fix each plane's axis order (`ZX`: x +z,
@@ -292,9 +307,9 @@ circle by 0: read on the oracle (2026-11-14) the sweep fails with
 `cylinder` does for a zero height. `runtime-extrude-both-on-empty-stack`,
 `-on-solid`, `-on-open-path` and `-on-point` are `both` where no pending
 wire is: CadQuery and `cq` both raise `No pending wires present`.
-`unsupported-extrude-both-two-sketches` draws a second circle before the
-extrusion: the oracle extrudes both (`ok`, `oracle.json`: an annulus, V = 6 pi), the
-subset refuses `circle` on a pending wire before `extrude` is reached. `test_cq_extrude_both.py` holds
+`ok-extrude-both-circle-circle` draws a second circle before the
+extrusion: the oracle extrudes both (`ok`, `oracle.json`: an annulus, V = 6 pi),
+and so does `cq`, the two circles a ring. `test_cq_extrude_both.py` holds
 the failing rows as agreeing, with properties over stacks, planes and
 distances.
 

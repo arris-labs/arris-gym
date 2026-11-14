@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 50.26548245743669,
+    "area": 100.53096491487338,
+    "centroid": [
+      2,
+      -1,
+      1
+    ],
+    "bounds": [
+      [
+        -1,
+        -2,
+        -2
+      ],
+      [
+        5,
+        0,
+        4
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "moveTo(2, 1) on XZ is world (2, 0, 1): local (u, v, w) maps to (u, -w, v). The second circle is centred on the first, so the ring of ok-circle-circle-ring about that point, extruded 2 along world -y: V=16*pi, A=32*pi, centroid (2,-1,1), x -1 to 5, y -2 to 0, z -2 to 4."
+}

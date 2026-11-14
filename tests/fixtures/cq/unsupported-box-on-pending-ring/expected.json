@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "unsupported_api",
+  "message": "Workplane.box on a pending wire"
+}

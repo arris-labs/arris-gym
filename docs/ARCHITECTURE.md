@@ -354,7 +354,11 @@ offsets, sketches and extrusion use that directed frame, as CadQuery does.
 `origin=`, three numbers, is a world point: the named plane's origin moves
 there and its axes stay; a `transformed` offset is then local to it. `circle` on an empty stack is centred on
 the plane's origin, and on a stack holding only a `moveTo` point on that
-point, in the plane's axes; any other stack ends `unsupported_api`.
+point, in the plane's axes. A second `circle` on a stack holding one circle is
+concentric with it, and the two make a ring for `extrude` or `revolve`, the
+larger outside (CadQuery's `eachpoint` over the first wire's centre, both wires
+pending); radii of one size or a zero radius, and any other stack, end
+`unsupported_api`.
 `box` is centred the same way, on the origin or on a lone `moveTo` point; a
 drawn path, a sketch or a solid on the stack ends `unsupported_api` (on a
 solid CadQuery centres the box on its centre of mass, not modelled).

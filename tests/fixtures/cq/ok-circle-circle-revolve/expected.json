@@ -1,0 +1,36 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 789.5683520871487,
+    "area": 789.5683520871487,
+    "centroid": [
+      5,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -3,
+        -3,
+        -8
+      ],
+      [
+        13,
+        3,
+        8
+      ]
+    ],
+    "faces": 2,
+    "face_kinds": [
+      [
+        "torus",
+        2
+      ]
+    ],
+    "shells": 2,
+    "genus": 2,
+    "cavities": 1
+  },
+  "note": "The ring (R=3, r=1) turned about the line x=5, z=0 (parallel to y), 5 from its centre. Pappus: V=2*pi*5*pi*(9-1)=80*pi^2; each wall a torus of tube radius r and major radius 5, A=4*pi^2*5*(3+1)=80*pi^2; centroid on the axis at (5,0,0); x 5+-8, y +-3, z +-8. The two tori are the body's two shells: the outer one bounds the solid and the inner one a cavity (`cavities` 1), so the oracle counts one solid; each shell has genus 1."
+}

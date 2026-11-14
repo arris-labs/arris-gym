@@ -1,0 +1,40 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "cq refuses a second circle of radius 0 as unsupported_api; CadQuery 2.3.0 builds the disc of the first circle alone and its checker passes",
+  "measures": {
+    "volume": 25.132741228718345,
+    "area": 50.26548245743669,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        0
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "faces": 3,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "CadQuery drops the radius-0 wire: the solid is the plain cylinder r=2, h=2. V=8*pi, A=2*pi*4+2*pi*2*2=16*pi, centroid (0,0,1), z 0 to 2."
+}

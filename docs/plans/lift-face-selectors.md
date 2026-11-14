@@ -173,7 +173,7 @@ within a given design; **[3]** unproven semantics, established here.
   *Settled* (step 7): the conductor's run and `cq_diagnose.py` on its
   outputs; the causes and their steps are 7a to 7c below and the figures
   in *Open questions*.
-- [ ] Step 7a **[2]** — `impeller`, 105 `cq_bug` (`unsupported_api` for
+- [x] Step 7a **[2]** — `impeller`, 105 `cq_bug` (`unsupported_api` for
   "`Workplane.circle` on a non-empty stack"): the program writes
   `.circle(R).circle(r).extrude(h)`, a second `circle` on the stack the
   first left. Read it on the oracle (ADR-0005; CadQuery's `circle` goes
@@ -183,6 +183,17 @@ within a given design; **[3]** unproven semantics, established here.
   written), else refuse it with its fixture and a narrower message; either
   way the 105 leave `cq_bug`. Run the subset's other operations on that
   stack on both sides and refuse each that disagrees (*Do* step 2).
+  *Settled* (step 7a): `tools/fidelity` classes an oracle-`ok` row whose
+  `cq` ends `unsupported_api` `cq_bug` whatever the message (`_oracle_ok`),
+  so a narrower refusal would not move the 105: the lift is the way. The
+  oracle builds the ring (`ok-circle-circle-*`); all 105 `impeller` programs
+  now end `ok` and agree against the recorded oracle reports. Same-radius
+  circles (oracle `invalid`, a refusal is `unclassified` either way) and a
+  third circle stay refused; a zero radius (oracle: the plain disc) is the
+  strict xfail `regression/cq-circle-circle-zero-radius`.
+  `unsupported-extrude-both-two-sketches` became `ok-extrude-both-circle-circle`.
+  `test_cq.py`'s recorded-oracle test counts one solid per shell less the
+  fixture's `cavities` (the revolved ring is a hollow torus).
 - [ ] Step 7b **[3]** — `bearing_retainer_cap`, 37 `arris_bug`
   (`checker_fail`: 22 "L5 f10: loops 1 and 2 intersect", 10 "f18/f19: loop
   0 intersects itself", 5 "f16/f17: loop 0 intersects itself"); every program ends in a `faces(sel).workplane().hole(d)`

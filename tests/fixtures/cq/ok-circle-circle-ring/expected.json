@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 50.26548245743669,
+    "area": 100.53096491487338,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -3,
+        -3,
+        0
+      ],
+      [
+        3,
+        3,
+        2
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "Two concentric circles on the stack are one ring: the larger outside. V=pi*(9-1)*2=16*pi, A=2*pi*(9-1)+2*pi*(3+1)*2=32*pi, centroid (0,0,1), z from 0 to 2."
+}

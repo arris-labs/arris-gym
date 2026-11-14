@@ -71,8 +71,9 @@ def test_the_oracle_holds_a_recorded_fixtures_closed_form(case: fixture_cases.Ca
     assert report.measures is not None
     want = case.expected["measures"]
     assert isinstance(want, dict)
-    # One solid per shell of the closed form: none of these parts has a cavity.
-    assert report.measures.solids == want["shells"]
+    # One solid per shell of the closed form, less the shells that bound a
+    # cavity (`cavities`, absent when the part has none).
+    assert report.measures.solids == want["shells"] - want.get("cavities", 0)
     got = report.measures
     pairs = [(got.volume, want["volume"]), (got.area, want["area"])]
     pairs += list(zip(got.centroid, want["centroid"], strict=True))
