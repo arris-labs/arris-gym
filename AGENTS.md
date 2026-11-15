@@ -38,12 +38,12 @@ against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **0.1.0 published** (2026-11-10).
 **C2 target set** (2026-11-12): ADR-0014 fixes the fidelity target, a reach of
 85% on BenchCAD and 100% on CAD-Recode with no in-subset `cq_bug`. Now
-(2026-11-14): reach 6,154/17,900 on BenchCAD and 104/968 on CAD-Recode
-(the face selectors, `hole`, `pushPoints`, `cboreHole` and `cskHole` lifted,
-ADR-0017, ADR-0018), in-subset `cq_bug` 0 on CAD-Recode and 7 on BenchCAD
+(2026-11-15): reach 6,565/17,900 on BenchCAD and 104/968 on CAD-Recode
+(the face selectors, `hole`, `pushPoints`, `cboreHole`, `cskHole`, `rarray`,
+`polarArray` and `cutBlind` lifted, ADR-0017 to ADR-0019), in-subset `cq_bug` 0 on CAD-Recode and 7 on BenchCAD
 (`connecting_rod`, waiting on arris, ADR-0014's amendment).
-**Next:** C2's growth: bundle 2b (`rarray`, `polarArray`, `center`, `cutBlind`), then the knee's other bundles, riskiest first (ADR-0014)
-(`docs/ROADMAP.md`).
+**Next:** C2's growth: bundle 3, then the knee's other bundles, riskiest
+first (ADR-0014, `docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code
 

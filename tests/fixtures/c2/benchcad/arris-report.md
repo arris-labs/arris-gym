@@ -1,13 +1,13 @@
 # arris report
 
-Over 17900 programs: 1335 arris refusals, 142 arris bugs.
+Over 17900 programs: 1385 arris refusals, 142 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 
-### ` "OpDegenerateError" ` (815)
+### ` "OpDegenerateError" ` (865)
 
 - 281x ` "degenerate result: an arc's circle crosses the revolve axis: a spindle torus" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f81, +f82)" `
@@ -31,15 +31,33 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f130, +f111, +f121)" `
 - 3x ` "degenerate result: the faces touch along a curve interior to both result faces (+f15, +f6, +f11)" `
 - 65x ` "degenerate result: the faces touch along a curve interior to both result faces (+f15, +f6, +f7)" `
+- 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f16, +f13, +f14)" `
+- 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f18, +f15, +f16)" `
 - 159x ` "degenerate result: the faces touch along a curve interior to both result faces (+f2, +f5)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f20, +f17, +f18)" `
+- 8x ` "degenerate result: the faces touch along a curve interior to both result faces (+f22, +f13, +f20)" `
+- 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f22, +f19, +f20)" `
+- 3x ` "degenerate result: the faces touch along a curve interior to both result faces (+f24, +f15, +f22)" `
+- 3x ` "degenerate result: the faces touch along a curve interior to both result faces (+f24, +f21, +f22)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f254, +f250, +f253)" `
+- 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f26, +f17, +f24)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f268, +f266, +f267)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f27, +f21, +f22)" `
+- 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f28, +f19, +f26)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f296, +f293, +f294)" `
 - 32x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f18)" `
 - 34x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f22)" `
 - 46x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f24)" `
 - 47x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f31)" `
 - 61x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f8)" `
+- 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f30, +f21, +f28)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f310, +f308, +f309)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f380, +f378, +f379)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f394, +f392, +f393)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f408, +f404, +f407)" `
 - 11x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f27)" `
 - 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f36)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f450, +f446, +f449)" `
 - 6x ` "degenerate result: the faces touch along a curve interior to both result faces (+f47, +f30, +f31)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f47, +f30, +f40)" `
 - 10x ` "degenerate result: the faces touch along a curve interior to both result faces (+f48, +f31, +f32)" `

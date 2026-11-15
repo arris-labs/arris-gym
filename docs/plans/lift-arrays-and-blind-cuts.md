@@ -163,10 +163,14 @@ within a given design; **[3]** unproven semantics, established here.
   25 `bellows` `occt_wrong`, arris within 1.7e-10 in volume and 7.2e-11 in area
   of the closed form. Tests: the fixture's closed form, `bellows_011847` as
   written and with its holes inside the rim, and its committed oracle row.
-- [ ] Step 7 **[1, conductor-run]** — the committed re-run of both tables
+- [x] Step 7 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests); it deletes
   `fixture_cases.c2_baseline_subset()` (step 2 added it, as step 2 of
-  plans/lift-holes-and-points did) and the selector probe's `later` forms.
+  plans/lift-holes-and-points did).
+  *Settled*: the selector probe's `later` forms stay. They define the 950
+  programs its committed rows are (`before_subset()` without them gives 2,166,
+  and the rows are the oracle's, not re-runnable here), so removing them would
+  break that evidence, not retire a baseline.
 
 ## Acceptance
 

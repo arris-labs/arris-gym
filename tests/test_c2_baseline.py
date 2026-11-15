@@ -1,10 +1,10 @@
-"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-holes-and-points step 8).
+"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-arrays-and-blind-cuts step 7).
 
 `tools/cq_corpus.py` wrote `tests/fixtures/c2/<corpus>/` (network, the oracle
 environment, outside the gate). This reads the committed rows only: the table
 validates its own digest and counts, has one row per census row of the corpus,
 carries the corpus's licence, and the committed reach report is the one the
-table and the census rows give under the `cq` subset it was run under. The
+table and the census rows give under today's `cq` subset. The
 README states each digest, so a changed row is a changed README. The figures the docs publish
 (reach, agreement, the two target comparisons, each over all programs) are
 asserted here, so a re-run that moves one moves this file.
@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 
 import fixture_cases
-from arris_gym import Status
+from arris_gym import Status, cq
 from arris_gym.census import ProgramCensus, Unparsable, reach
 from arris_gym.fidelity import (
     DisagreementClass,
@@ -38,17 +38,17 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 6_154,
-        "agree": 4_481,
+        "in_subset": 6_565,
+        "agree": 4_695,
         "in_subset_cq_bug": 7,
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
             "arris_bug": 142,
-            "arris_refusal": 1_335,
+            "arris_refusal": 1_385,
             "by_design": 0,
-            "cq_bug": 11_256,
-            "occt_wrong": 482,
+            "cq_bug": 10_890,
+            "occt_wrong": 584,
         },
         "unclassified": 204,
         "oracle_ok": 17_537,
@@ -90,8 +90,8 @@ def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
 
 
 def reach_stems(corpus: str) -> list[str]:
-    """The stems the baseline subset admits, sorted (`reach`'s own census reading)."""
-    return sorted(reach(census_rows(corpus), fixture_cases.c2_baseline_subset()).stems)
+    """The stems today's subset admits, sorted (`reach`'s own census reading)."""
+    return sorted(reach(census_rows(corpus), cq.subset()).stems)
 
 
 def table_of(corpus: str) -> FidelityTable:
@@ -115,7 +115,7 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), fixture_cases.c2_baseline_subset()) == committed
+    assert reach_report(table, census_rows(corpus), cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, census_rows(corpus), fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]

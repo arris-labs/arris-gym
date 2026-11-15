@@ -1,4 +1,654 @@
 {
+ "bellows_000539_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 22553.326267612756,
+   "bounds": [
+    [
+     -25.77,
+     0.0,
+     -25.77
+    ],
+    [
+     25.77,
+     66.02,
+     25.77
+    ]
+   ],
+   "centroid": [
+    0.0,
+    32.67635396760598,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=24.668, r=1.22, d=3.46, cone=((23.32, 62.56), (25.77, 66.02)), profile=((10.401, 0.0), (23.32, 0.0), (25.77, 0.0), (25.77, 3.46), (23.32, 3.46), (13.75, 9.37), (23.32, 15.28), (13.75, 21.19), (23.32, 27.1), (13.75, 33.01), (23.32, 38.92), (13.75, 44.83), (23.32, 50.74), (13.75, 56.65), (23.32, 62.56), (25.77, 66.02), (23.32, 66.02), (10.401, 66.02), (10.401, 0.0))",
+   "volume": 56399.07648860191
+  }
+ },
+ "bellows_000597_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 31075.67637476591,
+   "bounds": [
+    [
+     -26.05,
+     0.0,
+     -26.05
+    ],
+    [
+     26.05,
+     117.88,
+     26.05
+    ]
+   ],
+   "centroid": [
+    0.0,
+    58.520730979558444,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=24.592, r=1.215, d=2.66, cone=((22.81, 115.22), (26.05, 117.88)), profile=((10.93, 0.0), (22.81, 0.0), (26.05, 0.0), (26.05, 2.66), (22.81, 2.66), (14.01, 12.04), (22.81, 21.42), (14.01, 30.8), (22.81, 40.18), (14.01, 49.56), (22.81, 58.94), (14.01, 68.32), (22.81, 77.7), (14.01, 87.08), (22.81, 96.46), (14.01, 105.84), (22.81, 115.22), (26.05, 117.88), (22.81, 117.88), (10.93, 117.88), (10.93, 0.0))",
+   "volume": 88485.58583689663
+  }
+ },
+ "bellows_000724_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 18359.213222545717,
+   "bounds": [
+    [
+     -19.99,
+     0.0,
+     -19.99
+    ],
+    [
+     19.99,
+     95.24,
+     19.99
+    ]
+   ],
+   "centroid": [
+    0.0,
+    42.80970345487901,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=19.0, r=1.1, d=3.66, cone=((14.073, 91.58), (19.99, 95.24)), profile=((6.28, 0.0), (17.79, 0.0), (19.99, 0.0), (19.99, 3.66), (17.79, 3.66), (8.717, 9.94), (17.641, 16.22), (8.57, 22.5), (17.047, 28.78), (8.423, 35.06), (16.452, 41.34), (8.276, 47.62), (15.857, 53.9), (8.129, 60.18), (15.263, 66.46), (7.982, 72.74), (14.668, 79.02), (7.835, 85.3), (14.073, 91.58), (19.99, 95.24), (17.79, 95.24), (6.28, 95.24), (6.28, 0.0))",
+   "volume": 38789.84284331322
+  }
+ },
+ "bellows_002655_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 46171.18460525923,
+   "bounds": [
+    [
+     -31.4,
+     0.0,
+     -31.4
+    ],
+    [
+     31.4,
+     119.12,
+     31.4
+    ]
+   ],
+   "centroid": [
+    0.0,
+    57.65097425226886,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=29.838, r=1.155, d=1.96, cone=((26.361, 117.16), (31.4, 119.12)), profile=((13.25, 0.0), (27.93, 0.0), (31.4, 0.0), (31.4, 1.96), (27.93, 1.96), (16.069, 9.16), (27.876, 16.36), (16.006, 23.56), (27.659, 30.76), (15.944, 37.96), (27.443, 45.16), (15.882, 52.36), (27.227, 59.56), (15.819, 66.76), (27.01, 73.96), (15.757, 81.16), (26.794, 88.36), (15.694, 95.56), (26.577, 102.76), (15.632, 109.96), (26.361, 117.16), (31.4, 119.12), (27.93, 119.12), (13.25, 119.12), (13.25, 0.0))",
+   "volume": 117205.29041230156
+  }
+ },
+ "bellows_003119_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 129674.83804483112,
+   "bounds": [
+    [
+     -46.93,
+     0.0,
+     -46.93
+    ],
+    [
+     46.93,
+     318.3,
+     46.93
+    ]
+   ],
+   "centroid": [
+    0.0,
+    150.30638056952506,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=44.999, r=1.685, d=6.27, cone=((37.691, 312.03), (46.93, 318.3)), profile=((15.57, 0.0), (42.64, 0.0), (46.93, 0.0), (46.93, 6.27), (42.64, 6.27), (19.778, 28.11), (42.442, 49.95), (19.593, 71.79), (41.65, 93.63), (19.409, 115.47), (40.858, 137.31), (19.224, 159.15), (40.066, 180.99), (19.04, 202.83), (39.274, 224.67), (18.855, 246.51), (38.483, 268.35), (18.671, 290.19), (37.691, 312.03), (46.93, 318.3), (42.64, 318.3), (15.57, 318.3), (15.57, 0.0))",
+   "volume": 727222.4326440997
+  }
+ },
+ "bellows_004146_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 80266.36637671351,
+   "bounds": [
+    [
+     -37.09,
+     0.0,
+     -37.09
+    ],
+    [
+     37.09,
+     241.54,
+     37.09
+    ]
+   ],
+   "centroid": [
+    0.0,
+    111.42048990366547,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=35.317, r=1.715, d=4.36, cone=((28.473, 237.18), (37.09, 241.54)), profile=((15.79, 0.0), (33.15, 0.0), (37.09, 0.0), (37.09, 4.36), (33.15, 4.36), (19.738, 20.99), (32.963, 37.62), (19.514, 54.25), (32.215, 70.88), (19.29, 87.51), (31.466, 104.14), (19.066, 120.77), (30.718, 137.4), (18.842, 154.03), (29.97, 170.66), (18.618, 187.29), (29.222, 203.92), (18.394, 220.55), (28.473, 237.18), (37.09, 241.54), (33.15, 241.54), (15.79, 241.54), (15.79, 0.0))",
+   "volume": 313063.0104577692
+  }
+ },
+ "bellows_005903_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 71925.60090204938,
+   "bounds": [
+    [
+     -37.05,
+     0.0,
+     -37.05
+    ],
+    [
+     37.05,
+     225.76,
+     37.05
+    ]
+   ],
+   "centroid": [
+    0.0,
+    105.30306099555555,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=35.227, r=1.315, d=10.22, cone=((28.669, 215.54), (37.05, 225.76)), profile=((12.45, 0.0), (33.0, 0.0), (37.05, 0.0), (37.05, 10.22), (33.0, 10.22), (17.401, 27.33), (32.794, 44.44), (17.182, 61.55), (31.969, 78.66), (16.963, 95.77), (31.144, 112.88), (16.744, 129.99), (30.319, 147.1), (16.525, 164.21), (29.494, 181.32), (16.306, 198.43), (28.669, 215.54), (37.05, 225.76), (33.0, 225.76), (12.45, 225.76), (12.45, 0.0))",
+   "volume": 350875.622229355
+  }
+ },
+ "bellows_006447_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17448.607302785815,
+   "bounds": [
+    [
+     -19.13,
+     0.0,
+     -19.13
+    ],
+    [
+     19.13,
+     82.96,
+     19.13
+    ]
+   ],
+   "centroid": [
+    0.0,
+    41.06354137412783,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=18.09, r=1.21, d=2.77, cone=((16.82, 80.19), (19.13, 82.96)), profile=((8.64, 0.0), (16.82, 0.0), (19.13, 0.0), (19.13, 2.77), (16.82, 2.77), (10.48, 8.3), (16.82, 13.83), (10.48, 19.36), (16.82, 24.89), (10.48, 30.42), (16.82, 35.95), (10.48, 41.48), (16.82, 47.01), (10.48, 52.54), (16.82, 58.07), (10.48, 63.6), (16.82, 69.13), (10.48, 74.66), (16.82, 80.19), (19.13, 82.96), (16.82, 82.96), (8.64, 82.96), (8.64, 0.0))",
+   "volume": 32604.8742190393
+  }
+ },
+ "bellows_007491_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 39323.03993737185,
+   "bounds": [
+    [
+     -28.8,
+     0.0,
+     -28.8
+    ],
+    [
+     28.8,
+     134.46,
+     28.8
+    ]
+   ],
+   "centroid": [
+    0.0,
+    66.69266836268606,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=27.617, r=1.36, d=5.91, cone=((26.17, 128.55), (28.8, 134.46)), profile=((8.701, 0.0), (26.17, 0.0), (28.8, 0.0), (28.8, 5.91), (26.17, 5.91), (13.23, 16.13), (26.17, 26.35), (13.23, 36.57), (26.17, 46.79), (13.23, 57.01), (26.17, 67.23), (13.23, 77.45), (26.17, 87.67), (13.23, 97.89), (26.17, 108.11), (13.23, 118.33), (26.17, 128.55), (28.8, 134.46), (26.17, 134.46), (8.701, 134.46), (8.701, 0.0))",
+   "volume": 152162.7969101166
+  }
+ },
+ "bellows_007494_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 44771.28616878474,
+   "bounds": [
+    [
+     -33.65,
+     0.0,
+     -33.65
+    ],
+    [
+     33.65,
+     118.32,
+     33.65
+    ]
+   ],
+   "centroid": [
+    0.0,
+    58.56473176252165,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=31.994, r=1.115, d=4.01, cone=((29.97, 114.31), (33.65, 118.32)), profile=((15.38, 0.0), (29.97, 0.0), (33.65, 0.0), (33.65, 4.01), (29.97, 4.01), (17.38, 15.04), (29.97, 26.07), (17.38, 37.1), (29.97, 48.13), (17.38, 59.16), (29.97, 70.19), (17.38, 81.22), (29.97, 92.25), (17.38, 103.28), (29.97, 114.31), (33.65, 118.32), (29.97, 118.32), (15.38, 118.32), (15.38, 0.0))",
+   "volume": 137765.81076872812
+  }
+ },
+ "bellows_009246_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 64580.27690369005,
+   "bounds": [
+    [
+     -33.69,
+     0.0,
+     -33.69
+    ],
+    [
+     33.69,
+     188.5,
+     33.69
+    ]
+   ],
+   "centroid": [
+    0.0,
+    93.94231183568144,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=32.255, r=1.16, d=2.81, cone=((30.5, 185.69), (33.69, 188.5)), profile=((9.97, 0.0), (30.5, 0.0), (33.69, 0.0), (33.69, 2.81), (30.5, 2.81), (14.91, 14.24), (30.5, 25.67), (14.91, 37.1), (30.5, 48.53), (14.91, 59.96), (30.5, 71.39), (14.91, 82.82), (30.5, 94.25), (14.91, 105.68), (30.5, 117.11), (14.91, 128.54), (30.5, 139.97), (14.91, 151.4), (30.5, 162.83), (14.91, 174.26), (30.5, 185.69), (33.69, 188.5), (30.5, 188.5), (9.97, 188.5), (9.97, 0.0))",
+   "volume": 268006.635799756
+  }
+ },
+ "bellows_010022_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 120856.50169998381,
+   "bounds": [
+    [
+     -44.39,
+     0.0,
+     -44.39
+    ],
+    [
+     44.39,
+     310.38,
+     44.39
+    ]
+   ],
+   "centroid": [
+    0.0,
+    135.8182747195462,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=42.288, r=2.23, d=10.79, cone=((30.901, 299.59), (44.39, 310.38)), profile=((17.53, 0.0), (39.72, 0.0), (44.39, 0.0), (44.39, 10.79), (39.72, 10.79), (20.79, 28.84), (39.416, 46.89), (20.469, 64.94), (38.199, 82.99), (20.148, 101.04), (36.983, 119.09), (19.827, 137.14), (35.767, 155.19), (19.506, 173.24), (34.55, 191.29), (19.186, 209.34), (33.334, 227.39), (18.865, 245.44), (32.117, 263.49), (18.544, 281.54), (30.901, 299.59), (44.39, 310.38), (39.72, 310.38), (17.53, 310.38), (17.53, 0.0))",
+   "volume": 533024.613659479
+  }
+ },
+ "bellows_010796_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 76420.55651342697,
+   "bounds": [
+    [
+     -39.61,
+     0.0,
+     -39.61
+    ],
+    [
+     39.61,
+     148.7,
+     39.61
+    ]
+   ],
+   "centroid": [
+    0.0,
+    73.9395625733948,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=37.472, r=1.98, d=2.83, cone=((34.86, 145.87), (39.61, 148.7)), profile=((12.22, 0.0), (34.86, 0.0), (39.61, 0.0), (39.61, 2.83), (34.86, 2.83), (16.3, 11.77), (34.86, 20.71), (16.3, 29.65), (34.86, 38.59), (16.3, 47.53), (34.86, 56.47), (16.3, 65.41), (34.86, 74.35), (16.3, 83.29), (34.86, 92.23), (16.3, 101.17), (34.86, 110.11), (16.3, 119.05), (34.86, 127.99), (16.3, 136.93), (34.86, 145.87), (39.61, 148.7), (34.86, 148.7), (12.22, 148.7), (12.22, 0.0))",
+   "volume": 263171.27449099143
+  }
+ },
+ "bellows_011187_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 97300.90855446435,
+   "bounds": [
+    [
+     -50.84,
+     0.0,
+     -50.84
+    ],
+    [
+     50.84,
+     182.78,
+     50.84
+    ]
+   ],
+   "centroid": [
+    0.0,
+    86.97863716427767,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=48.896, r=1.52, d=10.99, cone=((43.08, 171.79), (50.84, 182.78)), profile=((23.637, 0.0), (46.52, 0.0), (50.84, 0.0), (50.84, 10.99), (46.52, 10.99), (29.402, 31.09), (46.255, 51.19), (29.065, 71.29), (45.197, 91.39), (28.729, 111.49), (44.139, 131.59), (28.393, 151.69), (43.08, 171.79), (50.84, 182.78), (46.52, 182.78), (23.637, 182.78), (23.637, 0.0))",
+   "volume": 546976.3992297594
+  }
+ },
+ "bellows_011718_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 29438.311830760256,
+   "bounds": [
+    [
+     -28.97,
+     0.0,
+     -28.97
+    ],
+    [
+     28.97,
+     96.82,
+     28.97
+    ]
+   ],
+   "centroid": [
+    0.0,
+    46.91087301852877,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=27.62, r=0.955, d=4.81, cone=((24.809, 92.01), (28.97, 96.82)), profile=((10.26, 0.0), (25.97, 0.0), (28.97, 0.0), (28.97, 4.81), (25.97, 4.81), (13.214, 15.71), (25.881, 26.61), (13.123, 37.51), (25.524, 48.41), (13.032, 59.31), (25.167, 70.21), (12.941, 81.11), (24.809, 92.01), (28.97, 96.82), (25.97, 96.82), (10.26, 96.82), (10.26, 0.0))",
+   "volume": 96946.02515147235
+  }
+ },
+ "bellows_011847_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 14884.26099409495,
+   "bounds": [
+    [
+     -21.09,
+     0.0,
+     -21.09
+    ],
+    [
+     21.09,
+     62.92,
+     21.09
+    ]
+   ],
+   "centroid": [
+    0.0,
+    31.028117409995975,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=19.925, r=1.18, d=3.18, cone=((18.5, 59.74), (21.09, 62.92)), profile=((7.07, 0.0), (18.5, 0.0), (21.09, 0.0), (21.09, 3.18), (18.5, 3.18), (8.6, 10.25), (18.5, 17.32), (8.6, 24.39), (18.5, 31.46), (8.6, 38.53), (18.5, 45.6), (8.6, 52.67), (18.5, 59.74), (21.09, 62.92), (18.5, 62.92), (7.07, 62.92), (7.07, 0.0))",
+   "volume": 32437.94555678092
+  }
+ },
+ "bellows_014604_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 88522.68957150499,
+   "bounds": [
+    [
+     -48.13,
+     0.0,
+     -48.13
+    ],
+    [
+     48.13,
+     157.14,
+     48.13
+    ]
+   ],
+   "centroid": [
+    0.0,
+    74.01078454179586,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=46.096, r=1.6, d=3.75, cone=((39.336, 153.39), (48.13, 157.14)), profile=((22.739, 0.0), (43.61, 0.0), (48.13, 0.0), (48.13, 3.75), (43.61, 3.75), (28.019, 16.22), (43.406, 28.69), (27.756, 41.16), (42.592, 53.63), (27.493, 66.1), (41.778, 78.57), (27.23, 91.04), (40.964, 103.51), (26.968, 115.98), (40.15, 128.45), (26.705, 140.92), (39.336, 153.39), (48.13, 157.14), (43.61, 157.14), (22.739, 157.14), (22.739, 0.0))",
+   "volume": 363911.034107506
+  }
+ },
+ "bellows_015255_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 55291.28834141517,
+   "bounds": [
+    [
+     -35.75,
+     0.0,
+     -35.75
+    ],
+    [
+     35.75,
+     124.12,
+     35.75
+    ]
+   ],
+   "centroid": [
+    0.0,
+    61.780044978491574,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=34.611, r=1.07, d=3.02, cone=((33.22, 121.1), (35.75, 124.12)), profile=((17.15, 0.0), (33.22, 0.0), (35.75, 0.0), (35.75, 3.02), (33.22, 3.02), (19.48, 12.86), (33.22, 22.7), (19.48, 32.54), (33.22, 42.38), (19.48, 52.22), (33.22, 62.06), (19.48, 71.9), (33.22, 81.74), (19.48, 91.58), (33.22, 101.42), (19.48, 111.26), (33.22, 121.1), (35.75, 124.12), (33.22, 124.12), (17.15, 124.12), (17.15, 0.0))",
+   "volume": 172032.11960329494
+  }
+ },
+ "bellows_016367_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 54239.25555974611,
+   "bounds": [
+    [
+     -31.23,
+     0.0,
+     -31.23
+    ],
+    [
+     31.23,
+     169.52,
+     31.23
+    ]
+   ],
+   "centroid": [
+    0.0,
+    84.33449636824982,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=30.154, r=1.25, d=5.31, cone=((28.84, 164.21), (31.23, 169.52)), profile=((11.965, 0.0), (28.84, 0.0), (31.23, 0.0), (31.23, 5.31), (28.84, 5.31), (16.34, 16.66), (28.84, 28.01), (16.34, 39.36), (28.84, 50.71), (16.34, 62.06), (28.84, 73.41), (16.34, 84.76), (28.84, 96.11), (16.34, 107.46), (28.84, 118.81), (16.34, 130.16), (28.84, 141.51), (16.34, 152.86), (28.84, 164.21), (31.23, 169.52), (28.84, 169.52), (11.965, 169.52), (11.965, 0.0))",
+   "volume": 216108.01340504884
+  }
+ },
+ "bellows_016513_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 24825.70030280121,
+   "bounds": [
+    [
+     -23.28,
+     0.0,
+     -23.28
+    ],
+    [
+     23.28,
+     104.62,
+     23.28
+    ]
+   ],
+   "centroid": [
+    0.0,
+    51.969559081074635,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=22.047, r=1.32, d=2.45, cone=((20.54, 102.17), (23.28, 104.62)), profile=((7.53, 0.0), (20.54, 0.0), (23.28, 0.0), (23.28, 2.45), (20.54, 2.45), (9.68, 10.76), (20.54, 19.07), (9.68, 27.38), (20.54, 35.69), (9.68, 44.0), (20.54, 52.31), (9.68, 60.62), (20.54, 68.93), (9.68, 77.24), (20.54, 85.55), (9.68, 93.86), (20.54, 102.17), (23.28, 104.62), (20.54, 104.62), (7.53, 104.62), (7.53, 0.0))",
+   "volume": 63723.989461712816
+  }
+ },
+ "bellows_017770_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 65259.17812399126,
+   "bounds": [
+    [
+     -40.02,
+     0.0,
+     -40.02
+    ],
+    [
+     40.02,
+     174.24,
+     40.02
+    ]
+   ],
+   "centroid": [
+    0.0,
+    82.77909179072937,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=37.743, r=1.195, d=8.92, cone=((31.929, 165.32), (40.02, 174.24)), profile=((11.68, 0.0), (34.96, 0.0), (40.02, 0.0), (40.02, 8.92), (34.96, 8.92), (16.296, 24.56), (34.782, 40.2), (16.129, 55.84), (34.069, 71.48), (15.962, 87.12), (33.355, 102.76), (15.795, 118.4), (32.642, 134.04), (15.628, 149.68), (31.929, 165.32), (40.02, 174.24), (34.96, 174.24), (11.68, 174.24), (11.68, 0.0))",
+   "volume": 321894.63289963215
+  }
+ },
+ "bellows_017921_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 40277.9208601565,
+   "bounds": [
+    [
+     -30.13,
+     0.0,
+     -30.13
+    ],
+    [
+     30.13,
+     123.04,
+     30.13
+    ]
+   ],
+   "centroid": [
+    0.0,
+    61.08661049868966,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=28.82, r=1.455, d=4.16, cone=((27.22, 118.88), (30.13, 123.04)), profile=((10.953, 0.0), (27.22, 0.0), (30.13, 0.0), (30.13, 4.16), (27.22, 4.16), (15.17, 13.72), (27.22, 23.28), (15.17, 32.84), (27.22, 42.4), (15.17, 51.96), (27.22, 61.52), (15.17, 71.08), (27.22, 80.64), (15.17, 90.2), (27.22, 99.76), (15.17, 109.32), (27.22, 118.88), (30.13, 123.04), (27.22, 123.04), (10.953, 123.04), (10.953, 0.0))",
+   "volume": 142353.12318341457
+  }
+ },
+ "bellows_018449_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 26269.058845881136,
+   "bounds": [
+    [
+     -23.45,
+     0.0,
+     -23.45
+    ],
+    [
+     23.45,
+     90.46,
+     23.45
+    ]
+   ],
+   "centroid": [
+    0.0,
+    44.904968098599355,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=22.248, r=1.295, d=2.51, cone=((20.78, 87.95), (23.45, 90.46)), profile=((8.671, 0.0), (20.78, 0.0), (23.45, 0.0), (23.45, 2.51), (20.78, 2.51), (11.81, 7.85), (20.78, 13.19), (11.81, 18.53), (20.78, 23.87), (11.81, 29.21), (20.78, 34.55), (11.81, 39.89), (20.78, 45.23), (11.81, 50.57), (20.78, 55.91), (11.81, 61.25), (20.78, 66.59), (11.81, 71.93), (20.78, 77.27), (11.81, 82.61), (20.78, 87.95), (23.45, 90.46), (20.78, 90.46), (8.671, 90.46), (8.671, 0.0))",
+   "volume": 59826.355814807015
+  }
+ },
+ "bellows_019849_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 46357.23897868258,
+   "bounds": [
+    [
+     -33.58,
+     0.0,
+     -33.58
+    ],
+    [
+     33.58,
+     119.8,
+     33.58
+    ]
+   ],
+   "centroid": [
+    0.0,
+    57.65286604255299,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=31.708, r=1.065, d=3.62, cone=((27.592, 116.18), (33.58, 119.8)), profile=((11.3, 0.0), (29.42, 0.0), (33.58, 0.0), (33.58, 3.62), (29.42, 3.62), (13.281, 13.0), (29.333, 22.38), (13.202, 31.76), (28.985, 41.14), (13.123, 50.52), (28.637, 59.9), (13.044, 69.28), (28.289, 78.66), (12.965, 88.04), (27.94, 97.42), (12.887, 106.8), (27.592, 116.18), (33.58, 119.8), (29.42, 119.8), (11.3, 119.8), (11.3, 0.0))",
+   "volume": 136213.32990909956
+  }
+ },
+ "bellows_019871_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 60811.2858655301,
+   "bounds": [
+    [
+     -40.02,
+     0.0,
+     -40.02
+    ],
+    [
+     40.02,
+     133.64,
+     40.02
+    ]
+   ],
+   "centroid": [
+    0.0,
+    64.12505819553365,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=37.761, r=1.815, d=3.16, cone=((32.397, 130.48), (40.02, 133.64)), profile=((14.764, 0.0), (35.0, 0.0), (40.02, 0.0), (40.02, 3.16), (35.0, 3.16), (19.939, 13.77), (34.876, 24.38), (19.797, 34.99), (34.38, 45.6), (19.656, 56.21), (33.884, 66.82), (19.514, 77.43), (33.389, 88.04), (19.372, 98.65), (32.893, 109.26), (19.23, 119.87), (32.397, 130.48), (40.02, 133.64), (35.0, 133.64), (14.764, 133.64), (14.764, 0.0))",
+   "volume": 229745.36613432303
+  }
+ },
  "connecting_rod_000271_s20260507": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -6841,6 +7491,162 @@
    "volume": 26594.474860954906
   }
  },
+ "t_pipe_fitting_000436_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 359208.9131029674,
+   "bounds": [
+    [
+     -102.85,
+     -172.99,
+     -102.85
+    ],
+    [
+     102.85,
+     172.99,
+     102.85
+    ]
+   ],
+   "centroid": [
+    -6.69332427098163e-18,
+    0.0,
+    1.1244694669337107
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=9.91, rf2=21.35, t2=11.89, d=8.81) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=62.91, h=336.07, r=13.35, hb=84.65, s=6.72, q=56.28",
+   "volume": 1282607.2379740265
+  }
+ },
+ "t_pipe_fitting_000464_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 165775.90438934712,
+   "bounds": [
+    [
+     -65.7,
+     -127.235,
+     -65.7
+    ],
+    [
+     65.7,
+     127.235,
+     87.6
+    ]
+   ],
+   "centroid": [
+    -2.3038350648161473e-17,
+    0.0,
+    5.367569612069816
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.82, rf2=26.7, t2=9.44, d=8.12) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=37.05, h=246.65, r=16.7, hb=87.6, s=11.46, q=31.81",
+   "volume": 461394.3458121273
+  }
+ },
+ "t_pipe_fitting_000472_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 192880.50435520188,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -152.945
+    ],
+    [
+     65.7,
+     65.7,
+     152.945
+    ]
+   ],
+   "centroid": [
+    1.1182925597854128e-17,
+    2.347348646938015,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.62, rf2=26.7, t2=10.42, d=8.96) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=40.885, h=297.27, r=16.7, hb=63.73, s=10.92, q=35.105",
+   "volume": 585089.2255194354
+  }
+ },
+ "t_pipe_fitting_000777_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 25108.32243818416,
+   "bounds": [
+    [
+     -24.05,
+     -44.129999999999995,
+     -24.05
+    ],
+    [
+     24.05,
+     44.129999999999995,
+     55.99
+    ]
+   ],
+   "centroid": [
+    -6.386994433812228e-18,
+    0.0,
+    10.443297074634689
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=24.05, t=3.99, rf2=17.05, t2=4.82, d=3.99) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=12.375, h=84.27, r=10.65, hb=55.99, s=7.99, q=9.715",
+   "volume": 35776.22265020897
+  }
+ },
+ "t_pipe_fitting_000826_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 85121.6989359735,
+   "bounds": [
+    [
+     -54.25,
+     -54.25,
+     -67.58500000000001
+    ],
+    [
+     54.25,
+     75.74,
+     67.58500000000001
+    ]
+   ],
+   "centroid": [
+    0.0,
+    8.457085019534782,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.09, rf2=26.7, t2=6.04, d=6.9) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=26.01, h=130.08, r=16.7, hb=75.74, s=13.33, q=22.64",
+   "volume": 162659.5223391045
+  }
+ },
+ "t_pipe_fitting_001101_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 104502.02034325156,
+   "bounds": [
+    [
+     -54.25,
+     -54.25,
+     -88.46
+    ],
+    [
+     54.25,
+     81.37,
+     88.46
+    ]
+   ],
+   "centroid": [
+    1.4791189232734012e-17,
+    11.085157930180786,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 3 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.29, rf2=33.75, t2=6.28, d=7.18) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=27.05, h=171.63, r=21.1, hb=81.37, s=17.59, q=23.54",
+   "volume": 205783.97314446917
+  }
+ },
  "t_pipe_fitting_001148_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -6867,6 +7673,32 @@
    "volume": 40199.83246877695
   }
  },
+ "t_pipe_fitting_001454_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 53687.18920558622,
+   "bounds": [
+    [
+     -38.0,
+     -59.510000000000005,
+     -38.0
+    ],
+    [
+     38.0,
+     59.510000000000005,
+     61.52
+    ]
+   ],
+   "centroid": [
+    6.111862743353261e-18,
+    0.0,
+    10.25379933769654
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.09, rf2=26.7, t2=6.14, d=6.53) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=20.25, h=113.93, r=16.7, hb=61.52, s=13.28, q=16.83",
+   "volume": 99087.90398439518
+  }
+ },
  "t_pipe_fitting_001642_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -6891,6 +7723,32 @@
    "kind": "closed_form",
    "note": "a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=22.875, h=145.49, r=10.65, hb=58.76, s=6.79, q=19.015",
    "volume": 81118.95012155427
+  }
+ },
+ "t_pipe_fitting_001755_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 133263.92266525156,
+   "bounds": [
+    [
+     -114.705,
+     -65.7,
+     -65.7
+    ],
+    [
+     114.705,
+     65.7,
+     65.7
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.721023978859589e-17,
+    1.942025112887443
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=6.22, rf2=26.7, t2=7.51, d=6.46) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=29.495, h=223.19, r=16.7, hb=44.85, s=12.53, q=25.325",
+   "volume": 310937.6700584217
   }
  },
  "t_pipe_fitting_001787_s20260505": {
@@ -7023,6 +7881,58 @@
    "volume": 14376.26962088031
   }
  },
+ "t_pipe_fitting_002165_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 71009.8606339141,
+   "bounds": [
+    [
+     -43.45,
+     -43.45,
+     -74.83
+    ],
+    [
+     43.45,
+     57.34,
+     74.83
+    ]
+   ],
+   "centroid": [
+    4.500464680257647e-17,
+    6.66753052668316,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=5.64, rf2=26.7, t2=6.77, d=8.0) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=24.775, h=144.02, r=16.7, hb=57.34, s=12.93, q=21.005",
+   "volume": 141204.81049853508
+  }
+ },
+ "t_pipe_fitting_002297_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 78460.48869804043,
+   "bounds": [
+    [
+     -94.715,
+     -43.45,
+     -43.45
+    ],
+    [
+     94.715,
+     43.45,
+     57.92
+    ]
+   ],
+   "centroid": [
+    0.0,
+    4.115451966264981e-17,
+    3.1379611831043306
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=5.63, rf2=17.05, t2=6.75, d=7.98) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=24.715, h=183.8, r=10.65, hb=57.92, s=6.88, q=20.945",
+   "volume": 153371.41077914694
+  }
+ },
  "t_pipe_fitting_002653_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7047,6 +7957,32 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=16.03, h=117.12, r=10.65, hb=58.75, s=7.41, q=12.79",
    "volume": 41890.24398247553
+  }
+ },
+ "t_pipe_fitting_002774_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 151705.8991911762,
+   "bounds": [
+    [
+     -65.7,
+     -106.03,
+     -65.7
+    ],
+    [
+     65.7,
+     106.03,
+     89.77
+    ]
+   ],
+   "centroid": [
+    6.673346682678203e-18,
+    0.0,
+    8.600020605530098
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.8, rf2=33.75, t2=9.42, d=8.11) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=36.98, h=204.26, r=21.1, hb=89.77, s=15.87, q=31.75",
+   "volume": 429015.2292240377
   }
  },
  "t_pipe_fitting_002829_s20260505": {
@@ -7101,6 +8037,58 @@
    "volume": 21268.77994518981
   }
  },
+ "t_pipe_fitting_002956_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 108651.28657070867,
+   "bounds": [
+    [
+     -54.25,
+     -92.905,
+     -54.25
+    ],
+    [
+     54.25,
+     92.905,
+     61.94
+    ]
+   ],
+   "centroid": [
+    -1.6817588180402803e-17,
+    0.0,
+    4.3727826803610705
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=6.66, rf2=26.7, t2=7.9, d=9.03) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=34.015, h=179.15, r=16.7, hb=61.94, s=12.29, q=29.605",
+   "volume": 255615.1466006966
+  }
+ },
+ "t_pipe_fitting_003263_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 74640.0948874884,
+   "bounds": [
+    [
+     -43.45,
+     -73.19,
+     -43.45
+    ],
+    [
+     43.45,
+     73.19,
+     87.75
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    13.365432321767775
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=5.43, rf2=26.7, t2=6.51, d=7.7) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=23.835, h=140.95, r=16.7, hb=87.75, s=13.07, q=20.205",
+   "volume": 144911.74340741168
+  }
+ },
  "t_pipe_fitting_003440_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7153,6 +8141,58 @@
    "volume": 24329.250914005483
   }
  },
+ "t_pipe_fitting_003807_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 447463.3860927118,
+   "bounds": [
+    [
+     -102.85,
+     -102.85,
+     -194.97
+    ],
+    [
+     102.85,
+     216.23,
+     194.97
+    ]
+   ],
+   "centroid": [
+    3.275732477500215e-18,
+    37.531873353216554,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=7.88, rf2=71.1, t2=9.45, d=7.0) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=50.01, h=382.06, r=44.45, hb=216.23, s=39.18, q=44.74",
+   "volume": 1315600.2634049696
+  }
+ },
+ "t_pipe_fitting_003875_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 87042.3178055043,
+   "bounds": [
+    [
+     -54.25,
+     -54.25,
+     -79.005
+    ],
+    [
+     54.25,
+     54.25,
+     79.005
+    ]
+   ],
+   "centroid": [
+    1.6199758478898644e-17,
+    3.853427126097973,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 3 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.1, rf2=26.7, t2=6.05, d=6.91) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=26.045, h=152.91, r=16.7, hb=49.85, s=13.32, q=22.665",
+   "volume": 167775.21805908805
+  }
+ },
  "t_pipe_fitting_004594_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7203,6 +8243,32 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=27.445, h=186.36, r=16.7, hb=59.43, s=12.52, q=23.265",
    "volume": 135055.10532010227
+  }
+ },
+ "t_pipe_fitting_005088_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 179357.0712668198,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -139.26000000000002
+    ],
+    [
+     65.7,
+     86.26,
+     139.26000000000002
+    ]
+   ],
+   "centroid": [
+    1.7066364175210906e-17,
+    6.82726303779343,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 5 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.8, rf2=33.75, t2=9.42, d=8.1) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=36.955, h=270.72, r=21.1, hb=86.26, s=15.88, q=31.735",
+   "volume": 502024.56860163924
   }
  },
  "t_pipe_fitting_005153_s20260505": {
@@ -7283,6 +8349,58 @@
    "volume": 155562.96664239402
   }
  },
+ "t_pipe_fitting_005617_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 124841.94008682728,
+   "bounds": [
+    [
+     -93.045,
+     -54.25,
+     -54.25
+    ],
+    [
+     93.045,
+     54.25,
+     127.03
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.2853676726376041e-17,
+    20.363894680430295
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=6.27, rf2=33.75, t2=7.44, d=8.5) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=32.025, h=179.82, r=21.1, hb=127.03, s=16.95, q=27.875",
+   "volume": 278983.5443536263
+  }
+ },
+ "t_pipe_fitting_005891_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 61042.21697264701,
+   "bounds": [
+    [
+     -43.45,
+     -62.655,
+     -43.45
+    ],
+    [
+     43.45,
+     62.655,
+     53.91
+    ]
+   ],
+   "centroid": [
+    -3.943926152142301e-17,
+    0.0,
+    6.994251329346175
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=4.98, rf2=26.7, t2=5.98, d=7.07) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=21.88, h=120.33, r=16.7, hb=53.91, s=13.37, q=18.55",
+   "volume": 111118.70412216622
+  }
+ },
  "t_pipe_fitting_006019_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7309,6 +8427,110 @@
    "volume": 112979.37687161799
   }
  },
+ "t_pipe_fitting_006155_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 111681.27949248045,
+   "bounds": [
+    [
+     -54.25,
+     -100.94999999999999,
+     -54.25
+    ],
+    [
+     54.25,
+     100.94999999999999,
+     67.63
+    ]
+   ],
+   "centroid": [
+    -9.709368665890517e-18,
+    0.0,
+    9.356827135662398
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.26, rf2=38.65, t2=6.24, d=7.13) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=26.865, h=196.64, r=24.15, hb=67.63, s=20.67, q=23.385",
+   "volume": 218008.97877619055
+  }
+ },
+ "t_pipe_fitting_006208_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 56329.238173991886,
+   "bounds": [
+    [
+     -78.115,
+     -38.0,
+     -38.0
+    ],
+    [
+     78.115,
+     38.0,
+     46.58
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -6.087697356646098e-18,
+    3.0514739849775294
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.14, rf2=17.05, t2=6.21, d=6.6) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=20.475, h=151.09, r=10.65, hb=46.58, s=7.2, q=17.025",
+   "volume": 102623.7843787653
+  }
+ },
+ "t_pipe_fitting_006404_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 75993.81595874841,
+   "bounds": [
+    [
+     -43.45,
+     -88.35,
+     -43.45
+    ],
+    [
+     43.45,
+     88.35,
+     60.17
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    3.42359986789934
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=5.81, rf2=17.05, t2=6.97, d=8.23) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=25.49, h=170.89, r=10.65, hb=60.17, s=6.77, q=21.61",
+   "volume": 153788.78786849356
+  }
+ },
+ "t_pipe_fitting_006801_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 218017.55492305587,
+   "bounds": [
+    [
+     -65.7,
+     -167.53500000000003,
+     -65.7
+    ],
+    [
+     65.7,
+     167.53500000000003,
+     95.31
+    ]
+   ],
+   "centroid": [
+    -1.0151977662576995e-17,
+    0.0,
+    6.630150390998183
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.72, rf2=33.75, t2=10.53, d=9.06) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=41.32, h=326.35, r=21.1, hb=95.31, s=15.26, q=35.48",
+   "volume": 666617.1425923255
+  }
+ },
  "t_pipe_fitting_006813_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7333,6 +8555,110 @@
    "kind": "closed_form",
    "note": "a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=27.275, h=137.45, r=10.65, hb=38.51, s=6.49, q=23.115",
    "volume": 92642.14321492561
+  }
+ },
+ "t_pipe_fitting_006815_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 58267.79213658877,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -70.36999999999999
+    ],
+    [
+     38.0,
+     53.45,
+     70.36999999999999
+    ]
+   ],
+   "centroid": [
+    1.2860599314893108e-17,
+    7.34852186613421,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.39, rf2=26.7, t2=6.5, d=6.91) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=21.44, h=135.35, r=16.7, hb=53.45, s=13.08, q=17.82",
+   "volume": 113177.92088592166
+  }
+ },
+ "t_pipe_fitting_007177_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 429167.66471853986,
+   "bounds": [
+    [
+     -234.71,
+     -102.85,
+     -102.85
+    ],
+    [
+     234.71,
+     102.85,
+     102.85
+    ]
+   ],
+   "centroid": [
+    0.0,
+    4.8747504645179385e-18,
+    0.158876857398352
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=9.23, rf2=17.05, t2=11.08, d=8.21) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=58.64, h=460.19, r=10.65, hb=62.8, s=4.47, q=52.46",
+   "volume": 1424445.0709345234
+  }
+ },
+ "t_pipe_fitting_007284_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 148535.55245221767,
+   "bounds": [
+    [
+     -137.845,
+     -54.25,
+     -54.25
+    ],
+    [
+     137.845,
+     54.25,
+     82.39
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.2559145766882383e-17,
+    5.612676970684158
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=6.68, rf2=26.7, t2=7.92, d=9.05) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=34.12, h=269.01, r=16.7, hb=82.39, s=12.27, q=29.69",
+   "volume": 344837.1825681941
+  }
+ },
+ "t_pipe_fitting_007299_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 115820.46738143574,
+   "bounds": [
+    [
+     -65.7,
+     -85.58,
+     -65.7
+    ],
+    [
+     65.7,
+     85.58,
+     65.7
+    ]
+   ],
+   "centroid": [
+    -2.113413175949863e-17,
+    0.0,
+    2.8654981315906713
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=6.45, rf2=26.7, t2=7.8, d=6.71) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=30.595, h=164.71, r=16.7, hb=51.63, s=12.37, q=26.265",
+   "volume": 283286.04742663715
   }
  },
  "t_pipe_fitting_007322_s20260505": {
@@ -7385,6 +8711,110 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=11.385, h=75.05, r=10.65, hb=48.0, s=7.69, q=8.425",
    "volume": 19848.469182692905
+  }
+ },
+ "t_pipe_fitting_007889_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 77256.82208240127,
+   "bounds": [
+    [
+     -38.0,
+     -80.47,
+     -38.0
+    ],
+    [
+     38.0,
+     80.47,
+     96.34
+    ]
+   ],
+   "centroid": [
+    4.886512372544096e-18,
+    0.0,
+    21.753725848889903
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.41, rf2=33.75, t2=6.53, d=6.94) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=21.535, h=155.53, r=21.1, hb=96.34, s=17.47, q=17.905",
+   "volume": 148787.7898957963
+  }
+ },
+ "t_pipe_fitting_007912_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 58985.037786257446,
+   "bounds": [
+    [
+     -65.28,
+     -43.45,
+     -43.45
+    ],
+    [
+     65.28,
+     43.45,
+     46.17
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.2086742834500177e-17,
+    5.497533756304968
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=4.56, rf2=26.7, t2=5.47, d=6.47) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=20.02, h=126.0, r=16.7, hb=46.17, s=13.65, q=16.97",
+   "volume": 101774.6594654807
+  }
+ },
+ "t_pipe_fitting_008026_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 201187.04213136603,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -151.025
+    ],
+    [
+     65.7,
+     102.73,
+     151.025
+    ]
+   ],
+   "centroid": [
+    1.8266810973806852e-17,
+    8.296551933668555,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 5 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.47, rf2=33.75, t2=10.23, d=8.8) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=40.15, h=293.58, r=21.1, hb=102.73, s=15.42, q=34.47",
+   "volume": 601156.2405234494
+  }
+ },
+ "t_pipe_fitting_008070_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 45158.88449070443,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -59.735
+    ],
+    [
+     38.0,
+     48.41,
+     59.735
+    ]
+   ],
+   "centroid": [
+    3.1569927247713076e-17,
+    4.173696544301035,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=4.35, rf2=17.05, t2=5.25, d=5.58) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=17.315, h=115.12, r=10.65, hb=48.41, s=7.73, q=14.395",
+   "volume": 72148.39675985476
   }
  },
  "t_pipe_fitting_008081_s20260505": {
@@ -7491,6 +8921,84 @@
    "volume": 37037.39643704057
   }
  },
+ "t_pipe_fitting_008344_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 74962.98706669554,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -77.84
+    ],
+    [
+     38.0,
+     92.55,
+     77.84
+    ]
+   ],
+   "centroid": [
+    1.5037875943584685e-17,
+    20.839355637285767,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 5 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.41, rf2=33.75, t2=6.54, d=6.95) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=21.555, h=150.27, r=21.1, hb=92.55, s=17.46, q=17.915",
+   "volume": 145462.72555659653
+  }
+ },
+ "t_pipe_fitting_008524_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 320870.69449126127,
+   "bounds": [
+    [
+     -181.7,
+     -102.85,
+     -102.85
+    ],
+    [
+     181.7,
+     102.85,
+     102.85
+    ]
+   ],
+   "centroid": [
+    0.0,
+    5.3129849453538145e-18,
+    0.4269255097273556
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=7.52, rf2=26.7, t2=9.03, d=6.69) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=47.765, h=355.88, r=16.7, hb=51.15, s=11.67, q=42.735",
+   "volume": 917608.0095893117
+  }
+ },
+ "t_pipe_fitting_008636_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 47858.380181530694,
+   "bounds": [
+    [
+     -30.05,
+     -30.05,
+     -60.875
+    ],
+    [
+     30.05,
+     75.77,
+     60.875
+    ]
+   ],
+   "centroid": [
+    1.7435607518072876e-17,
+    16.885595218295215,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 3 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=30.05, t=5.58, rf2=26.7, t2=6.68, d=5.91) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=18.285, h=116.17, r=16.7, hb=75.77, s=13.0, q=14.585",
+   "volume": 93571.4631758239
+  }
+ },
  "t_pipe_fitting_009116_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7595,6 +9103,32 @@
    "volume": 47788.236776069236
   }
  },
+ "t_pipe_fitting_009401_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 190042.92218656736,
+   "bounds": [
+    [
+     -121.78999999999999,
+     -80.0,
+     -80.0
+    ],
+    [
+     121.78999999999999,
+     80.0,
+     80.0
+    ]
+   ],
+   "centroid": [
+    0.0,
+    2.6151276590537215e-17,
+    1.6292474359888218
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=80.0, t=7.57, rf2=21.35, t2=9.14, d=7.39) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=41.045, h=236.01, r=13.35, hb=64.36, s=8.28, q=35.975",
+   "volume": 533065.7866806599
+  }
+ },
  "t_pipe_fitting_009437_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7619,6 +9153,110 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=20.265, h=116.64, r=10.65, hb=47.49, s=7.56, q=17.175",
    "volume": 46832.744351504065
+  }
+ },
+ "t_pipe_fitting_009451_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 191383.858755806,
+   "bounds": [
+    [
+     -65.7,
+     -129.955,
+     -65.7
+    ],
+    [
+     65.7,
+     129.955,
+     120.26
+    ]
+   ],
+   "centroid": [
+    -1.8486121957678057e-17,
+    0.0,
+    19.73944486749469
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.58, rf2=48.25, t2=9.16, d=7.88) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=35.95, h=252.33, r=30.15, hb=120.26, s=25.07, q=30.87",
+   "volume": 524904.9488711779
+  }
+ },
+ "t_pipe_fitting_009508_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 66986.44954684094,
+   "bounds": [
+    [
+     -38.0,
+     -80.335,
+     -38.0
+    ],
+    [
+     38.0,
+     80.335,
+     73.57
+    ]
+   ],
+   "centroid": [
+    -1.13199337060697e-17,
+    0.0,
+    11.193182617392214
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.39, rf2=26.7, t2=6.51, d=6.92) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=21.47, h=155.28, r=16.7, hb=73.57, s=13.08, q=17.85",
+   "volume": 128954.0925878294
+  }
+ },
+ "t_pipe_fitting_009598_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 59255.73112980518,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -58.055
+    ],
+    [
+     38.0,
+     90.46,
+     58.055
+    ]
+   ],
+   "centroid": [
+    -6.28160231943318e-18,
+    18.118371166177564,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.37, rf2=26.7, t2=6.49, d=6.9) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=21.4, h=110.74, r=16.7, hb=90.46, s=13.09, q=17.79",
+   "volume": 113566.99080330071
+  }
+ },
+ "t_pipe_fitting_009633_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 71151.00144556462,
+   "bounds": [
+    [
+     -43.45,
+     -66.49,
+     -43.45
+    ],
+    [
+     43.45,
+     66.49,
+     70.84
+    ]
+   ],
+   "centroid": [
+    -1.3708204362625088e-17,
+    0.0,
+    13.444710600118615
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=5.27, rf2=33.75, t2=6.32, d=7.47) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=23.12, h=127.71, r=21.1, hb=70.84, s=17.58, q=19.6",
+   "volume": 138244.15693011342
   }
  },
  "t_pipe_fitting_009675_s20260505": {
@@ -7647,6 +9285,58 @@
    "volume": 61851.47229959312
   }
  },
+ "t_pipe_fitting_009737_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 129330.94547008471,
+   "bounds": [
+    [
+     -97.685,
+     -65.7,
+     -65.7
+    ],
+    [
+     97.685,
+     65.7,
+     66.83
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -5.7445316355836875e-18,
+    4.171476071605134
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=6.79, rf2=26.7, t2=8.2, d=7.05) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=32.18, h=188.58, r=16.7, hb=66.83, s=12.15, q=27.63",
+   "volume": 327848.7015289322
+  }
+ },
+ "t_pipe_fitting_010013_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 204646.34615124503,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -110.47
+    ],
+    [
+     65.7,
+     184.16,
+     110.47
+    ]
+   ],
+   "centroid": [
+    -6.478390868211765e-18,
+    38.35498529985304,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.82, rf2=48.25, t2=10.66, d=9.17) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=41.83, h=212.12, r=30.15, hb=184.16, s=24.24, q=35.92",
+   "volume": 638881.3262160529
+  }
+ },
  "t_pipe_fitting_010159_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7671,6 +9361,32 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=22.9, h=178.75, r=21.1, hb=95.62, s=17.24, q=19.04",
    "volume": 122952.23495353856
+  }
+ },
+ "t_pipe_fitting_010220_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 516757.52835536114,
+   "bounds": [
+    [
+     -102.85,
+     -204.30499999999998,
+     -102.85
+    ],
+    [
+     102.85,
+     204.30499999999998,
+     244.92
+    ]
+   ],
+   "centroid": [
+    -4.910863067765718e-18,
+    0.0,
+    40.36623538263849
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=10.15, rf2=71.1, t2=12.18, d=9.03) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=64.475, h=398.46, r=44.45, hb=244.92, s=37.66, q=57.685",
+   "volume": 1881021.6711613357
   }
  },
  "t_pipe_fitting_010276_s20260505": {
@@ -7699,6 +9415,32 @@
    "volume": 81406.57110394014
   }
  },
+ "t_pipe_fitting_010404_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 56075.32702644199,
+   "bounds": [
+    [
+     -68.58,
+     -38.0,
+     -38.0
+    ],
+    [
+     68.58,
+     38.0,
+     54.68
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -5.513150744776194e-18,
+    8.076214332148611
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=4.95, rf2=26.7, t2=5.97, d=6.34) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=19.69, h=132.21, r=16.7, hb=54.68, s=13.38, q=16.37",
+   "volume": 100701.03558120981
+  }
+ },
  "t_pipe_fitting_010444_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7725,6 +9467,32 @@
    "volume": 48357.80843583235
   }
  },
+ "t_pipe_fitting_010771_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 434589.56122111325,
+   "bounds": [
+    [
+     -102.85,
+     -102.85,
+     -185.095
+    ],
+    [
+     102.85,
+     195.51,
+     185.095
+    ]
+   ],
+   "centroid": [
+    2.040507049483612e-17,
+    18.518954984863502,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=10.41, rf2=48.25, t2=12.49, d=9.25) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=66.115, h=359.78, r=30.15, hb=195.51, s=23.19, q=59.155",
+   "volume": 1606695.5133975013
+  }
+ },
  "t_pipe_fitting_010834_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7749,6 +9517,32 @@
    "kind": "closed_form",
    "note": "a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=23.305, h=117.75, r=16.7, hb=109.13, s=12.77, q=19.375",
    "volume": 92101.30622765332
+  }
+ },
+ "t_pipe_fitting_011040_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 80245.58747484258,
+   "bounds": [
+    [
+     -54.25,
+     -54.25,
+     -68.43
+    ],
+    [
+     54.25,
+     54.32,
+     68.43
+    ]
+   ],
+   "centroid": [
+    0.0,
+    4.962603983727587,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=4.8, rf2=26.7, t2=5.69, d=6.51) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=24.515, h=132.06, r=16.7, hb=54.32, s=13.52, q=21.335",
+   "volume": 147018.51145303994
   }
  },
  "t_pipe_fitting_011116_s20260505": {
@@ -7803,6 +9597,58 @@
    "volume": 42002.999726123926
   }
  },
+ "t_pipe_fitting_011383_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 359960.48696272343,
+   "bounds": [
+    [
+     -102.85,
+     -171.275,
+     -102.85
+    ],
+    [
+     102.85,
+     171.275,
+     102.85
+    ]
+   ],
+   "centroid": [
+    -9.132728679061207e-18,
+    0.0,
+    1.039397245013249
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=10.16, rf2=21.35, t2=12.2, d=9.04) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=64.545, h=332.39, r=13.35, hb=83.35, s=6.55, q=57.745",
+   "volume": 1316908.8562184137
+  }
+ },
+ "t_pipe_fitting_011487_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 108504.6953099419,
+   "bounds": [
+    [
+     -43.45,
+     -43.45,
+     -104.05
+    ],
+    [
+     43.45,
+     101.47,
+     104.05
+    ]
+   ],
+   "centroid": [
+    0.0,
+    20.254577219385688,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=6.04, rf2=38.65, t2=7.25, d=8.57) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=26.52, h=202.06, r=24.15, hb=101.47, s=20.11, q=22.48",
+   "volume": 230432.98260609136
+  }
+ },
  "t_pipe_fitting_011577_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7827,6 +9673,32 @@
    "kind": "closed_form",
    "note": "a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=19.35, h=140.45, r=10.65, hb=39.9, s=7.7, q=16.4",
    "volume": 49664.60339615736
+  }
+ },
+ "t_pipe_fitting_011703_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 345116.2885799232,
+   "bounds": [
+    [
+     -102.85,
+     -102.85,
+     -186.88
+    ],
+    [
+     102.85,
+     102.85,
+     186.88
+    ]
+   ],
+   "centroid": [
+    9.436847664013591e-18,
+    4.841985542850049,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 5 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=7.49, rf2=48.25, t2=8.99, d=6.66) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=47.575, h=366.27, r=30.15, hb=81.91, s=25.14, q=42.565",
+   "volume": 982320.9833481241
   }
  },
  "t_pipe_fitting_011850_s20260505": {
@@ -7933,6 +9805,84 @@
    "volume": 119050.1289767366
   }
  },
+ "t_pipe_fitting_012790_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 54620.27082601803,
+   "bounds": [
+    [
+     -43.45,
+     -43.45,
+     -54.395
+    ],
+    [
+     43.45,
+     47.67,
+     54.395
+    ]
+   ],
+   "centroid": [
+    3.7003762387485525e-17,
+    6.308427406369711,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=4.62, rf2=26.7, t2=5.55, d=6.56) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=20.305, h=104.17, r=16.7, hb=47.67, s=13.61, q=17.215",
+   "volume": 94591.37593242327
+  }
+ },
+ "t_pipe_fitting_012917_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 440110.75134955277,
+   "bounds": [
+    [
+     -102.85,
+     -102.85,
+     -234.465
+    ],
+    [
+     102.85,
+     102.85,
+     234.465
+    ]
+   ],
+   "centroid": [
+    1.3063130611370206e-17,
+    0.22042913793922217,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 5 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=9.66, rf2=17.05, t2=11.59, d=8.58) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=61.31, h=459.27, r=10.65, hb=67.16, s=4.19, q=54.85",
+   "volume": 1518988.6278318071
+  }
+ },
+ "t_pipe_fitting_013083_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 274533.9911815095,
+   "bounds": [
+    [
+     -80.0,
+     -80.0,
+     -137.46
+    ],
+    [
+     80.0,
+     193.82,
+     137.46
+    ]
+   ],
+   "centroid": [
+    1.3034650465269828e-17,
+    30.190529322790482,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 3 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=80.0, t=9.0, rf2=48.25, t2=10.87, d=8.78) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=48.785, h=265.92, r=30.15, hb=193.82, s=24.12, q=42.755",
+   "volume": 891114.460949616
+  }
+ },
  "t_pipe_fitting_013171_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -7957,6 +9907,84 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=14.92, h=117.12, r=13.35, hb=36.09, s=10.33, q=11.9",
    "volume": 34075.77671523658
+  }
+ },
+ "t_pipe_fitting_013272_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 29149.560813509088,
+   "bounds": [
+    [
+     -30.05,
+     -30.05,
+     -45.065
+    ],
+    [
+     30.05,
+     31.49,
+     45.065
+    ]
+   ],
+   "centroid": [
+    2.4436125250017003e-17,
+    3.1653726473993533,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=30.05, t=4.71, rf2=17.05, t2=5.63, d=4.99) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=15.42, h=85.42, r=10.65, hb=31.49, s=7.53, q=12.3",
+   "volume": 48387.75190482695
+  }
+ },
+ "t_pipe_fitting_013276_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 326358.0088252012,
+   "bounds": [
+    [
+     -102.85,
+     -174.21,
+     -102.85
+    ],
+    [
+     102.85,
+     174.21,
+     102.85
+    ]
+   ],
+   "centroid": [
+    -1.605499739191884e-17,
+    0.0,
+    0.40801695425016643
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=8.2, rf2=21.35, t2=9.84, d=7.29) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=52.07, h=340.22, r=13.35, hb=57.67, s=7.87, q=46.59",
+   "volume": 999070.5450163799
+  }
+ },
+ "t_pipe_fitting_013279_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 158921.68506746323,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -116.915
+    ],
+    [
+     65.7,
+     72.71,
+     116.915
+    ]
+   ],
+   "centroid": [
+    2.2908281708032724e-17,
+    3.755200838308445,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 5 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.46, rf2=26.7, t2=10.21, d=8.79) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=40.09, h=225.37, r=16.7, hb=72.71, s=11.03, q=34.42",
+   "volume": 477701.8662755413
   }
  },
  "t_pipe_fitting_013428_s20260505": {
@@ -8009,6 +10037,110 @@
    "kind": "closed_form",
    "note": "a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=23.23, h=146.88, r=16.7, hb=81.7, s=12.78, q=19.31",
    "volume": 97004.3171577772
+  }
+ },
+ "t_pipe_fitting_013570_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 142551.98438221563,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -91.96499999999999
+    ],
+    [
+     65.7,
+     97.02,
+     91.96499999999999
+    ]
+   ],
+   "centroid": [
+    1.884895410400841e-17,
+    12.840655093235526,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 5 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.42, rf2=38.65, t2=8.96, d=7.71) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=35.165, h=176.51, r=24.15, hb=97.02, s=19.18, q=30.195",
+   "volume": 391766.0017192289
+  }
+ },
+ "t_pipe_fitting_013880_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 299818.5420357165,
+   "bounds": [
+    [
+     -145.22,
+     -102.85,
+     -102.85
+    ],
+    [
+     145.22,
+     102.85,
+     102.85
+    ]
+   ],
+   "centroid": [
+    0.0,
+    7.723038894603574e-18,
+    1.242542016424076
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=102.85, t=8.74, rf2=33.75, t2=10.48, d=7.77) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=55.475, h=281.7, r=21.1, hb=62.03, s=15.26, q=49.635",
+   "volume": 989671.2476952852
+  }
+ },
+ "t_pipe_fitting_013983_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 130345.65128272692,
+   "bounds": [
+    [
+     -54.25,
+     -116.16,
+     -54.25
+    ],
+    [
+     54.25,
+     116.16,
+     94.14
+    ]
+   ],
+   "centroid": [
+    -1.2805622315308575e-17,
+    0.0,
+    8.209790040346158
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=6.35, rf2=26.7, t2=7.54, d=8.62) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=32.475, h=225.97, r=16.7, hb=94.14, s=12.49, q=28.265",
+   "volume": 291667.5653836494
+  }
+ },
+ "t_pipe_fitting_014033_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 28785.749000278473,
+   "bounds": [
+    [
+     -30.05,
+     -30.05,
+     -45.470000000000006
+    ],
+    [
+     30.05,
+     37.69,
+     45.470000000000006
+    ]
+   ],
+   "centroid": [
+    1.624763530382349e-17,
+    4.341862301227109,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 3 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=30.05, t=4.29, rf2=17.05, t2=5.13, d=4.54) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=14.05, h=86.65, r=10.65, hb=37.69, s=7.81, q=11.21",
+   "volume": 45556.48205989055
   }
  },
  "t_pipe_fitting_014097_s20260505": {
@@ -8089,6 +10221,58 @@
    "volume": 95375.84709924468
   }
  },
+ "t_pipe_fitting_014890_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 80901.76722991868,
+   "bounds": [
+    [
+     -43.45,
+     -43.45,
+     -94.33
+    ],
+    [
+     43.45,
+     65.1,
+     94.33
+    ]
+   ],
+   "centroid": [
+    3.362620987326477e-17,
+    7.434662596507279,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=43.45, t=5.23, rf2=26.7, t2=6.27, d=7.41) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=22.95, h=183.43, r=16.7, hb=65.1, s=13.2, q=19.45",
+   "volume": 150351.566600564
+  }
+ },
+ "t_pipe_fitting_015111_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 115451.60740335156,
+   "bounds": [
+    [
+     -108.485,
+     -54.25,
+     -54.25
+    ],
+    [
+     108.485,
+     54.25,
+     90.16
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.00713022112375e-17,
+    8.673415666965917
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.39, rf2=26.7, t2=6.4, d=7.31) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=27.57, h=211.58, r=16.7, hb=90.16, s=13.12, q=23.99",
+   "volume": 226380.21043660596
+  }
+ },
  "t_pipe_fitting_015232_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -8141,6 +10325,214 @@
    "volume": 72773.29141875982
   }
  },
+ "t_pipe_fitting_015722_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 53971.310934243236,
+   "bounds": [
+    [
+     -63.675000000000004,
+     -30.05,
+     -30.05
+    ],
+    [
+     63.675000000000004,
+     30.05,
+     99.62
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.9275491537828277e-17,
+    24.59684419033201
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=30.05, t=5.59, rf2=26.7, t2=6.69, d=5.92) to a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=18.3, h=121.76, r=16.7, hb=99.62, s=13.0, q=14.6",
+   "volume": 102469.71989280253
+  }
+ },
+ "t_pipe_fitting_016040_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 208145.47181877005,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -111.74
+    ],
+    [
+     65.7,
+     197.98,
+     111.74
+    ]
+   ],
+   "centroid": [
+    1.7666747448120978e-17,
+    42.503627041403696,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 3 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.54, rf2=48.25, t2=10.31, d=8.87) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=40.46, h=214.94, r=30.15, hb=197.98, s=24.43, q=34.74",
+   "volume": 636721.9907260378
+  }
+ },
+ "t_pipe_fitting_016099_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 155577.2334235348,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -117.77
+    ],
+    [
+     65.7,
+     75.76,
+     117.77
+    ]
+   ],
+   "centroid": [
+    2.1595290449652565e-17,
+    6.262203327778096,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.4, rf2=33.75, t2=8.94, d=7.69) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=35.09, h=228.14, r=21.1, hb=75.76, s=16.14, q=30.13",
+   "volume": 417763.20894094097
+  }
+ },
+ "t_pipe_fitting_016387_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 73581.43154784455,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -69.61
+    ],
+    [
+     38.0,
+     98.24,
+     69.61
+    ]
+   ],
+   "centroid": [
+    1.2110864662372322e-17,
+    23.32989218973516,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.84, rf2=33.75, t2=7.05, d=7.49) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=23.24, h=133.38, r=21.1, hb=98.24, s=17.18, q=19.32",
+   "volume": 152995.75838384498
+  }
+ },
+ "t_pipe_fitting_016422_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 121251.43516729346,
+   "bounds": [
+    [
+     -65.7,
+     -88.735,
+     -65.7
+    ],
+    [
+     65.7,
+     88.735,
+     65.7
+    ]
+   ],
+   "centroid": [
+    6.405108216521043e-18,
+    0.0,
+    2.8990795694192526
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=6.95, rf2=26.7, t2=8.4, d=7.22) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=32.95, h=170.52, r=16.7, hb=54.07, s=12.04, q=28.29",
+   "volume": 315655.1019103728
+  }
+ },
+ "t_pipe_fitting_016590_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 55041.05277916777,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -67.005
+    ],
+    [
+     38.0,
+     65.21,
+     67.005
+    ]
+   ],
+   "centroid": [
+    2.54504810646342e-17,
+    11.234173881925312,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=4.32, rf2=26.7, t2=5.22, d=5.54) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=17.2, h=129.69, r=16.7, hb=65.21, s=13.8, q=14.3",
+   "volume": 87609.2357096627
+  }
+ },
+ "t_pipe_fitting_016601_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 81049.45698830228,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -94.95
+    ],
+    [
+     38.0,
+     72.85,
+     94.95
+    ]
+   ],
+   "centroid": [
+    1.1053880209683287e-17,
+    12.856370963778586,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.84, rf2=33.75, t2=7.05, d=7.49) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=23.255, h=184.06, r=21.1, hb=72.85, s=17.18, q=19.335",
+   "volume": 167625.38480203517
+  }
+ },
+ "t_pipe_fitting_017237_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 83767.93139198082,
+   "bounds": [
+    [
+     -38.0,
+     -38.0,
+     -91.95
+    ],
+    [
+     38.0,
+     89.63,
+     91.95
+    ]
+   ],
+   "centroid": [
+    -5.363830046738055e-18,
+    17.810972245715952,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=38.0, t=5.86, rf2=33.75, t2=7.07, d=7.51) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=23.32, h=178.04, r=21.1, hb=89.63, s=17.17, q=19.39",
+   "volume": 171930.35930104743
+  }
+ },
  "t_pipe_fitting_017346_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -8165,6 +10557,188 @@
    "kind": "closed_form",
    "note": "a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=22.705, h=163.5, r=13.35, hb=51.15, s=9.89, q=19.245",
    "volume": 81051.16951309975
+  }
+ },
+ "t_pipe_fitting_017449_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 175948.70727995143,
+   "bounds": [
+    [
+     -65.7,
+     -127.5,
+     -65.7
+    ],
+    [
+     65.7,
+     127.5,
+     92.24
+    ]
+   ],
+   "centroid": [
+    -1.0408919711247053e-17,
+    0.0,
+    9.534196151748962
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.04, rf2=38.65, t2=9.72, d=8.36) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=38.13, h=246.96, r=24.15, hb=92.24, s=18.76, q=32.74",
+   "volume": 510407.6746013543
+  }
+ },
+ "t_pipe_fitting_017556_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 161753.23867638982,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -105.005
+    ],
+    [
+     65.7,
+     97.19,
+     105.005
+    ]
+   ],
+   "centroid": [
+    1.7477446364054977e-17,
+    15.804296891999417,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 3 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.62, rf2=48.25, t2=9.2, d=7.92) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=36.125, h=202.39, r=30.15, hb=97.19, s=25.04, q=31.015",
+   "volume": 457855.7750110472
+  }
+ },
+ "t_pipe_fitting_017687_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 131527.3526890653,
+   "bounds": [
+    [
+     -65.7,
+     -108.785,
+     -65.7
+    ],
+    [
+     65.7,
+     108.785,
+     65.7
+    ]
+   ],
+   "centroid": [
+    -1.078551389169864e-17,
+    -0.0,
+    -0.023760960064213296
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=7.16, rf2=17.05, t2=8.64, d=7.43) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=33.92, h=210.41, r=10.65, hb=31.13, s=5.85, q=29.12",
+   "volume": 346500.6536509733
+  }
+ },
+ "t_pipe_fitting_018015_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 91366.25611154165,
+   "bounds": [
+    [
+     -54.25,
+     -85.80499999999999,
+     -54.25
+    ],
+    [
+     54.25,
+     85.80499999999999,
+     54.25
+    ]
+   ],
+   "centroid": [
+    -1.5137986166766522e-17,
+    0.0,
+    0.7784249810097785
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.88, rf2=17.05, t2=6.98, d=7.98) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=30.065, h=165.73, r=10.65, hb=36.0, s=6.75, q=26.165",
+   "volume": 195801.30095312616
+  }
+ },
+ "t_pipe_fitting_018028_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 181906.1412734263,
+   "bounds": [
+    [
+     -65.7,
+     -123.57,
+     -65.7
+    ],
+    [
+     65.7,
+     123.57,
+     112.59
+    ]
+   ],
+   "centroid": [
+    7.579294229324946e-18,
+    0.0,
+    10.746473249892531
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 6 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=8.95, rf2=33.75, t2=10.81, d=9.3) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=42.41, h=238.19, r=21.1, hb=112.59, s=15.1, q=36.41",
+   "volume": 569954.5838490515
+  }
+ },
+ "t_pipe_fitting_018118_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 123168.58834299199,
+   "bounds": [
+    [
+     -54.25,
+     -115.97,
+     -54.25
+    ],
+    [
+     54.25,
+     115.97,
+     54.25
+    ]
+   ],
+   "centroid": [
+    -4.904675456792439e-17,
+    0.0,
+    0.9810107145864146
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=6.75, rf2=17.05, t2=8.01, d=9.15) to a tee on the XZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=34.5, h=225.19, r=10.65, hb=45.66, s=6.18, q=30.03",
+   "volume": 284110.8285928937
+  }
+ },
+ "t_pipe_fitting_018167_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 97820.36057567282,
+   "bounds": [
+    [
+     -54.25,
+     -54.25,
+     -94.045
+    ],
+    [
+     54.25,
+     54.25,
+     94.045
+    ]
+   ],
+   "centroid": [
+    4.2307989466284465e-17,
+    1.414754873581381,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.71, rf2=17.05, t2=6.78, d=7.75) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=29.205, h=182.38, r=10.65, hb=46.1, s=6.86, q=25.415",
+   "volume": 199879.94754471895
   }
  },
  "t_pipe_fitting_018181_s20260505": {
@@ -8217,6 +10791,32 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=15.44, h=105.3, r=10.65, hb=45.48, s=7.53, q=12.32",
    "volume": 33691.49791183729
+  }
+ },
+ "t_pipe_fitting_018300_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 157649.40375400093,
+   "bounds": [
+    [
+     -65.7,
+     -65.7,
+     -97.575
+    ],
+    [
+     65.7,
+     117.73,
+     97.575
+    ]
+   ],
+   "centroid": [
+    7.675573632835794e-18,
+    22.673683514771025,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=65.7, t=6.69, rf2=48.25, t2=8.08, d=6.95) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=31.715, h=188.46, r=30.15, hb=117.73, s=25.67, q=27.235",
+   "volume": 398051.381525807
   }
  },
  "t_pipe_fitting_018310_s20260505": {
@@ -8349,6 +10949,32 @@
    "volume": 45961.166597429255
   }
  },
+ "t_pipe_fitting_018914_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 91906.75046689564,
+   "bounds": [
+    [
+     -54.25,
+     -54.25,
+     -81.19500000000001
+    ],
+    [
+     54.25,
+     54.72,
+     81.19500000000001
+    ]
+   ],
+   "centroid": [
+    1.3102154502707714e-17,
+    4.273474387786532,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 4 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=54.25, t=5.53, rf2=26.7, t2=6.56, d=7.5) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=28.25, h=156.86, r=16.7, hb=54.72, s=13.04, q=24.59",
+   "volume": 187934.066026968
+  }
+ },
  "t_pipe_fitting_019226_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -8425,6 +11051,32 @@
    "kind": "closed_form",
    "note": "a tee on the YZ plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=11.31, h=70.16, r=10.65, hb=41.78, s=8.22, q=8.88",
    "volume": 14974.814995820496
+  }
+ },
+ "t_pipe_fitting_019743_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 35248.71021736592,
+   "bounds": [
+    [
+     -30.05,
+     -30.05,
+     -61.68
+    ],
+    [
+     30.05,
+     34.48,
+     61.68
+    ]
+   ],
+   "centroid": [
+    2.0304291413566283e-17,
+    3.110624038408641,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "a flanged tee: a flange Rf, t centred on each end of M, 8 bolt holes d through both, a flange rf2, t2 flush with the branch's end, each adding elementary terms (Rf=30.05, t=4.7, rf2=17.05, t2=5.62, d=4.98) to a tee on the XY plane, ((main cylinder R, h) united with a branch r on y from 0 to hb) cut by a branch bore s and a through bore q; volume, y moment and area are one-dimensional integrals over the cross-section and each cylinder's surface patch (tools/cq_closed_forms.py): R=15.395, h=118.66, r=10.65, hb=34.48, s=7.53, q=12.275",
+   "volume": 57878.13052766177
   }
  },
  "u_bolt_000008_s20260506": {

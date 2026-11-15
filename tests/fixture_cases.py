@@ -82,20 +82,6 @@ def c1_subset() -> cq.Subset:
     )
 
 
-def c2_baseline_subset() -> cq.Subset:
-    """`cq.subset()` less the declarations of plans/lift-arrays-and-blind-cuts.
-
-    The committed C2 reports (`tests/fixtures/c2/`) were measured before
-    `Workplane.rarray`, `polarArray` and `cutBlind`; that plan's step 7 re-runs
-    them and this goes back to `cq.subset()` (and is deleted).
-    """
-    later = ("Workplane.rarray", "Workplane.polarArray", "Workplane.cutBlind")
-    return replace(
-        cq.subset(),
-        forms=tuple(form for form in cq.subset().forms if form.name not in later),
-    )
-
-
 @dataclass(frozen=True)
 class Case:
     """One fixture: its directory name, program text and expected JSON."""

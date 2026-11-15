@@ -322,11 +322,11 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 23 API forms:
+the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 26 API forms:
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
-axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `pushPoints` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending circles cut blind in one call, ADR-0019), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close` and `revolve`;
 `chamfer` and STEP export wait for their bundle in C2's order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
@@ -733,10 +733,10 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 6,154 (34.4%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 4,481 (25.0%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 11,256 / 1,335 / 142 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 482 | 0 | 1 | 0 |
+| reach | 6,565 (36.7%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 4,695 (26.2%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 10,890 / 1,385 / 142 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 584 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
 | in-subset `cq_bug` | 7 | 717 | 0 | 0 |
@@ -843,6 +843,17 @@ cylinder tangent to the plate, `regression/cq-tangent-cylinder-and-box`) and
 (`tools/cq_closed_forms.py` `part_measures`, boundary fluxes) to which arris
 is within 3e-11 and Open CASCADE's cylinder-cylinder section is 2e-9 to
 2e-6 off. `occt_wrong` is 482, in-subset refusals 1,042.
+
+`rarray`, `polarArray` and `cutBlind` took BenchCAD from 6,154 to 6,565 reached
+and CAD-Recode not at all (it writes none of them; ADR-0019). The 411 newly
+reached programs: 95 more in-subset refusals (44 from the two fixtures of the
+arrays' and blind cuts' contexts, 51 `dome_cap` whose revolve crosses its axis, a
+spindle torus), 102 `occt_wrong` by closed form (77 flanged `t_pipe_fitting`
+tees with a `polarArray` of bolt holes and 25 `bellows`, Open CASCADE's volume
+off by up to 9.5e-5 and 2.2e-6 relative, `tools/cq_closed_forms.py`
+`flanged_tee_measures` and `bellows_measures`, arris within the ADR-0005
+constants) and the rest agreeing. `occt_wrong` is 584, in-subset refusals 1,137,
+the table digest `45dc90b5…f475`, the oracle rows the committed bytes.
 
 **Seven in-subset `cq_bug` rows stay**, all `connecting_rod`
 (ADR-0014's amendment of 2026-11-14): `faces(">Z").faces(">Z")` keeps a
