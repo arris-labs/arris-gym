@@ -152,6 +152,16 @@ within a given design; **[3]** unproven semantics, established here.
   `faces('>X')`/`faces('>Z')` ("the centre of a face that arris does not give"), 7
   `connecting_rod` (ADR-0014's amendment, expected). Class the sprocket rows: new in the
   subset by this lift, so a fixture each and either a lift or a declared refusal.
+- [ ] Step 7d **[2]** — the full re-run on the final code (scratch, 2026-11-15) reaches
+  9,998/17,900, in-subset `cq_bug` 6 (`connecting_rod`), 603 unclassified; `cq_closed_forms.py`
+  then stops with `ValueError: a sprocket outside the arrangement the closed form handles`:
+  a `double_simplex_sprocket` beyond the 18 of step 7b now runs `ok` (the finer `faces` pass).
+  Find which, and class every such row: widen the closed form where it is exact, else an
+  xfail `regression/` fixture, else (kernel at fault) an arris ask. No row dropped; the tool
+  must not crash on one it cannot class (it leaves it unclassified, counted). Done when
+  `cq_closed_forms.py` over the scratch table
+  (`.../scratchpad/c2b2/fidelity.json.gz`, oracle rows `.../c2b/oracle.jsonl.gz`) with step
+  7c's flags writes verdicts and no in-subset row is unclassified.
 - [ ] Step 8 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests), the baseline
   subset helper step 2 adds deleted as in plans/lift-arrays-and-blind-cuts.
