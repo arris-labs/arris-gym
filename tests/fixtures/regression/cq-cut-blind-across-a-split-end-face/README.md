@@ -9,8 +9,8 @@ interior to both result faces" (e.g. `bellows_000367_s20260505`); the shape of t
 their text. Their revolved profile has a vertex on the bottom edge (`(32.12, 0.0)` between `(12.167, 0.0)` and
 `(35.1, 0.0)`), which splits the end face into a disc and an annulus, and each hole's circle crosses
 that edge: of the 67 in-subset `bellows` programs that write `cutBlind`, the 42 whose holes cross it are
-refused and the 25 whose holes lie clear of it are built (and unclassified, the Open CASCADE error of
-`ok-cut-blind-corpus-bellows`). Here a cylinder of radius 10 and height 3 with a vertex at (6, 0) takes
+refused and the 25 whose holes lie clear of it are built (and `occt_wrong` by the bellows' closed form, the Open CASCADE
+error of `ok-cut-blind-corpus-bellows`). Here a cylinder of radius 10 and height 3 with a vertex at (6, 0) takes
 a pocket of radius 7, 1 deep, across that circle. The same cut without the vertex, or inside the disc
 (radius 5), builds; a `hole(14)` and a `circle(7).extrude(-1)` across the circle are refused the same, so
 it is not `cutBlind`'s: a tool flush with a face split by an edge it crosses.
