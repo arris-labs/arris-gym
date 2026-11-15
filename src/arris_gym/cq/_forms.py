@@ -60,20 +60,28 @@ def census_form[**P, R, S](
     name: str,
     positional: Sequence[Sequence[str] | None] = (),
     keywords: Mapping[str, Sequence[str]] | None = None,
+    *,
+    alternatives: Sequence[Sequence[Sequence[str] | None]] = (),
 ) -> Callable[[Callable[Concatenate[S, P], R]], Callable[Concatenate[S, P], R]]:
     """Decorate a method so that only the census's form of it runs.
 
     `positional` holds, for each positional argument, the kinds it may be
     (`None` for any); the call must give exactly that many. `keywords` maps
     each keyword the call may give to the kinds it may be; any subset of
-    them is accepted, in any order. Any other form raises `UnsupportedApi`
-    naming it, before the method runs.
+    them is accepted, in any order. `alternatives` are further positional
+    shapes of the same call (`edges()` beside `edges(str)`), each a form of its
+    own for `subset()`, with the same keywords. Any other form raises
+    `UnsupportedApi` naming it, before the method runs.
     """
-    declaration = CensusForm(
-        name,
-        tuple(None if kinds is None else tuple(kinds) for kinds in positional),
-        tuple((key, tuple(kinds)) for key, kinds in (keywords or {}).items()),
-    )
+    named = tuple((key, tuple(kinds)) for key, kinds in (keywords or {}).items())
+
+    def shape(slots: Sequence[Sequence[str] | None]) -> CensusForm:
+        return CensusForm(
+            name, tuple(None if kinds is None else tuple(kinds) for kinds in slots), named
+        )
+
+    declaration = shape(positional)
+    others = tuple(shape(slots) for slots in alternatives)
     allowed = dict(declaration.keywords)
 
     def decorate(
@@ -81,9 +89,13 @@ def census_form[**P, R, S](
     ) -> Callable[Concatenate[S, P], R]:
         @functools.wraps(method)
         def checked(self: S, /, *args: P.args, **kwargs: P.kwargs) -> R:
-            fits = len(args) == len(declaration.positional) and all(
-                kinds is None or kind_of(arg) in kinds
-                for arg, kinds in zip(args, declaration.positional, strict=True)
+            fits = any(
+                len(args) == len(form.positional)
+                and all(
+                    kinds is None or kind_of(arg) in kinds
+                    for arg, kinds in zip(args, form.positional, strict=True)
+                )
+                for form in (declaration, *others)
             )
             fits = fits and all(
                 key in allowed and kind_of(value) in allowed[key] for key, value in kwargs.items()
@@ -93,6 +105,7 @@ def census_form[**P, R, S](
             return method(self, *args, **kwargs)
 
         checked.__census_form__ = declaration  # type: ignore[attr-defined]
+        checked.__census_alternatives__ = others  # type: ignore[attr-defined]
         return checked
 
     return decorate

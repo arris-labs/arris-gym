@@ -1,6 +1,7 @@
 """CadQuery's axis selectors over arris: which faces `faces(">Z")` keeps, and the plane on them.
 
-ADR-0017. Private: `Workplane.faces` and `Workplane.workplane` call it.
+ADR-0017, and ADR-0020 for edges. Private: `Workplane.faces`, `Workplane.workplane`,
+`Workplane.edges`, `Workplane.fillet` and `Workplane.chamfer` call it.
 """
 
 from __future__ import annotations
@@ -17,18 +18,24 @@ import arris.build
 from arris_gym.cq._unsupported import UnsupportedApi
 
 __all__ = [
+    "AXIS_SELECTORS",
     "CQ_TOLERANCE",
     "NO_FACES",
     "SELECTORS",
+    "Edges",
     "Faces",
+    "edges_of_faces",
+    "edges_of_solid",
     "plane_on",
     "plane_on_faces",
+    "select_edges",
     "select_faces",
 ]
 
 # The axis selectors the subset admits: `DirectionMinMaxSelector` on one world
 # axis, `>` the furthest cluster and `<` the nearest (ADR-0017).
-SELECTORS = (">X", "<X", ">Y", "<Y", ">Z", "<Z")
+AXIS_SELECTORS = (">X", "<X", ">Y", "<Y", ">Z", "<Z")
+SELECTORS = AXIS_SELECTORS
 _AXIS = {"X": 0, "Y": 1, "Z": 2}
 
 # CadQuery 2.3.0's default tolerance for `DirectionMinMaxSelector`, for
@@ -61,6 +68,19 @@ class Faces:
 
     solid: arris.build.Solid
     faces: tuple[arris.Face, ...]
+
+
+@dataclass(frozen=True)
+class Edges:
+    """The edges a selector kept, on a stack: the solid they belong to and the edges.
+
+    The edges are the solid's own `arris.Edge` values, in CadQuery's order:
+    ascending by their key along the selector's axis, a tie in the kernel's
+    edge order. Only `edges`, `fillet` and `chamfer` read it (ADR-0020 rule 6).
+    """
+
+    solid: arris.build.Solid
+    edges: tuple[arris.Edge, ...]
 
 
 def _cross(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
@@ -101,11 +121,18 @@ def _cell(d: float) -> tuple[bool, bool, bool, bool]:
 def _pick_within(
     keys: Sequence[float], estimated: Sequence[bool], margin: float, maximum: bool
 ) -> list[int] | None:
-    """What `_pick` keeps if it keeps the same under every shift of an estimated key.
+    """`_pick_widths` with every estimated key `margin` wide and every other exact."""
+    return _pick_widths(keys, [margin if e else 0.0 for e in estimated], maximum)
 
-    Each estimated key lies in `[k - margin, k + margin]`, an exact key is a
-    point, and `_pick` looks at a pair of keys only through their order and
-    whether they lie within `CQ_TOLERANCE`. So its answer holds over the whole
+
+def _pick_widths(keys: Sequence[float], width: Sequence[float], maximum: bool) -> list[int] | None:
+    """What `_pick` keeps if it keeps the same under every shift of an uncertain key.
+
+    A key `keys[i]` lies in `[keys[i] - width[i], keys[i] + width[i]]`.
+
+    An exact key is a point (width 0), and `_pick` looks at a pair of keys only
+    through their order and whether they lie within `CQ_TOLERANCE`. So its
+    answer holds over the whole
     box when no such comparison can change; or when the keys whose comparisons
     can change (the connected sets of such pairs) each lie within
     `CQ_TOLERANCE` of one another at the worst and every other key compares
@@ -115,7 +142,6 @@ def _pick_within(
     the gap; only the keys on the kept side of the widest such gap are checked.
     Returns `None` where none of this can be shown.
     """
-    width = [margin if e else 0.0 for e in estimated]
     ranked = sorted(range(len(keys)), key=lambda j: keys[j], reverse=maximum)
     block = len(ranked)
     for cut in range(1, len(ranked)):
@@ -145,7 +171,7 @@ def _pick_within(
         return i
 
     for i, j in itertools.combinations(near, 2):
-        if (estimated[i] or estimated[j]) and cell(i, j) is None:
+        if (width[i] or width[j]) and cell(i, j) is None:
             parent[find(i)] = find(j)
     sets: dict[int, list[int]] = {}
     for i in near:
@@ -204,7 +230,7 @@ def select_faces(
     of faces, ADR-0018 rule 5): CadQuery ranks those only. The solid still
     gives the part's box, the scale of the margin.
 
-    `selector` is one of `SELECTORS`. A face's key is its centre of mass
+    `selector` is one of `AXIS_SELECTORS`. A face's key is its centre of mass
     along the axis: its plane's offset where it is a plane normal to the axis
     (exact), else known from its box where that settles the selection, else
     the area centroid of its tessellation, trusted at a margin. Raises
@@ -290,6 +316,189 @@ def _depends(selector: str) -> str:
         f"Workplane.faces({selector!r}): the selection depends on the centre of a face "
         "that arris does not give"
     )
+
+
+# --- edges (ADR-0020) -------------------------------------------------------
+
+
+def edges_of_solid(solid: arris.build.Solid) -> tuple[arris.Edge, ...]:
+    """The candidate edges of `solid`, in the kernel's order (ADR-0020 rule 1).
+
+    A `degenerate` edge is left out, as CadQuery's `Edges()` leaves out a
+    degenerated edge (a sphere's pole).
+    """
+    model = solid.model
+    return tuple(e for e in model.edges(solid.body) if model.curve(e).kind != "degenerate")
+
+
+def edges_of_faces(solid: arris.build.Solid, faces: Sequence[arris.Face]) -> tuple[arris.Edge, ...]:
+    """The candidate edges of `faces`: each edge once, in the order first found (ADR-0020 rule 1).
+
+    Each is the solid's own edge value, so that an edge shared by two faces
+    is one, and a reversed edge is read as the solid's body does.
+    """
+    model = solid.model
+    own = {e.index: e for e in edges_of_solid(solid)}
+    found: dict[int, arris.Edge] = {}
+    for face in faces:
+        for edge in model.edges_of(face):
+            if edge.index in own and edge.index not in found:
+                found[edge.index] = own[edge.index]
+    return tuple(found.values())
+
+
+def _sub(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
+    return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
+
+
+def _dot(a: Sequence[float], b: Sequence[float]) -> float:
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+
+
+def _exact_centre(model: arris.Model, edge: arris.Edge) -> tuple[float, float, float] | None:
+    """The centre of mass of `edge` where it is known exactly, else `None` (ADR-0020 rule 2).
+
+    A line's midpoint; a full circle's or full ellipse's centre; an arc's
+    centre moved `r sin(θ/2)/(θ/2)` along its bisector. The arc runs
+    counter-clockwise about the circle's axis from its start to its end, from
+    its end to its start on a reversed edge. An ellipse arc and a B-spline
+    edge have no exact centre here.
+    """
+    c = model.curve(edge)
+    if c.kind == "line":
+        return (
+            (c.start[0] + c.end[0]) / 2,
+            (c.start[1] + c.end[1]) / 2,
+            (c.start[2] + c.end[2]) / 2,
+        )
+    if c.kind in ("circle", "ellipse") and c.start == c.end and c.origin is not None:
+        return c.origin
+    if c.kind != "circle" or c.origin is None or c.axis is None:
+        return None
+    first, last = (c.end, c.start) if edge.reversed else (c.start, c.end)
+    u, v = _sub(first, c.origin), _sub(last, c.origin)
+    sweep = math.atan2(_dot(_cross(u, v), c.axis), _dot(u, v))
+    if sweep <= 0:
+        sweep += 2 * math.pi
+    # The bisector: u turned by half the sweep about the axis (Rodrigues; u is
+    # perpendicular to the axis).
+    half = sweep / 2
+    w = _cross(c.axis, u)
+    bisector = [u[k] * math.cos(half) + w[k] * math.sin(half) for k in range(3)]
+    d = math.sin(half) / half
+    return (
+        c.origin[0] + d * bisector[0],
+        c.origin[1] + d * bisector[1],
+        c.origin[2] + d * bisector[2],
+    )
+
+
+def _polyline_centres(
+    model: arris.Model, body: arris.Body, chord: float
+) -> dict[int, tuple[float, float, float]]:
+    """The centre of mass of each edge's tessellated polyline, by edge index.
+
+    Summed in polyline order in Python floats, so it has the same bits on
+    every machine (ADR-0020 rule 2).
+    """
+    mesh = model.tessellate(body, chord)
+    points = struct.unpack(f"<{3 * mesh.n_positions}d", mesh.positions)
+    indices = struct.unpack(f"<{len(mesh.edge_indices) // 4}I", mesh.edge_indices)
+    found: dict[int, tuple[float, float, float]] = {}
+    for edge, first, end in mesh.edges:
+        total = 0.0
+        weighted = [0.0, 0.0, 0.0]
+        for k in range(first, end - 1):
+            p = points[3 * indices[k] : 3 * indices[k] + 3]
+            q = points[3 * indices[k + 1] : 3 * indices[k + 1] + 3]
+            length = math.dist(p, q)
+            total += length
+            for j in range(3):
+                weighted[j] += length * (p[j] + q[j]) / 2.0
+        if total == 0.0:
+            raise UnsupportedApi("Workplane.edges: an edge with no length in the mesh")
+        found[edge.index] = (weighted[0] / total, weighted[1] / total, weighted[2] / total)
+    return found
+
+
+def _edge_keys(
+    solid: arris.build.Solid, edges: Sequence[arris.Edge], axis: int
+) -> tuple[list[float], list[float]]:
+    """Each edge's key along `axis` and how far it is trusted (ADR-0020 rule 2).
+
+    A width of 0 is an exact key. A seam's key is exact where its face is a
+    surface of revolution about an axis parallel to `axis`, else it lies
+    anywhere on its face, so it is the face's box (centre, half the extent).
+    An ellipse arc's or a B-spline edge's key is its polyline's centre of
+    mass at a margin of the solid's box diagonal.
+    """
+    model = solid.model
+    unit = tuple(1.0 if i == axis else 0.0 for i in range(3))
+    whole = model.bounds(solid.body)
+    if whole is None:
+        raise UnsupportedApi("Workplane.edges on a solid without a box")
+    diagonal = _length([whole[1][k] - whole[0][k] for k in range(3)])
+    keys: list[float] = []
+    widths: list[float] = []
+    polylines: dict[int, tuple[float, float, float]] | None = None
+    for edge in edges:
+        centre = _exact_centre(model, edge)
+        faces = model.faces_of(solid.body, edge)
+        if len(faces) == 1:
+            info = model.surface(faces[0])
+            along = (
+                info.axis is not None
+                and _length(_cross(info.axis, unit)) <= model.angular_tolerance
+            )
+            if not (along and centre is not None):
+                box = model.bounds(faces[0])
+                if box is None:
+                    raise UnsupportedApi("Workplane.edges on a seam of a face without a box")
+                keys.append((box[0][axis] + box[1][axis]) / 2.0)
+                widths.append((box[1][axis] - box[0][axis]) / 2.0)
+                continue
+        if centre is None:
+            if polylines is None:
+                polylines = _polyline_centres(model, solid.body, diagonal * _ESTIMATE_CHORD)
+            centre = polylines[edge.index]
+            keys.append(centre[axis])
+            widths.append(diagonal * _ESTIMATE_MARGIN)
+            continue
+        keys.append(centre[axis])
+        widths.append(0.0)
+    return keys, widths
+
+
+def select_edges(
+    solid: arris.build.Solid, edges: Sequence[arris.Edge], selector: str | None
+) -> tuple[arris.Edge, ...]:
+    """The `edges` of `solid` that CadQuery's `selector` keeps (ADR-0020).
+
+    `edges` are candidates from `edges_of_solid` or `edges_of_faces` (or edges
+    a selector kept before); with no `selector` they are all kept. `selector`
+    is one of `SELECTORS`' six axis selectors: the edges whose centre of mass
+    lies furthest along (`>`) or least along (`<`) the axis, every one within
+    CadQuery's `1e-4` of the first of its cluster, in ascending key. Raises
+    `UnsupportedApi` where the selection depends on a key arris does not give
+    as CadQuery's kernel does: a seam on a face about another axis, or an
+    ellipse arc or B-spline edge in the kept cluster or able to reach it.
+
+    >>> import arris.build
+    >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
+    >>> len(select_edges(box, edges_of_solid(box), ">Z"))
+    4
+    """
+    if selector is None:
+        return tuple(edges)
+    maximum = selector[0] == ">"
+    keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]])
+    kept = _pick_widths(keys, widths, maximum) if any(widths) else _pick(keys, maximum)
+    if kept is None or any(widths[k] for k in kept):
+        raise UnsupportedApi(
+            f"Workplane.edges({selector!r}): the selection depends on an edge's place, "
+            "which arris does not decide as CadQuery's kernel does"
+        )
+    return tuple(edges[k] for k in _ordered(kept, keys))
 
 
 def plane_on(

@@ -197,7 +197,9 @@ def declared_programs(draw: st.DrawFn) -> tuple[CorpusProgram, cq.CensusForm]:
     lines = ["import cadquery as cq", "dimension = 2", "wp = cq.Workplane('XY')"]
     for declaration in chosen:
         # A selector is a literal for the census; a name or expression is no selector.
-        dynamic = () if declaration.name == "Workplane.faces" else ("name", "expr")
+        dynamic = (
+            () if declaration.name in ("Workplane.faces", "Workplane.edges") else ("name", "expr")
+        )
         args = [
             VALUES[draw(st.sampled_from((*kinds, *dynamic)))]
             for kinds in (slot or tuple(VALUES) for slot in declaration.positional)

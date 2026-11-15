@@ -106,7 +106,7 @@ within a given design; **[3]** unproven semantics, established here.
   words: edge keys on lines, circles, arcs and a NURBS edge; `|Z` on a
   cylinder (its seam); `'>Z or <Z'`; `edges()` on faces; a blend with a seam,
   on a compound, of radius 0 and negative, with no solid, and `clean()`.
-- [ ] Step 2 **[2]** — `edges()` and `edges(str)` with the axis selectors
+- [x] Step 2 **[2]** — `edges()` and `edges(str)` with the axis selectors
   (the edge key): `cq/ok-edges-*` with each kept edge's count and curve kind,
   `unsupported-` for an estimate inside the margin; `hypothesis`: a random box
   and selector keeps the four edges of the face the closed form names.
@@ -169,6 +169,14 @@ within a given design; **[3]** unproven semantics, established here.
 - *Settled* (step 1): CadQuery's `clean()` after `fillet` moved no measure
   and no face count, bit for bit, on four constructions (`unclean-*`), so `cq`
   writes no `clean`.
+- *Settled* (step 2): `cq/ok-edges-*` fixtures cannot exist: a program that
+  ends in edges is `ok` with volume 0 on the oracle and `runtime` ("holding no
+  solid") in `cq`, as for any non-solid result. What each selector keeps (count,
+  curve kind, centre) is held on the stack in `tests/test_cq_edges.py`, each kept
+  edge to its closed form, and by `ok-fillet-*` and `ok-chamfer-*` through the part
+  a blend makes of it; step 2's fixtures are the `runtime-edges-*` and
+  `unsupported-edges-*` refusals beside the oracle's reports. `census_form` gained
+  `alternatives=` so `edges()` and `edges(str)` are two declared forms.
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a

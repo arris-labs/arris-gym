@@ -15,7 +15,17 @@ import arris
 import arris.build
 
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
-from arris_gym.cq._selector import NO_FACES, SELECTORS, Faces, plane_on_faces, select_faces
+from arris_gym.cq._selector import (
+    AXIS_SELECTORS,
+    NO_FACES,
+    Edges,
+    Faces,
+    edges_of_faces,
+    edges_of_solid,
+    plane_on_faces,
+    select_edges,
+    select_faces,
+)
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
 from arris_gym.cq._vector import Vector
 
@@ -165,6 +175,11 @@ class _Path:
         return _Path(self.start, (*self.segments, _Segment(to, via)))
 
 
+def _what(selected: Faces | Edges) -> str:
+    """`faces` or `edges`: what a stack of selected objects holds, for a message."""
+    return "faces" if isinstance(selected, Faces) else "edges"
+
+
 def _uv(point: object, refusal: str) -> tuple[float, float]:
     """A drawn point as plane coordinates: two numbers, else outside the subset.
 
@@ -269,8 +284,8 @@ class Workplane:
             solids = node._solids()
             if solids:
                 return solids[0]
-            # A `faces` stack keeps the solid they were selected from.
-            kept = [o for o in node._stack if isinstance(o, Faces)]
+            # A `faces` or `edges` stack keeps the solid they were selected from.
+            kept = [o for o in node._stack if isinstance(o, Faces | Edges)]
             if kept:
                 return kept[0].solid
             node = node._parent
@@ -294,8 +309,7 @@ class Workplane:
         selected faces, a stack of points and circles at points, and
         `ValueError` (CadQuery's words, `runtime`) for any other stack.
         """
-        if any(isinstance(o, Faces) for o in self._stack):
-            raise UnsupportedApi(f"{form} on selected faces")
+        self._refuse_selected(form)
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi(f"{form} on a stack of points")
         if any(isinstance(o, _Discs) for o in self._stack):
@@ -315,8 +329,8 @@ class Workplane:
         if not self._stack:
             return _Path((0.0, 0.0))
         last = self._stack[-1]
-        if isinstance(last, Faces):
-            raise UnsupportedApi("Workplane.lineTo on selected faces")
+        if isinstance(last, Faces | Edges):
+            raise UnsupportedApi(f"Workplane.lineTo on selected {_what(last)}")
         if isinstance(last, _Points):
             raise UnsupportedApi("Workplane.lineTo on a stack of points")
         if isinstance(last, _Discs):
@@ -325,6 +339,12 @@ class Workplane:
             return last
         kind = "Sketch" if isinstance(last, arris.build.Sketch) else type(last).__name__
         raise RuntimeError(f"Cannot convert object type '{kind}' to vector")
+
+    def _refuse_selected(self, form: str) -> None:
+        """Raise `UnsupportedApi` naming `form` when the stack holds selected faces or edges."""
+        for o in self._stack:
+            if isinstance(o, Faces | Edges):
+                raise UnsupportedApi(f"{form} on selected {_what(o)}")
 
     def _refuse_pending(self, form: str) -> None:
         """Raise `UnsupportedApi` naming `form` when the stack holds a pending wire.
@@ -335,8 +355,7 @@ class Workplane:
         selector kept are refused the same way: what a call does on them is
         CadQuery's `eachpoint` or `_getFaces`, which the subset does not model.
         """
-        if any(isinstance(o, Faces) for o in self._stack):
-            raise UnsupportedApi(f"{form} on selected faces")
+        self._refuse_selected(form)
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi(f"{form} on a stack of points")
         if any(isinstance(o, (_Path, _Discs, arris.build.Sketch)) for o in self._stack):
@@ -346,8 +365,9 @@ class Workplane:
         """The solids of the workplane given to `union` or `cut`; `form` names the call."""
         if not isinstance(other, Workplane):
             raise UnsupportedApi(f"{form} with {type(other).__name__}")
-        if any(isinstance(o, Faces) for o in other._stack):
-            raise UnsupportedApi(f"{form} with selected faces")
+        for o in other._stack:
+            if isinstance(o, Faces | Edges):
+                raise UnsupportedApi(f"{form} with selected {_what(o)}")
         solids = other._solids()
         if not solids:
             raise ValueError(f"{form} was given a Workplane holding no solid")
@@ -485,8 +505,10 @@ class Workplane:
         >>> len(wp._stack[0].faces)
         1
         """
-        if selector not in SELECTORS:
+        if selector not in AXIS_SELECTORS:
             raise UnsupportedApi(f"Workplane.faces({selector!r})")
+        if any(isinstance(o, Edges) for o in self._stack):
+            raise UnsupportedApi("Workplane.faces on selected edges")
         kept = [o for o in self._stack if isinstance(o, Faces)]
         if kept:
             # CadQuery ranks the stacked faces only (ADR-0018 rule 5).
@@ -501,6 +523,51 @@ class Workplane:
             raise ValueError(NO_FACES)
         (solid,) = solids
         return self._derive(Faces(solid, select_faces(solid, selector)))
+
+    @census_form("Workplane.edges", [], alternatives=[[("str",)]])
+    def edges(self, selector: str | None = None) -> Workplane:
+        """The edges of the stack's solid or faces that CadQuery's `selector` keeps (ADR-0020).
+
+        With no `selector` every edge is kept. `selector` is one of `>X <X >Y
+        <Y >Z <Z`: the edges whose centre of mass lies furthest along (`>`) or
+        least along (`<`) the axis, every one within CadQuery's `1e-4` of the
+        first of its cluster, in ascending key. The candidates are the edges of
+        the solid on the stack, of the faces `faces` kept (each edge once, in the
+        order first found) or of the edges a selector kept before; a compound's
+        edges are those of every piece. They are the one object on the new
+        stack, which `fillet` and `chamfer` take; the solid stays in the chain.
+        A degenerate edge is no candidate. Raises `UnsupportedApi` for any
+        other selector and where the selection depends on an edge's place arris
+        does not decide as CadQuery's kernel does (a seam on a face about another
+        axis, an ellipse arc or B-spline edge able to reach the kept cluster).
+        A selector on an empty stack raises CadQuery's `ValueError`
+        (`runtime`), as `faces` does.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 4, 6).edges(">Z")
+        >>> len(wp._stack[0].edges)
+        4
+        """
+        if selector is not None and selector not in AXIS_SELECTORS:
+            raise UnsupportedApi(f"Workplane.edges({selector!r})")
+        for o in self._stack:
+            if isinstance(o, Edges):
+                return self._derive(Edges(o.solid, select_edges(o.solid, o.edges, selector)))
+            if isinstance(o, Faces):
+                candidates = edges_of_faces(o.solid, o.faces)
+                return self._derive(Edges(o.solid, select_edges(o.solid, candidates, selector)))
+        solids = self._solids()
+        if solids:
+            (solid,) = solids
+            return self._derive(Edges(solid, select_edges(solid, edges_of_solid(solid), selector)))
+        if not self._stack and selector is not None:
+            # No object on the stack has an edge: CadQuery's selector is handed
+            # an empty list, even where the chain holds a solid further up.
+            raise ValueError(NO_FACES)
+        raise UnsupportedApi(
+            "Workplane.edges on "
+            + ("an empty stack" if not self._stack else "a stack that holds no solid")
+        )
 
     @census_form("Workplane.pushPoints", [("list",)])
     def pushPoints(self, pntList: Sequence[object]) -> Workplane:

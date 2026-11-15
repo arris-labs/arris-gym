@@ -140,7 +140,7 @@ def test_a_call_returns_a_new_workplane_and_changes_none() -> None:
         del second._parent
 
 
-@pytest.mark.parametrize("name", ["text", "edges", "val", "objects", "plane"])
+@pytest.mark.parametrize("name", ["text", "vertices", "val", "objects", "plane"])
 def test_a_workplane_name_outside_the_subset_is_unsupported_never_attribute_error(
     name: str,
 ) -> None:

@@ -32,7 +32,7 @@ def programs() -> list[CorpusProgram]:
         "result = cq.Workplane('XY').b()",  # one missing form, wins first
         "result = cq.Workplane('XY').b()",
         "result = cq.Workplane('XY').b()",
-        "result = cq.Workplane('XY').a().edges('|Z')",  # a selector, admitted last
+        "result = cq.Workplane('XY').a().vertices('%LINE')",  # a selector, admitted last
         "result = mystery()",  # unknown stays blocked
         "r = cq.Workplane('XY')",  # an end form is an item too
         "(",
@@ -54,8 +54,8 @@ def test_greedy_unlocks_then_bridges_by_use_with_fixed_blockers() -> None:
         ("end_form", "r = …", 5),  # unlocks one, before the key-earlier form
         ("form", "Workplane.a()", 5),  # no gain; missing from three programs
         ("form", "cq.Workplane()", 7),
-        ("form", "Workplane.edges(str)", 7),  # ties the selector on use; kind
-        ("selector", "|Z", 8),
+        ("form", "Workplane.vertices(str)", 7),  # ties the selector on use; kind
+        ("selector", "%LINE", 8),
         ("form", "?.mystery()", 8),  # only an unknown-receiver program uses it
     ]
 
