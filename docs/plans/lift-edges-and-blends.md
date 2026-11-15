@@ -152,7 +152,7 @@ within a given design; **[3]** unproven semantics, established here.
   `faces('>X')`/`faces('>Z')` ("the centre of a face that arris does not give"), 7
   `connecting_rod` (ADR-0014's amendment, expected). Class the sprocket rows: new in the
   subset by this lift, so a fixture each and either a lift or a declared refusal.
-- [ ] Step 7d **[2]** — the full re-run on the final code (scratch, 2026-11-15) reaches
+- [x] Step 7d **[2]** — the full re-run on the final code (scratch, 2026-11-15) reaches
   9,998/17,900, in-subset `cq_bug` 6 (`connecting_rod`), 603 unclassified; `cq_closed_forms.py`
   then stops with `ValueError: a sprocket outside the arrangement the closed form handles`:
   a `double_simplex_sprocket` beyond the 18 of step 7b now runs `ok` (the finer `faces` pass).
@@ -162,17 +162,17 @@ within a given design; **[3]** unproven semantics, established here.
   `cq_closed_forms.py` over the scratch table
   (`.../scratchpad/c2b2/fidelity.json.gz`, oracle rows `.../c2b/oracle.jsonl.gz`) with step
   7c's flags writes verdicts and no in-subset row is unclassified.
-  *Partly done* (step 7d, not ticked): the sprocket crash was a plate ending 0.01 inside the hub's
-  length (not past it) and the `XZ` plane (axis -y), both now in `sprocket_measures`; the tool
-  leaves a row whose closed form refuses its program unclassified and names it on stderr. The
-  scratch table holds three more in-subset unclassified families, 127 rows, new with the blend
-  lifts: `sprocket_*` (82: a plate chamfered at both ends and bored, 60 alone on `YZ`/`XY`/`XZ`, 22
-  on `XY` with a hub annulus under it) and `pan_head_screw_*` (29: shank, filleted head, slot)
-  have closed forms now (`plate_measures`, `screw_closed_form`: arris within 1e-11, Open CASCADE
-  1e-3 and 1e-8 off); 16 `manifold_block_*` remain: a top-edge `chamfer` on the box, with side
-  `cboreHole`s and a `hole` along the chamfered edge itself (the workplane origin keeps the top's
-  height), so slanted planes meet axis cylinders: `part_measures` reads axis-aligned faces only.
-  Arris and Open CASCADE differ by 1e-5 to 3e-2 in volume there; which is right is not known.
+  *Done* (step 7d): the sprocket crash was a plate ending 0.01 inside the hub's length and the
+  `XZ` plane (axis -y), both now in `sprocket_measures`; a row whose closed form refuses its
+  program is left unclassified and named on stderr. The blend lifts newly ran 143 in-subset
+  unclassified rows, each now `occt_wrong` by a closed form, arris within 1e-11 of it:
+  `sprocket_*` (82, `plate_measures`), `pan_head_screw_*` (29, `screw_closed_form`) and
+  `manifold_block_*` (16: the box's top edges chamfered, with counterbores and a hole centred
+  on the chamfered edges). `part_measures` reads that box as a `Bevel` (its half-spaces and the
+  four chamfer planes, each holding a line along an axis, so its faces are read like the rest
+  and every feature on the rim is exact interval arithmetic); Open CASCADE is 1e-9 to 6e-8 off
+  in volume or area. The run over the scratch table with step 7c's flags writes 1,152
+  verdicts, each checked by `compare`, and leaves 0 in-subset rows unclassified.
 - [ ] Step 8 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests), the baseline
   subset helper step 2 adds deleted as in plans/lift-arrays-and-blind-cuts.

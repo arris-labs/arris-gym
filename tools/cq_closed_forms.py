@@ -43,10 +43,11 @@ one of them raises, never guessed):
 - **manifold_block / connecting_rod**: boxes and cylinders whose axes and faces all lie
   along x, y or z, united and cut in the program's order (`part_ops` reads the program
   by CadQuery's rules; bores crossing bores, a counterbore on a box's edge, a cross hole
-  into a ring's wall). Volume and moments are fluxes through the boundary (the divergence
-  theorem), and along a line on any face each solid is one exact interval, so what is
-  left is one integral across the lines per face, split where its formula changes
-  (`part_measures`).
+  into a ring's wall), the first box's top edges optionally chamfered (`edges(">A").chamfer(c)`,
+  the box less four mitred wedges, a convex solid whose slanted faces each hold a line along
+  an axis). Volume and moments are fluxes through the boundary (the divergence theorem), and
+  along a line on any face each solid is one exact interval, so what is left is one integral
+  across the lines per face, split where its formula changes (`part_measures`).
 
 - **bellows**: a closed profile turned about y (Pappus), an optional `hole` from the top
   widening its inner wall, and a `polarArray` of circles `cutBlind` from each end face:
@@ -1855,9 +1856,11 @@ def screw_closed_form(text: str) -> dict[str, object]:
 # --- Boxes and cylinders on the axes: manifold_block and connecting_rod -------------------
 #
 # A part built of boxes and cylinders whose axes and faces are all along x, y or z, united
-# and cut in the program's order. Its measures are integrals over its boundary (the
-# divergence theorem: V = 1/3 of the flux of x, the moment along j the flux of x_j^2/2 e_j),
-# and every boundary patch lies on one of the solids' faces. Along a line on such a face
+# and cut in the program's order, a box's top edges optionally chamfered (`Bevel`: each
+# chamfer a plane holding the axis along its edge, so read along lines on it like the rest).
+# Its measures are integrals over its boundary (the divergence theorem: V = 1/3 of the flux
+# of x, the moment along j the flux of x_j^2/2 e_j), and every boundary patch lies on one of
+# the solids' faces. Along a line on such a face
 # (a cylinder's side along its axis, a flat face along one of its axes) each solid is one
 # interval, found exactly, so the solid on either side of the face, and with it the boundary
 # and its orientation, is exact interval arithmetic. What is left is one integral across the
@@ -1902,7 +1905,21 @@ class Rod:
     hi: float
 
 
-Solid = Cuboid | Rod
+@dataclass(frozen=True)
+class Bevel:
+    """A box from `lo` to `hi` whose four edges around its face toward +`axis` are chamfered
+    by `c` (CadQuery's `edges(">A").chamfer(c)` on a box): the box less, along each of those
+    edges, the wedge beyond the plane through the two lines `c` from it on its two faces. Two
+    such planes meet at a corner along the mitre a box's chamfer makes, so the solid is the
+    box's half-spaces and the four planes' (`_bevel_planes`), convex."""
+
+    lo: Vec
+    hi: Vec
+    axis: int
+    c: float
+
+
+Solid = Cuboid | Rod | Bevel
 Op = tuple[str, Solid]  # "+" unites, "-" cuts, in the program's order
 Interval = tuple[float, float]
 Signature = tuple[object, ...]
@@ -1928,27 +1945,101 @@ def _chord(r: float, off: float) -> float | None:
     return math.sqrt(gap) if gap > 0 else None
 
 
-def _on_line(solid: Solid, d: int, at: Vec, nudge: tuple[int, int]) -> Interval | None:
+def _sign(x: float) -> int:
+    return (x > 0) - (x < 0)
+
+
+def _toward(a: int, step: int) -> Vec:
+    """An infinitesimal step along axis `a` (-1 for none), `step` = ±1, as a nudge."""
+    v = [0.0, 0.0, 0.0]
+    if a >= 0:
+        v[a] = float(step)
+    return v[0], v[1], v[2]
+
+
+Plane = tuple[Vec, float]  # the half-space n . p <= k
+
+
+def _bevel_planes(solid: Bevel) -> list[Plane]:
+    """The half-spaces whose intersection is `solid`: the box's six, then the four chamfers'.
+
+    A chamfer along the edge of the +a face and the face toward s along b cuts its two faces
+    `c` from the edge, so its plane is s x_b + x_a = (s hi_b or -lo_b) + hi_a - c.
+    """
+    a = solid.axis
+    planes: list[Plane] = []
+    for j in range(3):
+        planes.append((_toward(j, 1), solid.hi[j]))
+        planes.append((_toward(j, -1), -solid.lo[j]))
+    for b in _others(a):
+        for s, edge in ((1, solid.hi[b]), (-1, -solid.lo[b])):
+            n = [0.0, 0.0, 0.0]
+            n[b], n[a] = float(s), 1.0
+            planes.append(((n[0], n[1], n[2]), edge + solid.hi[a] - solid.c))
+    return planes
+
+
+def _clip(
+    planes: Sequence[Plane], d: int, at: Vec, nudge: Vec, skip: Callable[[Vec], bool]
+) -> tuple[Interval | None, object]:
+    """Where the line along axis `d` through `at` lies inside the half-spaces but those `skip`
+    names, and which planes bound it (its formula: where that changes, the integrand's does).
+
+    A plane the line lies on (to `COPLANAR_TOL`) keeps it when `nudge` moves it inside, as
+    `_within` does; a plane the nudge runs along keeps it only strictly inside.
+    """
+    lo, hi = -math.inf, math.inf
+    lo_by, hi_by = -1, -1
+    for m, (n, k) in enumerate(planes):
+        if skip(n):
+            continue
+        rest = 0.0
+        for j in _others(d):
+            rest += n[j] * at[j]
+        if n[d] == 0.0:
+            gap = k - rest
+            step = 0.0
+            for j in range(3):
+                step += n[j] * nudge[j]
+            if step and abs(gap) <= COPLANAR_TOL:
+                if step > 0:
+                    return None, None
+            elif not gap > 0:
+                return None, None
+            continue
+        bound = (k - rest) / n[d]
+        if n[d] > 0 and bound < hi:
+            hi, hi_by = bound, m
+        elif n[d] < 0 and bound > lo:
+            lo, lo_by = bound, m
+    if not hi > lo:
+        return None, None
+    return (lo, hi), (lo_by, hi_by)
+
+
+def _on_line(solid: Solid, d: int, at: Vec, nudge: Vec) -> tuple[Interval | None, object]:
     """Where the line along axis `d` through `at` lies inside `solid` (its d coordinate is not
-    read); `nudge` moves the coordinate on one axis by an infinitesimal step, (axis, ±1)."""
-    axis, step = nudge
+    read), and what that interval's formula depends on (None when there is none); `nudge`
+    moves the line by an infinitesimal step in its direction."""
+    if isinstance(solid, Bevel):
+        return _clip(_bevel_planes(solid), d, at, nudge, lambda n: False)
     if isinstance(solid, Cuboid):
         for j in _others(d):
-            if not _within(at[j], solid.lo[j], solid.hi[j], step if j == axis else 0):
-                return None
-        return solid.lo[d], solid.hi[d]
+            if not _within(at[j], solid.lo[j], solid.hi[j], _sign(nudge[j])):
+                return None, None
+        return (solid.lo[d], solid.hi[d]), True
     c = solid.centre
     if solid.axis == d:
         b, k = _others(d)
         if (at[b] - c[b]) ** 2 + (at[k] - c[k]) ** 2 < solid.r * solid.r:
-            return solid.lo, solid.hi
-        return None
+            return (solid.lo, solid.hi), True
+        return None, None
     a = solid.axis
-    if not _within(at[a], solid.lo, solid.hi, step if a == axis else 0):
-        return None
+    if not _within(at[a], solid.lo, solid.hi, _sign(nudge[a])):
+        return None, None
     o = 3 - a - d
     w = _chord(solid.r, at[o] - c[o])
-    return None if w is None else (c[d] - w, c[d] + w)
+    return (None, None) if w is None else ((c[d] - w, c[d] + w), True)
 
 
 def _union(intervals: Sequence[Interval]) -> list[Interval]:
@@ -2018,7 +2109,7 @@ def _part_on_line(
     ops: Sequence[Op],
     d: int,
     at: Vec,
-    nudge: tuple[int, int],
+    nudge: Vec,
     own: tuple[int, bool] | None,
     seen: list[object],
     ends: list[tuple[float, int]],
@@ -2031,9 +2122,10 @@ def _part_on_line(
         if own is not None and own[0] == i:
             assert isinstance(solid, Rod)
             interval = (solid.lo, solid.hi) if own[1] else None
+            seen.append(interval is not None)
         else:
-            interval = _on_line(solid, d, at, nudge)
-        seen.append(interval is not None)
+            interval, formula = _on_line(solid, d, at, nudge)
+            seen.append(formula)
         if interval is None:
             continue
         ends.extend(((interval[0], 2 * i), (interval[1], 2 * i + 1)))
@@ -2121,15 +2213,30 @@ def _piecewise(f: Integrand, a: float, b: float) -> list[float]:
     return total
 
 
-def _flat_extent(solid: Solid, b: int, k: int, v: float) -> Interval | None:
-    """A flat face of `solid` (a box's, a cylinder's end) on the line along b at k = v."""
+def _flat_extent(
+    solid: Solid, a: int, c: float, b: int, k: int, v: float
+) -> tuple[Interval | None, object]:
+    """A flat face of `solid` in the plane a = c (a box's, a cylinder's end) on the line along
+    b at k = v, and what its formula depends on."""
+    if isinstance(solid, Bevel):
+        at = [0.0, 0.0, 0.0]
+        at[a], at[k] = c, v
+        still = (0.0, 0.0, 0.0)
+        up, down = _toward(a, 1), _toward(a, -1)
+        point = (at[0], at[1], at[2])
+        return _clip(_bevel_planes(solid), b, point, still, lambda n: n in (up, down))
+    extent = _axis_extent(solid, b, k, v)
+    return extent, extent is not None
+
+
+def _axis_extent(solid: Cuboid | Rod, b: int, k: int, v: float) -> Interval | None:
     if isinstance(solid, Cuboid):
         return (solid.lo[b], solid.hi[b]) if solid.lo[k] < v < solid.hi[k] else None
     w = _chord(solid.r, v - solid.centre[k])
     return None if w is None else (solid.centre[b] - w, solid.centre[b] + w)
 
 
-# What `_flat` and `_side` return: area, three times the volume, and the three moments.
+# What `_flat`, `_slant` and `_side` return: area, three times the volume, and the three moments.
 _ZERO = (0.0, 0.0, 0.0, 0.0, 0.0)
 
 
@@ -2142,7 +2249,7 @@ def _flat(
     them is not read twice.
     """
     b, k = _others(a)
-    if isinstance(solid, Cuboid):
+    if isinstance(solid, Cuboid | Bevel):
         v0, v1 = solid.lo[k], solid.hi[k]
     else:
         v0, v1 = solid.centre[k] - solid.r, solid.centre[k] + solid.r
@@ -2151,17 +2258,17 @@ def _flat(
         at = [0.0, 0.0, 0.0]
         at[a], at[k] = c, v
         point = (at[0], at[1], at[2])
-        extent = _flat_extent(solid, b, k, v)
+        extent, formula = _flat_extent(solid, a, c, b, k, v)
         if extent is None:
             return _ZERO, ("none",)
-        seen: list[object] = []
+        seen: list[object] = [formula]
         ends: list[tuple[float, int]] = [(extent[0], -1), (extent[1], -2)]
-        inside = _part_on_line(ops, b, point, (a, -side), None, seen, ends)
-        outside = _part_on_line(ops, b, point, (a, side), None, seen, ends)
+        inside = _part_on_line(ops, b, point, _toward(a, -side), None, seen, ends)
+        outside = _part_on_line(ops, b, point, _toward(a, side), None, seen, ends)
         face = [extent]
         for j, other in enumerate(before):
-            known = _flat_extent(other, b, k, v)
-            seen.append(known is not None)
+            known, formula = _flat_extent(other, a, c, b, k, v)
+            seen.append(formula)
             if known is not None:
                 face = _minus(face, [known])
                 ends.extend(((known[0], -3 - 2 * j), (known[1], -4 - 2 * j)))
@@ -2188,8 +2295,8 @@ def _side(ops: Sequence[Op], i: int, rod: Rod) -> list[float]:
         point = (at[0], at[1], at[2])
         seen: list[object] = []
         ends: list[tuple[float, int]] = []
-        inside = _part_on_line(ops, a, point, (-1, 0), (i, True), seen, ends)
-        outside = _part_on_line(ops, a, point, (-1, 0), (i, False), seen, ends)
+        inside = _part_on_line(ops, a, point, _toward(-1, 0), (i, True), seen, ends)
+        outside = _part_on_line(ops, a, point, _toward(-1, 0), (i, False), seen, ends)
         own = [(rod.lo, rod.hi)]
         out = _length(_both(_minus(inside, outside), own))
         into = _length(_both(_minus(outside, inside), own))
@@ -2206,8 +2313,51 @@ def _side(ops: Sequence[Op], i: int, rod: Rod) -> list[float]:
     return total
 
 
+def _slant(ops: Sequence[Op], solid: Bevel, b: int, s: int) -> list[float]:
+    """The part's boundary on `solid`'s chamfer along the edge of its +a face and the face
+    toward s along b: the plane s x_b + x_a = K, read along lines on it along the third axis
+    k, across them by w = x_a from hi_a - c to hi_a (x_b = s (K - w)).
+
+    Its outward normal is n / sqrt(2) with n = s e_b + e_a and the area element sqrt(2) dw dk,
+    so the flux of p through it is K per unit of w and k, and that of x_j^2/2 e_j is
+    x_j^2/2 n_j; the area is sqrt(2) per unit.
+    """
+    a = solid.axis
+    (k,) = [j for j in range(3) if j not in (a, b)]
+    n = [0.0, 0.0, 0.0]
+    n[b], n[a] = float(s), 1.0
+    normal = (n[0], n[1], n[2])
+    big = solid.hi[b] if s > 0 else -solid.lo[b]
+    plane = big + solid.hi[a] - solid.c
+    inward = (-normal[0], -normal[1], -normal[2])
+
+    def f(w: float) -> tuple[tuple[float, ...], Signature]:
+        at = [0.0, 0.0, 0.0]
+        at[a], at[b] = w, s * (plane - w)
+        point = (at[0], at[1], at[2])
+        extent, formula = _clip(
+            _bevel_planes(solid), k, point, (0.0, 0.0, 0.0), lambda m: m == normal
+        )
+        if extent is None:
+            return _ZERO, ("none",)
+        seen: list[object] = [formula]
+        ends: list[tuple[float, int]] = [(extent[0], -1), (extent[1], -2)]
+        inside = _part_on_line(ops, k, point, inward, None, seen, ends)
+        outside = _part_on_line(ops, k, point, normal, None, seen, ends)
+        face = [extent]
+        out = _length(_both(_minus(inside, outside), face))  # the part's normal is +n
+        into = _length(_both(_minus(outside, inside), face))  # its normal is -n
+        net = out - into
+        values = [math.sqrt(2) * (out + into), plane * net, 0.0, 0.0, 0.0]
+        values[2 + b] = at[b] ** 2 / 2 * s * net
+        values[2 + a] = w * w / 2 * net
+        return tuple(values), (tuple(seen), _order(ends))
+
+    return _piecewise(f, solid.hi[a] - solid.c, solid.hi[a])
+
+
 def _solid_box(solid: Solid) -> Box:
-    if isinstance(solid, Cuboid):
+    if isinstance(solid, Cuboid | Bevel):
         return solid.lo, solid.hi
     lo = [solid.centre[i] - solid.r for i in range(3)]
     hi = [solid.centre[i] + solid.r for i in range(3)]
@@ -2234,14 +2384,14 @@ def _check_bounds(ops: Sequence[Op], box: Box) -> None:
             extreme = box[end][a]
             step = 1 if end == 0 else -1
             found = False
-            lines: list[tuple[int, Vec, tuple[int, int], tuple[int, bool] | None]]
+            lines: list[tuple[int, Vec, Vec, tuple[int, bool] | None]]
             for i, (kind, solid) in enumerate(ops):
                 if kind != "+" or _solid_box(solid)[end][a] != extreme:
                     continue
                 if isinstance(solid, Rod) and solid.axis != a:
                     at = [solid.centre[0], solid.centre[1], solid.centre[2]]
                     at[a] = extreme
-                    lines = [(solid.axis, (at[0], at[1], at[2]), (a, step), (i, True))]
+                    lines = [(solid.axis, (at[0], at[1], at[2]), _toward(a, step), (i, True))]
                 else:
                     b, k = _others(a)
                     lo, hi = _solid_box(solid)
@@ -2250,7 +2400,7 @@ def _check_bounds(ops: Sequence[Op], box: Box) -> None:
                         at = [0.0, 0.0, 0.0]
                         at[a] = extreme
                         at[k] = lo[k] + (hi[k] - lo[k]) * (n + 0.5) / SCAN_POINTS
-                        lines.append((b, (at[0], at[1], at[2]), (a, step), None))
+                        lines.append((b, (at[0], at[1], at[2]), _toward(a, step), None))
                 for d, point, nudge, own in lines:
                     if _part_on_line(ops, d, point, nudge, own, [], []):
                         found = True
@@ -2267,7 +2417,12 @@ def part_measures(ops: Sequence[Op]) -> tuple[float, float, Vec, Box]:
     planes: list[tuple[int, float, Solid]] = []  # flat faces read so far
     for i, (_, solid) in enumerate(ops):
         faces: list[tuple[int, int, float]] = []  # axis, outward side, plane
-        if isinstance(solid, Cuboid):
+        if isinstance(solid, Bevel):
+            for b in _others(solid.axis):
+                for s in (-1, 1):
+                    part = _slant(ops, solid, b, s) or list(_ZERO)
+                    totals = [x + y for x, y in zip(totals, part, strict=True)]
+        if isinstance(solid, Cuboid | Bevel):
             faces = [
                 (a, s, solid.hi[a] if s > 0 else solid.lo[a]) for a in range(3) for s in (-1, 1)
             ]
@@ -2321,7 +2476,7 @@ def _top(ops: Sequence[Op], a: int) -> float:
     """
     top = -math.inf
     for kind, solid in ops:
-        if kind == "+" and isinstance(solid, Cuboid):
+        if kind == "+" and isinstance(solid, Cuboid | Bevel):
             top = max(top, solid.hi[a])
         elif kind == "+" and isinstance(solid, Rod) and solid.axis == a:
             top = max(top, solid.hi)
@@ -2374,7 +2529,10 @@ def part_ops(text: str) -> list[Op]:
     its origin the previous origin projected onto it; `pushPoints` are points in that plane;
     `hole(d)` and `cboreHole(d, D, h)` bore from each point (the origin when none) against
     the normal for `largestDimension()`, the diagonal of the part's box (so through it), the
-    counterbore a second cylinder of D to h deep. Raises `ValueError` for any other call.
+    counterbore a second cylinder of D to h deep. `edges(">A").chamfer(c)` right after the
+    first box is the four edges of its +A face (the edges whose centre lies furthest along A)
+    chamfered by c (`Bevel`), c short of half each side across A and of the box's depth along
+    it. Raises `ValueError` for any other call.
     """
     m = re.search(r'result = \(\n\s*cq\.Workplane\("(XY|XZ|YZ)"\)', text)
     if m is None:
@@ -2386,8 +2544,11 @@ def part_ops(text: str) -> list[Op]:
     frame: Frame = ((0.0, 0.0, 0.0), x, y, n)
     points: list[Vec] | None = None
     selected: int | None = None
+    edged: int | None = None
     for call in _CALL.finditer(body):
         name, args = call.group(1), call.group(2)
+        if edged is not None and name != "chamfer":
+            raise ValueError("edges this tool does not blend")
         if name in ("box", "cylinder"):
             if ops:
                 raise ValueError("a second solid on the chain")
@@ -2404,6 +2565,21 @@ def part_ops(text: str) -> list[Op]:
             solid = _made(plane, offset, made.group(5), made.group(6))
             ops.append(("+" if name == "union" else "-", solid))
             points = None
+        elif name == "edges":
+            chosen = re.fullmatch(r'">([XYZ])"', args)
+            if chosen is None or len(ops) != 1 or not isinstance(ops[0][1], Cuboid):
+                raise ValueError(f"edges this tool does not read: {args}")
+            edged = "XYZ".index(chosen.group(1))
+        elif name == "chamfer":
+            box = ops[0][1] if edged is not None else None
+            if not isinstance(box, Cuboid) or edged is None or "," in args:
+                raise ValueError("a chamfer this tool does not read")
+            c = _num(args)
+            span = [box.hi[j] - box.lo[j] for j in range(3)]
+            if not 0 < c < min(span[edged], *(span[j] / 2 for j in _others(edged))):
+                raise ValueError("a chamfer that meets another face")
+            ops[0] = ("+", Bevel(box.lo, box.hi, edged, c))
+            edged = None
         elif name == "faces":
             chosen = re.fullmatch(r'">([XYZ])"', args)
             if chosen is None:
@@ -2451,6 +2627,8 @@ def part_ops(text: str) -> list[Op]:
             points = None
         else:
             raise ValueError(f"a call this tool does not read: {name}")
+    if edged is not None:
+        raise ValueError("edges this tool does not blend")
     return ops
 
 
@@ -2459,7 +2637,7 @@ def part_closed_form(text: str) -> dict[str, object]:
     ops = part_ops(text)
     volume, area, centroid, bounds = part_measures(ops)
     solids = "; ".join(
-        f"{kind} {'box' if isinstance(s, Cuboid) else 'cylinder'} {s}" for kind, s in ops
+        f"{kind} {'cylinder' if isinstance(s, Rod) else 'box'} {s}" for kind, s in ops
     )
     return {
         "kind": "closed_form",

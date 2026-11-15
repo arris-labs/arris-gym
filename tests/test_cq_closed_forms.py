@@ -767,16 +767,70 @@ def test_a_connecting_rod_is_what_arris_builds(plane: str, faces: str, lift: str
     assert _agrees(ag.run(text, dialect="cq"), cf.part_closed_form(text)) == []
 
 
+def test_a_chamfered_box_meets_its_textbook_figures() -> None:
+    # A box L x W x H with the four edges of its top chamfered by c: the top layer's section at
+    # t above its foot is (L - 2t)(W - 2t), so V = LW(H - c) + LWc - (L + W)c^2 + 4c^3/3, and
+    # each chamfer is a trapezoid of slant c sqrt 2.
+    L, W, H, c = 7.0, 5.0, 3.0, 0.8
+    for a in range(3):
+        lo, hi = [-L / 2, -W / 2, -H / 2], [L / 2, W / 2, H / 2]
+        lo[a], lo[2], hi[a], hi[2] = lo[2], lo[a], hi[2], hi[a]  # the top toward +a
+        bevel = cf.Bevel((lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2]), a, c)
+        volume, area, centroid, bounds = cf.part_measures([("+", bevel)])
+        assert volume == pytest.approx(L * W * H - (L + W) * c * c + 4 * c**3 / 3, rel=1e-14)
+        sides = (L - 2 * c) * (W - 2 * c) + 2 * (L + W) * (H - c)
+        slants = 2 * math.sqrt(2) * ((L + W) * c - 2 * c * c)
+        assert area == pytest.approx(L * W + sides + slants, rel=1e-14)
+        foot = H / 2 - c  # the moment along a: the block under the layer, then the layer
+        moment = L * W * (H - c) * (foot - H / 2) / 2
+        moment += L * W * (foot * c + c * c / 2) - 2 * (L + W) * (foot * c * c / 2 + c**3 / 3)
+        moment += 4 * (foot * c**3 / 3 + c**4 / 4)
+        assert centroid[a] == pytest.approx(moment / volume, rel=1e-13)
+        assert bounds == ((lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2]))
+
+
+CHAMFERED = MANIFOLD.replace(
+    ".box(83.17, 41.3, 31.06)\n",
+    '.box(83.17, 41.3, 31.06)\n    .edges(">{f1}")\n    .chamfer(1.3)\n',
+).replace(
+    ".hole(9.4)\n)",
+    """.hole(9.4)
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(-24.95, 0.0, {lift}), rotate=cq.Vector(0, 0, 0))
+            .cylinder(3.0, 7.5)
+    )
+)""",
+)
+
+
+@pytest.mark.parametrize(
+    ("plane", "faces", "lift"),
+    [("XY", "ZYX", "16.53"), ("XZ", "YZX", "-16.53"), ("YZ", "XZY", "16.53")],
+)
+def test_a_chamfered_manifold_block_is_what_arris_builds(plane: str, faces: str, lift: str) -> None:
+    """The corpus's chamfered block: the top's edges chamfered, the counterbores and the third
+    hole centred on the chamfered edges (their workplanes' origins keep the top's height), so
+    the chamfers meet the bores' sides, and a boss sunk into the top over a hole."""
+    text = CHAMFERED.format(plane=plane, f1=faces[0], f2=faces[1], f3=faces[2], lift=lift)
+    assert any(isinstance(s, cf.Bevel) for _, s in cf.part_ops(text))
+    assert _agrees(ag.run(text, dialect="cq"), cf.part_closed_form(text)) == []
+
+
 @pytest.mark.parametrize(
     ("change", "match"),
     [
-        ((".hole(9.4)\n)", ".hole(9.4)\n    .fillet(1.0)\n)"), "does not read: fillet"),
+        ((".chamfer(1.3)\n", ".chamfer(1.3)\n    .fillet(1.0)\n"), "does not read: fillet"),
         (('.faces(">Y")\n', '.faces("<Y")\n'), "selector this tool does not read"),
         ((".box(83.17, 41.3, 31.06)\n", ".box(83.17, 41.3, 31.06)\n    .box(1, 1, 1)\n"), "second"),
+        (("chamfer(1.3)", "chamfer(21.0)"), "meets another face"),  # past half the width
+        (("chamfer(1.3)", "chamfer(1.3, 0.5)"), "chamfer this tool does not read"),
+        (("chamfer(1.3)", "fillet(1.3)"), "does not blend"),
+        (('edges(">Z")', 'edges("|Z")'), "edges this tool does not read"),
     ],
 )
 def test_a_part_this_tool_does_not_read_is_refused(change: tuple[str, str], match: str) -> None:
-    text = MANIFOLD.format(plane="XY", f1="Z", f2="Y", f3="X").replace(*change)
+    text = CHAMFERED.format(plane="XY", f1="Z", f2="Y", f3="X", lift="16.53").replace(*change)
     with pytest.raises(ValueError, match=match):
         cf.part_closed_form(text)
 
