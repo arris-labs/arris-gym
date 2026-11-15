@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 47088.000720087584,
+    "area": 10643.173350955429,
+    "centroid": [
+      0.0,
+      0.0,
+      10.298728882048655
+    ],
+    "bounds": [
+      [
+        -25.5,
+        -25.5,
+        -7.2
+      ],
+      [
+        25.5,
+        25.5,
+        68.5
+      ]
+    ],
+    "faces": 11,
+    "face_kinds": [
+      [
+        "cone",
+        1
+      ],
+      [
+        "cylinder",
+        5
+      ],
+      [
+        "plane",
+        5
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `stepped_shaft_000048_s20260505` as written: four cylinders stacked on the z axis (radii 25.5, 12.5, 7.4, 4.1), `faces(\">Z\").chamfer(0.73)` bevelling the top face's one rim, a hole of radius 1.615 through the whole axis"
+}

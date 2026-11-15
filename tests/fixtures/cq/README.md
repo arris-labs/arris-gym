@@ -569,3 +569,12 @@ to the report's), and `cq` agrees with that report. `unsupported-chamfer-corpus-
 the kernels place it differently (ADR-0020 rule 2). `runtime-chamfer-*` are CadQuery's refusals
 and `arris-refusal-chamfer-*` the lengths Open CASCADE refuses with `StdFail_NotDone` and arris
 with its own words: both fail, a row that agrees.
+
+`ok-blend-corpus-stepped-shaft` and `ok-blend-corpus-gridfinity-bin` of
+plans/lift-edges-and-blends step 6 (`tests/test_cq_blend_contexts.py`): BenchCAD's
+`stepped_shaft_000048_s20260505` as written (four stacked cylinders, `faces(">Z").chamfer`
+bevelling a face's one rim, a hole along the axis) and `gridfinity_bin_000166_s20260505` as written
+(a fillet before a cut and a union, the rib joined against a wall), each held to its closed form
+and agreeing with the oracle's recorded report. The `ball_knob` blend (`faces("<Z").edges()`
+after a sphere and a stem touching at a point) is `regression/cq-ball-knob-chamfer-after-point-contact`,
+waiting on arris's union; the handwheel (blends after unions and cuts) is `ok-chamfer-corpus-handwheel`.

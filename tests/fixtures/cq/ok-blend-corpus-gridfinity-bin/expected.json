@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48124.98414335289,
+    "area": 43192.96093013919,
+    "centroid": [
+      0.0,
+      -2.7575150438429703,
+      -4.334621813992235
+    ],
+    "bounds": [
+      [
+        -42.0,
+        -42.0,
+        -21.0
+      ],
+      [
+        42.0,
+        42.0,
+        21.0
+      ]
+    ],
+    "faces": 20,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        16
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "BenchCAD's `gridfinity_bin_000166_s20260505` as written: a box 84 x 84 x 42 with its bottom edges rounded at 1.24, an open cavity cut, a rib joined against one wall"
+}

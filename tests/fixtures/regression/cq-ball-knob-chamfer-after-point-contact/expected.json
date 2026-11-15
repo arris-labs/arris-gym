@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 refuses the union before the chamfer, OpUnsupportedError \"no closed form for +f2 (plane surface) against +f0 (sphere surface)\", of a sphere and a cylinder that touch at the sphere's pole; CadQuery 2.3.0 builds a compound of the two solids and chamfers the cylinder's far rim",
+  "measures": {
+    "volume": 46155.26712497527,
+    "area": 8692.540968295347,
+    "centroid": [
+      0.0,
+      0.0,
+      -14.55549796806211
+    ],
+    "bounds": [
+      [
+        -20.14,
+        -20.14,
+        -92.66
+      ],
+      [
+        20.14,
+        20.14,
+        20.14
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "a `ball_knob` as the corpus writes it (`ball_knob_000446_s20260505`): a sphere of radius 20.14 and a stem (radius 7.25, 72.52 long, about z = -56.4) whose top disc touches the sphere's pole, a compound of two solids (ADR-0016), then `faces(\"<Z\").edges().chamfer(1.35)`: the stem's far rim, a triangle of legs 1.35 swept round it (Pappus). V = 4 pi R^3 / 3 + pi r^2 h - pi d^2 (r - d/3), A = 4 pi R^2 + 2 pi r^2 + 2 pi r h less the chamfer's strip, bounds the sphere's box extended by the stem; genus 0 and 2 shells from the construction"
+}

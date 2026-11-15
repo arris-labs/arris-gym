@@ -122,7 +122,7 @@ within a given design; **[3]** unproven semantics, established here.
   cylinder rim, a hole's rim), refused values, one `clevis_pin` and one
   `dowel_pin` as written; `hypothesis`: a cylinder's rim chamfered by `d`,
   `V − π d²(r − d/3)`.
-- [ ] Step 6 **[2]** — the corpus contexts, read on the oracle: a blend after
+- [x] Step 6 **[2]** — the corpus contexts, read on the oracle: a blend after
   `faces(sel)` then `edges()` (`ball_knob`), after a `union` or `cut` (a
   compound), `'>Z or <Z'` on a turned part (`stepped_shaft`), `gridfinity_bin`
   and `handwheel`; lifted where they agree, else refused, each with its `ok-`,
@@ -195,6 +195,13 @@ within a given design; **[3]** unproven semantics, established here.
   volume equals the closed form (a quadrature of the two cylinders, 42415.8528408) and the
   oracle's is 1.3e-5 off, so `compare` leaves the row unclassified; step 6 or 7 classes it
   (Open CASCADE wrong, by closed form).
+- *Settled* (step 6): no `stepped_shaft` writes `'>Z or <Z'` (115 write `faces(sel).chamfer`);
+  the turned parts that do are the pins of step 5, so the shaft fixture is `stepped_shaft_000048_s20260505`
+  and the pins cover the `or` selector on a turned part. All 78 blend-writing `ball_knob` programs end
+  `arris_refusal` at their union (a sphere and a stem touching at the pole, already
+  `fuse-contact-refusals`), before any blend: `regression/cq-ball-knob-chamfer-after-point-contact`
+  holds the desired result by closed form (xfail, no new ask). `gridfinity_bin` (164) and the
+  `stepped_shaft` (115) run `ok`, each fixture held to a closed form and agreeing with the oracle.
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a
