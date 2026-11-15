@@ -238,6 +238,18 @@ bore (`hole`, `cboreHole`, `cskHole`) cuts at each of and `circle` draws a
 circle at each of (ADR-0018); `rarray` puts one too, a grid about the plane's
 origin, and `polarArray` one on a circle about it (ADR-0019). `circle` at those points
 draws circles that `extrude` builds posts from and `cutBlind` cuts pockets with.
+`edges` puts a **stack of edges** on it, the solid's, the stacked faces' or
+the stacked edges' own, which `fillet` and `chamfer` blend (ADR-0020).
+
+**Edge key**:
+What an axis selector ranks an edge by: its centre of mass along the axis,
+exact on a line, a circle and an arc, bounded on a seam whose face's axis
+crosses the selector's, estimated on an ellipse arc or a B-spline (ADR-0020).
+
+**Seam**:
+An edge with one face on both sides, where a closed surface (a cylinder, a
+sphere) meets itself. Where it lies is the kernel's choice; a blend passes
+over it (ADR-0020).
 
 **Compound**:
 CadQuery's several solids that do not meet, held as one value. In `cq` it
