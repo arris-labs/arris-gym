@@ -18,6 +18,7 @@ from arris_gym.cq._forms import census_form, numbers_of, shape_of
 from arris_gym.cq._selector import (
     AXIS_SELECTORS,
     NO_FACES,
+    NO_SUITABLE_EDGES,
     SELECTORS,
     Edges,
     Faces,
@@ -570,6 +571,69 @@ class Workplane:
         raise UnsupportedApi(
             "Workplane.edges on "
             + ("an empty stack" if not self._stack else "a stack that holds no solid")
+        )
+
+    def _blended(
+        self,
+        form: str,
+        value: float,
+        none_selected: str,
+        blend: Callable[[arris.build.Solid, list[arris.Edge], float], arris.build.Solid],
+    ) -> Workplane:
+        """The chain's solid blended at the stack's edges in one call (ADR-0020 rule 5).
+
+        The edges are the stack's, or every edge of the stacked faces or solid.
+        Raises, in CadQuery's order, `ValueError` (`runtime`) for a chain with
+        no solid, then for no edges (`none_selected`, CadQuery's words), then for
+        a list of seams alone. Seams are dropped otherwise. `value` goes to
+        `blend` as written, so a value arris refuses is `arris_refusal`.
+        """
+        base = self._base_solid()
+        if base is None:
+            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+        candidates: tuple[arris.Edge, ...] = ()
+        for o in self._stack:
+            if isinstance(o, Edges):
+                candidates = o.edges
+            elif isinstance(o, Faces):
+                candidates = edges_of_faces(o.solid, o.faces)
+            elif isinstance(o, arris.build.Solid):
+                candidates = edges_of_solid(o)
+            else:
+                self._refuse_pending(form)
+        if not candidates:
+            raise ValueError(none_selected)
+        model = base.model
+        # A seam has one face on both sides: arris refuses it, Open CASCADE passes over it.
+        blendable = [e for e in candidates if len(model.faces_of(base.body, e)) != 1]
+        if not blendable:
+            raise ValueError(NO_SUITABLE_EDGES)
+        return self._derive(blend(base, blendable, value))
+
+    @census_form("Workplane.fillet", [("num",)])
+    def fillet(self, radius: float) -> Workplane:
+        """The chain's solid with the stack's edges rounded to `radius`, in one call (ADR-0020).
+
+        The edges are those on the stack (`edges`), or every edge of the stacked
+        faces or of the stacked solid, a compound's pieces included, which come
+        out as one body. A seam, an edge with one face on both sides, is passed
+        over, as Open CASCADE does; a stack of seams alone is CadQuery's
+        `ValueError` (`runtime`), as is a chain with no solid or a stack with no
+        edge. `radius` goes to arris as written: zero, a negative and one past
+        what the edge's faces allow are `arris_refusal`, where CadQuery raises
+        `StdFail_NotDone`; both fail. No `clean()` follows, which on the oracle
+        moves no measure (`ok-fillet-*`).
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(10, 8, 4).edges("|Z").fillet(1)
+        >>> round(wp._solids()[0].measure().volume, 6)
+        316.566371
+        """
+        return self._blended(
+            "Workplane.fillet",
+            radius,
+            "Fillets requires that edges be selected",
+            lambda solid, edges, value: solid.fillet(edges, value),
         )
 
     @census_form("Workplane.pushPoints", [("list",)])

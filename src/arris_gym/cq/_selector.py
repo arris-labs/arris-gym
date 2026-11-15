@@ -21,6 +21,7 @@ __all__ = [
     "AXIS_SELECTORS",
     "CQ_TOLERANCE",
     "NO_FACES",
+    "NO_SUITABLE_EDGES",
     "OR_SELECTORS",
     "PARALLEL_SELECTORS",
     "SELECTORS",
@@ -582,6 +583,9 @@ def plane_on(
 # CadQuery 2.3.0's `DirectionMinMaxSelector.filter` on an empty list, which `faces`
 # hands it when no object on the stack has a face: raised as `ValueError`.
 NO_FACES = "Can not return the Nth element of an empty list"
+# Open CASCADE's `Standard_Failure` that CadQuery 2.3.0's `fillet` and `chamfer` raise when
+# every edge they are given is a seam (ADR-0020 rule 5), raised here as `ValueError`.
+NO_SUITABLE_EDGES = "Standard_Failure: There are no suitable edges for chamfer or fillet"
 # CadQuery 2.3.0's `Workplane.workplane` on several objects: its words, raised
 # as `ValueError` (ADR-0017 rule 4).
 NOT_PLANAR = "If multiple objects selected, they all must be planar faces."

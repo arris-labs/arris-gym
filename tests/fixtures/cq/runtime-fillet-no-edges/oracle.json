@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Fillets requires that edges be selected",
+  "program_sha256": "77bbc2683fd83238680ad53cbe55cd99fc8ca17a194feee2a8d77c8899e1877d",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

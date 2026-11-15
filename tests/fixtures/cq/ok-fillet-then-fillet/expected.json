@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 304.55592991553624,
+    "area": 276.29821413075416,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.010593891264812359
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 18,
+    "face_kinds": [
+      [
+        "cylinder",
+        8
+      ],
+      [
+        "plane",
+        6
+      ],
+      [
+        "torus",
+        4
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "a second blend along the edges an earlier one made (a rounded box's top)"
+}

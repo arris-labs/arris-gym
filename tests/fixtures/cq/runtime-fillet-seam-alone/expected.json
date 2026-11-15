@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: Standard_Failure: There are no suitable edges for chamfer or fillet"
+}

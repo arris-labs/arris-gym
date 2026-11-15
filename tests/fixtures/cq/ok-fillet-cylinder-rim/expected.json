@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 49.628939098549026,
+    "area": 72.59025086280522,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.024184517867888316
+    ],
+    "bounds": [
+      [
+        -2.0,
+        -2.0,
+        -2.0
+      ],
+      [
+        2.0,
+        2.0,
+        2.0
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ],
+      [
+        "torus",
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "the top rim of a cylinder of radius 2 rounded at 0.5: a torus, by Pappus"
+}

@@ -4,7 +4,8 @@
 environment, outside the gate). This reads the committed rows only: the table
 validates its own digest and counts, has one row per census row of the corpus,
 carries the corpus's licence, and the committed reach report is the one the
-table and the census rows give under today's `cq` subset. The
+table and the census rows give under the baseline subset (`cq` less the
+forms and selectors of plans/lift-edges-and-blends, until its step 8 re-runs them). The
 README states each digest, so a changed row is a changed README. The figures the docs publish
 (reach, agreement, the two target comparisons, each over all programs) are
 asserted here, so a re-run that moves one moves this file.
@@ -21,7 +22,7 @@ from pathlib import Path
 import pytest
 
 import fixture_cases
-from arris_gym import Status, cq
+from arris_gym import Status
 from arris_gym.census import ProgramCensus, Unparsable, reach
 from arris_gym.fidelity import (
     DisagreementClass,
@@ -90,8 +91,8 @@ def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
 
 
 def reach_stems(corpus: str) -> list[str]:
-    """The stems today's subset admits, sorted (`reach`'s own census reading)."""
-    return sorted(reach(census_rows(corpus), cq.subset()).stems)
+    """The stems the baseline subset admits, sorted (`reach`'s own census reading)."""
+    return sorted(reach(census_rows(corpus), fixture_cases.c2_baseline_subset()).stems)
 
 
 def table_of(corpus: str) -> FidelityTable:
@@ -115,7 +116,7 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), cq.subset()) == committed
+    assert reach_report(table, census_rows(corpus), fixture_cases.c2_baseline_subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, census_rows(corpus), fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]

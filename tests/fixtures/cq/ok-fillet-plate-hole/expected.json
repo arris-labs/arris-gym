@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 143.43605983994095,
+    "area": 226.93376215923067,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.015025965444888798
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -1.0
+      ],
+      [
+        5.0,
+        4.0,
+        1.0
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cylinder",
+        5
+      ],
+      [
+        "plane",
+        6
+      ],
+      [
+        "torus",
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "a plate's top face with its hole: the four edges and the hole's rim, rounded at 0.5"
+}

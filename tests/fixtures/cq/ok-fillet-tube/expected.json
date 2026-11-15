@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 40.894569828497936,
+    "area": 92.89244460822141,
+    "centroid": [
+      0.0,
+      0.0,
+      0.967049069700907
+    ],
+    "bounds": [
+      [
+        -3.0,
+        -3.0,
+        0.0
+      ],
+      [
+        3.0,
+        3.0,
+        2.0
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ],
+      [
+        "torus",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "a tube's two top rims, outer and inner, rounded at 0.5"
+}

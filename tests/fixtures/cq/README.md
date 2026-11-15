@@ -542,3 +542,15 @@ type selector `%LINE`, and a `box` on a stack of edges (rule 6). A program that 
 edges has no `ok-` fixture: the oracle reports a bare edge as a shape of volume 0 and
 `cq` a result holding no solid, so what `edges` keeps is held on the stack in
 `tests/test_cq_edges.py` and by the part a blend makes of it (`ok-fillet-*`, step 4).
+
+`ok-fillet-*` of plans/lift-edges-and-blends step 4 (`tests/test_cq_fillet.py`), each beside the
+oracle's recorded report and held to the closed form of how it is built (a section swept
+along each run of edges, mitred at a box's corners, by Pappus; `test_edge_probe.PARTS`): a box's
+top edges, its vertical edges, one edge, the top face's edges, every edge of the solid, a
+cylinder's rim and its `edges()` (the seam passed over), a plate's top with its hole, a tube's
+two rims, two cubes that do not meet (a compound), and a second blend along the edges an earlier
+one made. `ok-fillet-corpus-washer` is `washer_000042_s20260505` as written: a row of the
+committed census, both rims of a ring rounded. `runtime-fillet-*` are CadQuery's refusals
+(no solid, no edge, a stack of seams alone) and `arris-refusal-fillet-*` the values Open CASCADE
+refuses with `StdFail_NotDone` (zero, negative, past the faces) and arris with its own words:
+both fail, a row that agrees.

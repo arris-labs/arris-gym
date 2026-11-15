@@ -5,6 +5,18 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"` now runs `edges()` and `edges(selector)` with the axis
+  selectors `>X <X >Y <Y >Z <Z`, the parallel selectors `|X |Y |Z` and
+  `'>Z or <Z'`, and `fillet(radius)`: the edges on the stack, or every edge of
+  the stacked faces or solid, rounded in one call. An edge is ranked by its
+  centre of mass, as in CadQuery; a seam (a cylinder's, a hole's) is passed over
+  by a blend. A chain with no solid, a stack with no edge and a stack of seams
+  alone end `runtime`, as in CadQuery; a radius of zero, a negative one or one
+  past what the edge's faces allow ends `arris_refusal` where CadQuery raises.
+  A selection whose answer is the kernel's own choice (an edge's place on a
+  face about another axis, a B-spline edge) ends `unsupported_api`. `faces`
+  does not take the parallel or `or` selectors.
+
 - `dialect="cq"` now runs `cutBlind(depth)`: the pending circle, ring (two
   concentric circles) or circles at points (`pushPoints`, `rarray`,
   `polarArray`) cut from the part, `depth` along the workplane's normal, so a

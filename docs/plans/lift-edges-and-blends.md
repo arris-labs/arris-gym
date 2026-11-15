@@ -113,7 +113,7 @@ within a given design; **[3]** unproven semantics, established here.
 - [x] Step 3 **[2]** — `|X|Y|Z` and `'>Z or <Z'`: fixtures on a box, a
   cylinder and a drilled plate; `hypothesis`: on a random box, `|Z` keeps four
   lines and `'>Z or <Z'` eight.
-- [ ] Step 4 **[2]** — `fillet(num)` per ADR-0020: `cq/ok-fillet-*` (a box's
+- [x] Step 4 **[2]** — `fillet(num)` per ADR-0020: `cq/ok-fillet-*` (a box's
   edge, its vertical edges, a cylinder rim) with closed-form volume, area and
   centroid, `runtime-` and `arris-refusal-` for the refused values, one
   `handwheel` as written; `hypothesis`: a box with its four `|Z` edges filleted
@@ -181,6 +181,10 @@ within a given design; **[3]** unproven semantics, established here.
   on the stack in `tests/test_cq_edges.py` (counts, curve kinds, centres by
   closed form), not as `cq/` fixtures, for step 2's reason. `SELECTORS` splits
   into `AXIS_SELECTORS` (what `faces` reads) and the whole declared set.
+- *Settled* (step 4): the `handwheel` is a step 5/6 program: all 201 write
+  `chamfer` and none `fillet`. Step 4's corpus program is `washer_000042_s20260505`
+  (`.edges(">X").fillet(0.25)` on a bored ring, a row of the committed census), and
+  `handwheel` goes to step 5 with `chamfer`.
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a

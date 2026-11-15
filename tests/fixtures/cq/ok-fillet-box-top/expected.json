@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 312.6578152417952,
+    "area": 287.9822971502571,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.04160731250172332
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "the four top edges of a 10 x 8 x 4 box rounded at 1, mitred at its corners"
+}

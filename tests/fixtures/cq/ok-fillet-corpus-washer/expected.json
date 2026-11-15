@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 55.833286257050695,
+    "area": 155.86476607686632,
+    "centroid": [
+      -0.005128602840751862,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -0.5,
+        -5.0,
+        -5.0
+      ],
+      [
+        0.5,
+        5.0,
+        5.0
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ],
+      [
+        "torus",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `washer_000042_s20260505` as written: a ring of radii 2.65 and 5, 1 thick, both rims at x = 0.5 rounded at 0.25"
+}

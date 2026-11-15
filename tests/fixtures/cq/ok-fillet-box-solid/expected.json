@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 302.4542726622231,
+    "area": 265.09733552923257,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 26,
+    "face_kinds": [
+      [
+        "cylinder",
+        12
+      ],
+      [
+        "plane",
+        6
+      ],
+      [
+        "sphere",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "`fillet` on the solid rounds all twelve edges: the inner box grown by a ball (Steiner)"
+}

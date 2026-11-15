@@ -277,6 +277,10 @@ def constructed_programs() -> dict[str, str]:
     return {name: _HEAD + body + _SHOW for name, body in sorted(CONSTRUCTED.items())}
 
 
+# The selectors plans/lift-edges-and-blends declared: `edges` reads them, never `faces`.
+_LATER_SELECTORS = ("|X", "|Y", "|Z", ">Z or <Z")
+
+
 def before_subset() -> Subset:
     """`cq.subset()` less the bundle's forms and selectors: the subset it was planned against.
 
@@ -284,7 +288,8 @@ def before_subset() -> Subset:
     they admitted, which is what this subtracts to read them again.
     """
     today = subset()
-    # Forms plans/lift-holes-and-points and plans/lift-arrays-and-blind-cuts added later: they admit
+    # Forms plans/lift-holes-and-points, plans/lift-arrays-and-blind-cuts and
+    # plans/lift-edges-and-blends added later (with that plan's four selectors): they admit
     # programs the 950 do not include.
     later = {
         "Workplane.pushPoints",
@@ -293,11 +298,13 @@ def before_subset() -> Subset:
         "Workplane.rarray",
         "Workplane.polarArray",
         "Workplane.cutBlind",
+        "Workplane.edges",
+        "Workplane.fillet",
     }
     named = {form.name for form in BUNDLE} | later
     return Subset(
         forms=tuple(form for form in today.forms if form.name not in named),
-        selectors=tuple(sorted(set(today.selectors) - set(SELECTORS))),
+        selectors=tuple(sorted(set(today.selectors) - set(SELECTORS) - set(_LATER_SELECTORS))),
         end_forms=today.end_forms,
     )
 

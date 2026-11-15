@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "OCP.OCP.Standard.Standard_Failure: There are no suitable edges for chamfer or fillet",
+  "program_sha256": "1f1286969355cacbb67ba7fb1dcfa3c9b14531e7a1e6dcd870bd741a92cbf69e",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

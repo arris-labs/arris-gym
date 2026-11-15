@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 316.5663706143592,
+    "area": 295.41592653589794,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        6
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "the four vertical edges rounded at 1: the section swept 4 long"
+}
