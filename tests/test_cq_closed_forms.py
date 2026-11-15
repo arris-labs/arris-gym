@@ -324,6 +324,106 @@ def test_a_bellows_this_tool_does_not_read_is_refused(bore: str, rp: str, match:
         cf.bellows_closed_form(BELLOWS.format(bore=bore, rp=rp))
 
 
+RING = """import cadquery as cq
+
+result = (
+    cq.Workplane("YZ")
+    {start}
+    .faces(">X").workplane()
+    .hole({bore})
+    .edges(">Z or <Z")
+    .fillet({f})
+    .cut(
+        cq.Workplane("YZ")
+            .transformed(offset=cq.Vector({y}, 0.0, 0.0), rotate=cq.Vector(0, 0, 0))
+            .box({length}, {width}, {thick})
+    )
+)
+
+# Export
+show_object(result)"""
+
+# The corpus's two slotted rings that Open CASCADE gets wrong: a cylinder slotted through (a
+# fillet of 0.14 on a ring 0.47 thick) and a circle extruded and slotted to 1.68 of its 2.36.
+CORPUS_RINGS = {
+    "spacer_ring_012675_s20260505": {
+        "start": ".cylinder(0.47, 12.13)",
+        "bore": "15.86",
+        "f": "0.14",
+        "y": "10.03",
+        "length": "9.4",
+        "width": "2.1",
+        "thick": "1.47",
+    },
+    "spacer_ring_016757_s20260505": {
+        "start": ".circle(70.73)\n    .extrude(2.36)",
+        "bore": "117.88",
+        "f": "0.47",
+        "y": "64.835",
+        "length": "24.58",
+        "width": "2.5",
+        "thick": "3.36",
+    },
+}
+
+
+@pytest.mark.parametrize("stem", sorted(CORPUS_RINGS))
+def test_a_corpus_slotted_ring_is_occt_wrong_by_its_closed_form(stem: str) -> None:
+    """The two rows as written: arris is within ADR-0005's constants of the closed form, the
+    recorded oracle report is not (1.3e-6 and 2.9e-9 off in volume), and the rule alone leaves
+    each unclassified."""
+    import gzip
+    import hashlib
+
+    from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+
+    text = RING.format(**CORPUS_RINGS[stem])
+    rows = gzip.decompress((C2 / "benchcad" / "oracle.jsonl.gz").read_bytes()).splitlines()
+    row = next(json.loads(line) for line in rows if json.loads(line)["stem"] == stem)
+    report = OracleReport.model_validate(row["report"])
+    assert hashlib.sha256(text.encode()).hexdigest() == report.program_sha256
+    result = ag.run(text, dialect="cq")
+    assert compare(result, report).outcome is FidelityOutcome.UNCLASSIFIED
+    verdict = Verdict.model_validate(
+        {"disagreement": "occt_wrong", "evidence": cf.slotted_ring_closed_form(text)}
+    )
+    assert compare(result, report, verdict).disagreement is DisagreementClass.OCCT_WRONG
+
+
+@pytest.mark.parametrize(
+    ("start", "thick"),
+    [
+        (".cylinder(2.0, 6.0)", "3.0"),  # centred: the box reaches past both faces (through)
+        (".circle(6.0)\n    .extrude(2.0)", "5.0"),  # from the plane: through the ring
+        (".circle(6.0)\n    .extrude(2.0)", "3.0"),  # a floor 1.5 up, inside the straight part
+    ],
+)
+@pytest.mark.parametrize(
+    ("y", "length", "width", "f"),
+    [("4.0", "6.0", "1.6", "0.2"), ("4.5", "7.5", "2.4", "0.3")],  # a wider slot, a bigger fillet
+)
+def test_a_slotted_ring_is_what_arris_builds(
+    start: str, thick: str, y: str, length: str, width: str, f: str
+) -> None:
+    text = RING.format(start=start, bore="9.0", f=f, y=y, length=length, width=width, thick=thick)
+    assert _agrees(ag.run(text, dialect="cq"), cf.slotted_ring_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        (("YZ", "XZ"), "not a filleted ring"),
+        ((".fillet(0.14)", ".chamfer(0.14)"), "not a filleted ring"),
+        (("1.47)\n    )", "0.3)\n    )"), "outside the arrangement"),  # a floor in the fillet
+        (("9.4, 2.1", "4.0, 2.1"), "outside the arrangement"),  # the slot stops inside the wall
+    ],
+)
+def test_a_ring_this_tool_does_not_read_is_refused(change: tuple[str, str], match: str) -> None:
+    text = RING.format(**CORPUS_RINGS["spacer_ring_012675_s20260505"]).replace(*change)
+    with pytest.raises(ValueError, match=match):
+        cf.slotted_ring_closed_form(text)
+
+
 HOOK = """import cadquery as cq
 
 result = (
@@ -669,3 +769,27 @@ def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> Non
     assert set(cf.verdicts_for(path, texts, refusals)) == {e.name for e in pins}
     with pytest.raises(ValueError, match="both"):
         cf.verdicts_for(path, texts, refusals, {"cotter_pin": bugs["shaft_collar"]})
+
+
+def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
+    """`--arris-bug` and `--refusal` take a stem as well as a family; the stem wins over its
+    family's key, and its siblings keep the family's."""
+    import gzip
+
+    from arris_gym.fidelity import FidelityTable, fidelity_table
+
+    table = FidelityTable.model_validate_json(
+        gzip.decompress((C2 / "benchcad" / "fidelity.json.gz").read_bytes())
+    )
+    collars = [e for e in table.entries if e.name.startswith("shaft_collar_") and e.row.verdict]
+    assert len(collars) == 5
+    path = tmp_path / "fidelity.json.gz"
+    path.write_bytes(gzip.compress(fidelity_table(collars).to_json().encode()))
+    texts = {e.name: "" for e in collars}
+    family = "tests/fixtures/regression/cq-cross-hole-bounds"
+    one = "tests/fixtures/regression/cq-chamfer-slot-bounds"
+    got = cf.verdicts_for(path, texts, {}, {"shaft_collar": family, collars[0].name: one})
+    paths = {name: v["evidence"]["path"] for name, v in got.items()}  # type: ignore[index]
+    assert paths.pop(collars[0].name) == one
+    assert set(paths.values()) == {family}
+    assert len(paths) == 4

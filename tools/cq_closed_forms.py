@@ -12,7 +12,8 @@ and writes one `Verdict` per stem that the row's measures can test:
 A row no rule classes is one the table left unclassified or classed only by a verdict, so
 the tool reads a table run with or without `--verdicts` alike; a row arris ended
 `unsupported_api` is outside the subset and gets no verdict. A family given by
-`--refusal` or `--arris-bug` is classed by that regression fixture rather than a closed form.
+`--refusal` or `--arris-bug` (or one row's stem, which wins) is classed by that regression
+fixture rather than a closed form.
 
 The part shapes, each read from its program's text (a program that is not exactly
 one of them raises, never guessed):
@@ -52,6 +53,11 @@ one of them raises, never guessed):
   through the bottom flange, and from the top face down to the cone under it (a sliver).
   A hole may run past the rim; what it takes is integrated by radius over its disc's
   part inside the rim (`bellows_measures`).
+
+- **spacer_ring**: a ring on the `YZ` plane, bored and filleted at its four rim circles, cut
+  across its wall by a box through the strip `|z| < w` (through the ring, or from its bottom
+  face up to a height inside the outer cylinder's straight part): every measure is a
+  one-dimensional integral over the radius (`slotted_ring_measures`).
 
 - **crossing cylinders**: the one CAD-Recode program whose row nothing classes (`CROSSING`).
 
@@ -1204,6 +1210,168 @@ def crossing_closed_form(sha256: str) -> dict[str, object]:
     }
 
 
+# --- A spacer ring slotted after its blend ------------------------------------------------
+#
+# A ring on the `YZ` plane (a cylinder or a circle extruded, bored through by `hole`), its four
+# rim circles filleted, then cut by a box across its wall: the strip `|z| < w` of the +y side,
+# from inside the bore to past the rim, and axially from the bottom face up to `hi` (the box's
+# top, through the whole ring or inside the outer cylinder's straight part). With `a` the
+# axial distance from the bottom face, `rho` the radius and `c(rho)` how far a fillet takes the
+# profile in from the flat face (0 on the straight part), the ring's column at `rho` is
+# `[c, h - c]`, the strip's polar element is `rho d(rho) d(phi)` over `|phi| < asin(w / rho)`,
+# and every measure is a one-dimensional integral over `rho`.
+
+_RING = re.compile(
+    rf'^import cadquery as cq\n\nresult = \(\n    cq\.Workplane\("YZ"\)\n'
+    rf"    (?:\.cylinder\({_NUMBER}, {_NUMBER}\)"
+    rf"|\.circle\({_NUMBER}\)\n    \.extrude\({_NUMBER}\))\n"
+    rf'    \.faces\(">X"\)\.workplane\(\)\n    \.hole\({_NUMBER}\)\n'
+    rf'    \.edges\(">Z or <Z"\)\n    \.fillet\({_NUMBER}\)\n'
+    rf"    \.cut\(\n        cq\.Workplane\(\"YZ\"\)\n"
+    rf"            \.transformed\(offset=cq\.Vector\({_NUMBER}, 0\.0, 0\.0\), "
+    rf"rotate=cq\.Vector\(0, 0, 0\)\)\n"
+    rf"            \.box\({_NUMBER}, {_NUMBER}, {_NUMBER}\)\n    \)\n\)\n\n"
+    rf"# Export\nshow_object\(result\)\n?$"
+)
+
+
+@dataclass(frozen=True)
+class SlottedRing:
+    """A filleted ring (outer radius `big`, bore radius `small`, height `h`, fillet `f`) whose
+    bottom face is at `bottom` along x, slotted by a strip of half-width `w` that reaches
+    axially from the bottom face to `hi` above it and across from `y0` to `y1` along y."""
+
+    big: float
+    small: float
+    h: float
+    f: float
+    bottom: float
+    w: float
+    hi: float
+    y0: float
+    y1: float
+
+
+def _slotted_ring(text: str) -> SlottedRing:
+    m = _RING.match(text)
+    if m is None:
+        raise ValueError("not a filleted ring slotted across its wall")
+    g = m.groups()
+    if g[0] is not None:  # `.cylinder(h, r)`: centred on the plane
+        h, big, bottom = _num(g[0]), _num(g[1]), -_num(g[0]) / 2
+    else:  # `.circle(r).extrude(h)`: from the plane along +x
+        h, big, bottom = _num(g[3]), _num(g[2]), 0.0
+    bore, f, y_centre, y_len, z_len, x_len = (_num(v) for v in g[4:10])
+    ring = SlottedRing(
+        big=big,
+        small=bore / 2,
+        h=h,
+        f=f,
+        bottom=bottom,
+        w=z_len / 2,
+        hi=x_len / 2 - bottom,
+        y0=y_centre - y_len / 2,
+        y1=y_centre + y_len / 2,
+    )
+    lo = -x_len / 2 - bottom
+    clear = math.sqrt(ring.small**2 - ring.w**2) if ring.w < ring.small else 0.0
+    if not (
+        0 < f < h / 2
+        and f < big - bore / 2 - f
+        and ring.w < ring.small
+        and 0 < ring.y0 < clear
+        and ring.y1 > big
+        and lo <= 0
+        and (ring.hi >= h or f <= ring.hi <= h - f)
+    ):
+        raise ValueError("a slotted ring outside the arrangement the closed form handles")
+    return ring
+
+
+def slotted_ring_measures(p: SlottedRing) -> tuple[float, float, Vec, Box]:
+    """Volume, area, centroid and bounds of a `SlottedRing`, each a one-dimensional integral
+    over the radius (the strip's `phi` range is `2 asin(w / rho)` and its moment along y
+    `2 w` per unit of `rho`, whatever `rho`); the walls of the cut are `g rho / sqrt(rho^2 -
+    w^2)` integrals and its floor, where the cut stops inside the ring, an annulus's strip."""
+    big, r, h, f, w, hi = p.big, p.small, p.h, p.f, p.w, p.hi
+    pi = math.pi
+    through = hi >= h
+    cuts = [r, r + f, big - f, big]
+
+    def over(g: Callable[[float], float], lo: float = r, up: float = big) -> float:
+        edges = sorted({lo, up, *(c for c in cuts if lo < c < up)})
+        return sum(tanh_sinh(g, a, b) for a, b in itertools.pairwise(edges))
+
+    def turn(rho: float) -> float:  # how far the fillet takes the profile in from a flat face
+        s = min(rho - r, big - rho)
+        return f - math.sqrt(f * f - (f - s) ** 2) if s < f else 0.0
+
+    def top(rho: float) -> float:  # the cut's upper end in a column
+        return h - turn(rho) if through else hi
+
+    def column(rho: float) -> float:  # what the cut takes of a column
+        return top(rho) - turn(rho)
+
+    def arc(rho: float) -> float:  # the strip's arc at radius rho
+        return 2 * rho * math.asin(w / rho)
+
+    ring_v = over(lambda rho: 2 * pi * rho * (h - 2 * turn(rho)))
+    cut_v = over(lambda rho: column(rho) * arc(rho))
+    cut_x = over(lambda rho: column(rho) * rho * 2 * w)
+    cut_a = over(lambda rho: arc(rho) * (top(rho) ** 2 - turn(rho) ** 2) / 2)
+    volume = ring_v - cut_v
+
+    ring_a = (
+        2 * pi * (big * (h - 2 * f) + r * (h - 2 * f))
+        + 2 * pi * ((big - f) ** 2 - (r + f) ** 2)
+        + 4 * pi * f * ((r + f) * pi / 2 - f + (big - f) * pi / 2 + f)
+    )
+    wedge = (  # the fillet patches' strips: bottom pair always, top pair when the cut passes them
+        tanh_sinh(lambda t: arc(r + f - f * math.cos(t)) * f, 0.0, pi / 2)
+        + tanh_sinh(lambda t: arc(big - f + f * math.cos(t)) * f, 0.0, pi / 2)
+    )
+    flat = over(arc, r + f, big - f)
+    reach = min(hi, h - f) - f
+    taken = (
+        flat
+        + (2 * big * math.asin(w / big) + 2 * r * math.asin(w / r)) * reach
+        + wedge
+        + ((flat + wedge) if through else 0.0)
+    )
+    walls = 2 * over(lambda rho: column(rho) * rho / math.sqrt(rho * rho - w * w))
+    floor = 0.0 if through else over(arc)
+    area = ring_a - taken + walls + floor
+
+    centroid = (
+        p.bottom + (ring_v * h / 2 - cut_a) / volume,
+        -cut_x / volume,
+        0.0,
+    )
+    y_hi = math.sqrt(big * big - w * w) if through else big
+    bounds = ((p.bottom, -big, -big), (p.bottom + h, y_hi, big))
+    return volume, area, centroid, bounds
+
+
+def slotted_ring_closed_form(text: str) -> dict[str, object]:
+    """The `ClosedForm` JSON of a spacer_ring program of the form `_RING` reads."""
+    ring = _slotted_ring(text)
+    volume, area, centroid, bounds = slotted_ring_measures(ring)
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": list(centroid),
+        "bounds": [list(bounds[0]), list(bounds[1])],
+        "note": (
+            "a ring, bored and filleted at its four rim circles, cut across its wall by a box "
+            "(the strip |z| < w, radially through, axially from the bottom face to the box's "
+            "top): each measure is a one-dimensional integral over the radius of the column "
+            "the cut takes (g(rho) over the strip's arc 2 rho asin(w / rho)), its walls and its "
+            f"floor (tools/cq_closed_forms.py, slotted_ring_measures): {ring}"
+        ),
+    }
+
+
 # --- Boxes and cylinders on the axes: manifold_block and connecting_rod -------------------
 #
 # A part built of boxes and cylinders whose axes and faces are all along x, y or z, united
@@ -1835,6 +2003,7 @@ FORM_FAMILIES = (
     "manifold_block_",
     "connecting_rod_",
     "bellows_",
+    "spacer_ring_",
 )
 
 
@@ -1850,6 +2019,8 @@ def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | No
         return part_closed_form(text)
     if stem.startswith("bellows_"):
         return bellows_closed_form(text)
+    if stem.startswith("spacer_ring_"):
+        return slotted_ring_closed_form(text)
     return None
 
 
@@ -1869,8 +2040,9 @@ def verdicts_for(
     with `--verdicts`), so the same table gives the same verdicts either way; a row
     arris ended `unsupported_api` is outside the subset and gets none. A family
     with a closed form is `occt_wrong` by it; a family named in `refusals`
-    (`family=regression fixture`) is `arris_refusal` by that fixture, and one named in
-    `arris_bugs` is `arris_bug` by its fixture. A family in both raises `ValueError`.
+    (`family=regression fixture`, or a single row's stem in place of the family, which wins) is
+    `arris_refusal` by that fixture, and one named in `arris_bugs` is `arris_bug` by its
+    fixture. A key in both raises `ValueError`.
     Each verdict is built as a `Verdict`, so ADR-0006's checks of the evidence run here.
     """
     from arris_gym import Status
@@ -1889,15 +2061,17 @@ def verdicts_for(
         if entry.row.status is Status.UNSUPPORTED_API:
             continue  # outside the subset: the kernel never saw it, so no finding classes it
         family = re.sub(r"_\d+_s\d+$", "", entry.name)
-        if family in refusals:
+        if entry.name in refusals or (entry.name not in bugs and family in refusals):
+            fixture = refusals[entry.name if entry.name in refusals else family]
             out[entry.name] = {
                 "disagreement": "arris_refusal",
-                "evidence": {"kind": "fixture", "path": refusals[family]},
+                "evidence": {"kind": "fixture", "path": fixture},
             }
-        elif family in bugs:
+        elif entry.name in bugs or family in bugs:
+            fixture = bugs[entry.name if entry.name in bugs else family]
             out[entry.name] = {
                 "disagreement": "arris_bug",
-                "evidence": {"kind": "fixture", "path": bugs[family]},
+                "evidence": {"kind": "fixture", "path": fixture},
             }
         elif entry.name.startswith(FORM_FAMILIES) or entry.row.program_sha256 in CROSSING:
             jobs.append((entry.name, corpus_texts[entry.name], entry.row.program_sha256))
@@ -1953,14 +2127,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="append",
         default=[],
         metavar="FAMILY=FIXTURE",
-        help="class a family's rows arris_refusal by this regression fixture directory",
+        help="class a family's rows (or a stem's) arris_refusal by this fixture directory",
     )
     parser.add_argument(
         "--arris-bug",
         action="append",
         default=[],
         metavar="FAMILY=FIXTURE",
-        help="class a family's rows arris_bug by this regression fixture directory",
+        help="class a family's rows (or a stem's) arris_bug by this regression fixture directory",
     )
     args = parser.parse_args(argv)
     refusals = dict(item.split("=", 1) for item in args.refusal)

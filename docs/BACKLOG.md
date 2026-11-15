@@ -164,7 +164,8 @@ A defect a run measured, one block each:
 - Seen: plans/lift-face-selectors step 7c, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, `shaft_collar` `_004211`, `_004399`, `_007583`, `_017335`, `_017997` (`_s20260505`), 2026-11-14
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k cross-hole-bounds`
 - Measured: those 5 rows, all in the subset, bounds 5e-4 to 1e-3 past the closed form along the set screw's axis; the oracle's volume 3e-6 to 1e-5 off it where computed (`_004211`, quadrature at 30 digits: arris 1.3e-10, the oracle 7.0e-6)
-- State: regression/cq-cross-hole-bounds (strict `xfail`); the 5 rows `arris_bug` by it (`tests/fixtures/c2/benchcad/verdicts.json`), `occt_wrong` by a closed form once arris's box is tight; reported in `../arris/docs/ideas/tight-body-bounds.md`
+- Seen again: plans/lift-edges-and-blends step 7c: 81 `clevis_pin` programs (a cylinder chamfered at both rims, one or two cross holes; bounds 1e-3 to 5e-3 wide, the oracle's volume to 2.2e-5 off) and `spacer_ring_008375` (a chamfered ring slotted to a floor inside its thickness: the slot's walls cut the chamfer's cone in two NURBS hyperbolas, x max 0.037 past the part)
+- State: regression/cq-cross-hole-bounds and regression/cq-chamfer-slot-bounds (strict `xfail`); the 5 `shaft_collar` and the 81 `clevis_pin` rows `arris_bug` by the first, `spacer_ring_008375` by the second (`tests/fixtures/c2/benchcad/verdicts.json` once step 8 re-runs), `occt_wrong` by a closed form once arris's box is tight; reported in `../arris/docs/ideas/tight-body-bounds.md`
 
 ## Rejected
 

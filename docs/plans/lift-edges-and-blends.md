@@ -142,7 +142,7 @@ within a given design; **[3]** unproven semantics, established here.
   oracle and closed forms say which edge `>Z` keeps), or, where the key truly cannot be
   decided, refuse by a declared form so the program is out of the subset, never a `cq_bug`;
   each shrunk to a fixture, ADR-0020 amended.
-- [ ] Step 7c **[2]** — the 84 rows step 7a's lift makes unclassified, every one `ok` on both
+- [x] Step 7c **[2]** — the 84 rows step 7a's lift makes unclassified, every one `ok` on both
   sides with the blend agreeing: 81 `clevis_pin` with a cross hole cut after the chamfer (volume
   up to 2.2e-5, bounds up to 0.005: the crossing cylinders, as `clevis_pin_000420_s20260505` of
   step 5) and 3 `spacer_ring` with a box cut after the blend (`008375`: bounds 0.037 and 2 faces;
@@ -232,6 +232,21 @@ within a given design; **[3]** unproven semantics, established here.
   `'>Z or <Z'` the seams alone; not taken. `unsupported-chamfer-corpus-clevis-pin-seam` became
   `ok-chamfer-corpus-clevis-pin`, `unsupported-edges-cylinder-side` (a lone cylinder's `>X`,
   now the seam, as the oracle keeps it) became `unsupported-edges-revolved-side`.
+- *Settled* (step 7c): the 84 are three causes, none a `cq` fault. 81 `clevis_pin` (a chamfered
+  cylinder, one or two cross holes): arris's box is 1e-3 to 5e-3 wide along the hole's axis (the NURBS hull,
+  `cq-cross-hole-bounds`' cause) and the oracle's volume 4e-9 to 2.2e-5 off the crossing cylinders' closed
+  form, so `arris_bug` by that fixture, family-keyed (`--arris-bug clevis_pin=...`), as the
+  `shaft_collar` rows; no closed form can clear arris's box. `spacer_ring_008375`: volume, area and centroid
+  equal to 1e-14 on both sides, arris's x max 0.037 past the part (the slot's walls cut the chamfer cone in
+  two NURBS hyperbolas): new fixture `regression/cq-chamfer-slot-bounds` (a solid disc, closed form by
+  quadrature, the oracle's measures equal it to 1e-15), `arris_bug` by stem (`--arris-bug`/`--refusal`
+  now take a stem, which wins over its family). `spacer_ring_012675` and `_016757` (a fillet, then a slot
+  through, or to a floor 1.68 up): `occt_wrong` by `slotted_ring_closed_form` (a one-dimensional integral over
+  the radius; arris within 6e-12 of it, Open CASCADE 1.3e-6 and 2.9e-9 off in volume), the ring's
+  parameters read by `_RING` (a program of another shape raises). Re-run on the 275 slice the three
+  classes give 84 verdicts, each passing `compare`; step 8's command is `tools/cq_closed_forms.py` with
+  `--arris-bug shaft_collar=...cq-cross-hole-bounds --arris-bug clevis_pin=...cq-cross-hole-bounds
+  --arris-bug spacer_ring_008375_s20260505=...cq-chamfer-slot-bounds`.
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a

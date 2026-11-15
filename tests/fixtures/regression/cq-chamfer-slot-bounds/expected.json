@@ -1,0 +1,14 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.10.0 reports the body's box 0.037 past the part along x (x max 21.1900001033 where the part reaches 21.1531): the slot's walls cut the chamfer's cone in two hyperbolas, NURBS edges boxed by their control hulls; volume, area and centroid are the closed form's, and CadQuery 2.3.0's box is tight",
+  "measures": {
+    "volume": 2079.077776313635,
+    "area": 2983.3319897099577,
+    "centroid": [-0.23444420020070791, -0.756787163254946, 0],
+    "bounds": [[-21.19, -1.51, -21.19], [21.153099063730593, 0, 21.19]],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "A disc of radius R = 21.19 on the XZ plane, y from -1.51 to 0 (h = 1.51), both rim circles chamfered by c = 0.4 (cones from radius R - c at the flat face to R, a leg c along y), then a box cut away: |z| < w = 1.25, x > x0 = 11.6075, y from the floor ys = -1.255 up past the top. With rho the radius, q = R - c, a column of height t(rho) = h for rho <= q and h - 2 (rho - q) beyond, the cut takes g(rho) = min(t, 1.255 - (rho - q)) of it (the bottom cone is under the floor where rho - q < 0.255). V = pi q^2 h + 2 pi int_q^R rho t drho less int_{|z|<w, x>x0} g dA, and the centroid's moments the same integrals weighted by x and by the column's y; A = the chamfered disc (two discs of radius q, two cones sqrt(2) rho drho dphi, the cylinder 2 pi R (h - 2c)) less the strip's part of each face (the top disc, both cones where they lie above the floor, the cylinder), plus the walls z = +-w (g integrated along x), the floor (|z| < w, rho < q + 0.255 on the bottom cone's far side) and the end wall x = x0 (2 w * 1.255). The integrals by tanh-sinh quadrature, split where an integrand's formula changes; both kernels' volume, area and centroid agree with it to 1e-14. Centroid z = 0 by the mirror plane; bounds the disc's, its +x end the strip's edge sqrt(R^2 - w^2) (the cylinder at |z| = w); one shell, genus 0. Faces are carried, not judged (ADR-0005)."
+}
