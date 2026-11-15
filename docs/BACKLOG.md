@@ -44,6 +44,9 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - 176 `pull_handle` rows end `OpInternalError` ("kernel bug: the face arrangement is not a subdivision…") and are `arris_refusal` by ADR-0006's rule, though the kernel calls it a bug and C1's `lobed_knob` rows were raised to `arris_bug` by verdict; decide whether these get `arris_bug` verdicts
 - Three BenchCAD programs outside the subset (`bearing_retainer_cap_014254`, `_015325`, `_016792`) end `OpInternalError` "a section edge of f38 ends at a node nothing else reaches"; shrink each to a `regression/` fixture and report it to arris
 - `cq`'s `polygon(2, d)` ends `runtime` where CadQuery 2.3.0 builds a zero-volume solid its checker passes (`ok`): an in-subset `cq_bug` (ADR-0012), held by `regression/cq-polygon-two-sides` (strict `xfail`); the census cannot see a literal, so the form cannot leave the subset for it alone: build the out-and-back prism in `cq`, and ask arris (`../arris/docs/ideas/`) if the kernel refuses a zero-volume solid (plans/lift-polygon step 2)
+- `center(num, num)` (a moved origin) rides with bundle 5's `rect`: 1,593 BenchCAD programs write it, none of them unlocked by it alone (plans/lift-arrays-and-blind-cuts, non-goals)
+- `pushPoints` of `Vector` or `Location`, `cboreHole` and `cskHole` with `depth=` or `clean=`, `hole` with a positional depth, `rarray(center=)`, `polarArray(fill=, rotate=)`, `cutBlind(clean=, both=, taper=)` and `cutBlind` up to a face: lifted when a corpus program writes them
+- File the two arris refusals of `regression/cq-cut-blind-after-a-filled-pocket` and `regression/cq-cut-blind-across-a-split-end-face` (a tool flush with a face split by an edge it crosses, `OpDegenerateError`) in `../arris/docs/ideas/`: both READMEs say "not yet reported"
 
 ## Findings
 
@@ -166,4 +169,3 @@ A defect a run measured, one block each:
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)
-- Bundle 2b of the knee: `rarray`, `polarArray`, `center` and `cutBlind` (the rest of the idea's bundle 2; +1,270 reach with the holes, measured at planning time), then `pushPoints` of `Vector` or `Location`, `cboreHole` and `cskHole` with `depth=` or `clean=` and `hole` with a positional depth when a corpus program writes them

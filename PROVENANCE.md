@@ -193,3 +193,10 @@ none of their code is carried over, and the module cites each step.
   spanning the hit voxels' box; holes filled by
   `scipy.ndimage.binary_fill_holes` at its documented default structure
   (faces-only connectivity), here a flood from the border.
+- `Workplane.rarray`, `Workplane.polarArray` and `Workplane.cutBlind`
+  (`cadquery/cq.py`, with `_extrude` and `clean`): the grid's order (x outer,
+  y inner) and centring, the circle's angles (a full turn split in `count`, a
+  partial one in `count - 1`), each refusal's words and `cutBlind`'s order of
+  refusals (no pending wire, zero depth, no solid). Confirmed on the oracle by
+  `tests/fixtures/arrays/` and `tests/fixtures/cq/ok-rarray-*`,
+  `ok-polar-array-*` and `ok-cut-blind-*`; ADR-0019.
