@@ -134,6 +134,18 @@ within a given design; **[3]** unproven semantics, established here.
   here. Each cause becomes a step 7a, 7b … before step 8, largest first,
   shrunk to `regression/` fixtures and filed with arris where the kernel is at
   fault, or classed by a closed form (`tools/cq_closed_forms.py`).
+- [ ] Step 7a **[3]** — BenchCAD's measurement (2026-11-15, scratch out-dir): reach
+  9,998/17,900 as forecast; 7,222 agree, 10,178 disagree, 500 unclassified; in-subset
+  `cq_bug` **300**, not 7. 275 are `edges('>Z')` ended `unsupported_api` by ADR-0020 rule 2
+  (the seam's key bound): `dowel_pin` 122, `clevis_pin` 112, `washer` 27, `spacer_ring` 14.
+  Narrow rule 2 so these run (a cylinder's seam key from its axis and the face's box; the
+  oracle and closed forms say which edge `>Z` keeps), or, where the key truly cannot be
+  decided, refuse by a declared form so the program is out of the subset, never a `cq_bug`;
+  each shrunk to a fixture, ADR-0020 amended.
+- [ ] Step 7b **[2]** — the other 25 in-subset `cq_bug`: 18 `double_simplex_sprocket`
+  `faces('>X')`/`faces('>Z')` ("the centre of a face that arris does not give"), 7
+  `connecting_rod` (ADR-0014's amendment, expected). Class the sprocket rows: new in the
+  subset by this lift, so a fixture each and either a lift or a declared refusal.
 - [ ] Step 8 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests), the baseline
   subset helper step 2 adds deleted as in plans/lift-arrays-and-blind-cuts.
