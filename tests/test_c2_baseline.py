@@ -1,11 +1,10 @@
-"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-arrays-and-blind-cuts step 7).
+"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-edges-and-blends step 8).
 
 `tools/cq_corpus.py` wrote `tests/fixtures/c2/<corpus>/` (network, the oracle
 environment, outside the gate). This reads the committed rows only: the table
 validates its own digest and counts, has one row per census row of the corpus,
 carries the corpus's licence, and the committed reach report is the one the
-table and the census rows give under the baseline subset (`cq` less the
-forms and selectors of plans/lift-edges-and-blends, until its step 8 re-runs them). The
+table and the census rows give under today's `cq` subset. The
 README states each digest, so a changed row is a changed README. The figures the docs publish
 (reach, agreement, the two target comparisons, each over all programs) are
 asserted here, so a re-run that moves one moves this file.
@@ -22,7 +21,7 @@ from pathlib import Path
 import pytest
 
 import fixture_cases
-from arris_gym import Status
+from arris_gym import Status, cq
 from arris_gym.census import ProgramCensus, Unparsable, reach
 from arris_gym.fidelity import (
     DisagreementClass,
@@ -39,19 +38,19 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 6_565,
-        "agree": 4_695,
-        "in_subset_cq_bug": 7,
+        "in_subset": 9_998,
+        "agree": 7_413,
+        "in_subset_cq_bug": 6,
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
-            "arris_bug": 142,
-            "arris_refusal": 1_385,
+            "arris_bug": 290,
+            "arris_refusal": 1_457,
             "by_design": 0,
-            "cq_bug": 10_890,
-            "occt_wrong": 584,
+            "cq_bug": 7_701,
+            "occt_wrong": 840,
         },
-        "unclassified": 204,
+        "unclassified": 199,
         "oracle_ok": 17_537,
     },
     "cadrecode": {
@@ -91,8 +90,8 @@ def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
 
 
 def reach_stems(corpus: str) -> list[str]:
-    """The stems the baseline subset admits, sorted (`reach`'s own census reading)."""
-    return sorted(reach(census_rows(corpus), fixture_cases.c2_baseline_subset()).stems)
+    """The stems today's subset admits, sorted (`reach`'s own census reading)."""
+    return sorted(reach(census_rows(corpus), cq.subset()).stems)
 
 
 def table_of(corpus: str) -> FidelityTable:
@@ -116,7 +115,7 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
-    assert reach_report(table, census_rows(corpus), fixture_cases.c2_baseline_subset()) == committed
+    assert reach_report(table, census_rows(corpus), cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, census_rows(corpus), fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]
@@ -138,17 +137,25 @@ def test_the_published_figures_are_the_committed_tables(corpus: str) -> None:
     assert table.oracle_statuses["ok"] == figures["oracle_ok"]
 
 
-def test_benchcads_arris_bugs_are_two_verdict_families_and_checker_fail_caps() -> None:
+def test_benchcads_arris_bugs_are_verdict_families_and_checker_fail_caps() -> None:
     entries = table_of("benchcad").entries
     bugs = [e for e in entries if e.row.disagreement is DisagreementClass.ARRIS_BUG]
     families = {e.name.rsplit("_", 2)[0] for e in bugs}
     assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == {
         "lobed_knob": 100,
-        "shaft_collar": 5,
+        "shaft_collar": 26,
         "bearing_retainer_cap": 37,
+        "clevis_pin": 126,
+        "spacer_ring": 1,
     }
-    assert families == {"lobed_knob", "shaft_collar", "bearing_retainer_cap"}
-    # The lobed_knob and shaft_collar rows are ok/ok with a verdict; the 37
+    assert families == {
+        "lobed_knob",
+        "shaft_collar",
+        "bearing_retainer_cap",
+        "clevis_pin",
+        "spacer_ring",
+    }
+    # The other rows are ok/ok with a verdict; the 37
     # bearing_retainer_cap rows are checker_fail rows the rule classes, with none.
     for e in bugs:
         if e.name.startswith("bearing_retainer_cap"):
@@ -158,8 +165,8 @@ def test_benchcads_arris_bugs_are_two_verdict_families_and_checker_fail_caps() -
             assert e.row.verdict is not None
 
 
-def test_benchcads_in_subset_cq_bugs_are_the_seven_parked_connecting_rods() -> None:
-    """The 7 in-subset `cq_bug` rows are step 7b's, blocked on arris (the human's amendment).
+def test_benchcads_in_subset_cq_bugs_are_the_parked_connecting_rods() -> None:
+    """The 6 in-subset `cq_bug` rows are step 7b's, blocked on arris (the amendment named 7).
 
     Each is a `connecting_rod` that `cq` refuses with `unsupported_api` while the oracle
     builds it: `faces(">Z").faces(">Z").workplane()` on a cylinder face, the plane's normal
@@ -174,8 +181,8 @@ def test_benchcads_in_subset_cq_bugs_are_the_seven_parked_connecting_rods() -> N
         for e in table.entries
         if e.name in inside and e.row.disagreement is DisagreementClass.CQ_BUG
     ]
-    assert len(parked) == committed.in_subset_cq_bug == 7
-    assert Counter(e.name.rsplit("_", 2)[0] for e in parked) == {"connecting_rod": 7}
+    assert len(parked) == committed.in_subset_cq_bug == 6
+    assert Counter(e.name.rsplit("_", 2)[0] for e in parked) == {"connecting_rod": 6}
     assert all(e.row.status is Status.UNSUPPORTED_API for e in parked)
     assert all(e.row.oracle_status is OracleStatus.OK for e in parked)
 

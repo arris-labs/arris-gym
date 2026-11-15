@@ -735,13 +735,13 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 6,565 (36.7%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 4,695 (26.2%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 10,890 / 1,385 / 142 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 584 | 0 | 1 | 0 |
-| unclassified (all outside the subset) | 204 | 363 | 0 | 0 |
+| reach | 9,998 (55.9%) | 1,871 | 104 (10.7%) | 0 |
+| agree (all programs) | 7,413 (41.4%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,701 / 1,457 / 290 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 840 | 0 | 1 | 0 |
+| unclassified (all outside the subset) | 199 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
-| in-subset `cq_bug` | 7 | 717 | 0 | 0 |
+| in-subset `cq_bug` | 6 | 717 | 0 | 0 |
 | in-subset `by_design` | 0 | 0 | 0 | 0 |
 
 The baseline's 717 in-subset `cq_bug` rows were all `unsupported_api` where the
@@ -857,10 +857,28 @@ off by up to 9.5e-5 and 2.2e-6 relative, `tools/cq_closed_forms.py`
 constants) and the rest agreeing. `occt_wrong` is 584, in-subset refusals 1,137,
 the table digest `45dc90b5…f475`, the oracle rows the committed bytes.
 
-**Seven in-subset `cq_bug` rows stay**, all `connecting_rod`
-(ADR-0014's amendment of 2026-11-14): `faces(">Z").faces(">Z")` keeps a
-cylinder face, and `workplane()` on it (6) or `faces(">Y")` ranking by its
-centre (1) ends `unsupported_api` where the oracle builds the part. They need
+`edges`, `fillet`, `chamfer`, the selectors `|X |Y |Z` and `'>Z or <Z'`, the
+seams a blend passes over and a finer estimate in `faces` took BenchCAD from
+6,565 to 9,998 reached (3,433 programs) and CAD-Recode not at all (it writes
+none of them; ADR-0020). The newly reached: 2,718 agree, 312 more in-subset
+refusals (a blend next to a boolean's edges, a radius at its limit, the arris
+report lists them), 148 more `arris_bug` (126 `clevis_pin` and 21 `shaft_collar`
+cross holes into a chamfered cylinder, arris's box 1e-3 to 5e-3 loose,
+`regression/cq-cross-hole-bounds`; one `spacer_ring`,
+`regression/cq-chamfer-slot-bounds`), and 256 `occt_wrong` by closed form
+(126 `double_simplex_sprocket` and 82 `sprocket`, where Open CASCADE's chamfer
+of the tooth outline takes less than the mitre, 29 `pan_head_screw`, 16
+chamfered `manifold_block`, 2 slotted `spacer_ring` and 1 `connecting_rod`,
+`tools/cq_closed_forms.py`, arris within the ADR-0005 constants). In-subset
+`cq_bug` goes 7 to 6, `occt_wrong` to 840, in-subset refusals to 1,449, unclassified
+(all outside the subset) to 199, the table digest `8daf4d7c…bbac`; the oracle
+rows are the committed bytes. The 31 oracle timeouts stay.
+
+**Six in-subset `cq_bug` rows stay**, all `connecting_rod`
+(ADR-0014's amendment of 2026-11-14 named seven; one now runs and is
+`occt_wrong` by closed form): `faces(">Z").faces(">Z")` keeps a
+cylinder face, and `workplane()` on it (6 of the original 7) or `faces(">Y")` ranking by its
+centre ends `unsupported_api` where the oracle builds the part. They need
 a face's exact centre of mass (`face-surface-properties`, a plan in arris)
 and, for the 6, the side of a cylinder that arris splits in two where a box's
 window crosses its seam read as one face, as Open CASCADE reads it, in arris

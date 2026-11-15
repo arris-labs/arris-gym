@@ -173,7 +173,7 @@ within a given design; **[3]** unproven semantics, established here.
   and every feature on the rim is exact interval arithmetic); Open CASCADE is 1e-9 to 6e-8 off
   in volume or area. The run over the scratch table with step 7c's flags writes 1,152
   verdicts, each checked by `compare`, and leaves 0 in-subset rows unclassified.
-- [ ] Step 8 **[1, conductor-run]** — the committed re-run of both tables
+- [x] Step 8 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests), the baseline
   subset helper step 2 adds deleted as in plans/lift-arrays-and-blind-cuts.
 

@@ -920,7 +920,7 @@ def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> Non
     want = {k: v for k, v in committed.items() if k.startswith(("shaft_collar_", "cotter_pin_"))}
     want = {k: v for k, v in want.items() if k in texts}
     assert got == want
-    assert len([k for k in got if k.startswith("shaft_collar_")]) == 5
+    assert len([k for k in got if k.startswith("shaft_collar_")]) == 26
     assert not {e.name for e in outside} & set(got)
     assert set(cf.verdicts_for(path, texts, refusals)) == {e.name for e in pins}
     with pytest.raises(ValueError, match="both"):
@@ -938,7 +938,7 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
         gzip.decompress((C2 / "benchcad" / "fidelity.json.gz").read_bytes())
     )
     collars = [e for e in table.entries if e.name.startswith("shaft_collar_") and e.row.verdict]
-    assert len(collars) == 5
+    assert len(collars) == 26
     path = tmp_path / "fidelity.json.gz"
     path.write_bytes(gzip.compress(fidelity_table(collars).to_json().encode()))
     texts = {e.name: "" for e in collars}
@@ -948,7 +948,7 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
     paths = {name: v["evidence"]["path"] for name, v in got.items()}  # type: ignore[index]
     assert paths.pop(collars[0].name) == one
     assert set(paths.values()) == {family}
-    assert len(paths) == 4
+    assert len(paths) == 25
 
 
 def test_a_row_whose_program_no_closed_form_reads_stays_unclassified(

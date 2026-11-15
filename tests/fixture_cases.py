@@ -87,23 +87,6 @@ def c1_subset() -> cq.Subset:
     )
 
 
-def c2_baseline_subset() -> cq.Subset:
-    """`cq.subset()` less the declarations of plans/lift-edges-and-blends.
-
-    The committed C2 reports (`tests/fixtures/c2/`) were measured before `Workplane.edges`
-    `Workplane.fillet` and `Workplane.chamfer` and the selectors `|X |Y |Z` and
-    `'>Z or <Z'`; that plan's step 8 re-runs them and this goes back to `cq.subset()` (and is
-    deleted).
-    """
-    later = ("Workplane.edges", "Workplane.fillet", "Workplane.chamfer")
-    axis = (">X", "<X", ">Y", "<Y", ">Z", "<Z")
-    return replace(
-        cq.subset(),
-        forms=tuple(form for form in cq.subset().forms if form.name not in later),
-        selectors=tuple(s for s in cq.subset().selectors if s in axis),
-    )
-
-
 @dataclass(frozen=True)
 class Case:
     """One fixture: its directory name, program text and expected JSON."""
