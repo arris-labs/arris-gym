@@ -128,7 +128,7 @@ within a given design; **[3]** unproven semantics, established here.
   and `handwheel`; lifted where they agree, else refused, each with its `ok-`,
   `runtime-` or `unsupported-` fixture; a new arris refusal is an xfail
   `regression/` fixture and an ask in `../arris/docs/ideas/`.
-- [ ] Step 7 **[2, conductor-run]** — the measurement: `cq_corpus.py
+- [x] Step 7 **[2, conductor-run]** — the measurement: `cq_corpus.py
   --oracle-rows` on both corpora into a scratch out-dir, then `cq_diagnose.py`;
   in-subset rows by class, `cq_bug` and unclassified by family, recorded
   here. Each cause becomes a step 7a, 7b … before step 8, largest first,
