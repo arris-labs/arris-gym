@@ -148,7 +148,7 @@ within a given design; **[3]** unproven semantics, established here.
   step 5) and 3 `spacer_ring` with a box cut after the blend (`008375`: bounds 0.037 and 2 faces;
   `012675`: volume 1.3e-6, 3 faces; `016757`: bounds 2e-7). Class each by a closed form
   (`tools/cq_closed_forms.py`) or shrink it to a `regression/` fixture.
-- [ ] Step 7b **[2]** — the other 25 in-subset `cq_bug`: 18 `double_simplex_sprocket`
+- [x] Step 7b **[2]** — the other 25 in-subset `cq_bug`: 18 `double_simplex_sprocket`
   `faces('>X')`/`faces('>Z')` ("the centre of a face that arris does not give"), 7
   `connecting_rod` (ADR-0014's amendment, expected). Class the sprocket rows: new in the
   subset by this lift, so a fixture each and either a lift or a declared refusal.
@@ -247,6 +247,21 @@ within a given design; **[3]** unproven semantics, established here.
   classes give 84 verdicts, each passing `compare`; step 8's command is `tools/cq_closed_forms.py` with
   `--arris-bug shaft_collar=...cq-cross-hole-bounds --arris-bug clevis_pin=...cq-cross-hole-bounds
   --arris-bug spacer_ring_008375_s20260505=...cq-chamfer-slot-bounds`.
+- *Settled* (step 7b): the 7 `connecting_rod` rows stay as ADR-0014's amendment has them (not
+  touched). The 18 sprockets are **lifted**, not refused: reach has no geometric declaration (ADR-0012
+  is static) and a refusal in the subset would be a left-over `cq_bug`. Cause: `faces('>X')`/`('>Z')`
+  on a hub whose cylinder side shows 0.01 above the top plate, a band whose centre (0.005 under the
+  end disc) is inside ADR-0017 rule 2's margin (1e-4 of the diagonal, 0.008 on D about 80). A second
+  estimate 100 times finer settles a gap, never a tie (`_REFINED_CHORD`, `_REFINED_MARGIN`; ADR-0017's
+  2026-11-15 amendment: the refusals of the 2026-11-14 one are unchanged, `test_cq_faces` holds
+  them). The 18 then end `ok` and disagree with the oracle: Open CASCADE's chamfer of the tooth
+  outline (252 to 522 edges) takes less than the mitre (0.1% of the volume), shown on one plate
+  alone (`chamfer(0.3)`: 1.2e-4 off) while convex, L-shaped, short-edge and arc polygons agree; the
+  closed form (`sprocket_measures`: mitred chamfer by the polygon's area, perimeter and sum of
+  tan(turn / 2), moments from the mitred offset) matches arris to 1e-11 and passes `compare` on all
+  18 (`occt_wrong`), asymmetric outlines included. Fixtures: `ok-thin-band-top-face` (the selection,
+  by construction, agreeing with the oracle), `ok-sprocket-corpus-along-x` (016264, asymmetric) and
+  `-along-z` (017919), each with a `verdict.json` and the oracle's record. No wheel change.
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a

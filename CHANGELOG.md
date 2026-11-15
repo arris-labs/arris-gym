@@ -5,6 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `dialect="cq"`: `faces(selector)` now runs on a part where a thin curved face
+  (a cylinder's side showing 0.01 above a plate, say) lies beside the selected
+  face, within the estimate's margin but not tied with it, as CadQuery keeps
+  the flat face alone: a sprocket's hub through its plates now ends `ok`. A tie
+  with a curved face is still `unsupported_api`.
+
 - `dialect="cq"` now runs `edges()` and `edges(selector)` with the axis
   selectors `>X <X >Y <Y >Z <Z`, the parallel selectors `|X |Y |Z` and
   `'>Z or <Z'`, `fillet(radius)` and `chamfer(length)`: the edges on the stack, or

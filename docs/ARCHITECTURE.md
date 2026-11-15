@@ -387,7 +387,9 @@ CadQuery's `DirectionMinMaxSelector` does (ADR-0017): by centre of mass along
 the axis, greedy clusters of `1e-4`, `>` the last and `<` the first. A planar
 face normal to the axis is ranked by its exact plane offset, any other by its
 box where that settles it, else by a tessellation estimate trusted at a margin;
-a selection the margin cannot settle ends `unsupported_api`. `workplane()` on
+a selection the margin cannot settle ends `unsupported_api`, after a second
+estimate a hundred times finer that settles a gap but never a tie (ADR-0017's
+2026-11-15 amendment). `workplane()` on
 one planar face is that face's plane (x `(0, 0, 1)` crossed with the normal,
 the parent origin projected onto it) and keeps the solid in the chain; on
 several planar faces with one normal and one offset it is their one plane.

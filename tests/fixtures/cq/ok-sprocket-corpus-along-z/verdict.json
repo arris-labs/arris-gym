@@ -1,0 +1,26 @@
+{
+  "disagreement": "occt_wrong",
+  "evidence": {
+    "kind": "closed_form",
+    "volume": 7688.904037243595,
+    "area": 4686.3033351161175,
+    "centroid": [
+      2.1333544351844488e-16,
+      6.15116381751218e-17,
+      8.541192693982076
+    ],
+    "bounds": [
+      [
+        -17.9331,
+        -17.9331,
+        0.0
+      ],
+      [
+        17.9331,
+        17.9331,
+        17.09
+      ]
+    ],
+    "note": "a hub and two tooth plates (one polygon, a mitred chamfer c at both ends of each), united, bored through along the axis: the plate's volume, flat faces and slanted faces from the polygon's area, perimeter and the sum of tan(turn / 2) over its vertices, the hub's cylinders and bore by Pappus-free elementary formulas (tools/cq_closed_forms.py, sprocket_measures): hub 6.69 x 17.09, plates 216 vertices, thickness 4.88, chamfer 0.732, second at 12.2, bore radius 3.255"
+  }
+}

@@ -424,6 +424,106 @@ def test_a_ring_this_tool_does_not_read_is_refused(change: tuple[str, str], matc
         cf.slotted_ring_closed_form(text)
 
 
+SPROCKET = """import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .circle({hub})
+    .extrude({length})
+    .union(
+        cq.Workplane("{plane}")
+            .polyline({outline})
+            .close()
+            .extrude({w})
+            .edges(">{axis}")
+            .chamfer({c})
+            .edges("<{axis}")
+            .chamfer({c})
+    )
+    .union(
+        cq.Workplane("{plane}")
+            .workplane(offset={offset})
+            .polyline({outline})
+            .close()
+            .extrude({w})
+            .edges(">{axis}")
+            .chamfer({c})
+            .edges("<{axis}")
+            .chamfer({c})
+    )
+    .faces(">{axis}").workplane()
+    .hole({bore})
+)
+
+# Export
+show_object(result)"""
+
+
+def sprocket_text(plane: str, c: str = "0.6", teeth: int = 7) -> str:
+    """A sprocket of the corpus's shape on a constructed outline: `teeth` lobes, so not
+    centrally symmetric, a reflex vertex at every root, a plate 4 thick."""
+    points = []
+    for k in range(4 * teeth):
+        angle = 2 * math.pi * k / (4 * teeth)
+        radius = (14.0, 11.0, 10.0, 11.0)[k % 4] + 0.5 * (k % 3)
+        points.append((round(radius * math.cos(angle), 4), round(radius * math.sin(angle), 4)))
+    return SPROCKET.format(
+        plane=plane,
+        axis="X" if plane == "YZ" else "Z",
+        hub="6.0",
+        length="20.04",
+        outline=points,
+        w="4.0",
+        c=c,
+        offset="12.0",
+        bore="4.4",
+    )
+
+
+@pytest.mark.parametrize("plane", ["YZ", "XY"])
+@pytest.mark.parametrize("c", ["0.3", "0.6"])
+def test_a_sprocket_is_what_arris_builds(plane: str, c: str) -> None:
+    # An outline with convex and reflex corners and no symmetry (7 lobes), along each axis:
+    # the mitred chamfer's volume, area and centre, the hub's and the bore's, and a centroid off
+    # the axis, against arris's own boolean and chamfer.
+    text = sprocket_text(plane, c)
+    assert _agrees(ag.run(text, dialect="cq"), cf.sprocket_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        (("hole(4.4)", "hole(14.0)"), "outside the arrangement"),  # a bore wider than the hub
+        (("offset=12.0", "offset=3.0"), "outside the arrangement"),  # the plates meet
+        (("circle(6.0)", "circle(19.0)"), "outside the arrangement"),  # the hub reaches the outline
+        (("chamfer(0.6)", "chamfer(2.1)"), "outside the arrangement"),  # more than half a plate
+        (('edges(">X")', 'edges(">Z")'), "not along its axis"),
+    ],
+)
+def test_a_sprocket_this_tool_does_not_read_is_refused(change: tuple[str, str], match: str) -> None:
+    text = sprocket_text("YZ").replace(*change)
+    with pytest.raises(ValueError, match=match):
+        cf.sprocket_closed_form(text)
+
+
+@pytest.mark.parametrize("slug", ["ok-sprocket-corpus-along-x", "ok-sprocket-corpus-along-z"])
+def test_a_corpus_sprocket_is_occt_wrong_by_its_closed_form(slug: str) -> None:
+    """The two sprockets as committed: arris is within ADR-0005's constants of the closed form,
+    the recorded oracle report is not (its chamfer takes less than the mitre does), and the
+    rule alone leaves each row unclassified."""
+    from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+
+    directory = Path(__file__).parent / "fixtures" / "cq" / slug
+    text = (directory / "program.py").read_text(encoding="utf-8")
+    verdict = Verdict.model_validate_json((directory / "verdict.json").read_text(encoding="utf-8"))
+    assert verdict.evidence == ClosedForm.model_validate(cf.sprocket_closed_form(text))
+    report = OracleReport.model_validate_json((directory / "oracle.json").read_text("utf-8"))
+    result = ag.run(text, dialect="cq", timeout=60)
+    assert _agrees(result, cf.sprocket_closed_form(text)) == []
+    assert compare(result, report).outcome is FidelityOutcome.UNCLASSIFIED
+    assert compare(result, report, verdict).disagreement is DisagreementClass.OCCT_WRONG
+
+
 HOOK = """import cadquery as cq
 
 result = (

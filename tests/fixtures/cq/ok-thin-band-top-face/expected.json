@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 31937.922129165065,
+    "area": 6519.757511954843,
+    "centroid": [
+      0,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -20,
+        -20,
+        -10.005
+      ],
+      [
+        20,
+        20,
+        10.005
+      ]
+    ],
+    "faces": 11,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        8
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "a 40 x 40 x 20 box and a cylinder of radius 5 and height 20.01 on one axis (it stands 0.005 proud of the box at each end), `faces(\">Z\")` then a hole of diameter 2 through all: the cylinder's side face above the box is a band 0.005 high whose centre of mass, 10.0025, is 0.0025 below the top disc (10.005), a gap the first estimate's margin (1e-4 of the box diagonal 57.0, 0.0057) cannot settle and the refined one (1e-6, 5.7e-5) does; CadQuery keeps the top disc alone, the hole is at its origin. V = 40*40*20 + pi*5^2*0.01 - pi*1^2*20.01; A = 4*40*20 + 2*(40*40 - pi*5^2) + 2*(pi*5^2 - pi*1^2) + 2*(2*pi*5*0.005) + 2*pi*1*20.01 = 6400 + 38.12 pi; centroid on the axis by the mirror planes x = 0, y = 0, z = 0; one shell, genus 1. Faces are carried, not judged (ADR-0005)"
+}

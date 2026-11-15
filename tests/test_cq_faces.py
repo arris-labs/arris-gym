@@ -654,3 +654,36 @@ def test_the_selector_doctests_run() -> None:
     from arris_gym.cq import _selector
 
     assert doctest.testmod(_selector).failed == 0
+
+
+def _box_and_pin(height: float) -> cq.Workplane:
+    """A 40 x 40 x 20 box with a cylinder of radius 5 and the given height on its axis, which
+    stands `(height - 20) / 2` proud of each face: a cylinder band at that height beside the
+    top face, whose centre of mass lies half of it below the cylinder's own top disc."""
+    return cq.Workplane("XY").box(40, 40, 20).union(cq.Workplane("XY").cylinder(height, 5))
+
+
+@pytest.mark.parametrize("proud", [0.005, 0.0025])
+def test_a_thin_band_the_first_margin_cannot_place_is_placed_by_the_refined_one(
+    proud: float,
+) -> None:
+    # The band (the cylinder's side above the box) is `proud` high, its centre `proud / 2`
+    # below the disc at 10 + proud: 0.0025 and 0.00125, over the refined margin (1e-6 of the
+    # diagonal 57, 5.7e-5) and CQ_TOLERANCE, under the first (1e-4 of it, 5.7e-3). The
+    # disc alone is kept, as CadQuery does (`ok-thin-band-top-face`).
+    top = _box_and_pin(20 + 2 * proud).faces(">Z")
+    (kept_faces,) = [o for o in top._stack if isinstance(o, Faces)]
+    assert len(kept_faces.faces) == 1
+    assert top.workplane()._plane.origin == pytest.approx((0, 0, 10 + proud), abs=1e-9)
+
+
+def test_a_band_that_ties_the_top_face_is_still_refused() -> None:
+    # A band 1.5e-4 high: its centre 7.5e-5 below the disc, inside CQ_TOLERANCE (1e-4), so
+    # CadQuery keeps band and disc, and with the refined margin (5.7e-5) the tie cannot be
+    # told from a near miss: `UnsupportedApi`, as before the refined pass.
+    with pytest.raises(cq.UnsupportedApi) as raised:
+        _box_and_pin(20.0003).faces(">Z")
+    assert str(raised.value) == (
+        "Workplane.faces('>Z'): the selection depends on the centre of a face "
+        "that arris does not give"
+    )

@@ -583,3 +583,17 @@ bevelling a face's one rim, a hole along the axis) and `gridfinity_bin_000166_s2
 and agreeing with the oracle's recorded report. The `ball_knob` blend (`faces("<Z").edges()`
 after a sphere and a stem touching at a point) is `regression/cq-ball-knob-chamfer-after-point-contact`,
 waiting on arris's union; the handwheel (blends after unions and cuts) is `ok-chamfer-corpus-handwheel`.
+
+`ok-thin-band-top-face` and `ok-sprocket-corpus-along-x`, `-along-z` of plans/lift-edges-and-blends
+step 7b (ADR-0017's 2026-11-15 amendment): `faces(">Z")` where a cylinder's side shows 0.005 above
+a box, a thin band whose centre is 0.0025 under the kept disc (a box and a cylinder, closed form by
+construction, agreeing with the oracle's recorded report), and BenchCAD's
+`double_simplex_sprocket_016264_s20260505` and `double_simplex_sprocket_017919_s20260505` as written
+(BenchCAD/BenchCAD, CC BY 4.0: a hub between two chamfered tooth plates, `faces(">X")` and
+`faces(">Z")` on the hub's end, then a bore), held to the closed form of `tools/cq_closed_forms.py`
+(`sprocket_measures`; the plate polygon's mitred chamfer, arris within 1e-10 of it). Each beside the
+oracle's recorded report and a `verdict.json`: the oracle's chamfer on the tooth outline takes less
+than the mitre does (its volume 0.1% over the closed form), so the row is `occt_wrong` by that
+closed form. arris carries one face more than the oracle (the plate's bottom flat and the hub's
+coplanar bottom disc stay two), ADR-0005's convention.
+

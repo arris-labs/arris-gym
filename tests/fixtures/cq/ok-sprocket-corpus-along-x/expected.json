@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 13864.690160482372,
+    "area": 6795.069768582386,
+    "centroid": [
+      7.092849215900188,
+      4.646445050667678e-06,
+      2.749041709535972e-16
+    ],
+    "bounds": [
+      [
+        0.0,
+        -23.7713,
+        -23.7396
+      ],
+      [
+        14.19,
+        23.5572,
+        23.7396
+      ]
+    ],
+    "faces": 2061,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        2058
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `double_simplex_sprocket_016264_s20260505` as written; the closed form of tools/cq_closed_forms.py (sprocket_measures): hub 15.02 x 14.19, plates 342 vertices, thickness 4.05, chamfer 0.6075, second at 10.13, bore radius 6.955; faces are carried, not judged (ADR-0005); faces: 6n + 8 by construction (n the outline's vertices: a chamfer face and a side per edge per plate, the plates' four flats, the hub's two sides, bore and top annulus), 2060 on the oracle, and one more on arris, which leaves the plate's bottom flat and the hub's coplanar bottom disc as two faces (ADR-0005's convention, carried)"
+}

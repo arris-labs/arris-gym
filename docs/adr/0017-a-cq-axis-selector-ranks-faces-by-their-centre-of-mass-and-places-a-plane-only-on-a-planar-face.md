@@ -218,3 +218,33 @@ errors are reached at every size. Until then a refusal where CadQuery raises
 is a `cq_bug` row if a corpus has one (ADR-0012); the step 7 re-run counts no
 in-subset `cq_bug`, so none of the corpus's programs reaches it. Rules 1 to 5
 are otherwise unchanged.
+
+## Amendment (2026-11-15): a second, finer estimate settles a gap, never a tie
+
+Rule 2's one estimate (chord 1e-5 of the box diagonal D, margin 1e-4 D) leaves a
+selection undecided where a thin curved face lies beside the selected one:
+BenchCAD's `double_simplex_sprocket` (18 programs, in the subset and ended
+`unsupported_api`) writes `faces(">X")` on a hub whose cylinder side shows 0.01
+above the top plate, a band whose centre, 0.005 under the hub's end disc, is
+inside the margin (D about 80, so 0.008). The band's centre is known by
+symmetry to be half way up it, so a gap of 0.005 against a tolerance of 1e-4
+is no tie, and the oracle keeps the disc alone.
+
+When the first estimate leaves the selection undecided, `select_faces` makes
+one more pass on the same undecided faces at a chord and a margin 100 times
+smaller (1e-7 D and 1e-6 D), keeping the first's ratios (an error of 0.4 of a
+chord, a margin of ten). The pass is trusted **to settle a gap only**: if the
+selection it decides keeps an estimated face (a tie, the cylinder side with
+its two discs, a triangular prism's slanted face) the result is still
+`unsupported_api`, as rule 2 and the 2026-11-14 amendment have it, so no
+behaviour of those amendments changes (`unsupported-faces-cylinder-side`,
+`unsupported-faces-triangular-prism` and the size-dependent rule 4 cases stay
+as they are). What it lifts is a selection whose kept faces are all exact and
+whose estimated faces lie more than `CQ_TOLERANCE` and the refined margin away.
+Held by `ok-thin-band-top-face` (a box with a cylinder 0.005 proud, D = 57, closed
+form by construction, agreeing with the oracle) and, on the corpus,
+`ok-sprocket-corpus-along-x` and `-along-z`: a sprocket as written, whose
+volume, area, centroid and bounds are the closed form of
+`tools/cq_closed_forms.py` (`sprocket_measures`) and arris's, while the oracle's
+chamfer on the tooth outline takes less than the mitre does, `occt_wrong` for
+all 18 rows (each passes `compare` against both sides).

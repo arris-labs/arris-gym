@@ -67,6 +67,12 @@ _ESTIMATE_CHORD = 1e-5
 # How far an estimated key is trusted, as a fraction of the same diagonal:
 # ten chords, 25 times the error measured on a half cylinder (ADR-0017 rule 2).
 _ESTIMATE_MARGIN = 1e-4
+# The finer pass `select_faces` makes when the first leaves a selection undecided: a chord and a
+# margin 100 times smaller, so the error measured at the first (0.4 of a chord) and the margin
+# (ten chords) both scale down with the chord (ADR-0017's 2026-11-15 amendment). It only
+# settles a gap: a selection that keeps an estimated face, a tie, is refused as before.
+_REFINED_CHORD = 1e-7
+_REFINED_MARGIN = 1e-6
 
 
 @dataclass(frozen=True)
@@ -339,13 +345,21 @@ def select_faces(
     if whole is None:
         raise UnsupportedApi("Workplane.faces on a solid without a box")
     diagonal = _length([whole[1][k] - whole[0][k] for k in range(3)])
-    values = _estimates(
-        model, solid.body, [faces[i] for i in undecided], axis, diagonal * _ESTIMATE_CHORD
-    )
     order = [*exact, *undecided]
-    keys = [*exact.values(), *values]
-    margin = diagonal * _ESTIMATE_MARGIN
-    kept = _pick_within(keys, [i >= len(exact) for i in range(len(keys))], margin, maximum)
+    kept: list[int] | None = None
+    for refined, (chord, share) in enumerate(
+        ((_ESTIMATE_CHORD, _ESTIMATE_MARGIN), (_REFINED_CHORD, _REFINED_MARGIN))
+    ):
+        values = _estimates(
+            model, solid.body, [faces[i] for i in undecided], axis, diagonal * chord
+        )
+        keys = [*exact.values(), *values]
+        kept = _pick_within(
+            keys, [i >= len(exact) for i in range(len(keys))], diagonal * share, maximum
+        )
+        if kept is not None and (not refined or max(kept) < len(exact)):
+            break
+        kept = None  # the finer pass settles a gap only: it keeps no estimated face
     if kept is None:
         raise UnsupportedApi(_depends(selector))
     return tuple(faces[order[k]] for k in _ordered(kept, keys))

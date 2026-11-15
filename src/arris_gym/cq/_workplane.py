@@ -513,7 +513,10 @@ class Workplane:
         centre is trusted to `1e-4` of the solid's box diagonal, so a tie on
         one is kept only on a small part (a diagonal under 1, under 0.5 for
         two estimated centres) and is `UnsupportedApi` on a larger one, where
-        CadQuery keeps the tied faces (ADR-0017's 2026-11-14 amendment). A stack with
+        CadQuery keeps the tied faces (ADR-0017's 2026-11-14 amendment). A second
+        estimate a hundred times finer settles a thin curved face beside the kept
+        faces, never a tie (ADR-0017's 2026-11-15 amendment; `ok-thin-band-top-face`).
+        A stack with
         no solid (empty, a `moveTo` point, a drawn path or a sketch, whose
         objects have no faces) raises CadQuery's `ValueError` (`runtime`),
         read on the oracle: `runtime-faces-on-*`. Where the solid is a compound
