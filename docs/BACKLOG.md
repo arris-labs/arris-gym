@@ -168,6 +168,9 @@ A defect a run measured, one block each:
 - Seen again: plans/lift-edges-and-blends step 7c: 81 `clevis_pin` programs (a cylinder chamfered at both rims, one or two cross holes; bounds 1e-3 to 5e-3 wide, the oracle's volume to 2.2e-5 off) and `spacer_ring_008375` (a chamfered ring slotted to a floor inside its thickness: the slot's walls cut the chamfer's cone in two NURBS hyperbolas, x max 0.037 past the part)
 - State: regression/cq-cross-hole-bounds and regression/cq-chamfer-slot-bounds (strict `xfail`); the 5 `shaft_collar` and the 81 `clevis_pin` rows `arris_bug` by the first, `spacer_ring_008375` by the second (`tests/fixtures/c2/benchcad/verdicts.json` once step 8 re-runs), `occt_wrong` by a closed form once arris's box is tight; reported in `../arris/docs/ideas/tight-body-bounds.md`
 
+- `cq` seam placement and closed-form tool hardening (plans/lift-edges-and-blends review): `_placed_key` tests `info.axis[axis] != 0.0` exactly where the rest of the function uses `angular_tolerance` (a cylinder on a `transformed` plane loses its seam placement and ends `unsupported_api`); `_closed_form_job` catches every `ValueError`, so a bug inside a closed form reads as "another arrangement" (a dedicated exception); `_with_seams` mutates a workplane after it is derived (safe today, fragile).
+- The finer `faces` estimate pass tessellates at a chord of 1e-7 of the diagonal: measure its cost on large curved faces, since a slow machine turns it into a `timeout`, the one status wall-clock time may change.
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)
