@@ -18,6 +18,7 @@ from arris_gym.cq._forms import census_form, numbers_of, shape_of
 from arris_gym.cq._selector import (
     AXIS_SELECTORS,
     NO_FACES,
+    SELECTORS,
     Edges,
     Faces,
     edges_of_faces,
@@ -531,7 +532,9 @@ class Workplane:
         With no `selector` every edge is kept. `selector` is one of `>X <X >Y
         <Y >Z <Z`: the edges whose centre of mass lies furthest along (`>`) or
         least along (`<`) the axis, every one within CadQuery's `1e-4` of the
-        first of its cluster, in ascending key. The candidates are the edges of
+        first of its cluster, in ascending key; `|X`, `|Y` or `|Z`: the line
+        edges parallel to the axis (a circle or arc never, a seam line when it
+        is parallel); or `>Z or <Z`: both ends' edges, each once. The candidates are the edges of
         the solid on the stack, of the faces `faces` kept (each edge once, in the
         order first found) or of the edges a selector kept before; a compound's
         edges are those of every piece. They are the one object on the new
@@ -548,7 +551,7 @@ class Workplane:
         >>> len(wp._stack[0].edges)
         4
         """
-        if selector is not None and selector not in AXIS_SELECTORS:
+        if selector is not None and selector not in SELECTORS:
             raise UnsupportedApi(f"Workplane.edges({selector!r})")
         for o in self._stack:
             if isinstance(o, Edges):

@@ -534,7 +534,8 @@ as its 64 older rows), which step 6 classes. All 87 in-subset `dome_cap` end in 
 spindle-torus refusal.
 
 `runtime-edges-*` and `unsupported-edges-*` of plans/lift-edges-and-blends step 2
-(`tests/test_cq_edges.py`), each beside the oracle's recorded report: `edges(">Z")` on an
+(`tests/test_cq_edges.py`, which also holds step 3's `|X |Y |Z` and `'>Z or <Z'` on a box, a
+cylinder and a drilled plate), each beside the oracle's recorded report: `edges(">Z")` on an
 empty stack is CadQuery's `ValueError` for an empty selection, and the oracle builds what
 `cq` refuses: a cylinder's `>X`, where the seam may tie the rims (ADR-0020 rule 2), the
 type selector `%LINE`, and a `box` on a stack of edges (rule 6). A program that ends in

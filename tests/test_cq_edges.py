@@ -1,4 +1,4 @@
-"""`edges()` and `edges(str)` with the axis selectors keep CadQuery's edges (ADR-0020 rules 1, 2).
+"""`edges()` and `edges(str)` keep CadQuery's edges (ADR-0020 rules 1 to 4).
 
 The closed forms are worked out by hand from how each part is built: a box's
 twelve edges and the midpoints of the four an axis selector keeps, a
@@ -84,6 +84,75 @@ def test_an_axis_selector_keeps_the_four_edges_of_the_face_it_names(selector: st
     a, b = (BOX[k] / 2 for k in others)
     ends = sorted((round(mid[others[0]], 9), round(mid[others[1]], 9)) for _, mid in got)
     assert ends == sorted([(-a, 0.0), (a, 0.0), (0.0, -b), (0.0, b)])
+
+
+@pytest.mark.parametrize("selector", ["|X", "|Y", "|Z"])
+def test_a_parallel_selector_keeps_the_four_lines_along_its_axis(selector: str) -> None:
+    """The box's four edges along an axis, one at each corner of the face across it: the
+    midpoint is on the axis's zero and at the extremes of the other two (ADR-0020 rule 3)."""
+    axis = AXIS[selector[1]]
+    got = kept(box().edges(selector))
+    assert len(got) == 4
+    assert {kind for kind, _ in got} == {"line"}
+    others = [k for k in range(3) if k != axis]
+    a, b = (BOX[k] / 2 for k in others)
+    ends = sorted((mid[others[0]], mid[others[1]]) for _, mid in got)
+    assert ends == sorted([(-a, -b), (-a, b), (a, -b), (a, b)])
+    assert all(abs(mid[axis]) < ROUNDING for _, mid in got)
+
+
+def test_the_or_selector_keeps_both_ends_once() -> None:
+    got = kept(box().edges(">Z or <Z"))
+    assert len(got) == 8
+    assert sorted({mid[2] for _, mid in got}) == [-2.0, 2.0]
+    # Each end's four edges, each edge once.
+    assert len({mid for _, mid in got}) == 8
+    both = kept(cq.Workplane("XY").cylinder(4, 2).edges(">Z or <Z"))
+    assert sorted(both) == [("circle", (0.0, 0.0, -2.0)), ("circle", (0.0, 0.0, 2.0))]
+
+
+def test_an_edge_both_sides_of_an_or_keep_is_kept_once() -> None:
+    """On a box 1e-5 thick every key lies within CadQuery's 1e-4 of the first, so `>Z` and
+    `<Z` each keep all twelve edges, and their union is the twelve, not twenty-four."""
+    sliver = cq.Workplane("XY").box(10, 8, 1e-5)
+    assert len(kept(sliver.edges(">Z"))) == 12
+    assert len(kept(sliver.edges(">Z or <Z"))) == 12
+
+
+def test_a_parallel_selector_never_keeps_a_circle_or_an_arc() -> None:
+    cylinder = cq.Workplane("XY").cylinder(4, 2)
+    # The seam is along z wherever it lies; the rims are circles.
+    seam = kept(cylinder.edges("|Z"))
+    assert [kind for kind, _ in seam] == ["line"]
+    assert kept(cylinder.edges("|X")) == []
+    assert kept(cylinder.edges("|Y")) == []
+    # A half cylinder: the arcs are never parallel to anything.
+    assert [kind for kind, _ in kept(half_cylinder().edges("|Z"))] == ["line", "line"]
+    assert [kind for kind, _ in kept(half_cylinder().edges("|X"))] == ["line", "line"]
+
+
+def test_a_drilled_plates_corners_and_hole_seam_are_parallel_to_z() -> None:
+    """The plate's four corners and the hole's seam: five lines (ADR-0020's `plate-edges|Z`)."""
+    plate = box().faces(">Z").workplane().hole(3)
+    got = kept(plate.edges("|Z"))
+    assert [kind for kind, _ in got] == ["line"] * 5
+    corners = sorted((c[0], c[1]) for _, c in got if abs(c[0]) > 2)
+    assert corners == [(-5.0, -4.0), (-5.0, 4.0), (5.0, -4.0), (5.0, 4.0)]
+    (seam,) = (c for _, c in got if abs(c[0]) < 2)
+    assert abs(seam[0]) == 1.5
+    assert seam[1] == 0.0
+
+
+def test_a_parallel_selector_on_a_face_ranks_that_faces_edges() -> None:
+    assert len(kept(box().faces(">X").edges("|Z"))) == 2
+    assert len(kept(box().faces(">X").edges("|X"))) == 0
+    assert len(kept(box().faces(">Z").edges("|Y"))) == 2
+
+
+def test_a_selector_still_refused_on_faces() -> None:
+    for selector in ("|Z", ">Z or <Z"):
+        with pytest.raises(cq.UnsupportedApi, match=r"^Workplane\.faces\("):
+            box().faces(selector)
 
 
 def test_the_kept_edges_come_in_ascending_key() -> None:
@@ -283,6 +352,24 @@ def test_every_unsupported_edges_fixture_is_a_form_the_oracle_builds() -> None:
             "message": message,
         }
         assert recorded(slug).status.value == "ok", slug
+
+
+@settings(max_examples=40, deadline=None)
+@given(size=st.tuples(st.integers(1, 30), st.integers(1, 30), st.integers(1, 30)))
+def test_on_a_random_box_a_parallel_selector_keeps_four_lines_and_or_eight(
+    size: tuple[int, int, int],
+) -> None:
+    """`|Z` keeps the four vertical lines, at the corners; `'>Z or <Z'` the eight lines of the
+    two ends, each at the height of one."""
+    wp = cq.Workplane("XY").box(*size)
+    vertical = kept(wp.edges("|Z"))
+    assert [kind for kind, _ in vertical] == ["line"] * 4
+    assert sorted((c[0], c[1]) for _, c in vertical) == sorted(
+        (sx * size[0] / 2, sy * size[1] / 2) for sx in (-1, 1) for sy in (-1, 1)
+    )
+    ends = kept(wp.edges(">Z or <Z"))
+    assert [kind for kind, _ in ends] == ["line"] * 8
+    assert sorted(c[2] for _, c in ends) == [-size[2] / 2] * 4 + [size[2] / 2] * 4
 
 
 @settings(max_examples=40, deadline=None)

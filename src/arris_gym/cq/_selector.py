@@ -21,6 +21,8 @@ __all__ = [
     "AXIS_SELECTORS",
     "CQ_TOLERANCE",
     "NO_FACES",
+    "OR_SELECTORS",
+    "PARALLEL_SELECTORS",
     "SELECTORS",
     "Edges",
     "Faces",
@@ -35,7 +37,13 @@ __all__ = [
 # The axis selectors the subset admits: `DirectionMinMaxSelector` on one world
 # axis, `>` the furthest cluster and `<` the nearest (ADR-0017).
 AXIS_SELECTORS = (">X", "<X", ">Y", "<Y", ">Z", "<Z")
-SELECTORS = AXIS_SELECTORS
+# The selectors only `edges` reads (ADR-0020): `ParallelDirSelector` on a world
+# axis, and `SumSelector` of the two ends of the z axis, `'>Z or <Z'`. No corpus
+# program writes either on `faces`, so `faces` still refuses them.
+PARALLEL_SELECTORS = ("|X", "|Y", "|Z")
+OR_SELECTORS = (">Z or <Z",)
+# Every selector string the subset declares, once for both methods (ADR-0012).
+SELECTORS = (*AXIS_SELECTORS, *PARALLEL_SELECTORS, *OR_SELECTORS)
 _AXIS = {"X": 0, "Y": 1, "Z": 2}
 
 # CadQuery 2.3.0's default tolerance for `DirectionMinMaxSelector`, for
@@ -469,6 +477,29 @@ def _edge_keys(
     return keys, widths
 
 
+def _parallel(model: arris.Model, edges: Sequence[arris.Edge], axis: int) -> tuple[arris.Edge, ...]:
+    """The line edges whose direction crosses `axis` within `CQ_TOLERANCE` (ADR-0020 rule 3).
+
+    The direction is the line's ends' difference, normalised. A circle, an arc,
+    an ellipse or a B-spline edge is never kept, as CadQuery's
+    `ParallelDirSelector` keeps only `LINE` edges. A seam line is kept where it
+    is parallel: a cylinder's seam is parallel to its axis wherever it lies.
+    """
+    unit = tuple(1.0 if i == axis else 0.0 for i in range(3))
+    kept = []
+    for edge in edges:
+        c = model.curve(edge)
+        if c.kind != "line":
+            continue
+        along = _sub(c.end, c.start)
+        length = _length(along)
+        if length == 0.0:
+            continue
+        if _length(_cross(unit, [a / length for a in along])) < CQ_TOLERANCE:
+            kept.append(edge)
+    return tuple(kept)
+
+
 def select_edges(
     solid: arris.build.Solid, edges: Sequence[arris.Edge], selector: str | None
 ) -> tuple[arris.Edge, ...]:
@@ -476,20 +507,33 @@ def select_edges(
 
     `edges` are candidates from `edges_of_solid` or `edges_of_faces` (or edges
     a selector kept before); with no `selector` they are all kept. `selector`
-    is one of `SELECTORS`' six axis selectors: the edges whose centre of mass
-    lies furthest along (`>`) or least along (`<`) the axis, every one within
-    CadQuery's `1e-4` of the first of its cluster, in ascending key. Raises
+    is one of `SELECTORS`. An axis selector (`AXIS_SELECTORS`) keeps the edges
+    whose centre of mass lies furthest along (`>`) or least along (`<`) the
+    axis, every one within CadQuery's `1e-4` of the first of its cluster, in
+    ascending key (rule 2). `|X`, `|Y` and `|Z` keep the line edges parallel
+    to the axis, in candidate order (rule 3). `'>Z or <Z'` keeps the edges
+    either side keeps, each once, in candidate order (rule 4). Raises
     `UnsupportedApi` where the selection depends on a key arris does not give
     as CadQuery's kernel does: a seam on a face about another axis, or an
     ellipse arc or B-spline edge in the kept cluster or able to reach it.
 
     >>> import arris.build
     >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
-    >>> len(select_edges(box, edges_of_solid(box), ">Z"))
-    4
+    >>> candidates = edges_of_solid(box)
+    >>> len(select_edges(box, candidates, ">Z")), len(select_edges(box, candidates, "|Z"))
+    (4, 4)
     """
     if selector is None:
         return tuple(edges)
+    if selector in OR_SELECTORS:
+        both = {
+            edge.index
+            for side in selector.split(" or ")
+            for edge in select_edges(solid, edges, side)
+        }
+        return tuple(e for e in edges if e.index in both)
+    if selector in PARALLEL_SELECTORS:
+        return _parallel(solid.model, edges, _AXIS[selector[1]])
     maximum = selector[0] == ">"
     keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]])
     kept = _pick_widths(keys, widths, maximum) if any(widths) else _pick(keys, maximum)

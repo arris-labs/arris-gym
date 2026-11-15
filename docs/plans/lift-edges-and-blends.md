@@ -110,7 +110,7 @@ within a given design; **[3]** unproven semantics, established here.
   (the edge key): `cq/ok-edges-*` with each kept edge's count and curve kind,
   `unsupported-` for an estimate inside the margin; `hypothesis`: a random box
   and selector keeps the four edges of the face the closed form names.
-- [ ] Step 3 **[2]** — `|X|Y|Z` and `'>Z or <Z'`: fixtures on a box, a
+- [x] Step 3 **[2]** — `|X|Y|Z` and `'>Z or <Z'`: fixtures on a box, a
   cylinder and a drilled plate; `hypothesis`: on a random box, `|Z` keeps four
   lines and `'>Z or <Z'` eight.
 - [ ] Step 4 **[2]** — `fillet(num)` per ADR-0020: `cq/ok-fillet-*` (a box's
@@ -177,6 +177,10 @@ within a given design; **[3]** unproven semantics, established here.
   a blend makes of it; step 2's fixtures are the `runtime-edges-*` and
   `unsupported-edges-*` refusals beside the oracle's reports. `census_form` gained
   `alternatives=` so `edges()` and `edges(str)` are two declared forms.
+- *Settled* (step 3): the box, cylinder and drilled-plate selections are held
+  on the stack in `tests/test_cq_edges.py` (counts, curve kinds, centres by
+  closed form), not as `cq/` fixtures, for step 2's reason. `SELECTORS` splits
+  into `AXIS_SELECTORS` (what `faces` reads) and the whole declared set.
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a
