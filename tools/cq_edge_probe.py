@@ -135,6 +135,40 @@ _PAIR = (
     '.union(cq.Workplane("XY").transformed(offset=cq.Vector(5, 0, 0)).box(2, 2, 2))'
 )
 
+# Cylinders CadQuery builds off the XY plane, each with the parallel selector
+# along its axis, which keeps its seams (and the lines of a box along it): where
+# Open CASCADE puts each seam (ADR-0020 rule 2, amended). A washer is a
+# cylinder of radius 5 and height 1 or 2 about the origin with a bore of
+# radius 1.5 through it from the face the selector names.
+SEAMS: dict[str, str] = {
+    "seam-yz-cylinder": 'cq.Workplane("YZ").cylinder(10, 2).edges("|X")',
+    "seam-xz-cylinder": 'cq.Workplane("XZ").cylinder(10, 2).edges("|Y")',
+    "seam-zx-cylinder": 'cq.Workplane("ZX").cylinder(10, 2).edges("|Y")',
+    "seam-turned-cylinder": (
+        'cq.Workplane("XY").transformed(rotate=cq.Vector(0, 0, 30)).cylinder(4, 1).edges("|Z")'
+    ),
+    "seam-yz-washer": (
+        'cq.Workplane("YZ").cylinder(1, 5).faces(">X").workplane().hole(3).edges("|X")'
+    ),
+    "seam-xz-washer": (
+        'cq.Workplane("XZ").cylinder(1, 5).faces("<Y").workplane().hole(3).edges("|Y")'
+    ),
+    "seam-xz-ring": (
+        'cq.Workplane("XZ").circle(5).extrude(1).faces("<Y").workplane().hole(3).edges("|Y")'
+    ),
+    "seam-yz-cbore": (
+        'cq.Workplane("YZ").cylinder(2, 5).faces(">X").workplane().cboreHole(2, 4, 0.5).edges("|X")'
+    ),
+    "seam-yz-cut-blind": (
+        'cq.Workplane("YZ").cylinder(2, 5).faces(">X").workplane().circle(1.5).cutBlind(-1)'
+        '.edges("|X")'
+    ),
+    "seam-xz-points": (
+        'cq.Workplane("XZ").cylinder(2, 5).faces("<Y").workplane()'
+        '.pushPoints([(2, 0), (-2, 1)]).hole(1).edges("|Y")'
+    ),
+}
+
 _AXES = (">X", "<X", ">Y", "<Y", ">Z", "<Z")
 _PARALLEL = ("|X", "|Y", "|Z")
 
@@ -161,6 +195,7 @@ SELECTIONS: dict[str, str] = {
     "plate-edges|Z": f'result = {_PLATE}.edges("|Z")',
     "plate-faces>Z-edges": f'result = {_PLATE}.faces(">Z").edges()',
     "rounded-edges>Z": f'result = {_ROUNDED}.edges(">Z")',
+    **{name: f"result = {chain}" for name, chain in SEAMS.items()},
 }
 
 # Each is measured as it is.

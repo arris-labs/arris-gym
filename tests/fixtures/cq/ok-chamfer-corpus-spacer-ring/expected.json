@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 209.14568126721943,
+    "area": 1041.5210887569679,
+    "centroid": [
+      0.21499999999999994,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        0.0,
+        -17.915,
+        -17.915
+      ],
+      [
+        0.43,
+        17.915,
+        17.915
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cone",
+        4
+      ],
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `spacer_ring_001337_s20260505` as written: radii 17.915 and 12.795, swept 0.43 along x, its four rims chamfered 0.13; both seams tie with them"
+}

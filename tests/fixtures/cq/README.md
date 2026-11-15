@@ -537,7 +537,8 @@ spindle-torus refusal.
 (`tests/test_cq_edges.py`, which also holds step 3's `|X |Y |Z` and `'>Z or <Z'` on a box, a
 cylinder and a drilled plate), each beside the oracle's recorded report: `edges(">Z")` on an
 empty stack is CadQuery's `ValueError` for an empty selection, and the oracle builds what
-`cq` refuses: a cylinder's `>X`, where the seam may tie the rims (ADR-0020 rule 2), the
+`cq` refuses: a revolved wall's `>X`, where its seam, which no record places, may tie the rims
+(ADR-0020 rule 2 and its amendment), the
 type selector `%LINE`, and a `box` on a stack of edges (rule 6). A program that ends in
 edges has no `ok-` fixture: the oracle reports a bare edge as a shape of volume 0 and
 `cq` a result holding no solid, so what `edges` keeps is held on the stack in
@@ -564,9 +565,13 @@ compound) and a chamfer along the edges a fillet made. `ok-chamfer-corpus-dowel-
 `dowel_pin_000027_s20260505` as written, by closed form; `ok-chamfer-corpus-handwheel` is
 `handwheel_000006_s20260506` as written, its volume, area, centroid and bounds the oracle's
 recorded report (no closed form is at hand; its face kinds, shells and genus are `cq`'s, the face count held
-to the report's), and `cq` agrees with that report. `unsupported-chamfer-corpus-clevis-pin-seam` is
-`clevis_pin_000171_s20260505` (a pin along y): `'>Z or <Z'` ranks the seam with the rims, and
-the kernels place it differently (ADR-0020 rule 2). `runtime-chamfer-*` are CadQuery's refusals
+to the report's), and `cq` agrees with that report. `ok-chamfer-corpus-clevis-pin` (a pin along y,
+`unsupported-chamfer-corpus-clevis-pin-seam` until plans/lift-edges-and-blends step 7a),
+`ok-chamfer-corpus-washer` and `ok-chamfer-corpus-spacer-ring` (a washer and a swept ring along x,
+each with a bore) are `clevis_pin_000171_s20260505`, `washer_000024_s20260505` and
+`spacer_ring_001337_s20260505` as written (BenchCAD/BenchCAD, CC BY 4.0), by closed form:
+`'>Z or <Z'` ranks each seam, placed where Open CASCADE puts it, at the height of the axis, tied
+with the rims (ADR-0020's amendment). `runtime-chamfer-*` are CadQuery's refusals
 and `arris-refusal-chamfer-*` the lengths Open CASCADE refuses with `StdFail_NotDone` and arris
 with its own words: both fail, a row that agrees.
 

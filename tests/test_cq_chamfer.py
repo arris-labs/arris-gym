@@ -5,9 +5,11 @@ edges, Pappus's rule, mitred at a box's corners), worked out from how each part 
 nothing is read from `cq`. Each `ok-chamfer-*` fixture has the oracle's recorded report beside
 it and agrees with it; each `runtime-chamfer-*` one is CadQuery's refusal and each
 `arris-refusal-chamfer-*` one a length Open CASCADE refuses with `StdFail_NotDone` and arris
-with its own words: both fail. The corpus programs are BenchCAD's, as written: a dowel pin by
-closed form, a handwheel (a union of spokes) by the oracle's own measures, where no closed form
-is at hand, held to the recorded report, and a clevis pin along y that `cq` refuses at its seam.
+with its own words: both fail. The corpus programs are BenchCAD's, as written: a dowel pin, a
+clevis pin along y, a washer and a spacer ring along x by closed form (`'>Z or <Z'` across a
+turned part's axis, its seams placed where Open CASCADE puts them: ADR-0020 rule 2, amended),
+and a handwheel (a union of spokes) by the oracle's own measures, where no closed form is at
+hand, held to the recorded report.
 """
 
 from __future__ import annotations
@@ -118,14 +120,47 @@ result = (
 # Export
 show_object(result)
 """
-# A pin along the y axis: its seam is where the kernels differ, so `cq` refuses (ADR-0020 rule 2).
-CORPUS_CLEVIS_SEAM = """import cadquery as cq
+# A pin along the y axis: `'>Z or <Z'` ranks its seam, at the height of the axis on the
+# plane's +x, with the two rims (ADR-0020 rule 2, amended).
+CORPUS_CLEVIS = """import cadquery as cq
 
 result = (
     cq.Workplane("XZ")
     .cylinder(42.77, 5.94)
     .edges(">Z or <Z")
     .chamfer(1.19)
+)
+
+# Export
+show_object(result)
+"""
+# A washer along x: the wall's seam on the plane's +y, the bore's on -y of the face's
+# plane, both at the height of the axis, so `'>Z or <Z'` keeps the four rims and both seams.
+CORPUS_WASHER = """import cadquery as cq
+
+result = (
+    cq.Workplane("YZ")
+    .cylinder(5.0, 30.0)
+    .faces(">X").workplane()
+    .hole(34.0)
+    .edges(">Z or <Z")
+    .chamfer(0.4)
+)
+
+# Export
+show_object(result)
+"""
+# The same with the disc swept by `extrude` from x = 0 to 0.43.
+CORPUS_SPACER = """import cadquery as cq
+
+result = (
+    cq.Workplane("YZ")
+    .circle(17.915)
+    .extrude(0.43)
+    .faces(">X").workplane()
+    .hole(25.59)
+    .edges(">Z or <Z")
+    .chamfer(0.13)
 )
 
 # Export
@@ -157,6 +192,39 @@ def dowel() -> Measures:
     area = base[1] + 2 * math.pi * a * t
     z = (base[0] * base[2][2] - cut * (h / 2 - t / 2)) / volume
     return volume, area, (0.0, 0.0, z)
+
+
+def turned(outer: float, inner: float, height: float, d: float, start: float) -> Measures:
+    """A disc of radius `outer` (less a bore of radius `inner`, if any) along an axis from
+    `start` to `start + height`, every rim chamfered by `d`: the closed form along z, its
+    centroid on the axis at `start + height / 2` (both ends alike)."""
+    rims = [
+        Rim(2 * math.pi * outer, 2 * math.pi, start + height, -1.0),
+        Rim(2 * math.pi * outer, 2 * math.pi, start, 1.0),
+    ]
+    if inner:
+        rims += [
+            Rim(2 * math.pi * inner, -2 * math.pi, start + height, -1.0),
+            Rim(2 * math.pi * inner, -2 * math.pi, start, 1.0),
+        ]
+    ring = outer * outer - inner * inner
+    return Part(
+        math.pi * ring * height,
+        2 * math.pi * ring + 2 * math.pi * (outer + inner) * height,
+        (0.0, 0.0, start + height / 2),
+        section=triangle(d),
+        rims=rims,
+    ).measures()
+
+
+def along_x(m: Measures) -> Measures:
+    """A closed form along z turned onto the x axis."""
+    return m[0], m[1], (m[2][2], m[2][0], m[2][1])
+
+
+def along_y(m: Measures) -> Measures:
+    """A closed form along z turned onto the y axis."""
+    return m[0], m[1], (m[2][1], m[2][2], m[2][0])
 
 
 PIN_BOUNDS = [[-1.105, -1.105, -13.25], [1.105, 1.105, 13.25]]
@@ -257,6 +325,36 @@ CORPUS: dict[str, tuple[str, Measures, list[list[float]], list[list[object]], in
         "BenchCAD's `dowel_pin_000027_s20260505` as written: a pin of radius 1.105 and length "
         "26.5, both rims chamfered 0.33, a blind hole of radius 0.33 and depth 0.792 in its top",
     ),
+    "ok-chamfer-corpus-clevis-pin": (
+        CORPUS_CLEVIS,
+        along_y(turned(5.94, 0.0, 42.77, 1.19, -42.77 / 2)),
+        [[-5.94, -21.385, -5.94], [5.94, 21.385, 5.94]],
+        [["cone", 2], ["cylinder", 1], ["plane", 2]],
+        1,
+        0,
+        "BenchCAD's `clevis_pin_000171_s20260505` as written: a pin of radius 5.94 and length "
+        "42.77 along y, both rims chamfered 1.19; its seam, on the plane's +x, ties with them",
+    ),
+    "ok-chamfer-corpus-washer": (
+        CORPUS_WASHER,
+        along_x(turned(30.0, 17.0, 5.0, 0.4, -2.5)),
+        [[-2.5, -30.0, -30.0], [2.5, 30.0, 30.0]],
+        [["cone", 4], ["cylinder", 2], ["plane", 2]],
+        1,
+        1,
+        "BenchCAD's `washer_000024_s20260505` as written: radii 30 and 17, 5 thick along x, "
+        "its four rims chamfered 0.4; both seams tie with them",
+    ),
+    "ok-chamfer-corpus-spacer-ring": (
+        CORPUS_SPACER,
+        along_x(turned(17.915, 12.795, 0.43, 0.13, 0.0)),
+        [[0.0, -17.915, -17.915], [0.43, 17.915, 17.915]],
+        [["cone", 4], ["cylinder", 2], ["plane", 2]],
+        1,
+        1,
+        "BenchCAD's `spacer_ring_001337_s20260505` as written: radii 17.915 and 12.795, swept "
+        "0.43 along x, its four rims chamfered 0.13; both seams tie with them",
+    ),
 }
 # A corpus program with no closed form at hand: its measures are the recorded oracle's
 # (`ORACLE_HELD`), the `cq` run agreeing with it by `compare`; slug -> (program, face kinds,
@@ -271,9 +369,6 @@ ORACLE_HELD: dict[str, tuple[str, list[list[object]], int, int, str]] = {
         "the outer rim of the +x end chamfered 3.2",
     ),
 }
-# The slug whose program is refused (ADR-0020 rule 2) and the cause.
-UNSUPPORTED = "unsupported-chamfer-corpus-clevis-pin-seam"
-
 # slug -> (program text, the last line of CadQuery's error).
 RUNTIME: dict[str, tuple[str, str]] = {
     "runtime-chamfer-no-solid": (
@@ -396,16 +491,14 @@ def test_the_oracles_reports_hold_the_closed_forms() -> None:
             assert fixture_cases.close(got, float(ideal)), slug
 
 
-def test_a_seam_the_kernels_place_differently_is_refused() -> None:
-    (case,) = cases("unsupported-chamfer-").values()
-    assert case.slug == UNSUPPORTED
-    assert case.program == CORPUS_CLEVIS_SEAM
-    assert case.expected["status"] == "unsupported_api"
-    result = fixture_cases.run(case)
-    assert result.status is ag.Status.UNSUPPORTED_API
-    assert "Workplane.edges('>Z')" in result.message
-    report = recorded(case.slug)
-    assert report.status.value == "ok"
+def test_two_seams_no_record_places_still_block_the_or_selector() -> None:
+    """The corpus washer with its bore on a polar array: CadQuery turns the bore's axes, `cq`
+    does not, so neither seam is placed. Each may lie anywhere on its wall, one above the rims
+    and one below, where `'>Z or <Z'` would keep the seams alone (ADR-0020 rule 2)."""
+    washer = cq.Workplane("YZ").cylinder(5.0, 30.0).faces(">X").workplane()
+    with pytest.raises(cq.UnsupportedApi, match=r"Workplane.edges\('>Z'\)"):
+        washer.polarArray(0, 0, 360, 1).hole(34.0).edges(">Z or <Z")
+    assert not cases("unsupported-chamfer-")
 
 
 def test_every_runtime_chamfer_fixture_is_cadquerys_refusal() -> None:

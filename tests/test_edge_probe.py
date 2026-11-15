@@ -173,6 +173,32 @@ SELECTED: dict[str, tuple[int, list[tuple[str, Point]]]] = {
         lines([(-5.0, 0.0, 2.0), (5.0, 0.0, 2.0), (0.0, -4.0, 2.0), (0.0, 4.0, 2.0)])
         + _ROUNDED_ARCS,
     ),
+    # CadQuery's seams (ADR-0020 rule 2, amended): a cylinder's, and a circle's
+    # swept by `extrude` or `cutBlind`, lies on its workplane's +x; a bore's on
+    # its -x. "YZ" has x along +y, "XZ" along +x, "ZX" along +z; `workplane()` on
+    # a face of normal n takes x along z x n (+y on ">X", +x on "<Y").
+    "seam-yz-cylinder": (3, lines([(0.0, 2.0, 0.0)])),
+    "seam-xz-cylinder": (3, lines([(2.0, 0.0, 0.0)])),
+    "seam-zx-cylinder": (3, lines([(0.0, 0.0, 2.0)])),
+    # The plane turned 30 degrees about z: its x, and the seam, turn with it.
+    "seam-turned-cylinder": (
+        3,
+        lines([(math.cos(math.radians(30.0)), math.sin(math.radians(30.0)), 0.0)]),
+    ),
+    # Four rims and two seams: the wall's on the plane's +x, the bore's on -x of
+    # the face's plane.
+    "seam-yz-washer": (6, lines([(0.0, 5.0, 0.0), (0.0, -1.5, 0.0)])),
+    "seam-xz-washer": (6, lines([(5.0, 0.0, 0.0), (-1.5, 0.0, 0.0)])),
+    # The disc swept from y = 0 to -1 along "XZ"'s normal.
+    "seam-xz-ring": (6, lines([(5.0, -0.5, 0.0), (-1.5, -0.5, 0.0)])),
+    # Six rims and three seams: the wall's, the bore's (radius 1, from x = -1 to
+    # 0.5) and the counterbore's (radius 2, from x = 0.5 to 1).
+    "seam-yz-cbore": (9, lines([(0.0, 5.0, 0.0), (-0.25, -1.0, 0.0), (0.75, -2.0, 0.0)])),
+    # A pocket of radius 1.5 from x = 0 to 1: a circle swept, its seam on +x (+y).
+    "seam-yz-cut-blind": (6, lines([(0.0, 5.0, 0.0), (0.5, 1.5, 0.0)])),
+    # Bores of radius 0.5 at the plane's (2, 0) and (-2, 1): world (2, ., 0) and
+    # (-2, ., 1), its y being +z; each seam 0.5 towards -x.
+    "seam-xz-points": (9, lines([(5.0, 0.0, 0.0), (1.5, 0.0, 0.0), (-2.5, 0.0, 1.0)])),
 }
 
 

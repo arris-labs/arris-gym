@@ -210,3 +210,11 @@ none of their code is carried over, and the module cites each step.
   Confirmed on the oracle by `tests/fixtures/edges/` and `tests/fixtures/cq/ok-fillet-*`,
   `runtime-fillet-*`, `arris-refusal-fillet-*` and the `chamfer` fixtures
   (`ok-chamfer-*`, `runtime-chamfer-*`, `arris-refusal-chamfer-*`); ADR-0020.
+- Where Open CASCADE puts a seam (`cadquery/cq.py`: `Workplane.cylinder`, `circle`,
+  `hole`, `cboreHole`, `cskHole`, `polarArray`, `_computeXdir`; `occ_impl/shapes.py`:
+  `Solid.makeCylinder`, `Edge.makeCircle`; Open CASCADE's `gp_Ax2` from a direction):
+  each cylinder and circle made in the workplane's own axes, along +z for a cylinder
+  or circle and -z for a bore, so its seam lies on the workplane's +x or -x; the
+  turn `polarArray` gives each point. Confirmed on the oracle by the `seam-*`
+  constructions of `tests/fixtures/edges/` and `tests/fixtures/cq/ok-chamfer-corpus-*`;
+  ADR-0020's amendment.

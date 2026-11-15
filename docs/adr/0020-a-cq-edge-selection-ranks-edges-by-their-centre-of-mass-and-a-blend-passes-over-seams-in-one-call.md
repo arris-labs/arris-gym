@@ -206,3 +206,50 @@ one edge's centre with the parent's normal.
 - **An estimate for every edge, as a face's.** A line, a circle and an arc
   have exact centres, and an estimate would put a margin on every selection
   of them for no gain.
+
+## Amendment (2026-11-15): `cq` places the seams of the cylinders it builds as Open CASCADE does
+
+plans/lift-edges-and-blends step 7 ran BenchCAD's 9,998 in-subset programs and found 300
+`cq_bug` rows, 275 of them `edges(">Z or <Z")` ended `unsupported_api` by rule 2's bound: a
+pin, washer or spacer ring turned along x or y (`"YZ"`, `"XZ"`), whose seams lie on walls
+about an axis square to z. The bound is right for a seam whose place nothing tells: a washer's
+two seams, one above its rims and one below, would leave `'>Z or <Z'` the seams alone. But
+CadQuery's source tells the place of every seam `cq` itself builds, and the oracle bears it out.
+
+**What CadQuery does.** `Workplane.cylinder` makes `Solid.makeCylinder` in the workplane's own
+axes along +z and moves it there; `circle` makes `Wire.makeCircle` the same way, and `extrude`
+and `cutBlind` sweep it; `hole`, `cboreHole` and `cskHole` make their cylinders along -z.
+Open CASCADE's `gp_Ax2` for a direction of +z takes x along +x, and for -z along -x; a circle,
+and the face it sweeps, starts at its frame's x. So the seam of a cylinder, of a swept circle and
+of a pocket lies on the workplane's +x, and a bore's on its -x, at every point of the stack.
+`polarArray` turns each point's axes by its angle, and the seam with them. `workplane()` on a
+face of normal n takes x along z × n (`_computeXdir`), so on any face of a turned part along x
+or y, x is square to z.
+
+**What the oracle shows.** Ten constructions of `tools/cq_edge_probe.py` (`seam-*`, held in
+`tests/test_edge_probe.py`), each with the parallel selector along its axis, record every seam
+on that line: cylinders on `"YZ"`, `"XZ"`, `"ZX"` and a plane turned 30° about z; washers on
+`"YZ"` and `"XZ"` with a bore from `">X"` or `"<Y"`; a swept disc with a bore; a counterbore;
+a pocket by `cutBlind`; and two bores at `pushPoints`. arris puts its own seams by its own rule:
+the bore's on `"YZ"` at -z where Open CASCADE's is at -y.
+
+**Rule 2, amended.** Each `cq` chain carries a record of where Open CASCADE puts the seam of
+every cylinder it built, or an operand of its `union` or `cut` did: the cylinder's axis line
+and radius, and the side, the workplane's +x for `cylinder`, `extrude` and `cutBlind`, its -x
+for a bore. A seam whose face is a cylinder whose axis is square to the selector's (its
+component along the selector's axis exactly 0) is exact, at the axis's key plus the radius's
+share along the side, where the records of that cylinder, matched by radius and axis line
+within the model's tolerance, name one side. Elsewhere it is bounded as before. The chain
+forgets every record, and every seam is bounded again, after a call whose seams it does not
+model: `revolve`, and `polarArray`, which `cq` places without CadQuery's turn. A tool swept from
+a part of a circle (an arc), whose face Open CASCADE could later join into one with a seam
+where neither kernel says, forgets them too.
+
+**Consequences.** The 275 programs run, every one `ok` on both sides: 191 agree with the
+oracle and 84 are unclassified for a cause after the blend (81 clevis pins with a cross hole cut
+after it, 3 spacer rings with a box cut after it; plans/lift-edges-and-blends step 7c);
+`tests/fixtures/cq/ok-chamfer-corpus-clevis-pin` (once `unsupported-chamfer-corpus-clevis-pin-seam`),
+`-washer` and `-spacer-ring` hold three of them to their closed forms. `edges(">X")` on a
+lone `cylinder` keeps the seam and `>Y` ties it with the rims, as the oracle does; the seam of a
+revolved wall still ends `unsupported_api` (`unsupported-edges-revolved-side`). Rules 1 and 3
+to 6 are unchanged.

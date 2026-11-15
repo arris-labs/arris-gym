@@ -244,12 +244,14 @@ the stacked edges' own, which `fillet` and `chamfer` blend (ADR-0020).
 **Edge key**:
 What an axis selector ranks an edge by: its centre of mass along the axis,
 exact on a line, a circle and an arc, bounded on a seam whose face's axis
-crosses the selector's, estimated on an ellipse arc or a B-spline (ADR-0020).
+crosses the selector's unless `cq` placed it, estimated on an ellipse arc or a
+B-spline (ADR-0020).
 
 **Seam**:
 An edge with one face on both sides, where a closed surface (a cylinder, a
 sphere) meets itself. Where it lies is the kernel's choice; a blend passes
-over it (ADR-0020).
+over it. `cq` records where Open CASCADE puts the seam of each cylinder it
+builds as CadQuery does, and ranks such a seam there (ADR-0020's amendment).
 
 **Compound**:
 CadQuery's several solids that do not meet, held as one value. In `cq` it

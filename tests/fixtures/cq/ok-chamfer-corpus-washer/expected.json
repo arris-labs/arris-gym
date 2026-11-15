@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 9550.316003206826,
+    "area": 5177.184031723535,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -2.5,
+        -30.0,
+        -30.0
+      ],
+      [
+        2.5,
+        30.0,
+        30.0
+      ]
+    ],
+    "faces": 8,
+    "face_kinds": [
+      [
+        "cone",
+        4
+      ],
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "BenchCAD's `washer_000024_s20260505` as written: radii 30 and 17, 5 thick along x, its four rims chamfered 0.4; both seams tie with them"
+}

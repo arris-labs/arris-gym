@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 4691.590830675813,
+    "area": 1762.241540850934,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.94,
+        -21.385,
+        -5.94
+      ],
+      [
+        5.94,
+        21.385,
+        5.94
+      ]
+    ],
+    "faces": 5,
+    "face_kinds": [
+      [
+        "cone",
+        2
+      ],
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "BenchCAD's `clevis_pin_000171_s20260505` as written: a pin of radius 5.94 and length 42.77 along y, both rims chamfered 1.19; its seam, on the plane's +x, ties with them"
+}

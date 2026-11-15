@@ -134,7 +134,7 @@ within a given design; **[3]** unproven semantics, established here.
   here. Each cause becomes a step 7a, 7b … before step 8, largest first,
   shrunk to `regression/` fixtures and filed with arris where the kernel is at
   fault, or classed by a closed form (`tools/cq_closed_forms.py`).
-- [ ] Step 7a **[3]** — BenchCAD's measurement (2026-11-15, scratch out-dir): reach
+- [x] Step 7a **[3]** — BenchCAD's measurement (2026-11-15, scratch out-dir): reach
   9,998/17,900 as forecast; 7,222 agree, 10,178 disagree, 500 unclassified; in-subset
   `cq_bug` **300**, not 7. 275 are `edges('>Z')` ended `unsupported_api` by ADR-0020 rule 2
   (the seam's key bound): `dowel_pin` 122, `clevis_pin` 112, `washer` 27, `spacer_ring` 14.
@@ -142,6 +142,12 @@ within a given design; **[3]** unproven semantics, established here.
   oracle and closed forms say which edge `>Z` keeps), or, where the key truly cannot be
   decided, refuse by a declared form so the program is out of the subset, never a `cq_bug`;
   each shrunk to a fixture, ADR-0020 amended.
+- [ ] Step 7c **[2]** — the 84 rows step 7a's lift makes unclassified, every one `ok` on both
+  sides with the blend agreeing: 81 `clevis_pin` with a cross hole cut after the chamfer (volume
+  up to 2.2e-5, bounds up to 0.005: the crossing cylinders, as `clevis_pin_000420_s20260505` of
+  step 5) and 3 `spacer_ring` with a box cut after the blend (`008375`: bounds 0.037 and 2 faces;
+  `012675`: volume 1.3e-6, 3 faces; `016757`: bounds 2e-7). Class each by a closed form
+  (`tools/cq_closed_forms.py`) or shrink it to a `regression/` fixture.
 - [ ] Step 7b **[2]** — the other 25 in-subset `cq_bug`: 18 `double_simplex_sprocket`
   `faces('>X')`/`faces('>Z')` ("the centre of a face that arris does not give"), 7
   `connecting_rod` (ADR-0014's amendment, expected). Class the sprocket rows: new in the
@@ -214,6 +220,18 @@ within a given design; **[3]** unproven semantics, established here.
   `fuse-contact-refusals`), before any blend: `regression/cq-ball-knob-chamfer-after-point-contact`
   holds the desired result by closed form (xfail, no new ask). `gridfinity_bin` (164) and the
   `stepped_shaft` (115) run `ok`, each fixture held to a closed form and agreeing with the oracle.
+- *Settled* (step 7a, ADR-0020's amendment): the 275 are not undecidable. CadQuery builds every
+  cylinder, swept circle and bore in its workplane's own axes, so Open CASCADE's seam lies on the
+  workplane's +x (a bore's on -x); the oracle bears it out on ten `seam-*` constructions. Each
+  `cq` chain records those seams (`Seam`, `Workplane._seams`), merged through `union` and `cut`
+  and forgotten after `revolve`, `polarArray` (CadQuery turns each point) and a swept arc; a seam
+  on a cylinder whose axis is square to the selector's is ranked there. The 275 run `ok`: 191
+  agree, 84 unclassified after the blend (step 7c), 0 `cq_bug`. A narrower rule needing no
+  record (a blend passes over seams, so only the other edges' membership matters) decides the
+  234 pins but not a washer's two seams, which one above and one below the rims would leave
+  `'>Z or <Z'` the seams alone; not taken. `unsupported-chamfer-corpus-clevis-pin-seam` became
+  `ok-chamfer-corpus-clevis-pin`, `unsupported-edges-cylinder-side` (a lone cylinder's `>X`,
+  now the seam, as the oracle keeps it) became `unsupported-edges-revolved-side`.
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a

@@ -27,10 +27,12 @@ __all__ = [
     "SELECTORS",
     "Edges",
     "Faces",
+    "Seam",
     "edges_of_faces",
     "edges_of_solid",
     "plane_on",
     "plane_on_faces",
+    "seams_of",
     "select_edges",
     "select_faces",
 ]
@@ -90,6 +92,49 @@ class Edges:
 
     solid: arris.build.Solid
     edges: tuple[arris.Edge, ...]
+
+
+@dataclass(frozen=True)
+class Seam:
+    """Where Open CASCADE puts the seam of a cylinder `cq` built as CadQuery builds it.
+
+    The cylinder has `radius` about the line through `point` along the unit
+    `axis`; its seam is the line on it `radius` from the axis towards the unit
+    `side`, across the axis (ADR-0020 rule 2, amended). CadQuery makes every
+    such cylinder in its workplane's own axes and moves it there, and Open
+    CASCADE starts a circle, and so the face it sweeps, at its frame's x: so
+    `cylinder` and the circles `extrude` and `cutBlind` sweep have their seam
+    on the workplane's +x, and a bore (`hole`, `cboreHole`, `cskHole`), swept
+    along -z, on its -x. arris places its own seams by its own rule.
+    """
+
+    point: tuple[float, float, float]
+    axis: tuple[float, float, float]
+    radius: float
+    side: tuple[float, float, float]
+
+
+def seams_of(tool: arris.build.Solid, side: Sequence[float]) -> tuple[Seam, ...] | None:
+    """The seam of each cylinder face of `tool`, on `side`; `None` if one has no seam.
+
+    `tool` is a cylinder or a circle swept along its plane's normal, built the
+    way CadQuery builds it, `side` the workplane's x (or -x for a bore). A
+    cylinder face with no seam (a sweep of an arc) is a part of a turn that
+    Open CASCADE may later join with another into a face whose seam lies
+    where neither says: `None`, no seam of the chain is known.
+    """
+    model = tool.model
+    found: list[Seam] = []
+    for face in model.faces(tool.body):
+        info = model.surface(face)
+        if info.kind != "cylinder":
+            continue
+        if info.origin is None or info.axis is None or info.radius is None:
+            return None
+        if not any(len(model.faces_of(tool.body, e)) == 1 for e in model.edges_of(face)):
+            return None
+        found.append(Seam(info.origin, info.axis, info.radius, (side[0], side[1], side[2])))
+    return tuple(found)
 
 
 def _cross(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
@@ -430,14 +475,53 @@ def _polyline_centres(
     return found
 
 
+def _placed_key(
+    model: arris.Model, info: arris.SurfaceInfo, axis: int, seams: Sequence[Seam] | None
+) -> float | None:
+    """A seam's key where the chain's records place it as Open CASCADE does, else `None`.
+
+    ADR-0020 rule 2, amended: only on a cylinder whose axis is square to the
+    selector's, so that every line along it has the key of the axis plus the
+    side's share of the radius; and only where the records of that cylinder
+    (its radius and axis line within the model's tolerance) all name one side.
+    `seams` is `None` where the chain made a seam no record places.
+    """
+    if seams is None or info.kind != "cylinder":
+        return None
+    if info.origin is None or info.axis is None or info.radius is None:
+        return None
+    if info.axis[axis] != 0.0:
+        return None
+    sides: list[tuple[float, float, float]] = []
+    for seam in seams:
+        if abs(seam.radius - info.radius) > model.tolerance:
+            continue
+        if _length(_cross(seam.axis, info.axis)) > model.angular_tolerance:
+            continue
+        v = _sub(info.origin, seam.point)
+        along = _dot(v, seam.axis)
+        if _length([v[k] - along * seam.axis[k] for k in range(3)]) > model.tolerance:
+            continue
+        sides.append(seam.side)
+    if not sides:
+        return None
+    if any(_length(_sub(side, sides[0])) > model.angular_tolerance for side in sides[1:]):
+        return None
+    return info.origin[axis] + info.radius * sides[0][axis]
+
+
 def _edge_keys(
-    solid: arris.build.Solid, edges: Sequence[arris.Edge], axis: int
+    solid: arris.build.Solid,
+    edges: Sequence[arris.Edge],
+    axis: int,
+    seams: Sequence[Seam] | None = None,
 ) -> tuple[list[float], list[float]]:
     """Each edge's key along `axis` and how far it is trusted (ADR-0020 rule 2).
 
     A width of 0 is an exact key. A seam's key is exact where its face is a
-    surface of revolution about an axis parallel to `axis`, else it lies
-    anywhere on its face, so it is the face's box (centre, half the extent).
+    surface of revolution about an axis parallel to `axis`, or where `seams`
+    place it as Open CASCADE does (`_placed_key`); else it lies anywhere on its
+    face, so it is the face's box (centre, half the extent).
     An ellipse arc's or a B-spline edge's key is its polyline's centre of
     mass at a margin of the solid's box diagonal.
     """
@@ -460,6 +544,11 @@ def _edge_keys(
                 and _length(_cross(info.axis, unit)) <= model.angular_tolerance
             )
             if not (along and centre is not None):
+                placed = _placed_key(model, info, axis, seams)
+                if placed is not None:
+                    keys.append(placed)
+                    widths.append(0.0)
+                    continue
                 box = model.bounds(faces[0])
                 if box is None:
                     raise UnsupportedApi("Workplane.edges on a seam of a face without a box")
@@ -502,7 +591,10 @@ def _parallel(model: arris.Model, edges: Sequence[arris.Edge], axis: int) -> tup
 
 
 def select_edges(
-    solid: arris.build.Solid, edges: Sequence[arris.Edge], selector: str | None
+    solid: arris.build.Solid,
+    edges: Sequence[arris.Edge],
+    selector: str | None,
+    seams: Sequence[Seam] | None = None,
 ) -> tuple[arris.Edge, ...]:
     """The `edges` of `solid` that CadQuery's `selector` keeps (ADR-0020).
 
@@ -515,8 +607,10 @@ def select_edges(
     to the axis, in candidate order (rule 3). `'>Z or <Z'` keeps the edges
     either side keeps, each once, in candidate order (rule 4). Raises
     `UnsupportedApi` where the selection depends on a key arris does not give
-    as CadQuery's kernel does: a seam on a face about another axis, or an
-    ellipse arc or B-spline edge in the kept cluster or able to reach it.
+    as CadQuery's kernel does: a seam on a face about another axis that
+    `seams`, the chain's records of where Open CASCADE puts its seams, do not
+    place (`None`: no seam of the chain is placed), or an ellipse arc or
+    B-spline edge in the kept cluster or able to reach it.
 
     >>> import arris.build
     >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
@@ -530,13 +624,13 @@ def select_edges(
         both = {
             edge.index
             for side in selector.split(" or ")
-            for edge in select_edges(solid, edges, side)
+            for edge in select_edges(solid, edges, side, seams)
         }
         return tuple(e for e in edges if e.index in both)
     if selector in PARALLEL_SELECTORS:
         return _parallel(solid.model, edges, _AXIS[selector[1]])
     maximum = selector[0] == ">"
-    keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]])
+    keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]], seams)
     kept = _pick_widths(keys, widths, maximum) if any(widths) else _pick(keys, maximum)
     if kept is None or any(widths[k] for k in kept):
         raise UnsupportedApi(

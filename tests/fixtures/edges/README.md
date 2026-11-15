@@ -13,7 +13,10 @@ programs on a 10 × 8 × 4 box about the origin, cylinders of radius 1 and 2,
 a D (a half circle on a chord), three quarters of a disc, a cylinder cut by a
 tilted plane (a full ellipse), two crossing cylinders (B-spline edges), a
 plate with a hole, a tube, the box with its vertical edges rounded, and two
-boxes that do not meet. A selection's entry holds the record of the `edges`
+boxes that do not meet; and `SEAMS` (`seam-*`, ADR-0020's amendment):
+cylinders, washers, a swept ring, a counterbore, a pocket and bores at points on
+planes other than `XY`, each with the parallel selector along its axis, which
+keeps its seams. A selection's entry holds the record of the `edges`
 call that made `result`: every candidate edge (type, centre of mass, length,
 ends, in CadQuery's collection order) and the kept indices, sorted. A blend's
 entry holds the oracle's report less `step` and `seconds`: `fillet` and

@@ -22,9 +22,11 @@ from arris_gym.cq._selector import (
     SELECTORS,
     Edges,
     Faces,
+    Seam,
     edges_of_faces,
     edges_of_solid,
     plane_on_faces,
+    seams_of,
     select_edges,
     select_faces,
 )
@@ -230,11 +232,15 @@ class Workplane:
     Workplane.text
     """
 
-    __slots__ = ("_parent", "_plane", "_stack")
+    __slots__ = ("_parent", "_plane", "_seams", "_stack")
 
     _plane: arris.build.Workplane
     _stack: tuple[object, ...]
     _parent: Workplane | None
+    # Where Open CASCADE puts the seam of each cylinder this chain built, or
+    # one of its operands did; `None` once a call made a seam no record places
+    # (ADR-0020 rule 2, amended). `edges` reads it.
+    _seams: tuple[Seam, ...] | None
 
     @census_form("cq.Workplane", [("str",)], keywords={"origin": ("tuple",)})
     def __init__(self, inPlane: str = _XY, origin: tuple[float, float, float] = (0, 0, 0)) -> None:
@@ -251,6 +257,7 @@ class Workplane:
         object.__setattr__(self, "_plane", plane)
         object.__setattr__(self, "_stack", ())
         object.__setattr__(self, "_parent", None)
+        object.__setattr__(self, "_seams", ())
 
     def _derive(self, *objects: object) -> Workplane:
         """A new workplane on this one's plane, `objects` its stack, this one its parent."""
@@ -258,7 +265,17 @@ class Workplane:
         object.__setattr__(child, "_plane", self._plane)
         object.__setattr__(child, "_stack", objects)
         object.__setattr__(child, "_parent", self)
+        object.__setattr__(child, "_seams", self._seams)
         return child
+
+    def _with_seams(self, seams: tuple[Seam, ...] | None) -> Workplane:
+        """This workplane, just derived, with `seams` added to its chain's; `None` forgets all.
+
+        Called only on a workplane a call has just made and not yet returned.
+        """
+        known = None if self._seams is None or seams is None else self._seams + seams
+        object.__setattr__(self, "_seams", known)
+        return self
 
     def _derive_on(self, plane: arris.build.Workplane, *objects: object) -> Workplane:
         """A new workplane on `plane`, `objects` its stack, this one its parent."""
@@ -540,10 +557,12 @@ class Workplane:
         order first found) or of the edges a selector kept before; a compound's
         edges are those of every piece. They are the one object on the new
         stack, which `fillet` and `chamfer` take; the solid stays in the chain.
-        A degenerate edge is no candidate. Raises `UnsupportedApi` for any
-        other selector and where the selection depends on an edge's place arris
-        does not decide as CadQuery's kernel does (a seam on a face about another
-        axis, an ellipse arc or B-spline edge able to reach the kept cluster).
+        A degenerate edge is no candidate. A seam of a cylinder this chain built
+        is ranked where Open CASCADE puts it, which the chain records (ADR-0020's
+        amendment). Raises `UnsupportedApi` for any other selector and where the
+        selection depends on an edge's place arris does not decide as CadQuery's
+        kernel does (a seam no record places on a face about another axis, an
+        ellipse arc or B-spline edge able to reach the kept cluster).
         A selector on an empty stack raises CadQuery's `ValueError`
         (`runtime`), as `faces` does.
 
@@ -556,14 +575,17 @@ class Workplane:
             raise UnsupportedApi(f"Workplane.edges({selector!r})")
         for o in self._stack:
             if isinstance(o, Edges):
-                return self._derive(Edges(o.solid, select_edges(o.solid, o.edges, selector)))
+                kept = select_edges(o.solid, o.edges, selector, self._seams)
+                return self._derive(Edges(o.solid, kept))
             if isinstance(o, Faces):
                 candidates = edges_of_faces(o.solid, o.faces)
-                return self._derive(Edges(o.solid, select_edges(o.solid, candidates, selector)))
+                kept = select_edges(o.solid, candidates, selector, self._seams)
+                return self._derive(Edges(o.solid, kept))
         solids = self._solids()
         if solids:
             (solid,) = solids
-            return self._derive(Edges(solid, select_edges(solid, edges_of_solid(solid), selector)))
+            kept = select_edges(solid, edges_of_solid(solid), selector, self._seams)
+            return self._derive(Edges(solid, kept))
         if not self._stack and selector is not None:
             # No object on the stack has an edge: CadQuery's selector is handed
             # an empty list, even where the chain holds a solid further up.
@@ -762,7 +784,9 @@ class Workplane:
         for i in range(count):
             phi = math.radians(startAngle + step * i)
             points.append((float(radius * math.cos(phi)), float(radius * math.sin(phi)), 0.0))
-        return self._derive(_Points(tuple(points)))
+        # CadQuery turns each point's axes by its angle, and with them where a bore's or
+        # a circle's seam lies; `cq` drops the turn, so no seam of the chain is placed.
+        return self._derive(_Points(tuple(points)))._with_seams(None)
 
     @census_form("Workplane.hole", [("num",)], keywords={"depth": ("num",)})
     def hole(self, diameter: float, depth: float | None = None) -> Workplane:
@@ -996,7 +1020,13 @@ class Workplane:
                         "y", _FULL_TURN, model=base.model
                     )
                 )
-        return self._derive(base.cut(*tools))
+        # CadQuery bores along its plane's -z, so Open CASCADE puts each bore's seam on -x.
+        away = (-plane.x[0], -plane.x[1], -plane.x[2])
+        seams: tuple[Seam, ...] | None = ()
+        for tool in tools:
+            placed = seams_of(tool, away)
+            seams = None if seams is None or placed is None else seams + placed
+        return self._derive(base.cut(*tools))._with_seams(seams)
 
     @census_form("Workplane.box", [("num",)] * 3)
     def box(self, length: float, width: float, height: float) -> Workplane:
@@ -1087,7 +1117,8 @@ class Workplane:
         if radius == 0:
             raise ValueError(f"{named}: a zero radius (CadQuery builds an invalid shape)")
         sketch = self._plane.offset(-height / 2).circle(radius, center=center)
-        return self._combined(sketch.extrude(height))
+        tool = sketch.extrude(height)
+        return self._combined(tool)._with_seams(seams_of(tool, sketch.plane.x))
 
     @census_form("Workplane.sphere", [("num",)])
     def sphere(self, radius: float) -> Workplane:
@@ -1326,9 +1357,10 @@ class Workplane:
                 f"Workplane.extrude({distance}, both={both}): a zero distance "
                 "(CadQuery's Standard_ConstructionError)"
             )
-        result = self._combined(sketches[0].extrude(distance, both=both))
-        for sketch in sketches[1:]:
-            result = result._combined(sketch.extrude(distance, both=both))
+        result = self
+        for sketch in sketches:
+            tool = sketch.extrude(distance, both=both)
+            result = result._combined(tool)._with_seams(seams_of(tool, sketch.plane.x))
         return result
 
     @census_form("Workplane.cutBlind", [("num",)])
@@ -1368,7 +1400,12 @@ class Workplane:
         base = self._base_solid()
         if base is None:
             raise ValueError("Cannot find a solid on the stack or in the parent chain")
-        return self._derive(base.cut(*(s.extrude(until, model=base.model) for s in sketches)))
+        tools = [s.extrude(until, model=base.model) for s in sketches]
+        seams: tuple[Seam, ...] | None = ()
+        for sketch, tool in zip(sketches, tools, strict=True):
+            placed = seams_of(tool, sketch.plane.x)
+            seams = None if seams is None or placed is None else seams + placed
+        return self._derive(base.cut(*tools))._with_seams(seams)
 
     @census_form("Workplane.moveTo", [("num",)] * 2)
     def moveTo(self, x: float = 0, y: float = 0) -> Workplane:
@@ -1528,7 +1565,8 @@ class Workplane:
         made = arris.build.default_model().revolve(
             sketch.profile(), start, direction, degrees * _REVOLVE_RADIANS_PER_DEGREE
         )
-        return self._combined(arris.build.Solid.of(made))
+        # Where Open CASCADE starts a turned face is not modelled: no seam is placed.
+        return self._combined(arris.build.Solid.of(made))._with_seams(None)
 
     @census_form("Workplane.union", [None])
     def union(self, toUnion: Workplane) -> Workplane:
@@ -1554,7 +1592,7 @@ class Workplane:
         result = self
         for other in others:
             result = result._combined(other)
-        return result
+        return result._with_seams(toUnion._seams)
 
     @census_form("Workplane.cut", [None])
     def cut(self, toCut: Workplane) -> Workplane:
@@ -1578,7 +1616,7 @@ class Workplane:
             raise ValueError("Cannot find a solid on the stack or in the parent chain")
         # A cut that splits its base is CadQuery's compound: one solid with a
         # shell per piece (ADR-0016).
-        return self._derive(base.cut(*tools))
+        return self._derive(base.cut(*tools))._with_seams(toCut._seams)
 
     def __copy__(self) -> Workplane:
         return self

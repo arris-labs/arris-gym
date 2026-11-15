@@ -8,12 +8,14 @@ edge selection ends no program in a solid (the oracle reports a bare edge as a
 shape of volume 0), so what is kept is read off the stack; the `ok-fillet-*`
 fixtures of plans/lift-edges-and-blends step 4 judge it by the part a blend
 makes of it. The fixtures here are the refusals, each beside the oracle's
-recorded report.
+recorded report. Where `cq` places a seam (ADR-0020 rule 2, amended) is held to
+the oracle's own records of `tools/cq_edge_probe.py` (`seam-*`).
 """
 
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 
 import pytest
 from hypothesis import given, settings
@@ -21,9 +23,11 @@ from hypothesis import strategies as st
 
 import arris_gym as ag
 import arris_gym.cq as cq
+import cq_edge_probe as probe
 import fixture_cases
 from arris_gym.cq._selector import Edges
 from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
+from test_edge_probe import record
 
 Point = tuple[float, float, float]
 # What two floats that closed-form arithmetic gives agree to.
@@ -172,11 +176,110 @@ def test_a_cylinder_has_two_rims_and_a_seam() -> None:
     assert kept(part.faces(">Z").edges()) == [("circle", (0.0, 0.0, 2.0))]
 
 
-@pytest.mark.parametrize("selector", [">X", "<X", ">Y", "<Y"])
-def test_a_cylinders_seam_ties_a_selector_across_its_axis_and_is_refused(selector: str) -> None:
+def test_a_cylinders_seam_is_ranked_where_open_cascade_puts_it() -> None:
+    """`cylinder` has its seam on the plane's +x (ADR-0020 rule 2, amended): `>X` keeps it
+    alone, `<X` the two rims, and `>Y` and `<Y` all three, tied at y = 0, as the oracle keeps
+    them (`cylinder-edges>X`, `cylinder-edges>Y`)."""
+    part = cq.Workplane("XY").cylinder(4, 1)
+    assert kept(part.edges(">X")) == [("line", (1.0, 0.0, 0.0))]
+    assert sorted(c[2] for _, c in kept(part.edges("<X"))) == [-2.0, 2.0]
+    for selector in (">Y", "<Y"):
+        assert sorted(kind for kind, _ in kept(part.edges(selector))) == [
+            "circle",
+            "circle",
+            "line",
+        ]
+    oracle = record("cylinder-edges>X")
+    assert [oracle["candidates"][i]["type"] for i in oracle["kept"]] == ["LINE"]
+    assert len(record("cylinder-edges>Y")["kept"]) == 3
+
+
+@pytest.mark.parametrize(
+    "part",
+    [
+        # A revolved wall: where Open CASCADE starts a turned face is not modelled.
+        cq.Workplane("XY")
+        .polyline([(0, -2), (2, -2), (2, 2), (0, 2)])
+        .close()
+        .revolve(360, (0, -2, 0), (0, 2, 0)),
+        # A bore on a polar array: CadQuery turns its axes, `cq` does not.
+        cq.Workplane("XY").cylinder(4, 2).faces(">Z").workplane().polarArray(0, 0, 360, 1).hole(1),
+    ],
+    ids=["revolved", "polar-bore"],
+)
+def test_a_seam_no_record_places_ties_a_selector_across_its_axis_and_is_refused(
+    part: cq.Workplane,
+) -> None:
     """The seam's key runs over the wall's width, so it may tie with the rims (ADR-0020 rule 2)."""
     with pytest.raises(cq.UnsupportedApi, match=r"depends on an edge's place"):
-        cq.Workplane("XY").cylinder(4, 2).edges(selector)
+        part.edges(">X")
+
+
+# The parts of the probe's `seam-*` constructions, built in `cq`: each less its last call.
+SEAM_PARTS: dict[str, Callable[[], cq.Workplane]] = {
+    "seam-yz-cylinder": lambda: cq.Workplane("YZ").cylinder(10, 2),
+    "seam-xz-cylinder": lambda: cq.Workplane("XZ").cylinder(10, 2),
+    "seam-zx-cylinder": lambda: cq.Workplane("ZX").cylinder(10, 2),
+    "seam-turned-cylinder": lambda: (
+        cq.Workplane("XY").transformed(rotate=cq.Vector(0, 0, 30)).cylinder(4, 1)
+    ),
+    "seam-yz-washer": lambda: cq.Workplane("YZ").cylinder(1, 5).faces(">X").workplane().hole(3),
+    "seam-xz-washer": lambda: cq.Workplane("XZ").cylinder(1, 5).faces("<Y").workplane().hole(3),
+    "seam-xz-ring": lambda: cq.Workplane("XZ").circle(5).extrude(1).faces("<Y").workplane().hole(3),
+    "seam-yz-cbore": lambda: (
+        cq.Workplane("YZ").cylinder(2, 5).faces(">X").workplane().cboreHole(2, 4, 0.5)
+    ),
+    "seam-yz-cut-blind": lambda: (
+        cq.Workplane("YZ").cylinder(2, 5).faces(">X").workplane().circle(1.5).cutBlind(-1)
+    ),
+    "seam-xz-points": lambda: (
+        cq.Workplane("XZ")
+        .cylinder(2, 5)
+        .faces("<Y")
+        .workplane()
+        .pushPoints([(2, 0), (-2, 1)])
+        .hole(1)
+    ),
+}
+
+
+def _off_line(q: list[float], point: Point, axis: Point) -> float:
+    """How far `q` lies from the line through `point` along the unit `axis`."""
+    v = [q[k] - point[k] for k in range(3)]
+    along = sum(v[k] * axis[k] for k in range(3))
+    return math.sqrt(sum((v[k] - along * axis[k]) ** 2 for k in range(3)))
+
+
+def test_every_seam_construction_is_built_here() -> None:
+    assert sorted(SEAM_PARTS) == sorted(probe.SEAMS)
+
+
+@pytest.mark.parametrize("name", sorted(SEAM_PARTS))
+def test_the_chains_records_put_each_seam_where_open_cascade_does(name: str) -> None:
+    """Each seam the oracle keeps lies on the line of one of the chain's records, one record a
+    seam: `cylinder`, `extrude` and `cutBlind` on the plane's +x, a bore on -x, on named,
+    turned and face planes (ADR-0020 rule 2, amended)."""
+    oracle = record(name)
+    # The probe's selector is along the axes: it keeps the seams and nothing else.
+    seams = [oracle["candidates"][i] for i in oracle["kept"]]
+    assert all(seam["type"] == "LINE" for seam in seams)
+    records = SEAM_PARTS[name]()._seams
+    assert records is not None
+    assert len(records) == len(seams)
+    unmatched = list(records)
+    for seam in seams:
+        on = []
+        for r in unmatched:
+            p = r.point
+            line = (
+                p[0] + r.radius * r.side[0],
+                p[1] + r.radius * r.side[1],
+                p[2] + r.radius * r.side[2],
+            )
+            if all(_off_line(seam[end], line, r.axis) < ROUNDING for end in ("start", "end")):
+                on.append(r)
+        assert len(on) == 1, (seam, records)
+        unmatched.remove(on[0])
 
 
 def half_cylinder() -> cq.Workplane:
@@ -212,9 +315,11 @@ def test_the_edges_of_a_plates_top_include_its_holes_rim() -> None:
 
 
 def test_a_seam_bounded_far_from_the_kept_edges_does_not_block_a_selection() -> None:
-    """A hole's seam lies somewhere on the hole's wall, x within 1.5 of 0; the plate's
-    `>X` edges are at x = 5, so the seam cannot reach them (ADR-0020 rule 2)."""
-    plate = box().faces(">Z").workplane().hole(3)
+    """A hole bored on a polar array has a seam no record places: it lies somewhere on the
+    hole's wall, x within 1.5 of 0; the plate's `>X` edges are at x = 5, so the seam cannot
+    reach them (ADR-0020 rule 2)."""
+    plate = box().faces(">Z").workplane().polarArray(0, 0, 360, 1).hole(3)
+    assert plate._seams is None
     got = kept(plate.edges(">X"))
     assert len(got) == 4
     assert {c[0] for _, c in got} == {5.0}
@@ -300,8 +405,9 @@ RUNTIME: dict[str, tuple[str, str]] = {
     ),
 }
 UNSUPPORTED: dict[str, tuple[str, str]] = {
-    "unsupported-edges-cylinder-side": (
-        f'{HEAD}.cylinder(4, 2).edges(">X"){TAIL}',
+    "unsupported-edges-revolved-side": (
+        f"{HEAD}.polyline([(0, -2), (2, -2), (2, 2), (0, 2)]).close()"
+        f'.revolve(360, (0, -2, 0), (0, 2, 0)).edges(">X"){TAIL}',
         "Workplane.edges('>X'): the selection depends on an edge's place, "
         "which arris does not decide as CadQuery's kernel does",
     ),
