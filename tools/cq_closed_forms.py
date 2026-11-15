@@ -59,6 +59,14 @@ one of them raises, never guessed):
   face up to a height inside the outer cylinder's straight part): every measure is a
   one-dimensional integral over the radius (`slotted_ring_measures`).
 
+- **sprocket**: one chamfered tooth plate bored along its axis, on `YZ`, `XY` or `XZ`
+  (toward -y), and on `XY` a hub annulus under it: the double sprocket's mitred chamfer
+  formulas without the hub above (`plate_measures`).
+
+- **pan_head_screw**: a shank and a head turned about z, the head's top rim filleted, less
+  the strip of a slot across the head: a disc cut by a strip is elementary, the fillet's
+  torus a quadrature over its angle (`screw_closed_form`).
+
 - **crossing cylinders**: the one CAD-Recode program whose row nothing classes (`CROSSING`).
 
 The integrals are tanh-sinh quadrature (endpoint square-root singularities are
@@ -1386,20 +1394,20 @@ def slotted_ring_closed_form(text: str) -> dict[str, object]:
 # the flat faces, so it only adds its own side, its top annulus and the bore.
 
 _SPROCKET = re.compile(
-    r'^import cadquery as cq\n\nresult = \(\n    cq\.Workplane\("(YZ|XY)"\)\n'
+    r'^import cadquery as cq\n\nresult = \(\n    cq\.Workplane\("(YZ|XY|XZ)"\)\n'
     rf"    \.circle\({_NUMBER}\)\n    \.extrude\({_NUMBER}\)\n"
     r"    \.union\(\n        cq\.Workplane\(\"\1\"\)\n"
     r"            \.polyline\((\[.*?\])\)\n            \.close\(\)\n"
     rf"            \.extrude\({_NUMBER}\)\n"
-    rf'            \.edges\("(>[XZ])"\)\n            \.chamfer\({_NUMBER}\)\n'
-    rf'            \.edges\("(<[XZ])"\)\n            \.chamfer\({_NUMBER}\)\n    \)\n'
+    rf'            \.edges\("(>[XYZ])"\)\n            \.chamfer\({_NUMBER}\)\n'
+    rf'            \.edges\("(<[XYZ])"\)\n            \.chamfer\({_NUMBER}\)\n    \)\n'
     r"    \.union\(\n        cq\.Workplane\(\"\1\"\)\n"
     rf"            \.workplane\(offset={_NUMBER}\)\n"
     r"            \.polyline\((\[.*?\])\)\n            \.close\(\)\n"
     rf"            \.extrude\({_NUMBER}\)\n"
-    rf'            \.edges\("(>[XZ])"\)\n            \.chamfer\({_NUMBER}\)\n'
-    rf'            \.edges\("(<[XZ])"\)\n            \.chamfer\({_NUMBER}\)\n    \)\n'
-    rf'    \.faces\("(>[XZ])"\)\.workplane\(\)\n    \.hole\({_NUMBER}\)\n\)\n\n'
+    rf'            \.edges\("(>[XYZ])"\)\n            \.chamfer\({_NUMBER}\)\n'
+    rf'            \.edges\("(<[XYZ])"\)\n            \.chamfer\({_NUMBER}\)\n    \)\n'
+    rf'    \.faces\("(>[XYZ])"\)\.workplane\(\)\n    \.hole\({_NUMBER}\)\n\)\n\n'
     r"# Export\nshow_object\(result\)\n?$",
     re.S,
 )
@@ -1408,7 +1416,8 @@ _POINT = re.compile(rf"\({_NUMBER}, {_NUMBER}\)")
 
 @dataclass(frozen=True)
 class Sprocket:
-    """A double sprocket along `axis` (0 for `YZ`, 2 for `XY`): hub radius `hub` and length
+    """A double sprocket along `axis` (0 for `YZ`, 2 for `XY`, 1 for `XZ`, whose normal is -y so
+    the part lies below y = 0): hub radius `hub` and length
     `length`, two plates of outline `outline` (the plane's two other axes in order), thickness
     `w` and chamfer `c`, the second at `offset`, and a bore of radius `bore`."""
 
@@ -1431,14 +1440,17 @@ def _sprocket(text: str) -> Sprocket:
     outline = tuple((_num(a), _num(b)) for a, b in _POINT.findall(g[3]))
     if g[3] != g[10] or len(outline) < 3:
         raise ValueError("a sprocket whose two plates are not one outline")
-    axis_up, axis_low = (">X", "<X") if plane == "YZ" else (">Z", "<Z")
+    axis_name = {"YZ": "X", "XY": "Z", "XZ": "Y"}[plane]
+    axis_up, axis_low = f">{axis_name}", f"<{axis_name}"
     if {g[5], g[12], g[16]} != {axis_up} or {g[7], g[14]} != {axis_low}:
         raise ValueError("a sprocket whose selectors are not along its axis")
     values = [_num(g[i]) for i in (1, 2, 4, 6, 8, 9, 11, 13, 15, 17)]
     hub, length, w, c1, c2, offset, w2, c3, c4, bore = values
     if not (w == w2 and c1 == c2 == c3 == c4):
         raise ValueError("a sprocket whose two plates differ")
-    return Sprocket(0 if plane == "YZ" else 2, hub, length, outline, w, c1, offset, bore / 2)
+    return Sprocket(
+        {"YZ": 0, "XZ": 1, "XY": 2}[plane], hub, length, outline, w, c1, offset, bore / 2
+    )
 
 
 def _turns(
@@ -1466,11 +1478,15 @@ def sprocket_measures(s: Sprocket) -> tuple[float, float, Vec, Box]:
     """Volume, area, centroid and bounds of a `Sprocket` by the plate polygon's mitred chamfer
     (the header's formulas) and the hub's cylinders; a part outside what they hold raises
     `ValueError`: a plate not wholly above its chamfers, the hub touching a chamfer, a bore
-    wider than the hub, plates that meet or reach past the hub, a chamfer that overruns an edge."""
+    wider than the hub, plates that meet or reach past the hub, a chamfer that overruns an edge.
+    A hub ending inside the second plate (`length` between `offset` and `offset + w`) is the
+    same solid as one ending flush with it, as the flat face of the plate covers the hub's end
+    disc: it is worked out as the flush one."""
     n = len(s.outline)
     area, perimeter, turns, lengths = _turns(s.outline)
     tans = [math.tan(a / 2) for a in turns]
     c, w, hub, bore = s.c, s.w, s.hub, s.bore
+    length = max(s.length, s.offset + w)  # a hub ending inside the second plate is buried in it
     near = min(
         _segment_distance(s.outline[i], s.outline[(i + 1) % n]) for i in range(n)
     )  # the outline's distance from the axis
@@ -1479,7 +1495,7 @@ def sprocket_measures(s: Sprocket) -> tuple[float, float, Vec, Box]:
         and w > 2 * c
         and 0 < bore < hub < near - c
         and s.offset > w
-        and s.offset + w <= s.length
+        and s.offset < s.length
         and all(lengths[i] > c * (abs(tans[i]) + abs(tans[(i + 1) % n])) for i in range(n))
     ):
         raise ValueError("a sprocket outside the arrangement the closed form handles")
@@ -1488,12 +1504,12 @@ def sprocket_measures(s: Sprocket) -> tuple[float, float, Vec, Box]:
     cut = c * c * perimeter / 2 - c**3 / 3 * sum_tan  # the volume a chamfer takes at one end
     plate = area * w - 2 * cut
     outside = plate - pi * hub * hub * w
-    volume = pi * hub * hub * s.length + 2 * outside - pi * bore * bore * s.length
+    volume = pi * hub * hub * length + 2 * outside - pi * bore * bore * length
     moment = (
-        pi * hub * hub * s.length * s.length / 2
+        pi * hub * hub * length * length / 2
         + outside * (w / 2)
         + outside * (s.offset + w / 2)
-        - pi * bore * bore * s.length * s.length / 2
+        - pi * bore * bore * length * length / 2
     )
     flat = area - c * perimeter + c * c * sum_tan
     slant = math.sqrt(2) * c * (perimeter - c * sum_tan)
@@ -1502,8 +1518,8 @@ def sprocket_measures(s: Sprocket) -> tuple[float, float, Vec, Box]:
         2 * one
         - 3 * pi * hub * hub
         + pi * (hub * hub - bore * bore)
-        + 2 * pi * hub * (s.length - 2 * w)
-        + 2 * pi * bore * s.length
+        + 2 * pi * hub * (length - 2 * w)
+        + 2 * pi * bore * length
         - pi * bore * bore
     )
     # The plate's transverse moment: its layers are the outline offset inward by the chamfer's
@@ -1522,11 +1538,15 @@ def sprocket_measures(s: Sprocket) -> tuple[float, float, Vec, Box]:
     high = [max(xs), max(ys)]
     if s.axis == 0:
         lo: Vec = (0.0, low[0], low[1])
-        hi: Vec = (s.length, high[0], high[1])
+        hi: Vec = (length, high[0], high[1])
         centroid: Vec = (moment / volume, across[0], across[1])
+    elif s.axis == 1:
+        lo = (low[0], -length, low[1])
+        hi = (high[0], 0.0, high[1])
+        centroid = (across[0], -moment / volume, across[1])
     else:
         lo = (low[0], low[1], 0.0)
-        hi = (high[0], high[1], s.length)
+        hi = (high[0], high[1], length)
         centroid = (across[0], across[1], moment / volume)
     return volume, total, centroid, (lo, hi)
 
@@ -1586,6 +1606,248 @@ def sprocket_closed_form(text: str) -> dict[str, object]:
             f"(tools/cq_closed_forms.py, sprocket_measures): hub {s.hub} x {s.length}, "
             f"plates {len(s.outline)} vertices, thickness {s.w}, chamfer {s.c}, "
             f"second at {s.offset}, bore radius {s.bore}"
+        ),
+    }
+
+
+# --- A sprocket plate: one chamfered tooth plate, bored, with an optional hub below ---------
+#
+# The `sprocket_*` programs: the double sprocket's plate alone (`polyline(...).close().extrude(w)`
+# chamfered by `c` at both ends, a `hole` through it along the axis) and, on `XY`, a hub below it
+# (`faces("<Z").workplane().circle(R).extrude(h)`, then a blind `hole` of the bore's diameter from
+# the hub's end, which leaves a hub annulus under the plate). The plate's formulas are the double
+# sprocket's (its header); the hub's disc lies inside the plate's flat bottom face.
+
+_PLATE = re.compile(
+    r'^import cadquery as cq\n\nresult = \(\n    cq\.Workplane\("(YZ|XY|XZ)"\)\n'
+    r"    \.polyline\((\[.*?\])\)\n    \.close\(\)\n"
+    rf"    \.extrude\({_NUMBER}\)\n"
+    rf'    \.edges\("(>[XYZ])"\)\n    \.chamfer\({_NUMBER}\)\n'
+    rf'    \.edges\("(<[XYZ])"\)\n    \.chamfer\({_NUMBER}\)\n'
+    rf'    \.faces\("(>[XYZ])"\)\.workplane\(\)\n    \.hole\({_NUMBER}\)\n'
+    rf'(?:    \.faces\("(<[XYZ])"\)\.workplane\(\)\n    \.circle\({_NUMBER}\)\n'
+    rf'    \.extrude\({_NUMBER}\)\n    \.faces\("(<[XYZ])"\)\.workplane\(\)\n'
+    rf"    \.hole\({_NUMBER}, depth={_NUMBER}\)\n)?"
+    r"\)\n\n# Export\nshow_object\(result\)\n?$",
+    re.S,
+)
+
+
+def plate_measures(text: str) -> tuple[float, float, Vec, Box, str]:
+    """Volume, area, centroid, bounds and a note of a `sprocket_*` plate program `_PLATE` reads.
+
+    Raises `ValueError` for another program, or one outside the arrangement the formulas hold:
+    selectors not along the axis, a bore not inside the flat faces, a chamfer that overruns an
+    edge, a hub off the `XY` plane, narrower than the bore or not inside the flat bottom face, or
+    a blind hole that is not the bore's diameter or does not reach the plate.
+    """
+    m = _PLATE.match(text)
+    if m is None:
+        raise ValueError("not a sprocket plate")
+    g = m.groups()
+    plane = g[0]
+    name = {"YZ": "X", "XY": "Z", "XZ": "Y"}[plane]
+    outline = tuple((_num(a), _num(b)) for a, b in _POINT.findall(g[1]))
+    ends = (f">{name}", f"<{name}")
+    if len(outline) < 3 or (g[3], g[5], g[7]) != (ends[0], ends[1], ends[0]):
+        raise ValueError("a plate whose selectors are not along its axis")
+    w, c1, c2, bore = _num(g[2]), _num(g[4]), _num(g[6]), _num(g[8]) / 2
+    if c1 != c2:
+        raise ValueError("a plate whose two chamfers differ")
+    c = c1
+    hub, height = 0.0, 0.0
+    if g[9] is not None:
+        hub, height = _num(g[10]), _num(g[11])
+        if (g[9], g[12]) != (ends[1], ends[1]) or plane != "XY":
+            raise ValueError("a hub this tool does not read")
+        if _num(g[13]) != bore * 2 or _num(g[14]) < height:
+            raise ValueError("a blind hole that is not the bore or stops short of the plate")
+    n = len(outline)
+    area, perimeter, turns, lengths = _turns(outline)
+    tans = [math.tan(a / 2) for a in turns]
+    near = min(_segment_distance(outline[i], outline[(i + 1) % n]) for i in range(n))
+    if not (
+        c > 0
+        and w > 2 * c
+        and 0 < bore < near - c
+        and (g[9] is None or bore < hub < near - c)
+        and all(lengths[i] > c * (abs(tans[i]) + abs(tans[(i + 1) % n])) for i in range(n))
+    ):
+        raise ValueError("a plate outside the arrangement the closed form handles")
+    pi = math.pi
+    sum_tan = sum(tans)
+    cut = c * c * perimeter / 2 - c**3 / 3 * sum_tan
+    plate = area * w - 2 * cut - pi * bore * bore * w
+    annulus = pi * (hub * hub - bore * bore) * height if g[9] is not None else 0.0
+    volume = plate + annulus
+    flat = area - c * perimeter + c * c * sum_tan
+    slant = math.sqrt(2) * c * (perimeter - c * sum_tan)
+    total = 2 * flat + perimeter * (w - 2 * c) + 2 * slant - 2 * pi * bore * bore
+    total += 2 * pi * bore * w
+    total += 2 * pi * (hub + bore) * height  # zero without a hub
+    m0 = _offset_moment(outline, 0.0)
+
+    def lost(k: int) -> Callable[[float], float]:
+        return lambda d: m0[k] - _offset_moment(outline, d)[k]
+
+    taken = [gauss(lost(k), 0.0, c) for k in range(2)]
+    across = [(m0[k] * w - 2 * taken[k]) / volume for k in range(2)]
+    along = (plate * (w / 2) - annulus * (height / 2)) / volume
+    xs = [p[0] for p in outline]
+    ys = [p[1] for p in outline]
+    low = [min(xs), min(ys)]
+    high = [max(xs), max(ys)]
+    below = height
+    if plane == "YZ":
+        bounds: Box = ((-below, low[0], low[1]), (w, high[0], high[1]))
+        centroid: Vec = (along, across[0], across[1])
+    elif plane == "XZ":
+        bounds = ((low[0], -w, low[1]), (high[0], 0.0, high[1]))
+        centroid = (across[0], -along, across[1])
+    else:
+        bounds = ((low[0], low[1], -below), (high[0], high[1], w))
+        centroid = (across[0], across[1], along)
+    note = (
+        "one tooth plate (a polygon, a mitred chamfer c at both ends), bored through along the "
+        "axis, with a hub annulus under it where the program has one: the plate's volume, flat "
+        "faces and slanted faces from the polygon's area, perimeter and the sum of tan(turn / 2) "
+        f"(tools/cq_closed_forms.py, plate_measures): {n} vertices, thickness {w}, chamfer {c}, "
+        f"bore radius {bore}, hub radius {hub} x {height}"
+    )
+    return volume, total, centroid, bounds, note
+
+
+def plate_closed_form(text: str) -> dict[str, object]:
+    """The `ClosedForm` JSON of a `sprocket_*` plate program `_PLATE` reads."""
+    volume, area, centroid, bounds, note = plate_measures(text)
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": list(centroid),
+        "bounds": [list(bounds[0]), list(bounds[1])],
+        "note": note,
+    }
+
+
+# --- A pan head screw: a shank, a filleted head and a slot across it ---------------------------
+#
+# A shank (a cylinder of radius `s` from z = 0 to `z1`), a head (radius `R`, from `z1` to
+# `z1 + h`) whose top rim is filleted by `f`, and a box slot `lx x 2a x lz` across the head
+# (through its whole width, `lx / 2 >= R`, its floor `zb` inside the head). Body of revolution
+# less the strip `|y| < a` above `zb`. At the fillet's angle `t` (0 at the side, pi / 2 at the top)
+# the head's radius is `rho = R - f + f cos t` at `z = z1 + h - f + f sin t`. A disc of radius
+# `rho` cut by the strip has area `2 (a sqrt(rho^2 - a^2) + rho^2 asin(a / rho))`, the strip's
+# rim patch on the torus `4 asin(a / rho) rho f dt` and each slot wall `2 sqrt(rho^2 - a^2)`
+# per unit height; the floor is the strip's section at `zb`.
+
+_SCREW = re.compile(
+    r'^import cadquery as cq\n\nresult = \(\n    cq\.Workplane\("XY"\)\n'
+    rf"(?:    \.circle\({_NUMBER}\)\n    \.extrude\({_NUMBER}\)\n"
+    rf"|    \.transformed\(offset=cq\.Vector\({_NUMBER}, {_NUMBER}, {_NUMBER}\), "
+    rf"rotate=cq\.Vector\(0, 0, 0\)\)\n    \.cylinder\({_NUMBER}, {_NUMBER}\)\n)"
+    rf'    \.faces\(">Z"\)\.workplane\(\)\n    \.circle\({_NUMBER}\)\n    \.extrude\({_NUMBER}\)\n'
+    rf'    \.edges\(">Z"\)\n    \.fillet\({_NUMBER}\)\n'
+    r"    \.cut\(\n        cq\.Workplane\(\"XY\"\)\n"
+    rf"            \.transformed\(offset=cq\.Vector\({_NUMBER}, {_NUMBER}, {_NUMBER}\), "
+    r"rotate=cq\.Vector\(0, 0, 0\)\)\n"
+    rf"            \.box\({_NUMBER}, {_NUMBER}, {_NUMBER}\)\n    \)\n\)\n\n"
+    r"# Export\nshow_object\(result\)\n?$",
+    re.S,
+)
+
+
+def screw_closed_form(text: str) -> dict[str, object]:
+    """The `ClosedForm` JSON of a `pan_head_screw` program `_SCREW` reads.
+
+    Raises `ValueError` for another program, or one outside what the formulas hold: a cylinder
+    or slot off the axis, a fillet that is not inside the head, a slot narrower than the head or
+    a floor below the head or above its top rim.
+    """
+    m = _SCREW.match(text)
+    if m is None:
+        raise ValueError("not a pan head screw")
+    g = m.groups()
+    if g[0] is not None:
+        s, z1 = _num(g[0]), _num(g[1])
+    else:
+        ox, oy, oz = _num(g[2]), _num(g[3]), _num(g[4])
+        height, s = _num(g[5]), _num(g[6])
+        if ox != 0 or oy != 0:
+            raise ValueError("a shank off the axis")
+        z1 = oz + height / 2
+        if oz - height / 2 != 0:
+            raise ValueError("a shank that does not start at the origin")
+    radius, h, f = _num(g[7]), _num(g[8]), _num(g[9])
+    bx, by, bz, lx, ly, lz = (_num(g[i]) for i in range(10, 16))
+    a = ly / 2
+    zb = bz - lz / 2
+    top = z1 + h
+    if bx != 0 or by != 0:
+        raise ValueError("a slot off the axis")
+    if not (0 < s < radius and 0 < f < min(h, radius - a) and a > 0 and lx / 2 >= radius):
+        raise ValueError("a screw outside the arrangement the closed form handles")
+    if not (z1 <= zb < top and bz + lz / 2 >= top):
+        raise ValueError("a slot that does not open the head's top")
+    pi = math.pi
+    zc = top - f
+
+    def rho(t: float) -> float:
+        return radius - f + f * math.cos(t)
+
+    def strip(r: float) -> float:
+        return 2 * (a * math.sqrt(r * r - a * a) + r * r * math.asin(a / r))
+
+    half = pi / 2
+
+    def over_fillet(g_of_t: Callable[[float], float]) -> float:
+        return gauss(g_of_t, 0.0, half)
+
+    # Body of revolution: the shank, the head and the fillet's removed ring.
+    ring = over_fillet(lambda t: pi * (radius**2 - rho(t) ** 2) * f * math.cos(t))
+    ring_moment = over_fillet(
+        lambda t: (zc + f * math.sin(t)) * pi * (radius**2 - rho(t) ** 2) * f * math.cos(t)
+    )
+    v_shank = pi * s * s * z1
+    v_head = pi * radius * radius * h
+    revolved = v_shank + v_head - ring
+    m_revolved = v_shank * z1 / 2 + v_head * (z1 + h / 2) - ring_moment
+    # The strip above the floor.
+    side = strip(radius) * (zc - zb)
+    side_moment = strip(radius) * (zc * zc - zb * zb) / 2
+    rim = over_fillet(lambda t: strip(rho(t)) * f * math.cos(t))
+    rim_moment = over_fillet(lambda t: (zc + f * math.sin(t)) * strip(rho(t)) * f * math.cos(t))
+    volume = revolved - side - rim
+    moment = m_revolved - side_moment - rim_moment
+    # Area: the revolved surface less its part in the strip, plus the slot's floor and walls.
+    torus = over_fillet(lambda t: 2 * pi * rho(t) * f)
+    torus_strip = over_fillet(lambda t: 4 * math.asin(a / rho(t)) * rho(t) * f)
+    area = (
+        pi * s * s  # the shank's end
+        + 2 * pi * s * z1
+        + pi * (radius**2 - s * s)
+        + 2 * pi * radius * (h - f)
+        + torus
+        + pi * (radius - f) ** 2
+    )
+    area -= 4 * math.asin(a / radius) * radius * (zc - zb) + torus_strip
+    area -= strip(radius - f)  # the top disc's part in the strip
+    area += strip(radius)  # the floor
+    wall = 2 * gauss(lambda z: 2 * math.sqrt(radius**2 - a * a), zb, zc)
+    area += wall + 2 * over_fillet(lambda t: 2 * math.sqrt(rho(t) ** 2 - a * a) * f * math.cos(t))
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": [0.0, 0.0, moment / volume],
+        "bounds": [[-radius, -radius, 0.0], [radius, radius, top]],
+        "note": (
+            "a shank and a head turned about z (the head's top rim filleted: Pappus-free "
+            "quadrature over the fillet's angle) less the strip |y| < a of a slot across the head "
+            "from its floor up: the section of a disc cut by the strip is 2 (a sqrt(r^2 - a^2) + "
+            "r^2 asin(a / r)) (tools/cq_closed_forms.py, screw_closed_form): "
+            f"shank radius {s} to z {z1}, head radius {radius} x {h}, fillet {f}, "
+            f"slot half width {a} from z {zb}"
         ),
     }
 
@@ -2223,6 +2485,8 @@ FORM_FAMILIES = (
     "bellows_",
     "spacer_ring_",
     "double_simplex_sprocket_",
+    "sprocket_",
+    "pan_head_screw_",
 )
 
 
@@ -2242,11 +2506,20 @@ def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | No
         return slotted_ring_closed_form(text)
     if stem.startswith("double_simplex_sprocket_"):
         return sprocket_closed_form(text)
+    if stem.startswith("sprocket_"):
+        return plate_closed_form(text)
+    if stem.startswith("pan_head_screw_"):
+        return screw_closed_form(text)
     return None
 
 
 def _closed_form_job(job: tuple[str, str, str]) -> dict[str, object] | None:
-    return closed_form_for(*job)
+    """The closed form of one row, or None where the form's reader refuses its program (a
+    `ValueError`: another arrangement than it handles), which leaves the row unclassified."""
+    try:
+        return closed_form_for(*job)
+    except ValueError:
+        return None
 
 
 def verdicts_for(
@@ -2263,7 +2536,8 @@ def verdicts_for(
     with a closed form is `occt_wrong` by it; a family named in `refusals`
     (`family=regression fixture`, or a single row's stem in place of the family, which wins) is
     `arris_refusal` by that fixture, and one named in `arris_bugs` is `arris_bug` by its
-    fixture. A key in both raises `ValueError`.
+    fixture. A key in both raises `ValueError`. A row whose closed form refuses its program is left
+    unclassified and named on stderr.
     Each verdict is built as a `Verdict`, so ADR-0006's checks of the evidence run here.
     """
     from arris_gym import Status
@@ -2303,9 +2577,14 @@ def verdicts_for(
         spawn = multiprocessing.get_context("spawn")
         with ProcessPoolExecutor(max_workers=WORKERS, mp_context=spawn) as pool:
             forms = list(pool.map(_closed_form_job, jobs))
+    left = []
     for (stem, _, _), closed in zip(jobs, forms, strict=True):
-        if closed is not None:
+        if closed is None:
+            left.append(stem)
+        else:
             out[stem] = {"disagreement": "occt_wrong", "evidence": closed}
+    if left:  # counted, never dropped: the table still holds them unclassified
+        print(f"{len(left)} rows no closed form reads, left unclassified: {left}", file=sys.stderr)
     return dict(sorted(out.items()))
 
 

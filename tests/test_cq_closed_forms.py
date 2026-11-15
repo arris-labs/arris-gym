@@ -459,7 +459,7 @@ result = (
 show_object(result)"""
 
 
-def sprocket_text(plane: str, c: str = "0.6", teeth: int = 7) -> str:
+def sprocket_text(plane: str, c: str = "0.6", teeth: int = 7, length: str = "20.04") -> str:
     """A sprocket of the corpus's shape on a constructed outline: `teeth` lobes, so not
     centrally symmetric, a reflex vertex at every root, a plate 4 thick."""
     points = []
@@ -469,9 +469,9 @@ def sprocket_text(plane: str, c: str = "0.6", teeth: int = 7) -> str:
         points.append((round(radius * math.cos(angle), 4), round(radius * math.sin(angle), 4)))
     return SPROCKET.format(
         plane=plane,
-        axis="X" if plane == "YZ" else "Z",
+        axis={"YZ": "X", "XY": "Z", "XZ": "Y"}[plane],
         hub="6.0",
-        length="20.04",
+        length=length,
         outline=points,
         w="4.0",
         c=c,
@@ -480,13 +480,15 @@ def sprocket_text(plane: str, c: str = "0.6", teeth: int = 7) -> str:
     )
 
 
-@pytest.mark.parametrize("plane", ["YZ", "XY"])
+@pytest.mark.parametrize("plane", ["YZ", "XY", "XZ"])
 @pytest.mark.parametrize("c", ["0.3", "0.6"])
-def test_a_sprocket_is_what_arris_builds(plane: str, c: str) -> None:
+@pytest.mark.parametrize("length", ["20.04", "19.99"])  # the hub past the plate, and inside it
+def test_a_sprocket_is_what_arris_builds(plane: str, c: str, length: str) -> None:
     # An outline with convex and reflex corners and no symmetry (7 lobes), along each axis:
     # the mitred chamfer's volume, area and centre, the hub's and the bore's, and a centroid off
     # the axis, against arris's own boolean and chamfer.
-    text = sprocket_text(plane, c)
+    # `XZ` extrudes toward -y; a hub ending 0.01 inside the second plate is that plate's solid.
+    text = sprocket_text(plane, c, length=length)
     assert _agrees(ag.run(text, dialect="cq"), cf.sprocket_closed_form(text)) == []
 
 
@@ -893,3 +895,129 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
     assert paths.pop(collars[0].name) == one
     assert set(paths.values()) == {family}
     assert len(paths) == 4
+
+
+def test_a_row_whose_program_no_closed_form_reads_stays_unclassified(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A program the family's reader refuses (here an empty text) does not stop the tool: the
+    row is left out of the verdicts and named on stderr, never dropped from the count."""
+    import gzip
+
+    from arris_gym.fidelity import FidelityTable, fidelity_table
+
+    table = FidelityTable.model_validate_json(
+        gzip.decompress((C2 / "benchcad" / "fidelity.json.gz").read_bytes())
+    )
+    rows = [e for e in table.entries if e.name.startswith(cf.FORM_FAMILIES) and e.row.verdict][:2]
+    assert len(rows) == 2
+    path = tmp_path / "fidelity.json.gz"
+    path.write_bytes(gzip.compress(fidelity_table(rows).to_json().encode()))
+    assert cf.verdicts_for(path, {e.name: "" for e in rows}, {}) == {}
+    assert "2 rows no closed form reads" in capsys.readouterr().err
+
+
+def plate_text(plane: str, hub: bool = False, c: str = "0.6") -> str:
+    """A `sprocket_*` program of the corpus's shape on the constructed 7-lobe outline: a plate
+    4 thick bored 8.8 across, and on `XY` optionally a hub of radius 9 and height 5 below it."""
+    points = []
+    for k in range(28):
+        angle = 2 * math.pi * k / 28
+        radius = (14.0, 11.0, 10.0, 11.0)[k % 4] + 0.5 * (k % 3)
+        points.append((round(radius * math.cos(angle), 4), round(radius * math.sin(angle), 4)))
+    top = {"YZ": "X", "XY": "Z", "XZ": "Y"}[plane]
+    text = (
+        f'import cadquery as cq\n\nresult = (\n    cq.Workplane("{plane}")\n'
+        f"    .polyline({points})\n    .close()\n    .extrude(4.0)\n"
+        f'    .edges(">{top}")\n    .chamfer({c})\n    .edges("<{top}")\n    .chamfer({c})\n'
+        f'    .faces(">{top}").workplane()\n    .hole(8.8)\n'
+    )
+    if hub:
+        text += (
+            f'    .faces("<{top}").workplane()\n    .circle(9.0)\n    .extrude(5.0)\n'
+            f'    .faces("<{top}").workplane()\n    .hole(8.8, depth=6.0)\n'
+        )
+    return text + ")\n\n# Export\nshow_object(result)\n"
+
+
+@pytest.mark.parametrize("plane", ["YZ", "XY", "XZ"])
+@pytest.mark.parametrize("c", ["0.3", "0.6"])
+def test_a_sprocket_plate_is_what_arris_builds(plane: str, c: str) -> None:
+    # A plate with convex and reflex corners and no symmetry, along each axis (`XZ` toward -y).
+    text = plate_text(plane, c=c)
+    assert _agrees(ag.run(text, dialect="cq"), cf.plate_closed_form(text)) == []
+
+
+def test_a_sprocket_plate_with_a_hub_is_what_arris_builds() -> None:
+    text = plate_text("XY", hub=True)
+    assert _agrees(ag.run(text, dialect="cq"), cf.plate_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        (
+            ("hole(8.8)\n", "hole(24.0)\n"),
+            "stops short|outside the arr",
+        ),  # a bore past the flat face
+        (("chamfer(0.6)", "chamfer(2.1)"), "outside the arrangement"),  # more than half the plate
+        (('edges(">Z")', 'edges(">X")'), "not along its axis"),
+        (("hole(8.8, depth=6.0)", "hole(8.8, depth=3.0)"), "stops short"),
+        (("circle(9.0)", "circle(3.0)"), "outside the arrangement"),  # a hub inside the bore
+    ],
+)
+def test_a_sprocket_plate_this_tool_does_not_read_is_refused(
+    change: tuple[str, str], match: str
+) -> None:
+    with pytest.raises(ValueError, match=match):
+        cf.plate_closed_form(plate_text("XY", hub=True).replace(*change))
+
+
+SCREW_TURNED = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .circle(1.25)
+    .extrude(20.0)
+    .faces(">Z").workplane()
+    .circle(2.5)
+    .extrude(1.5)
+    .edges(">Z")
+    .fillet(0.3)
+    .cut(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 21.2), rotate=cq.Vector(0, 0, 0))
+            .box(5.4, 0.6, 1.4)
+    )
+)
+
+# Export
+show_object(result)
+"""
+SCREW_CYLINDER = SCREW_TURNED.replace(
+    ".circle(1.25)\n    .extrude(20.0)",
+    ".transformed(offset=cq.Vector(0, 0, 10.0), rotate=cq.Vector(0, 0, 0))\n"
+    "    .cylinder(20.0, 1.25)",
+).replace("fillet(0.3)", "fillet(0.45)")
+
+
+@pytest.mark.parametrize("text", [SCREW_TURNED, SCREW_CYLINDER], ids=["turned", "cylinder"])
+def test_a_pan_head_screw_is_what_arris_builds(text: str) -> None:
+    """A filleted head with a slot across it, the shank by either of the corpus's two ways."""
+    assert _agrees(ag.run(text, dialect="cq"), cf.screw_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        (("box(5.4, 0.6, 1.4)", "box(4.0, 0.6, 1.4)"), "outside the arrangement"),  # narrower
+        (("fillet(0.3)", "fillet(1.6)"), "outside the arrangement"),  # more than the head
+        (("21.2", "20.3"), "does not open"),  # a floor under the head's bottom
+        (("(0, 0, 21.2)", "(1, 0, 21.2)"), "off the axis"),
+    ],
+)
+def test_a_pan_head_screw_this_tool_does_not_read_is_refused(
+    change: tuple[str, str], match: str
+) -> None:
+    with pytest.raises(ValueError, match=match):
+        cf.screw_closed_form(SCREW_TURNED.replace(*change))

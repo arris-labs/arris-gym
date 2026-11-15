@@ -162,6 +162,17 @@ within a given design; **[3]** unproven semantics, established here.
   `cq_closed_forms.py` over the scratch table
   (`.../scratchpad/c2b2/fidelity.json.gz`, oracle rows `.../c2b/oracle.jsonl.gz`) with step
   7c's flags writes verdicts and no in-subset row is unclassified.
+  *Partly done* (step 7d, not ticked): the sprocket crash was a plate ending 0.01 inside the hub's
+  length (not past it) and the `XZ` plane (axis -y), both now in `sprocket_measures`; the tool
+  leaves a row whose closed form refuses its program unclassified and names it on stderr. The
+  scratch table holds three more in-subset unclassified families, 127 rows, new with the blend
+  lifts: `sprocket_*` (82: a plate chamfered at both ends and bored, 60 alone on `YZ`/`XY`/`XZ`, 22
+  on `XY` with a hub annulus under it) and `pan_head_screw_*` (29: shank, filleted head, slot)
+  have closed forms now (`plate_measures`, `screw_closed_form`: arris within 1e-11, Open CASCADE
+  1e-3 and 1e-8 off); 16 `manifold_block_*` remain: a top-edge `chamfer` on the box, with side
+  `cboreHole`s and a `hole` along the chamfered edge itself (the workplane origin keeps the top's
+  height), so slanted planes meet axis cylinders: `part_measures` reads axis-aligned faces only.
+  Arris and Open CASCADE differ by 1e-5 to 3e-2 in volume there; which is right is not known.
 - [ ] Step 8 **[1, conductor-run]** — the committed re-run of both tables
   (`tests/fixtures/c2/*`, the READMEs' figures and digests), the baseline
   subset helper step 2 adds deleted as in plans/lift-arrays-and-blind-cuts.
