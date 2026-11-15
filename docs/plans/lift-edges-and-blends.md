@@ -268,6 +268,25 @@ within a given design; **[3]** unproven semantics, established here.
   classes give 84 verdicts, each passing `compare`; step 8's command is `tools/cq_closed_forms.py` with
   `--arris-bug shaft_collar=...cq-cross-hole-bounds --arris-bug clevis_pin=...cq-cross-hole-bounds
   --arris-bug spacer_ring_008375_s20260505=...cq-chamfer-slot-bounds`.
+- *Settled* (step 7c, repaired in review): the family-keyed `--arris-bug` flag classed every
+  unclassified row of its family with no cause check, so of the 153 `arris_bug` rows 21 newly run
+  `shaft_collar` rows and 45 of `clevis_pin` had no one's reading, and two did not show the fixture's
+  cause. Now `check_bug_cause` holds each `--arris-bug` row to its fixture: for the two bounds fixtures
+  both sides `ok`, arris's box past the oracle's by more than `BOUNDS_ABS` (1e-6), volume and area
+  within 1e-4 (cross hole; 1e-9 for the chamfered slot) and faces within 2; a row failing it stays
+  unclassified, counted and named on stderr. Over the committed table it left two (all 126
+  `clevis_pin` and the other 24 `shaft_collar` pass, boxes 1.4e-4 to 5e-3 loose):
+  `shaft_collar_004924` (a box only the padding, 2e-7, but volume 3.5e-7 off and 2 faces: the three
+  cuts are one cylinder, CadQuery's `rotate=(90, 0, 120)` turning a plane about its own z, now the
+  cylinder's axis; a closed form by quadrature `collar_measures`, keyed by the program's SHA-256,
+  arris within 4e-13 of it and Open CASCADE 3.5e-7 off in volume): `occt_wrong`; and
+  `shaft_collar_016155` (arris `OpInternalError` "kernel bug: the face arrangement is not a
+  subdivision", the oracle `invalid`: the stem's top face is 3.14 wide and its two rims take a
+  chamfer of 2.2 each, 4.4 of bevel): `arris_bug` by the new
+  `regression/cq-chamfers-overlap-on-a-face` (a ring, desired `arris_refusal` of kind
+  `OpDegenerateError`; `fixture_cases.check` compares only the keys a refusal expectation names),
+  asked of arris in `overlapping-blends-refusal`. The 126 `clevis_pin` and 24 `shaft_collar` rows
+  are `arris_bug` by `check_bounds_cause`, no longer by the flag alone.
 - *Settled* (step 7b): the 7 `connecting_rod` rows stay as ADR-0014's amendment has them (not
   touched). The 18 sprockets are **lifted**, not refused: reach has no geometric declaration (ADR-0012
   is static) and a refusal in the subset would be a left-over `cq_bug`. Cause: `faces('>X')`/`('>Z')`

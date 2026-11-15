@@ -44,11 +44,11 @@ FIGURES = {
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
-            "arris_bug": 290,
+            "arris_bug": 289,
             "arris_refusal": 1_457,
             "by_design": 0,
             "cq_bug": 7_701,
-            "occt_wrong": 840,
+            "occt_wrong": 841,
         },
         "unclassified": 199,
         "oracle_ok": 17_537,
@@ -143,7 +143,7 @@ def test_benchcads_arris_bugs_are_verdict_families_and_checker_fail_caps() -> No
     families = {e.name.rsplit("_", 2)[0] for e in bugs}
     assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == {
         "lobed_knob": 100,
-        "shaft_collar": 26,
+        "shaft_collar": 25,
         "bearing_retainer_cap": 37,
         "clevis_pin": 126,
         "spacer_ring": 1,

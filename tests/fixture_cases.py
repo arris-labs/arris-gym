@@ -174,7 +174,9 @@ def check(result: ExecResult, expected: dict[str, object]) -> list[str]:
         else:
             got = result.refusal.model_dump()
             got["entities"] = list(result.refusal.entities)
-            if got != refusal:
+            # A desired refusal may name only some keys (a kind, where the kernel's words
+            # are not written yet): the others are not compared.
+            if {k: v for k, v in got.items() if k in refusal} != refusal:
                 problems.append(f"refusal {got}, expected {refusal}")
     elif result.refusal is not None:
         problems.append(f"unexpected refusal {result.refusal}")

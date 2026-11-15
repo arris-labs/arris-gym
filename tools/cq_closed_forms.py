@@ -95,6 +95,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from arris_gym import ExecResult
+    from arris_gym.fidelity import OracleReport
     from arris_gym.sandbox.outcome import ArrisRefusal
 
 # Quadrature: the step of the tanh-sinh sum and its half-width. At 1/32 and 3.5 a
@@ -128,6 +130,19 @@ REFUSAL_CAUSES: dict[str, tuple[str, str, int]] = {
         "degenerate result: the faces touch along a curve interior to both result faces",
         2,
     ),
+}
+
+# What an `--arris-bug` bounds fixture stands for: arris's box loose past what ADR-0005's
+# `BOUNDS_ABS` accepts, on a row `ok` on both sides, the other figures inside the
+# fixture's own: (volume and area, relative, the most the oracle's may lie off arris's;
+# the most arris's face count may differ from the oracle's). The cross hole's cylinders are
+# measured 3.1e-5 and 1.1e-5 off the closed form by Open CASCADE (the fixture's README), so
+# 1e-4 is three times that; the chamfered slot is exact on both sides, so ADR-0005's own.
+# A row outside these has another fault than the fixture's, and stays unclassified.
+CROSS_HOLE_REL = 1e-4
+BOUNDS_CAUSES: dict[str, tuple[float, int]] = {
+    "cq-cross-hole-bounds": (CROSS_HOLE_REL, 2),
+    "cq-chamfer-slot-bounds": (1e-9, 2),  # VOLUME_REL and AREA_REL
 }
 
 # Programs run at once when the verdicts are checked.
@@ -1215,6 +1230,117 @@ def crossing_closed_form(sha256: str) -> dict[str, object]:
             "along x from -35 to 50 at y = -31) overlap only where B's first end sits inside "
             "A's width; volume, moments and the surface patches inside the other cylinder are "
             f"one-dimensional integrals (tools/cq_closed_forms.py, crossing_measures): {p}"
+        ),
+    }
+
+
+# The one BenchCAD `shaft_collar` program a closed form clears: a cylinder bored through, both
+# top rims chamfered (`edges(">Z")` takes the outer and the bore circle), then cut three times
+# by one and the same cylinder: CadQuery's `transformed(rotate=Vector(90, 0, 120))` turns the
+# plane about its own, already turned, z, which is the cylinder's axis, so the 120 and 240
+# cuts repeat the first. Keyed by SHA-256, so no other text takes its form. The collar's
+# axis is z, centred on the origin; the cut is a cylinder of radius `a` along y through
+# (x = 0, z = `h / 2`), the top plane, so its half under the top removes a tunnel from each wall.
+COLLARS = {
+    "eb1b3b2ba69e9d1f5000933ee659038b7faba3e5dbd1ef01fac0ff10925f6119": {
+        "h": 16.55,  # height, z from -h / 2 to h / 2
+        "r": 18.915,  # outer radius
+        "bore": 23.64,  # bore diameter
+        "c": 2.13,  # chamfer of the outer and the bore rim at the top
+        "a": 1.18,  # radius of the cross cylinder, under c so it cuts the cones only
+    }
+}
+
+
+def collar_measures(p: dict[str, float]) -> tuple[float, float, Vec, Box]:
+    """Volume, area, centroid and bounds of a chamfered collar crossed by a tunnel.
+
+    With `d` the depth under the top face, the ring at `d` is `[ri(d), ro(d)]` in radius, the
+    chamfers' cones making `ro = r - (c - d)` and `ri = bore / 2 + (c - d)` for `d < c`. The
+    tunnel is `t^2 + d^2 <= a^2` (`t` across, along y), cut through both walls: in each, its
+    length at `(t, d)` is `sqrt(ro^2 - t^2) - sqrt(ri^2 - t^2)`. The volume and the z moment
+    are integrals over `d` of the ring less the tunnel; the area is the ring's six faces
+    (two planes, two cylinders, two cones) less the tunnel's opening in the top plane and in
+    each cone (`dA = sqrt(1 + (t^2 + r^2 r'^2) / y^2) dt dd` on a cone `y = sqrt(r^2 - t^2)`),
+    plus the tunnel's wall (`a` times its length, around the half circle).
+    """
+    h, r, ri0, c, a = p["h"], p["r"], p["bore"] / 2, p["c"], p["a"]
+    top = h / 2
+    pi = math.pi
+    if not (0 < a < c < min(h, r - ri0) / 2 and ri0 > a):
+        raise ValueError("a collar outside the arrangement the closed form handles")
+
+    def radii(d: float) -> tuple[float, float]:
+        k = max(c - d, 0.0)
+        return r - k, ri0 + k
+
+    def ring(d: float) -> float:
+        out, inn = radii(d)
+        return pi * (out * out - inn * inn)
+
+    def length(t: float, d: float) -> float:
+        out, inn = radii(d)
+        return math.sqrt(out * out - t * t) - math.sqrt(inn * inn - t * t)
+
+    def across(f: Callable[[float, float], float]) -> Callable[[float], float]:
+        def at(d: float) -> float:
+            w = math.sqrt(max(a * a - d * d, 0.0))
+            return tanh_sinh(lambda t: f(t, d), -w, w)
+
+        return at
+
+    tunnel = across(length)
+    v_ring = tanh_sinh(ring, 0, c) + ring(c) * (h - c)
+    m_ring = tanh_sinh(lambda d: (top - d) * ring(d), 0, c) + tanh_sinh(
+        lambda d: (top - d) * ring(d), c, h
+    )
+    v_tunnel = tanh_sinh(tunnel, 0, a)
+    m_tunnel = tanh_sinh(lambda d: (top - d) * tunnel(d), 0, a)
+    volume = v_ring - 2 * v_tunnel
+    z_moment = m_ring - 2 * m_tunnel
+    out0, in0 = radii(0.0)
+
+    def cone(outer: bool) -> Callable[[float, float], float]:
+        def element(t: float, d: float) -> float:
+            rad = r - c + d if outer else ri0 + c - d
+            y2 = rad * rad - t * t
+            return math.sqrt(1 + (t * t + rad * rad) / y2)
+
+        return element
+
+    s_ring = (
+        pi * (out0 * out0 - in0 * in0)  # the top annulus
+        + pi * (r * r - ri0 * ri0)  # the bottom
+        + 2 * pi * (r + ri0) * (h - c)  # the two cylinders
+        + pi * (2 * r - c) * c * math.sqrt(2)  # the outer cone
+        + pi * (2 * ri0 + c) * c * math.sqrt(2)  # the bore's
+    )
+    opening = tanh_sinh(
+        lambda t: math.sqrt(out0 * out0 - t * t) - math.sqrt(in0 * in0 - t * t), -a, a
+    )
+    cones = tanh_sinh(across(cone(True)), 0, a) + tanh_sinh(across(cone(False)), 0, a)
+    wall = tanh_sinh(lambda q: a * length(a * math.cos(q), a * math.sin(q)), 0, pi)
+    area = s_ring - 2 * (opening + cones) + 2 * wall
+    bounds = ((-r, -r, -top), (r, r, top))
+    return volume, area, (0.0, 0.0, z_moment / volume), bounds
+
+
+def collar_closed_form(sha256: str) -> dict[str, object]:
+    """The `ClosedForm` JSON of the `shaft_collar` program `sha256` names."""
+    p = COLLARS[sha256]
+    volume, area, centroid, bounds = collar_measures(p)
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": list(centroid),
+        "bounds": [list(bounds[0]), list(bounds[1])],
+        "note": (
+            "a collar bored through, both top rims chamfered, a cross cylinder along y through "
+            "the top plane cutting a tunnel in each wall (the program's three cuts are one: "
+            "the plane's z turn leaves the cylinder's axis where it was); volume, z moment and "
+            "areas are one- and two-dimensional integrals over the tunnel's cross-section "
+            f"(tools/cq_closed_forms.py, collar_measures): {p}"
         ),
     }
 
@@ -2672,6 +2798,8 @@ def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | No
     """The closed form of a program of a family (or a SHA-256) this tool knows, else None."""
     if sha256 in CROSSING:
         return crossing_closed_form(sha256)
+    if sha256 in COLLARS:
+        return collar_closed_form(sha256)
     if stem.startswith("t_pipe_fitting_"):
         return tee_closed_form(text)
     if stem.startswith(("u_bolt_", "j_hook_")):
@@ -2734,7 +2862,9 @@ def verdicts_for(
         if entry.row.status is Status.UNSUPPORTED_API:
             continue  # outside the subset: the kernel never saw it, so no finding classes it
         family = re.sub(r"_\d+_s\d+$", "", entry.name)
-        if entry.name in refusals or (entry.name not in bugs and family in refusals):
+        if entry.row.program_sha256 in COLLARS:  # its own closed form wins over a family's flag
+            jobs.append((entry.name, corpus_texts[entry.name], entry.row.program_sha256))
+        elif entry.name in refusals or (entry.name not in bugs and family in refusals):
             fixture = refusals[entry.name if entry.name in refusals else family]
             out[entry.name] = {
                 "disagreement": "arris_refusal",
@@ -2746,7 +2876,11 @@ def verdicts_for(
                 "disagreement": "arris_bug",
                 "evidence": {"kind": "fixture", "path": fixture},
             }
-        elif entry.name.startswith(FORM_FAMILIES) or entry.row.program_sha256 in CROSSING:
+        elif (
+            entry.name.startswith(FORM_FAMILIES)
+            or entry.row.program_sha256 in CROSSING
+            or entry.row.program_sha256 in COLLARS
+        ):
             jobs.append((entry.name, corpus_texts[entry.name], entry.row.program_sha256))
     # Each closed form is a pure function of its program, worked out one per process, each
     # process started afresh (a fork of a process with threads may deadlock).
@@ -2789,6 +2923,71 @@ def check_refusal_cause(refusal: ArrisRefusal | None, fixture: str) -> None:
         )
 
 
+def check_bounds_cause(result: ExecResult, report: OracleReport, fixture: str) -> None:
+    """Raise `ValueError` unless the row shows the cause `fixture` names (a loose arris box).
+
+    `fixture` is an `--arris-bug` path; its last component keys `BOUNDS_CAUSES`. Both sides end
+    `ok` with measures, arris's box lies past the oracle's by more than `BOUNDS_ABS` (a box
+    within it is the kernel's padding, ADR-0005), and the volume, the area and the face count
+    differ by no more than the fixture allows.
+    """
+    from arris_gym import Status
+    from arris_gym.fidelity import BOUNDS_ABS, OracleStatus, measure_deltas
+
+    name = Path(fixture).name
+    if name not in BOUNDS_CAUSES:
+        raise ValueError(f"no bounds cause is registered for fixture {name!r}")
+    if (
+        result.status is not Status.OK
+        or report.status is not OracleStatus.OK
+        or result.measures is None
+        or report.measures is None
+    ):
+        raise ValueError(f"a side did not end ok, so fixture {name!r} is not its evidence")
+    figures, faces = BOUNDS_CAUSES[name]
+    deltas = measure_deltas(result.measures, report.measures)
+    if deltas.bounds <= BOUNDS_ABS:
+        raise ValueError(f"arris's box is not loose ({deltas.bounds:.1e}), fixture {name!r}")
+    if deltas.volume > figures or deltas.area > figures:
+        raise ValueError(
+            f"volume {deltas.volume:.1e} or area {deltas.area:.1e} off beyond fixture {name!r}"
+        )
+    if abs(deltas.faces) > faces:
+        raise ValueError(f"faces differ by {deltas.faces}, beyond fixture {name!r}")
+
+
+# What `cq-chamfers-overlap-on-a-face` stands for: arris's own `OpInternalError` of a face
+# arrangement that is no subdivision, on a program Open CASCADE builds `invalid`.
+OVERLAP_KIND = "OpInternalError"
+OVERLAP_PREFIX = "kernel bug: the face arrangement is not a subdivision"
+
+
+def check_overlap_cause(result: ExecResult, report: OracleReport, fixture: str) -> None:
+    """Raise `ValueError` unless the row shows the cause `fixture` names: arris refusing
+    with the kernel's own `OpInternalError` (a face arrangement that is no subdivision) where
+    the oracle's shape is `invalid`. Which edges the program chamfers is the fixture's own."""
+    from arris_gym.fidelity import OracleStatus
+
+    name = Path(fixture).name
+    refusal = result.refusal
+    if report.status is not OracleStatus.INVALID:
+        raise ValueError(f"the oracle's shape is not invalid, fixture {name!r} is not its evidence")
+    if (
+        refusal is None
+        or refusal.kind != OVERLAP_KIND
+        or not refusal.message.startswith(OVERLAP_PREFIX)
+    ):
+        raise ValueError(f"arris did not end with the internal error of fixture {name!r}")
+
+
+def check_bug_cause(result: ExecResult, report: OracleReport, fixture: str) -> None:
+    """Raise `ValueError` unless the row shows the cause of its `--arris-bug` `fixture`."""
+    if Path(fixture).name == "cq-chamfers-overlap-on-a-face":
+        check_overlap_cause(result, report, fixture)
+    else:
+        check_bounds_cause(result, report, fixture)
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Write the verdicts of a corpus table's unclassified rows, checked against both sides."""
     import arris_gym as ag
@@ -2828,14 +3027,28 @@ def main(argv: Sequence[str] | None = None) -> int:
     with ag.Sandbox() as sandbox:
         results = sandbox.run_many([texts[s] for s in stems], dialect="cq", workers=WORKERS)
     refused = []
+    not_its_cause = []
     for stem, result in zip(stems, results, strict=True):
         try:
             evidence = verdicts[stem]["evidence"]
             if verdicts[stem]["disagreement"] == "arris_refusal" and isinstance(evidence, dict):
                 check_refusal_cause(result.refusal, str(evidence["path"]))
+            if verdicts[stem]["disagreement"] == "arris_bug" and isinstance(evidence, dict):
+                try:
+                    check_bug_cause(result, reports[stem], str(evidence["path"]))
+                except ValueError as error:  # counted, never labelled: the row stays as it is
+                    not_its_cause.append(f"{stem}: {error}")
+                    del verdicts[stem]
+                    continue
             compare(result, reports[stem], Verdict.model_validate(verdicts[stem]))
         except ValueError as error:
             refused.append(f"{stem}: {error}")
+    if not_its_cause:
+        print(
+            f"{len(not_its_cause)} rows show no cause of their --arris-bug fixture, "
+            "left unclassified:\n" + "\n".join(not_its_cause),
+            file=sys.stderr,
+        )
     if refused:
         print("\n".join(refused), file=sys.stderr)
         return 1

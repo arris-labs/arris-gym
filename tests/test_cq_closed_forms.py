@@ -915,14 +915,19 @@ def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> Non
     path.write_bytes(gzip.compress(fidelity_table(picked).to_json().encode()))
     texts = {e.name: "" for e in picked}
     refusals = {"cotter_pin": "tests/fixtures/regression/cq-tangent-cylinders"}
-    bugs = {"shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds"}
+    bugs = {
+        "shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds",
+        "shaft_collar_016155_s20260505": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face",
+    }
     got = cf.verdicts_for(path, texts, refusals, bugs)
     want = {k: v for k, v in committed.items() if k.startswith(("shaft_collar_", "cotter_pin_"))}
     want = {k: v for k, v in want.items() if k in texts}
     assert got == want
     assert len([k for k in got if k.startswith("shaft_collar_")]) == 26
     assert not {e.name for e in outside} & set(got)
-    assert set(cf.verdicts_for(path, texts, refusals)) == {e.name for e in pins}
+    own = {e.name for e in collars if e.row.program_sha256 in cf.COLLARS}  # its closed form
+    assert len(own) == 1
+    assert set(cf.verdicts_for(path, texts, refusals)) == {e.name for e in pins} | own
     with pytest.raises(ValueError, match="both"):
         cf.verdicts_for(path, texts, refusals, {"cotter_pin": bugs["shaft_collar"]})
 
@@ -937,8 +942,14 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
     table = FidelityTable.model_validate_json(
         gzip.decompress((C2 / "benchcad" / "fidelity.json.gz").read_bytes())
     )
-    collars = [e for e in table.entries if e.name.startswith("shaft_collar_") and e.row.verdict]
-    assert len(collars) == 26
+    collars = [
+        e
+        for e in table.entries
+        if e.name.startswith("shaft_collar_")
+        and e.row.verdict
+        and e.row.program_sha256 not in cf.COLLARS  # its own closed form, not a fixture's row
+    ]
+    assert len(collars) == 25
     path = tmp_path / "fidelity.json.gz"
     path.write_bytes(gzip.compress(fidelity_table(collars).to_json().encode()))
     texts = {e.name: "" for e in collars}
@@ -948,7 +959,7 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
     paths = {name: v["evidence"]["path"] for name, v in got.items()}  # type: ignore[index]
     assert paths.pop(collars[0].name) == one
     assert set(paths.values()) == {family}
-    assert len(paths) == 25
+    assert len(paths) == 24
 
 
 def test_a_row_whose_program_no_closed_form_reads_stays_unclassified(
@@ -1075,3 +1086,154 @@ def test_a_pan_head_screw_this_tool_does_not_read_is_refused(
 ) -> None:
     with pytest.raises(ValueError, match=match):
         cf.screw_closed_form(SCREW_TURNED.replace(*change))
+
+
+def _bounds_pair(
+    *,
+    box_gap: float = 1e-3,
+    volume_rel: float = 1e-5,
+    arris_ok: bool = True,
+    oracle_ok: bool = True,
+    faces: int = 0,
+) -> tuple[ag.ExecResult, object]:
+    """An arris result and an oracle report of one body, the arris box `box_gap` wider in x."""
+    from arris_gym.fidelity import OracleMeasures, OracleReport, OracleStatus
+    from arris_gym.sandbox import Dialect, Measures, Versions
+
+    sha = "0" * 64
+    box = ((-1.0, -1.0, 0.0), (1.0, 1.0, 2.0))
+    wide = ((-1.0 - box_gap, -1.0, 0.0), (1.0 + box_gap, 1.0, 2.0))
+    measures = Measures(
+        volume=10.0 * (1 + volume_rel),
+        area=30.0,
+        centroid=(0.0, 0.0, 1.0),
+        bounds=wide,
+        faces=6 + faces,
+        shells=1,
+        genus=0,
+        face_kinds=(("plane", 6 + faces),),
+    )
+    result = ag.ExecResult.model_construct(  # no body: only the measures are read
+        status=ag.Status.OK if arris_ok else ag.Status.ARRIS_REFUSAL,
+        message="",
+        refusal=None,
+        body=None,
+        measures=measures if arris_ok else None,
+        violations=(),
+        program_sha256=sha,
+        dialect=Dialect.CQ,
+        versions=Versions(arris="0", numpy="0", arris_gym="0"),
+        seconds=0.0,
+    )
+    report = OracleReport.model_construct(
+        status=OracleStatus.OK if oracle_ok else OracleStatus.INVALID,
+        message="",
+        measures=OracleMeasures(
+            volume=10.0, area=30.0, centroid=(0.0, 0.0, 1.0), bounds=box, faces=6, solids=1
+        )
+        if oracle_ok
+        else None,
+        step_sha256=sha if oracle_ok else None,
+        program_sha256=sha,
+        versions=None,
+    )
+    return result, report
+
+
+def test_a_family_arris_bug_row_is_classed_only_when_the_bounds_fixture_is_its_cause() -> None:
+    """`--arris-bug` keyed by a family classes a row only if its figures show the fixture's
+    cause: both sides `ok`, arris's box loose against the oracle's, and the other figures what
+    the fixture allows. Any other row stays unclassified (the tool names it)."""
+    fixture = "tests/fixtures/regression/cq-cross-hole-bounds"
+    result, report = _bounds_pair()
+    cf.check_bounds_cause(result, report, fixture)  # type: ignore[arg-type]
+    cases = {
+        "box is not loose": _bounds_pair(box_gap=BOUNDS_ABS / 10),
+        "did not end ok": _bounds_pair(arris_ok=False),
+        "did not end ok ": _bounds_pair(oracle_ok=False),
+        "volume": _bounds_pair(volume_rel=1e-2),
+        "faces": _bounds_pair(faces=9),
+    }
+    for why, (bad, other) in cases.items():
+        with pytest.raises(ValueError, match=why.strip()):
+            cf.check_bounds_cause(bad, other, fixture)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="no bounds cause"):
+        cf.check_bounds_cause(result, report, "tests/fixtures/regression/other")  # type: ignore[arg-type]
+
+
+def test_the_chamfered_collar_is_what_arris_builds_and_what_the_family_flag_never_takes(
+    tmp_path: Path,
+) -> None:
+    """`shaft_collar_004924`'s closed form: its parameters, in one cut (CadQuery's three are
+    the same cylinder), meet arris's figures to ADR-0005's constants, and a row with that
+    program's SHA-256 is `occt_wrong` by it whatever a `--arris-bug` family flag says."""
+    import gzip
+
+    from arris_gym.fidelity import FidelityTable, fidelity_table
+
+    sha = next(iter(cf.COLLARS))
+    p = cf.COLLARS[sha]
+    text = (
+        'import cadquery as cq\n\nresult = (\n    cq.Workplane("XY")\n'
+        f"    .cylinder({p['h']}, {p['r']})\n"
+        f'    .faces(">Z").workplane()\n    .hole({p["bore"]})\n'
+        f'    .edges(">Z")\n    .chamfer({p["c"]})\n'
+        '    .cut(\n        cq.Workplane("XY")\n'
+        f"            .transformed(offset=cq.Vector(0.0, 0.0, {p['h'] / 2}), "
+        "rotate=cq.Vector(90.0, 0.0, 0.0))\n"
+        f"            .cylinder(41.83, {p['a']})\n    )\n)\n"
+    )
+    result = ag.run(text, dialect="cq")
+    assert result.program_sha256 != sha  # one cut where the corpus writes three
+    assert _agrees(result, cf.collar_closed_form(sha)) == []
+    table = FidelityTable.model_validate_json(
+        gzip.decompress((C2 / "benchcad" / "fidelity.json.gz").read_bytes())
+    )
+    row = next(e for e in table.entries if e.row.program_sha256 == sha)
+    assert row.name.startswith("shaft_collar_")
+    path = tmp_path / "fidelity.json.gz"
+    path.write_bytes(gzip.compress(fidelity_table([row]).to_json().encode()))
+    flag = {"shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds"}
+    got = cf.verdicts_for(path, {row.name: ""}, {}, flag)
+    assert {k: v["disagreement"] for k, v in got.items()} == {row.name: "occt_wrong"}
+
+
+def test_an_arris_bug_row_is_classed_by_the_overlap_fixture_only_on_its_internal_error() -> None:
+    from arris_gym.fidelity import OracleReport, OracleStatus
+    from arris_gym.sandbox import Dialect, Versions
+
+    fixture = "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
+    refusal = ArrisRefusal(
+        kind="OpInternalError",
+        message="kernel bug: the face arrangement is not a subdivision: a hole of f14 lies",
+        entities=(),
+    )
+
+    def result(refusal: ArrisRefusal | None, status: ag.Status) -> ag.ExecResult:
+        return ag.ExecResult.model_construct(
+            status=status,
+            message="",
+            refusal=refusal,
+            body=None,
+            measures=None,
+            violations=(),
+            program_sha256="0" * 64,
+            dialect=Dialect.CQ,
+            versions=Versions(arris="0", numpy="0", arris_gym="0"),
+            seconds=0.0,
+        )
+
+    def oracle(status: OracleStatus) -> OracleReport:
+        return OracleReport.model_construct(status=status, message="", measures=None)
+
+    cf.check_bug_cause(
+        result(refusal, ag.Status.ARRIS_REFUSAL), oracle(OracleStatus.INVALID), fixture
+    )
+    other = ArrisRefusal(kind="OpDegenerateError", message=refusal.message, entities=())
+    for bad, report in (
+        (result(refusal, ag.Status.ARRIS_REFUSAL), oracle(OracleStatus.OK)),
+        (result(other, ag.Status.ARRIS_REFUSAL), oracle(OracleStatus.INVALID)),
+        (result(None, ag.Status.OK), oracle(OracleStatus.INVALID)),
+    ):
+        with pytest.raises(ValueError, match=r"not invalid|internal error"):
+            cf.check_bug_cause(bad, report, fixture)

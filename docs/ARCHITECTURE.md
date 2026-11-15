@@ -737,8 +737,8 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | programs | 17,900 | 17,900 | 968 | 968 |
 | reach | 9,998 (55.9%) | 1,871 | 104 (10.7%) | 0 |
 | agree (all programs) | 7,413 (41.4%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,701 / 1,457 / 290 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 840 | 0 | 1 | 0 |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,701 / 1,457 / 289 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 841 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 199 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
 | in-subset `cq_bug` | 6 | 717 | 0 | 0 |
@@ -862,16 +862,20 @@ seams a blend passes over and a finer estimate in `faces` took BenchCAD from
 6,565 to 9,998 reached (3,433 programs) and CAD-Recode not at all (it writes
 none of them; ADR-0020). The newly reached: 2,718 agree, 312 more in-subset
 refusals (a blend next to a boolean's edges, a radius at its limit, the arris
-report lists them), 148 more `arris_bug` (126 `clevis_pin` and 21 `shaft_collar`
-cross holes into a chamfered cylinder, arris's box 1e-3 to 5e-3 loose,
-`regression/cq-cross-hole-bounds`; one `spacer_ring`,
-`regression/cq-chamfer-slot-bounds`), and 256 `occt_wrong` by closed form
+report lists them), 147 more `arris_bug` (126 `clevis_pin` and 19 `shaft_collar`
+cross holes into a chamfered cylinder, arris's box 1e-3 to 5e-3 loose, each row
+held to its fixture by `check_bounds_cause`, `regression/cq-cross-hole-bounds`;
+one `shaft_collar` with two rim chamfers wider together than their face, arris's
+own `OpInternalError` against an `invalid` oracle shape,
+`regression/cq-chamfers-overlap-on-a-face`; one `spacer_ring`,
+`regression/cq-chamfer-slot-bounds`), and 257 `occt_wrong` by closed form
 (126 `double_simplex_sprocket` and 82 `sprocket`, where Open CASCADE's chamfer
 of the tooth outline takes less than the mitre, 29 `pan_head_screw`, 16
-chamfered `manifold_block`, 2 slotted `spacer_ring` and 1 `connecting_rod`,
+chamfered `manifold_block`, 2 slotted `spacer_ring`, 1 `connecting_rod` and 1
+`shaft_collar` whose three cuts are one cylinder,
 `tools/cq_closed_forms.py`, arris within the ADR-0005 constants). In-subset
-`cq_bug` goes 7 to 6, `occt_wrong` to 840, in-subset refusals to 1,449, unclassified
-(all outside the subset) to 199, the table digest `8daf4d7c…bbac`; the oracle
+`cq_bug` goes 7 to 6 (`connecting_rod_000131_s20260507` runs since the finer estimate of step 7b), `occt_wrong` to 841, in-subset refusals to 1,449, unclassified
+(all outside the subset) to 199, the table digest `6a6f857c…6414`; the oracle
 rows are the committed bytes. The 31 oracle timeouts stay.
 
 **Six in-subset `cq_bug` rows stay**, all `connecting_rod`

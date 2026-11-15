@@ -12789,10 +12789,29 @@
   }
  },
  "shaft_collar_004924_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "occt_wrong",
   "evidence": {
-   "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+   "area": 4331.645177501169,
+   "bounds": [
+    [
+     -18.915,
+     -18.915,
+     -8.275
+    ],
+    [
+     18.915,
+     18.915,
+     8.275
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    -0.31642799130810223
+   ],
+   "kind": "closed_form",
+   "note": "a collar bored through, both top rims chamfered, a cross cylinder along y through the top plane cutting a tunnel in each wall (the program's three cuts are one: the plane's z turn leaves the cylinder's axis where it was); volume, z moment and areas are one- and two-dimensional integrals over the tunnel's cross-section (tools/cq_closed_forms.py, collar_measures): {'h': 16.55, 'r': 18.915, 'bore': 23.64, 'c': 2.13, 'a': 1.18}",
+   "volume": 10883.059192170676
   }
  },
  "shaft_collar_005222_s20260505": {
@@ -12883,7 +12902,7 @@
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
   }
  },
  "shaft_collar_017310_s20260505": {

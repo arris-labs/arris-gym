@@ -1,6 +1,6 @@
 # arris report
 
-Over 17900 programs: 1457 arris refusals, 290 arris bugs.
+Over 17900 programs: 1457 arris refusals, 289 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
@@ -390,7 +390,6 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "shaft_collar_004211_s20260505" ` (e9bb5462cfde8560583ea701d365c9df2927e3ecc9b9a7449485ee8119d29500): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_004399_s20260505" ` (37d28b9220fbbdd7be73b45c3504546c803aa94e356c5bf900f5d0107676cb3a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_004549_s20260505" ` (0881e244292508082a30f497e504bc621e5b1697d2a3ab5b07808d10cd6e5cce): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
-- ` "shaft_collar_004924_s20260505" ` (eb1b3b2ba69e9d1f5000933ee659038b7faba3e5dbd1ef01fac0ff10925f6119): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_005222_s20260505" ` (2de38a513698d060fdb8c5f028118c2851aa06171f2468e61789a16b8de26ef1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_005240_s20260505" ` (d5a9ff05f83d9e34c5f9e8a4f4910d1268868cbd9b8bc616b1a7104243406322): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_005870_s20260505" ` (1ad9907feacbed6942929ed4d3f441c121f9e95bc8012add0964a9e0da233a63): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
@@ -403,7 +402,7 @@ arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "shaft_collar_013475_s20260505" ` (d9a75c0052270faba75da7a2e761d0fe1b1a7d70e58a85b8147cccbc2ba6cf44): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_013634_s20260505" ` (a9bdc9e29c0424b6caf0afa0b0a0ef5465e50740c9b1f7ebcb0965fe73995bef): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_014211_s20260505" ` (d48e57e0a68c3271760ee4f2fc914de78e49303debcf0c3972c57bac8809bb3e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
-- ` "shaft_collar_016155_s20260505" ` (458ba061b5e3f1c47be5cf92cd594b15741320e7a2e3141e1fa01e1c248b8e77): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_016155_s20260505" ` (458ba061b5e3f1c47be5cf92cd594b15741320e7a2e3141e1fa01e1c248b8e77): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-chamfers-overlap-on-a-face" `
 - ` "shaft_collar_017310_s20260505" ` (846c82692ecfa40ae6b6bfba75a60d8cf9f5246ee27ae8f09e67531d07145bb2): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_017335_s20260505" ` (1be979cbcdd097953f3fba37a9764f6d202a15dceab56ffe6f5ae7f62cff4c15): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_017997_s20260505" ` (8d490a591ea6f317ae58b5b3fdc1f41c271ea7de045a70ea11ac751a4a017f6e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `

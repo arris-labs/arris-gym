@@ -16,8 +16,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   `'>Z or <Z'`, `fillet(radius)` and `chamfer(length)`: the edges on the stack, or
   every edge of the stacked faces or solid, rounded or bevelled in one call. An edge is ranked by its
   centre of mass, as in CadQuery; a seam (a cylinder's, a hole's) is passed over
-  by a blend. A chain with no solid, a stack with no edge and a stack of seams
-  alone end `runtime`, as in CadQuery; a radius or length of zero, a negative one or one
+  by a blend. `fillet` and `chamfer` on a chain with no solid, a stack with no
+  edge and a stack of seams alone end `runtime`, as in CadQuery; `edges(selector)`
+  on an empty stack does too, but `edges()` with no selector on an empty stack
+  or on a stack that holds no solid ends `unsupported_api` (CadQuery gives an
+  empty workplane for the empty stack); a radius or length of zero, a negative one or one
   past what the edge's faces allow ends `arris_refusal` where CadQuery raises.
   A selection whose answer is the kernel's own choice (an edge's place on a
   face about another axis, a B-spline edge) ends `unsupported_api`. `faces`
