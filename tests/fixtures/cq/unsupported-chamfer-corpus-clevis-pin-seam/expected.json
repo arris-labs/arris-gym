@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "unsupported_api",
+  "message": "Workplane.edges('>Z'): the selection depends on an edge's place, which arris does not decide as CadQuery's kernel does"
+}

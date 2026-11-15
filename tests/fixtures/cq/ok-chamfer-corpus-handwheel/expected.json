@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 110528.30703559706,
+    "area": 30850.603024082986,
+    "centroid": [
+      20.139985391990578,
+      7.342126960043548,
+      8.684840258953151e-16
+    ],
+    "bounds": [
+      [
+        -13.04,
+        -58.21,
+        -58.21
+      ],
+      [
+        85.67999999999999,
+        60.825,
+        58.21
+      ]
+    ],
+    "faces": 28,
+    "face_kinds": [
+      [
+        "cone",
+        1
+      ],
+      [
+        "cylinder",
+        6
+      ],
+      [
+        "plane",
+        21
+      ]
+    ],
+    "shells": 1,
+    "genus": 4
+  },
+  "note": "BenchCAD's `handwheel_000006_s20260506` as written: a hub, a rim and three spokes, the outer rim of the +x end chamfered 3.2"
+}

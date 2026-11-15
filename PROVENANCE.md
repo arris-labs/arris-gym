@@ -200,11 +200,13 @@ none of their code is carried over, and the module cites each step.
   refusals (no pending wire, zero depth, no solid). Confirmed on the oracle by
   `tests/fixtures/arrays/` and `tests/fixtures/cq/ok-rarray-*`,
   `ok-polar-array-*` and `ok-cut-blind-*`; ADR-0019.
-- `Workplane.edges`, `Workplane.fillet`, `ParallelDirSelector` and `SumSelector`
+- `Workplane.edges`, `Workplane.fillet`, `Workplane.chamfer`, `ParallelDirSelector` and `SumSelector`
   (`cadquery/cq.py`, `selectors.py`, `occ_impl/shapes.py`: `_collectProperty`,
-  `findSolid`, `DirectionMinMaxSelector`, `Mixin1D.Center`, `Mixin3D.fillet`):
+  `findSolid`, `DirectionMinMaxSelector`, `Mixin1D.Center`, `Mixin3D.fillet`,
+  `Mixin3D.chamfer`):
   the candidates (each edge once, in the order first found, degenerate edges left
   out), an edge's centre of mass as its key, the parallel line test, the union
   of an `or`, the solid and edges a blend takes and each refusal's words.
   Confirmed on the oracle by `tests/fixtures/edges/` and `tests/fixtures/cq/ok-fillet-*`,
-  `runtime-fillet-*` and `arris-refusal-fillet-*`; ADR-0020.
+  `runtime-fillet-*`, `arris-refusal-fillet-*` and the `chamfer` fixtures
+  (`ok-chamfer-*`, `runtime-chamfer-*`, `arris-refusal-chamfer-*`); ADR-0020.

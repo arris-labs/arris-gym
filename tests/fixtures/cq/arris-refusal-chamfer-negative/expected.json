@@ -1,0 +1,12 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "message": "degenerate result: distance must be positive, not -1 (+b0)",
+  "refusal": {
+    "kind": "OpDegenerateError",
+    "message": "degenerate result: distance must be positive, not -1 (+b0)",
+    "entities": [
+      "Body(model=0, index=0, generation=0)"
+    ]
+  }
+}

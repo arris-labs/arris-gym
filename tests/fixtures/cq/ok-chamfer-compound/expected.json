@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 14.0,
+    "area": 41.31370849898476,
+    "centroid": [
+      2.5,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      [
+        6.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "faces": 20,
+    "face_kinds": [
+      [
+        "plane",
+        20
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "two cubes that do not meet, a compound: each one's vertical edges, in one blend"
+}

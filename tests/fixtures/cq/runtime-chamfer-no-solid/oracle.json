@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Cannot find a solid on the stack or in the parent chain",
+  "program_sha256": "555911fbca10f30cba7403da6d33931eeeaa46f98e4dcccb4afa032d891296b6",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 140.22050278651685,
+    "area": 223.3188885583376,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.033521856716146256
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -1.0
+      ],
+      [
+        5.0,
+        4.0,
+        1.0
+      ]
+    ],
+    "faces": 12,
+    "face_kinds": [
+      [
+        "cone",
+        1
+      ],
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        10
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "a plate's top face with its hole: the four edges and the hole's rim, bevelled by 0.5"
+}

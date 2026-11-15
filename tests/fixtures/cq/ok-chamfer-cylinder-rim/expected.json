@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48.82558582454137,
+    "area": 71.39229637697045,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.05395442359249329
+    ],
+    "bounds": [
+      [
+        -2.0,
+        -2.0,
+        -2.0
+      ],
+      [
+        2.0,
+        2.0,
+        2.0
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cone",
+        1
+      ],
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "the top rim of a cylinder of radius 2 bevelled by 0.5: a cone, by Pappus"
+}

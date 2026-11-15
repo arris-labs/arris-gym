@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 312.0,
+    "area": 290.62741699796953,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "plane",
+        10
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "the four vertical edges bevelled by 1: the triangle swept 4 long"
+}

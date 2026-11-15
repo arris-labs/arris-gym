@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 38.877209088173686,
+    "area": 90.678807927483,
+    "centroid": [
+      0.0,
+      0.0,
+      0.9242424242424243
+    ],
+    "bounds": [
+      [
+        -3.0,
+        -3.0,
+        0.0
+      ],
+      [
+        3.0,
+        3.0,
+        2.0
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "cone",
+        2
+      ],
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "note": "a tube's two top rims, outer and inner, bevelled by 0.5"
+}

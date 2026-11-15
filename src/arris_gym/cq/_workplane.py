@@ -636,6 +636,28 @@ class Workplane:
             lambda solid, edges, value: solid.fillet(edges, value),
         )
 
+    @census_form("Workplane.chamfer", [("num",)])
+    def chamfer(self, length: float) -> Workplane:
+        """The chain's solid with the stack's edges bevelled by `length`, in one call (ADR-0020).
+
+        The edges, the seams passed over and the refusals are `fillet`'s (ADR-0020
+        rule 5): a chain with no solid, a stack with no edge and a stack of seams
+        alone are CadQuery's `ValueError` (`runtime`); `length` goes to arris as
+        written, so zero, a negative and one past what the edge's faces allow are
+        `arris_refusal`, where CadQuery raises `StdFail_NotDone`; both fail.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(10, 8, 4).edges("|Z").chamfer(1)
+        >>> round(wp._solids()[0].measure().volume, 6)
+        312.0
+        """
+        return self._blended(
+            "Workplane.chamfer",
+            length,
+            "Chamfer requires that edges be selected",
+            lambda solid, edges, value: solid.chamfer(edges, value),
+        )
+
     @census_form("Workplane.pushPoints", [("list",)])
     def pushPoints(self, pntList: Sequence[object]) -> Workplane:
         """A stack of the points of `pntList`, in this workplane's local coordinates.

@@ -1,0 +1,12 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "message": "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e1)",
+  "refusal": {
+    "kind": "OpDegenerateError",
+    "message": "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e1)",
+    "entities": [
+      "+e1"
+    ]
+  }
+}

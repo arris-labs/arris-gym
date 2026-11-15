@@ -45,7 +45,8 @@ def c1_subset() -> cq.Subset:
     plans/lift-holes-and-points' forms: `Workplane.pushPoints`, `Workplane.cboreHole`,
     `Workplane.cskHole`; plans/lift-arrays-and-blind-cuts' forms:
     `Workplane.rarray`, `Workplane.polarArray`, `Workplane.cutBlind`;
-    plans/lift-edges-and-blends' forms: `Workplane.edges`, `Workplane.fillet`.
+    plans/lift-edges-and-blends' forms: `Workplane.edges`, `Workplane.fillet`,
+    `Workplane.chamfer`.
 
     A frozen record, never widened to admit a lifted form: `reach.json` is the
     C1 curve and `test_committed_benchcad_curve_repeats_offline` holds it.
@@ -73,6 +74,7 @@ def c1_subset() -> cq.Subset:
                 "Workplane.cutBlind",
                 "Workplane.edges",
                 "Workplane.fillet",
+                "Workplane.chamfer",
                 "Workplane.workplane",
                 "Workplane.cylinder",
                 "Workplane.threePointArc",
@@ -89,7 +91,7 @@ def c2_baseline_subset() -> cq.Subset:
     """`cq.subset()` less the declarations of plans/lift-edges-and-blends.
 
     The committed C2 reports (`tests/fixtures/c2/`) were measured before `Workplane.edges`
-    and `Workplane.fillet` (and `chamfer`, once step 5 lands) and the selectors `|X |Y |Z` and
+    `Workplane.fillet` and `Workplane.chamfer` and the selectors `|X |Y |Z` and
     `'>Z or <Z'`; that plan's step 8 re-runs them and this goes back to `cq.subset()` (and is
     deleted).
     """

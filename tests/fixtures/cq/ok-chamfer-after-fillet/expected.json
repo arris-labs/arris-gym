@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 302.32558582454135,
+    "area": 273.5344320007014,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.023873896261136018
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "faces": 18,
+    "face_kinds": [
+      [
+        "cone",
+        4
+      ],
+      [
+        "cylinder",
+        4
+      ],
+      [
+        "plane",
+        10
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "a chamfer along the edges a fillet made (a rounded box's top)"
+}

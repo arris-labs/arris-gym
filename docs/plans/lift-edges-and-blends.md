@@ -118,7 +118,7 @@ within a given design; **[3]** unproven semantics, established here.
   centroid, `runtime-` and `arris-refusal-` for the refused values, one
   `handwheel` as written; `hypothesis`: a box with its four `|Z` edges filleted
   at a random radius, `V − (4 − π) r² h`.
-- [ ] Step 5 **[2]** — `chamfer(num)`: `cq/ok-chamfer-*` (a box's top edges, a
+- [x] Step 5 **[2]** — `chamfer(num)`: `cq/ok-chamfer-*` (a box's top edges, a
   cylinder rim, a hole's rim), refused values, one `clevis_pin` and one
   `dowel_pin` as written; `hypothesis`: a cylinder's rim chamfered by `d`,
   `V − π d²(r − d/3)`.
@@ -185,6 +185,16 @@ within a given design; **[3]** unproven semantics, established here.
   `chamfer` and none `fillet`. Step 4's corpus program is `washer_000042_s20260505`
   (`.edges(">X").fillet(0.25)` on a bored ring, a row of the committed census), and
   `handwheel` goes to step 5 with `chamfer`.
+- *Settled* (step 5): `Workplane.chamfer` is `fillet`'s `_blended` with `Solid.chamfer` and
+  CadQuery's "Chamfer requires that edges be selected". The corpus programs as written: the
+  `clevis_pin` is `clevis_pin_000171_s20260505` (a pin along y), `unsupported-` at its seam
+  (ADR-0020 rule 2: 234 of the 355 pin programs write a plane other than `XY` and meet it);
+  the `dowel_pin` is `dowel_pin_000027_s20260505` (`XY`, closed form); the `handwheel` is
+  `handwheel_000006_s20260506`, whose measures are the oracle's (no closed form is at hand).
+  `clevis_pin_000420_s20260505` (a cross hole cut after the chamfer) is not a fixture: arris's
+  volume equals the closed form (a quadrature of the two cylinders, 42415.8528408) and the
+  oracle's is 1.3e-5 off, so `compare` leaves the row unclassified; step 6 or 7 classes it
+  (Open CASCADE wrong, by closed form).
 - ⚠ OPEN (agent, by step 7): the share of the 3,433 arris refuses (a blend
   next to a boolean's edges, a radius at its limit). Refusals are
   `arris_refusal` rows and lower agreement, not reach; if they dominate a

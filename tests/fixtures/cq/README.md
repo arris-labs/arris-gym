@@ -554,3 +554,18 @@ committed census, both rims of a ring rounded. `runtime-fillet-*` are CadQuery's
 (no solid, no edge, a stack of seams alone) and `arris-refusal-fillet-*` the values Open CASCADE
 refuses with `StdFail_NotDone` (zero, negative, past the faces) and arris with its own words:
 both fail, a row that agrees.
+
+`ok-chamfer-*` of plans/lift-edges-and-blends step 5 (`tests/test_cq_chamfer.py`), each beside the
+oracle's recorded report and held to the closed form of how it is built (a triangle swept
+along each run of edges, mitred at a box's corners, by Pappus; `test_edge_probe.PARTS`): a box's
+top and vertical edges, a cylinder's rim, both rims (`'>Z or <Z'`) and `edges()` (the seam
+passed over), a plate's top with its hole, a tube's two rims, two cubes that do not meet (a
+compound) and a chamfer along the edges a fillet made. `ok-chamfer-corpus-dowel-pin` is
+`dowel_pin_000027_s20260505` as written, by closed form; `ok-chamfer-corpus-handwheel` is
+`handwheel_000006_s20260506` as written, its volume, area, centroid and bounds the oracle's
+recorded report (no closed form is at hand; its face kinds, shells and genus are `cq`'s, the face count held
+to the report's), and `cq` agrees with that report. `unsupported-chamfer-corpus-clevis-pin-seam` is
+`clevis_pin_000171_s20260505` (a pin along y): `'>Z or <Z'` ranks the seam with the rims, and
+the kernels place it differently (ADR-0020 rule 2). `runtime-chamfer-*` are CadQuery's refusals
+and `arris-refusal-chamfer-*` the lengths Open CASCADE refuses with `StdFail_NotDone` and arris
+with its own words: both fail, a row that agrees.

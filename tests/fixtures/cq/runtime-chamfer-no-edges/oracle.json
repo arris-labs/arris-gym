@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Chamfer requires that edges be selected",
+  "program_sha256": "a223d9cba7b5277de59aae32ca50aab9da9ee2bbc593a887d2d51a580e73b12b",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

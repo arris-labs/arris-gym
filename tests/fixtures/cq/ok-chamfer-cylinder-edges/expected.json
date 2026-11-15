@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 47.38568919164605,
+    "area": 67.38636906778586,
+    "centroid": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": [
+      [
+        -2.0,
+        -2.0,
+        -2.0
+      ],
+      [
+        2.0,
+        2.0,
+        2.0
+      ]
+    ],
+    "faces": 5,
+    "face_kinds": [
+      [
+        "cone",
+        2
+      ],
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "every edge of the cylinder: the seam is passed over, as Open CASCADE does"
+}

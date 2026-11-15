@@ -1,0 +1,43 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 100.70124771899813,
+    "area": 190.3337873496362,
+    "centroid": [
+      0.0,
+      0.0,
+      -0.03458648107943736
+    ],
+    "bounds": [
+      [
+        -1.105,
+        -1.105,
+        -13.25
+      ],
+      [
+        1.105,
+        1.105,
+        13.25
+      ]
+    ],
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cone",
+        2
+      ],
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        3
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "BenchCAD's `dowel_pin_000027_s20260505` as written: a pin of radius 1.105 and length 26.5, both rims chamfered 0.33, a blind hole of radius 0.33 and depth 0.792 in its top"
+}
