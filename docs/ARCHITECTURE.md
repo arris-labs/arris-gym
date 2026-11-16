@@ -947,7 +947,7 @@ depends on the main environment alone, never on CadQuery (ADR-0011).
   timeouts; `mean_reward` 0.4836 over 300, 0.9753 over the 200 valid;
   invalidity 1/3. The IoU is 1.0 on all 200 valid rows, exact on 100 and
   sampled on the 100 `phone_stand` rows, whose exact route the kernel refuses
-  (`BACKLOG.md`, Findings). Digest `8621e0cc…` (arris 0.11.1); under 0.10.0 `f89bce24…`, equal on two architectures.
+  (`BACKLOG.md`, Findings). Digest `8621e0cc…` (arris 0.11.1; under 0.10.0 `f89bce24…`), equal on two architectures.
 - `tools/rescore_diff.py A B` names the rows two tables differ at and the first
   stage each differs at.
 

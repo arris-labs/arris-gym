@@ -111,6 +111,11 @@ Under arris 0.10.0 the digest was
 0.11.1 table differs from it in each row's `versions.arris` alone, every
 status, measure, IoU route and reward bit-equal (ADR-0021: the reward's
 version stays 1).
+Across machines on arris 0.11.1 (CI run 43946448566 on commit 4f3431f, both
+`rescore` jobs green): the digest
+`8621e0ccf239cfb4b0322c9fc75681d760308dcbc0dfeb972be563c7ae88d0cd` was equal
+on `ubuntu-latest` (x86-64) and `ubuntu-24.04-arm` (aarch64), as on the
+development machine.
 
 Across machines under arris 0.10.0 (CI run 42709431327 on commit 9d25b86, all 4 jobs green): the
 digest `f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812` was

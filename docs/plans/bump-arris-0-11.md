@@ -99,7 +99,7 @@ background.
   byte-identical. `tools/rescore_diff.py` against the committed table shows
   `versions` on every row and nothing else, or names each row that moved and
   its 0.11.1 cause. Commit the new digest in `c1/README.md`.
-- [ ] Step 6 **[1, CI]**: push `plan/bump-arris-0-11` (the human does this). CI's
+- [x] Step 6 **[1, CI]**: push `plan/bump-arris-0-11` (the human does this). CI's
   `rescore` job is green on `ubuntu-latest` and `ubuntu-24.04-arm`, both
   digests equal to the committed one. Record the run id in `c1/README.md`.
 - [x] Step 7 **[2, conductor-run]**: C2's tables. Run `tools/cq_corpus.py`
