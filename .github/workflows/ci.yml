@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    # plan/** so a plan's [CI] step runs on its own branch (.agents/rules/git.md).
+    branches: [main, "plan/**"]
     tags: ["v*"]
   pull_request:
 
