@@ -730,7 +730,7 @@ SHA-256 and oracle versions it holds, so a change to `cq` alone re-runs `cq`
 alone and keeps the oracle's committed draw. On the slice with
 C1's verdicts it gives C1's figures: reach 300/300, 200 agree, 100 `arris_bug`.
 
-**The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset, arris 0.10.0,
+**The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset, arris 0.11.1,
 each figure over all programs; BenchCAD with C1's verdicts and its own), beside
 the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 
@@ -878,7 +878,9 @@ chamfered `manifold_block`, 2 slotted `spacer_ring`, 1 `connecting_rod` and 1
 `tools/cq_closed_forms.py`, arris within the ADR-0005 constants). In-subset
 `cq_bug` goes 7 to 6 (`connecting_rod_000131_s20260507` runs since the finer estimate of step 7b), `occt_wrong` to 841, in-subset refusals to 1,449, unclassified
 (all outside the subset) to 199, the table digest `6a6f857c…6414`; the oracle
-rows are the committed bytes. The 31 oracle timeouts stay.
+rows are the committed bytes. The 31 oracle timeouts stay. On arris 0.11.1
+(plans/bump-arris-0-11) both tables differ in `versions.arris` alone:
+BenchCAD `5f33dade…0584`, CAD-Recode `e2bf586c…7308`.
 
 **Six in-subset `cq_bug` rows stay**, all `connecting_rod`
 (ADR-0014's amendment of 2026-11-14 named seven; one now runs and is

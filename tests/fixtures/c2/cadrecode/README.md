@@ -30,7 +30,7 @@ the library's code licence does not replace it.
 ## The table
 
 `fidelity.json.gz` is the `FidelityTable` of all 968 programs under `cq` (arris
-0.10.0) against the oracle (CadQuery 2.3.0,
+0.11.1) against the oracle (CadQuery 2.3.0,
 `cadquery-ocp` 7.9.3.0), with its one verdict (`verdicts.json`); `oracle.jsonl.gz` the oracle's rows
 (STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
 report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
@@ -52,7 +52,7 @@ compound result (ADR-0016) were lifted).
   `in_subset_cq_bug` 0, `in_subset_by_design` 0. The one disagreement is stem `550`
   (two crossing cylinders), `occt_wrong` by its closed form (Verdicts, below).
 
-Table digest: `24c2f92a7cee01073348e62949c92f0a1caecc795a13bf288c1b4a38ea923448`. Oracle rows SHA-256 (uncompressed): `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
+Table digest: `e2bf586c6f8970875a98f631d1d2bb645ac69bbaf0f02532f61f8c8932107308` (arris 0.11.1, plans/bump-arris-0-11 step 7: every row differs from 0.10.0's table, digest `24c2f92a7cee01073348e62949c92f0a1caecc795a13bf288c1b4a38ea923448`, in `versions.arris` alone; the reach report is byte-equal). Oracle rows SHA-256 (uncompressed): `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
 
 Every agreement is two `ok` builds: the oracle builds all 968 programs, and the 864
 `cq_bug` rows are `unsupported_api` on forms outside the subset (`sketch()` and its

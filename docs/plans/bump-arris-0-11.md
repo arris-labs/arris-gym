@@ -102,7 +102,7 @@ background.
 - [ ] Step 6 **[1, CI]**: push `plan/bump-arris-0-11` (the human does this). CI's
   `rescore` job is green on `ubuntu-latest` and `ubuntu-24.04-arm`, both
   digests equal to the committed one. Record the run id in `c1/README.md`.
-- [ ] Step 7 **[2, conductor-run]**: C2's tables. Run `tools/cq_corpus.py`
+- [x] Step 7 **[2, conductor-run]**: C2's tables. Run `tools/cq_corpus.py`
   for BenchCAD, then for CAD-Recode, each with `--oracle-rows`, so the
   oracle's committed draw is kept and only `cq` re-runs. Their READMEs,
   `docs/ARCHITECTURE.md`'s C2 table and the counts in

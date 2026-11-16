@@ -3,7 +3,7 @@
 Over 17900 programs: 1457 arris refusals, 289 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
-arris ` "0.10.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
+arris ` "0.11.1" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 

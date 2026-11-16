@@ -24,7 +24,7 @@ and shared under its [CC-BY-4.0 licence](https://creativecommons.org/licenses/by
 ## The table
 
 `fidelity.json.gz` is the `FidelityTable` of all 17,900 programs under `cq` (arris
-0.10.0) against the oracle (CadQuery 2.3.0,
+0.11.1) against the oracle (CadQuery 2.3.0,
 `cadquery-ocp` 7.9.3.0), with C1's verdicts (`tests/fixtures/c1/verdicts.json`:
 the 100 `lobed_knob` rows `arris_bug`) and its own (`verdicts.json`, below); `oracle.jsonl.gz` the oracle's rows
 (STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
@@ -55,7 +55,7 @@ step 10, after the `YZ`, `XZ`, `ZX`, `origin=`, `workplane(offset=…)`, `circle
   the `faces(sel).workplane().hole(d)` programs), 24 `shaft_collar` and 126 `clevis_pin` cross holes (both `regression/cq-cross-hole-bounds`, each row held to it by `check_bounds_cause`: `ok` on both sides, arris's box 1.4e-4 to 5e-3 past the oracle's; the `clevis_pin` rows are chamfered cylinders), 1 `shaft_collar` (`shaft_collar_016155`, arris's own `OpInternalError` on two rim chamfers wider together than their face, the oracle's shape `invalid`: `regression/cq-chamfers-overlap-on-a-face`) and 1 `spacer_ring` (`regression/cq-chamfer-slot-bounds`); the 841 `occt_wrong` are 202 `u_bolt`, 184 `j_hook`, 141 `t_pipe_fitting`, 126 `double_simplex_sprocket`, 82 `sprocket`, 33 `manifold_block`, 29 `pan_head_screw`, 25 `bellows`, 16 `connecting_rod`, 2 `spacer_ring` and 1 `shaft_collar`, each by a closed form (this re-run's 257 are the sprockets, the screws, 16 chamfered `manifold_block`, 1 `connecting_rod`, 2 slotted `spacer_ring` and `shaft_collar_004924`, whose three cuts are one cylinder and which Open CASCADE builds 3.5e-7 off in volume, plans/lift-edges-and-blends steps 7c and 7d). The 199
   unclassified rows are all outside the subset. The 1,449 in-subset refusals are 312 more than the previous re-run's 1,137: the blends next to a boolean's edges and the revolves across their axis, as the arris report lists them (`ball_knob` 231, `hinge` 220, `pull_handle` 176, `cotter_pin` 159, `dome_cap` 159, `rivet` 122).
 
-Table digest: `6a6f857c4d42a2e5994e9296db3d8388023576f1f148e69f2f66b165d1856414`. Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, unchanged, the baseline's: this re-run's oracle rows (all 17,900) are byte-equal to the committed file.
+Table digest: `5f33dadef00e40c581d9e9adc20e9b62730bb698b6ee698311c05ab7ee2b0584` (arris 0.11.1, plans/bump-arris-0-11 step 7: every row differs from 0.10.0's table, digest `6a6f857c4d42a2e5994e9296db3d8388023576f1f148e69f2f66b165d1856414`, in `versions.arris` alone; the reach report is byte-equal, and the 31 oracle timeouts ran again and timed out again). Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, unchanged, the baseline's: this re-run's oracle rows (all 17,900) are byte-equal to the committed file.
 
 The table before the repair of step 7c (a family-keyed `--arris-bug` had classed rows with no cause check; 290 `arris_bug`, 840 `occt_wrong`) had digest `8daf4d7c0be6dca9d1995c161563078213bd21257ece15a727817715329bbbac`.
 
