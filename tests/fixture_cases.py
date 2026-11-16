@@ -23,8 +23,14 @@ ROOT = pathlib.Path(__file__).resolve().parent / "fixtures"
 # regression fixture instead.
 DEFAULT_TOLERANCE = 1e-6
 # The deadline, in seconds, a fixture expected to end in `timeout` runs to;
-# its expected message names it. Every other fixture runs to `run`'s default.
+# its expected message names it.
 TIMEOUT_DEADLINE = 1.0
+# The deadline every other fixture runs to: wide of the slowest fixture on
+# the slowest runner, so a fixture's status never turns on the machine's
+# speed (gym.md: wall-clock time reaches a status). `run`'s default, 5 s, is
+# too near: `cq/ok-sprocket-corpus-along-x` takes 4.55 s on the development
+# machine and timed out on CI's ARM runner (docs/BACKLOG.md, Findings).
+FIXTURE_DEADLINE = 60.0
 # The key a fixture declares in place of `message` when the same program's
 # message differs by machine: `platform.machine()` -> message. Its fixture
 # directory holds a README.md saying why (tools/check-fixtures.sh).
@@ -145,11 +151,11 @@ def for_machine(expected: dict[str, object], where: str, machine: str) -> dict[s
 
 def run(case: Case) -> ExecResult:
     """Run a fixture's program alone in its expected dialect, a `timeout`
-    fixture to `TIMEOUT_DEADLINE`."""
+    fixture to `TIMEOUT_DEADLINE` and every other to `FIXTURE_DEADLINE`."""
     dialect = str(case.expected["dialect"])
     if case.expected["status"] == Status.TIMEOUT.value:
         return arris_gym.run(case.program, dialect=dialect, timeout=TIMEOUT_DEADLINE)
-    return arris_gym.run(case.program, dialect=dialect)
+    return arris_gym.run(case.program, dialect=dialect, timeout=FIXTURE_DEADLINE)
 
 
 def close(actual: float, expected: float, tolerance: float = DEFAULT_TOLERANCE) -> bool:

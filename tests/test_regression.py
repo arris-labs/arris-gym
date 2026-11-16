@@ -38,7 +38,10 @@ def test_a_regression_fixture_ends_as_expected_every_run(case: fixture_cases.Cas
     programs = [f"{case.program}\n# {i}\n" for i in range(REPEATS)]
     dialect = str(case.expected["dialect"])
     with ag.Sandbox() as sandbox:
-        results = [sandbox.run(program, dialect=dialect) for program in programs]
+        results = [
+            sandbox.run(program, dialect=dialect, timeout=fixture_cases.FIXTURE_DEADLINE)
+            for program in programs
+        ]
         assert sandbox.executions == REPEATS
     for i, result in enumerate(results):
         assert fixture_cases.check(result, case.expected) == [], (case.slug, i, result.message)

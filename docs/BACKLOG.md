@@ -177,7 +177,7 @@ A defect a run measured, one block each:
 - Seen: CI run 43722758106, job `test (ubuntu-24.04-arm)`, commit 6520054 (main), 2026-11-15; `test (ubuntu-latest)` green in the same run
 - Reproduce: `uv run pytest tests/test_cq.py -k ok-sprocket-corpus-along-x` on a slow or loaded machine
 - Measured: 4.55 s to `ok` alone on the development machine (AMD Ryzen 9 7950X, idle, arris 0.11.1), 91% of the deadline; on the ARM runner under the parallel gate, past 5 s
-- State: measured; give the fixture an explicit deadline in `expected.json` (read by `fixture_cases.run`), or move it to a slower lane
+- State: fixed: every fixture not expected to time out runs to `FIXTURE_DEADLINE` = 60 s (`tests/fixture_cases.py`, `tests/test_regression.py`), not `run`'s 5 s default
 
 ## Rejected
 
