@@ -52,13 +52,17 @@ and `arris-report.md` taken from it. Written by
 `uv run --extra corpus tools/cq_slice.py` (the corpus from the Hugging Face
 cache or the network; outside the gate; about 2 s on 32 cores, the sandbox's
 defaults of 30 s and 512 MiB). Digests: table
-`0c4ae42ed1307b69e8afd58f303959d30f1df2c981efb2a4e1862fa498af8733`;
+`b282d691220e98af5c6478364b4e0b8319058f7affc54ab553ec47c89a9dc7f6`;
 the 300 oracle reports' digests (`OracleReport.digest()`, one per line, in stem
 order) `e8879b59d640b3948f0e69abbd4b228414587466cc2dac2c2e2425edfc5065bc`;
 `arris-report.json` SHA-256
-`1b7d0494fcb3b4262bf942337ea219e8024468adc1314d55d417f944b6eeddee`, `arris-report.md`
-`bb1ed67341600b7a4350460a1e233471de086961617ece5abc531ce1bfbf211a`
-(two runs equal, at 2 and 32 workers).
+`7697e6d7960eb95d655b2094b256cc91033150e3d69d9fdff7216bd7a2a6caf7`, `arris-report.md`
+`24ce0d337cdcddd7d38efd3fdcbc1cc6efedb3683d266f8945e8cf7c3e2c2695`
+(arris 0.11.1, plans/bump-arris-0-11 step 4; two runs equal). Under arris
+0.10.0 the table's digest was
+`0c4ae42ed1307b69e8afd58f303959d30f1df2c981efb2a4e1862fa498af8733`: the
+rows differ in their recorded versions alone, every status, measure and class
+equal.
 
 `verdicts.json` (stem → verdict, ADR-0006) classes the 100 `lobed_knob` rows
 `arris_bug`, its evidence the regression fixture

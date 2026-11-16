@@ -89,7 +89,7 @@ background.
   failure is checked verbatim against 0.11.1. Its reason then says "arris
   0.11.1" (29 `expected.json`; READMEs keep their history and gain one line).
   Also fix `reward/cone-shifted`'s note.
-- [ ] Step 4 **[1]**: C1's fidelity table. Run `uv run --extra corpus
+- [x] Step 4 **[1]**: C1's fidelity table. Run `uv run --extra corpus
   tools/cq_slice.py` (about 2 s). It writes `c1/fidelity.json` and the arris
   report; the `fidelity/arris-report-expected.*` fixtures are regenerated if
   their version moved. Expect 200 agree and 100 `arris_bug`, or every change
