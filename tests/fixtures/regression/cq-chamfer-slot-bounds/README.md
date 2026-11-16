@@ -10,3 +10,5 @@ Two kernels agree on every measure but the box, both held to the closed form of 
 So the row's class is `arris_bug` (`check_bounds_cause` holds the row to this: both sides `ok`, the box past the oracle's by more than 1e-6, volume and area equal to 1e-9): `spacer_ring_008375_s20260505`, in `tests/fixtures/c2/benchcad/verdicts.json` once the table is re-run, by this fixture. Reported to arris in `../arris/docs/ideas/tight-body-bounds.md`.
 
 Desired: `ok`, the closed form, bounds included. Marked strict `xfail` until an arris release boxes a body to its extent where a NURBS edge reaches it.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

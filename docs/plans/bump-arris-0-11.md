@@ -84,7 +84,7 @@ background.
 - [x] Step 2 **[2]**: ADR-0021, "an arris bump moves `versions.arris`, not
   the reward's version". Add its clause to `docs/ARCHITECTURE.md` §Reward and
   to gym.md.
-- [ ] Step 3 **[1]**: the regression fixtures that still fail. Each fixture
+- [x] Step 3 **[1]**: the regression fixtures that still fail. Each fixture
   whose `xfail` or README names arris 0.10.0 and still fails is run, and its
   failure is checked verbatim against 0.11.1. Its reason then says "arris
   0.11.1" (29 `expected.json`; READMEs keep their history and gain one line).

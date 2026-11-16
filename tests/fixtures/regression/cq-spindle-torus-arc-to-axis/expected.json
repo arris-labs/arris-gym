@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses a revolve of an arc whose circle crosses the axis while the arc stays on one side of it, OpDegenerateError \"an arc's circle crosses the revolve axis: a spindle torus\"; CadQuery 2.3.0 builds it",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses a revolve of an arc whose circle crosses the axis while the arc stays on one side of it, OpDegenerateError \"an arc's circle crosses the revolve axis: a spindle torus\"; CadQuery 2.3.0 builds it",
   "measures": {
     "volume": 768.870163820388,
     "area": 535.4182526685349,

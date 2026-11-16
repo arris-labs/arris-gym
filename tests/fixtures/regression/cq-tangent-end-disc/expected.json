@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a cycle of f5's arrangement does not turn once\", of a vertical cylinder and a horizontal one whose end disc is tangent to the vertical one's side; CadQuery 2.3.0 builds it (lengthen the horizontal one by 2 and arris builds it)",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a cycle of f5's arrangement does not turn once\", of a vertical cylinder and a horizontal one whose end disc is tangent to the vertical one's side; CadQuery 2.3.0 builds it (lengthen the horizontal one by 2 and arris builds it)",
   "measures": {
     "volume": 44.45722313718023,
     "area": 95.67255756846318,

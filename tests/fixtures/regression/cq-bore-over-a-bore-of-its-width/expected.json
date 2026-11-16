@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses the cut, OpDegenerateError \"degenerate result: the faces touch along a curve interior to both result faces\", of a bore cylinder whose wall is the wall of the through hole already there, and a wider cylinder from the same plane; CadQuery 2.3.0 builds the chamber",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses the cut, OpDegenerateError \"degenerate result: the faces touch along a curve interior to both result faces\", of a bore cylinder whose wall is the wall of the through hole already there, and a wider cylinder from the same plane; CadQuery 2.3.0 builds the chamber",
   "measures": {
     "volume": 315.68031010131403,
     "area": 321.27875959474386,

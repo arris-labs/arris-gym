@@ -13,3 +13,5 @@ solid), as its recorded run of the same program shows. With a bore of diameter
 Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict `xfail`
 until an arris release handles a cylinder tangent to a planar cut tool along
 lines. Reported to arris in `../arris/docs/ideas/hole-tangent-column.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

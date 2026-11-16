@@ -6,3 +6,5 @@ arris 0.10.0 refuses the union (the point contact of `cq-sphere-pole-on-disc`), 
 Desired: `ok`, that closed form (ADR-0016). Marked strict `xfail` until an arris
 release fuses a point contact; the ask is `../arris/docs/ideas/fuse-contact-refusals.md`'s, which
 already counts the `ball_knob` programs.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 reports the body's box 0.037 past the part along x (x max 21.1900001033 where the part reaches 21.1531): the slot's walls cut the chamfer's cone in two hyperbolas, NURBS edges boxed by their control hulls; volume, area and centroid are the closed form's, and CadQuery 2.3.0's box is tight",
+  "xfail": "arris 0.11.1 (as 0.10.0) reports the body's box 0.037 past the part along x (x max 21.1900001033 where the part reaches 21.1531): the slot's walls cut the chamfer's cone in two hyperbolas, NURBS edges boxed by their control hulls; volume, area and centroid are the closed form's, and CadQuery 2.3.0's box is tight",
   "measures": {
     "volume": 2079.077776313635,
     "area": 2983.3319897099577,

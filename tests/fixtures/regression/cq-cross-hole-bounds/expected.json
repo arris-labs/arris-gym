@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 reports the body's box 1.23e-3 past the cylinder along y (y -2.0012288786 to 2.0012288786) on a cylinder of radius 2 drilled across by a hole of radius 0.5: the box of each of the hole's two NURBS edges on the side wall is its control hull's; volume, area and centroid are the closed form's, and CadQuery 2.3.0's box is the cylinder's",
+  "xfail": "arris 0.11.1 (as 0.10.0) reports the body's box 1.23e-3 past the cylinder along y (y -2.0012288786 to 2.0012288786) on a cylinder of radius 2 drilled across by a hole of radius 0.5: the box of each of the hole's two NURBS edges on the side wall is its control hull's; volume, area and centroid are the closed form's, and CadQuery 2.3.0's box is the cylinder's",
   "measures": {
     "volume": 22.015887866296808,
     "area": 61.049774974859034,

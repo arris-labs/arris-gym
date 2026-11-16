@@ -11,3 +11,5 @@ form of `expected.json`'s `note` to 1e-9.
 Desired: `ok`, that closed form. Marked strict `xfail` until an arris release
 cuts slots that share an edge on the axis. Reported to arris in
 `../arris/docs/ideas/slots-through-a-cylinder.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

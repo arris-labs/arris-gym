@@ -11,3 +11,5 @@ cylinders (`cq-tangent-cylinders`); this is the cause behind that one.
 Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict
 `xfail` until an arris release builds a revolve whose circle touches its axis.
 Reported to arris in `../arris/docs/ideas/fuse-contact-refusals.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

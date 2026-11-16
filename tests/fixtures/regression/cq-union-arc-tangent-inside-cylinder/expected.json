@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a section edge of f0 ends at a node nothing else reaches\", of a cylinder and a plate inside its circle whose arc is tangent to it along one line; CadQuery 2.3.0 builds the closed form",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a section edge of f0 ends at a node nothing else reaches\", of a cylinder and a plate inside its circle whose arc is tangent to it along one line; CadQuery 2.3.0 builds the closed form",
   "measures": {
     "volume": 6.506360077604267,
     "area": 19.74225500323748,

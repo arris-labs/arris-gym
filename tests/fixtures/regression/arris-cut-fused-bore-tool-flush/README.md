@@ -21,3 +21,5 @@ Desired: `ok`, the measures of the closed form in `expected.json`'s `note`.
 Marked strict `xfail` until an arris release cuts it. Not on `cq`'s path
 (ADR-0018 cuts the pieces), so not yet reported to arris; a candidate for
 `../arris/docs/ideas/union-coplanar-third-operand.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

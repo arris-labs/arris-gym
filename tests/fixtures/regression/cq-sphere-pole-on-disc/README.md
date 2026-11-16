@@ -6,3 +6,5 @@ arris 0.10.0 refuses the union with `OpUnsupportedError` "no closed form for +f1
 Desired: `ok`, that closed form (ADR-0016). Marked strict `xfail` until an arris
 release fuses a point contact. Reported to arris in
 `../arris/docs/ideas/fuse-contact-refusals.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

@@ -10,3 +10,5 @@ interior to both result faces"; CadQuery 2.3.0 builds a compound of two solids
 Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict `xfail`
 until an arris release fuses solids that touch along a line. Reported to arris
 in `../arris/docs/ideas/fuse-contact-refusals.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

@@ -5,3 +5,5 @@ Shrunk from the 25 `bearing_retainer_cap` programs of [BenchCAD](https://hugging
 arris 0.10.0 refuses the union, `OpInternalError` "kernel bug: the face arrangement is not a subdivision: a section edge of f0 ends at a node nothing else reaches" (`arris_refusal`); `arris.build`'s `fuse` of the same cylinder and extruded sketch fails the same way. CadQuery 2.3.0 builds the closed form (V = 2 pi + (0.5 + pi / 8) / 4, one solid).
 
 Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict `xfail` until an arris release unites a solid tangent from inside to another's face along a line. Reported to arris in `../arris/docs/ideas/union-tangent-inside.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses the union before the chamfer, OpUnsupportedError \"no closed form for +f2 (plane surface) against +f0 (sphere surface)\", of a sphere and a cylinder that touch at the sphere's pole; CadQuery 2.3.0 builds a compound of the two solids and chamfers the cylinder's far rim",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses the union before the chamfer, OpUnsupportedError \"no closed form for +f2 (plane surface) against +f0 (sphere surface)\", of a sphere and a cylinder that touch at the sphere's pole; CadQuery 2.3.0 builds a compound of the two solids and chamfers the cylinder's far rim",
   "measures": {
     "volume": 46155.26712497527,
     "area": 8692.540968295347,

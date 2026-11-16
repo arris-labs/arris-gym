@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 unites them into a body its checker refuses, \"L5 f16: loop 0 intersects itself\" and \"L5 f19: loop 0 intersects itself\" (checker_fail), of a box and two cylinders, each tangent to one of the box's end faces along a line; CadQuery 2.3.0 builds the closed form",
+  "xfail": "arris 0.11.1 (as 0.10.0) unites them into a body its checker refuses, \"L5 f16: loop 0 intersects itself\" and \"L5 f19: loop 0 intersects itself\" (checker_fail), of a box and two cylinders, each tangent to one of the box's end faces along a line; CadQuery 2.3.0 builds the closed form",
   "measures": {
     "volume": 154.50155561268042,
     "area": 379.7930651069109,

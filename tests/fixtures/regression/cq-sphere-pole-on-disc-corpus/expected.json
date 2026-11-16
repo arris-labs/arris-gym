@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses the union, OpUnsupportedError \"no closed form for +f2 (plane surface) against +v0 (point)\", of a cylinder and a sphere that touch at one point; CadQuery 2.3.0 builds a compound of the two solids",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses the union, OpUnsupportedError \"no closed form for +f2 (plane surface) against +v0 (point)\", of a cylinder and a sphere that touch at one point; CadQuery 2.3.0 builds a compound of the two solids",
   "measures": {
     "volume": 8460.228587156591,
     "area": 2862.7059339082584,

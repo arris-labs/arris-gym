@@ -15,3 +15,5 @@ rows' verdict, `arris_refusal` by this fixture, is in
 `tests/fixtures/c2/benchcad/verdicts.json`. The chain's next call, a half
 torus whose major radius equals its minor, is `cq-horn-torus`.
 Reported to arris in `../arris/docs/ideas/fuse-contact-refusals.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

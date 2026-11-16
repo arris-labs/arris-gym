@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses the union, OpDegenerateError \"degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold\", of a cone frustum and a box that touches its top rim at one point on the revolve's seam side (+x); CadQuery 2.3.0 builds a compound of the two solids",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses the union, OpDegenerateError \"degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold\", of a cone frustum and a box that touches its top rim at one point on the revolve's seam side (+x); CadQuery 2.3.0 builds a compound of the two solids",
   "measures": {
     "volume": 40.79350694547071,
     "area": 81.96477815187095,

@@ -5,3 +5,5 @@ Shrunk from the 15 `bearing_retainer_cap` programs of [BenchCAD](https://hugging
 arris 0.10.0 unites them into a body its checker refuses, "L5 f16: loop 0 intersects itself" and "L5 f19: loop 0 intersects itself" (`checker_fail`, `arris_bug`); `arris.build`'s two `fuse` calls give the same report. CadQuery 2.3.0 builds the closed form (V = 154.5016, one solid). The same shape at other sizes is the family's other kernel words: 3 programs `OpInternalError` (a section edge of f38), 2 `OpUnsupportedError`, 21 `ok`.
 
 Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict `xfail` until an arris release unites a solid tangent from inside to another's face along a line. Reported to arris in `../arris/docs/ideas/union-tangent-inside.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

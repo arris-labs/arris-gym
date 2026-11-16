@@ -22,3 +22,5 @@ The oracle builds this part (volume 766.2344, area 637.7433, one solid) and hold
 
 Desired: `ok`, the measures of the closed form. Marked strict `xfail` until an arris release cuts it.
 Not yet reported to arris; a candidate for `../arris/docs/ideas/union-coplanar-third-operand.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

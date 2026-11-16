@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.10.0 refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a hole of f7 lies inside no region\", of a cone frustum and a box that touches its top rim at one point opposite the revolve's seam (-x); CadQuery 2.3.0 builds a compound of the two solids",
+  "xfail": "arris 0.11.1 (as 0.10.0) refuses the union, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a hole of f7 lies inside no region\", of a cone frustum and a box that touches its top rim at one point opposite the revolve's seam (-x); CadQuery 2.3.0 builds a compound of the two solids",
   "measures": {
     "volume": 40.79350694547071,
     "area": 81.96477815187095,

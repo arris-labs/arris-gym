@@ -14,3 +14,5 @@ Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict
 `xfail` until an arris release builds a revolve whose arc stays on one side of
 the axis it crosses. Reported to arris in
 `../arris/docs/ideas/spindle-torus-revolve.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

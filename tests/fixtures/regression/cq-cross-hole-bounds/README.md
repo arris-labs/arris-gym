@@ -10,3 +10,5 @@ Two kernels, two measures, both held to the closed form of `expected.json`'s `no
 Since both sides miss the closed form, no closed-form verdict passes `compare` (it holds the exonerated side to it), and the rows are `arris_bug` by this fixture (`tests/fixtures/c2/benchcad/verdicts.json`), each only after `tools/cq_closed_forms.py`'s `check_bounds_cause` has found its cause here: both sides `ok`, arris's box past the oracle's by more than ADR-0005's 1e-6 (the padding alone is 2e-7), volume and area within 1e-4 of each other and the face counts within 2: once arris reports a tight box they are `occt_wrong` by a closed form. A row with another cause stays unclassified until it is read on its own (`shaft_collar_004924` is `occt_wrong` by a closed form of its own, `shaft_collar_016155` `arris_bug` by `cq-chamfers-overlap-on-a-face`).
 
 Desired: `ok`, the closed form, bounds included. Marked strict `xfail` until an arris release boxes a body to its extent where a NURBS edge reaches it. Reported to arris in `../arris/docs/ideas/tight-body-bounds.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).

@@ -5,3 +5,5 @@ Shrunk from the 22 `bearing_retainer_cap` programs of [BenchCAD](https://hugging
 arris 0.10.0 unites them into a body its checker refuses, "L5 f5: loops 0 and 1 intersect" and "L5 f6: loops 0 and 1 intersect" (`checker_fail`, `arris_bug`); `arris.build`'s `fuse` of the same two cylinders gives the same report. CadQuery 2.3.0 builds the closed form (V = 5 pi, A = 14 pi, one solid).
 
 Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict `xfail` until an arris release unites a solid tangent from inside to another's face along a line. Reported to arris in `../arris/docs/ideas/union-tangent-inside.md`.
+
+Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
