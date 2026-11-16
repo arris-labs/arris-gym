@@ -30,15 +30,15 @@ wheels = [
 
 [[package]]
 name = "arris"
-version = "0.10.0"
+version = "0.11.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2c/d0/2a93096474abbe698db142895d9c720ac12805750b274637d2f18d845f3b/arris-0.10.0.tar.gz", hash = "sha256:0865f03586697569d23922b3967e7a2287ebd21e0ca7765445d29c5fdccaf1f5", size = 2788355, upload-time = "2026-11-05T11:04:08.504Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bb/4d/389bd4808373f03c50ac708ac751f19c8c0f4da45c148f1d41560b43075a/arris-0.11.1.tar.gz", hash = "sha256:445dc698e126f56707258271a6f87547fda08b9429419c38be85edf403060369", size = 2820888, upload-time = "2026-11-16T06:21:35.37Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bb/60/df74dc97485e887b5aa2f883a66a5a3e62b601eda99d19560eb22868376b/arris-0.10.0-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:2412e4f50be19399f523f7a6f7f750ef7efb640d91c6470e39a8b13c321634cf", size = 3701474, upload-time = "2026-11-05T11:03:58.236Z" },
-    { url = "https://files.pythonhosted.org/packages/f9/e2/1a18629904140300a8f95cf8588934725ec9b8c91330ba474123f223092a/arris-0.10.0-cp310-abi3-macosx_11_0_x86_64.whl", hash = "sha256:63b3170e4259b04b2f8cdd26dbf50502b299707e17c36ac7daa7bdd63f1879f1", size = 4018981, upload-time = "2026-11-05T11:04:00.535Z" },
-    { url = "https://files.pythonhosted.org/packages/a2/f3/b1023a8244cd9ad95f38d59060a61009c8e46f862769a1fb2c6bbd13aa9d/arris-0.10.0-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:20d15e14bd2d839072c413c95cc258b56310bad63b9c4d59a7c05fb8785576c5", size = 3992051, upload-time = "2026-11-05T11:04:02.249Z" },
-    { url = "https://files.pythonhosted.org/packages/6e/16/503189b0540eb44902bc0e02d450279072c6e1ac7fe6b20f77f01db38a91/arris-0.10.0-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:13c3f849b1b7dfc079c447eb102a46caa5d2712769627fe3363a545b40b2d363", size = 4158799, upload-time = "2026-11-05T11:04:04.075Z" },
-    { url = "https://files.pythonhosted.org/packages/d3/e7/0bf68637f26973dd58af52627e4723c3f70eb81f7713c53f07ea65b22c9a/arris-0.10.0-cp310-abi3-win_amd64.whl", hash = "sha256:50694f3f4df5c9a4018c7705c177d8d16af5e5a4a40265459ae86acb38556ac7", size = 3831419, upload-time = "2026-11-05T11:04:06.176Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/e9/16759971fb3e3c06c18825d59ef26067b6044f74067678f7d025b2dedf3e/arris-0.11.1-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:873a000bf99bd90b3c44c1803f395cc70994729e9bbb32fd7a3c149086becf7f", size = 3707047, upload-time = "2026-11-16T06:21:24.282Z" },
+    { url = "https://files.pythonhosted.org/packages/6a/6b/c8129d2efd3e78f8634e551e98f607baf58765dfaa61e97e9c9a4e4f163d/arris-0.11.1-cp310-abi3-macosx_11_0_x86_64.whl", hash = "sha256:f5837825a983c8c8a3e991ad3df35b429628378beadef1d9d861342c6d462b88", size = 4023861, upload-time = "2026-11-16T06:21:26.321Z" },
+    { url = "https://files.pythonhosted.org/packages/a1/01/07752a8051d181d77674ec56cec433c3abe23a6ca70369a9a2cf9c08e7b1/arris-0.11.1-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:c0c4c3fbb8ca845d0e68a3fbc52fae02d897771960535f5f2ceaf553c8dea382", size = 3994746, upload-time = "2026-11-16T06:21:28.508Z" },
+    { url = "https://files.pythonhosted.org/packages/71/78/1cd04ff1d4ff4bf1f36a3ab6f44b500e0a4eccc43790ed97e16ccf19d8b1/arris-0.11.1-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:5e8e3f78794223c2cc38cb3bfd82df87d539adc5a9296e556081db30589025bc", size = 4167122, upload-time = "2026-11-16T06:21:31.144Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/12/d19d3db99a3ed713d889646f68632b924864f9f8b96843b6e83baeeb63b5/arris-0.11.1-cp310-abi3-win_amd64.whl", hash = "sha256:21f1b25ae1cbee660c415f636c015df2f3ac642924b74dba074d6cbfb51eb564", size = 3836625, upload-time = "2026-11-16T06:21:33.339Z" },
 ]
 
 [[package]]
@@ -69,7 +69,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "arris", specifier = "==0.10.0" },
+    { name = "arris", specifier = "==0.11.1" },
     { name = "huggingface-hub", marker = "extra == 'corpus'", specifier = "==2.4.0" },
     { name = "numpy", specifier = "==2.3.4" },
     { name = "pyarrow", marker = "extra == 'corpus'", specifier = "==26.0.1" },
