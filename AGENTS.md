@@ -42,7 +42,8 @@ against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 (the face selectors, `hole`, the point stacks, `cutBlind`, `edges`, `fillet`,
 `chamfer` and the parallel selectors lifted, ADR-0017 to ADR-0020), in-subset
 `cq_bug` 0 on CAD-Recode and 6 on BenchCAD (`connecting_rod`, waiting on arris,
-ADR-0014's amendment).
+ADR-0014's amendment). `arris` 0.11.1 pinned (2026-11-16): no row moved, and a
+kernel bump is named by `versions.arris`, not the reward's version (ADR-0021).
 **Next:** C2's growth: bundle 4, CAD-Recode's sketch API, then the knee's other
 bundles, riskiest first (ADR-0014, `docs/ROADMAP.md`).
 

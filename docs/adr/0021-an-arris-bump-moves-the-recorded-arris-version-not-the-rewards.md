@@ -53,3 +53,22 @@ rows with different `versions.arris` says so.
   `versions.arris`. It would also hide formula changes among kernel releases.
 - **Fold the arris version into the reward's version** (`1+arris0.11.1`). It
   duplicates the row's own field, and every consumer would have to parse it.
+
+## Amendment (2026-11-16): which digests hash which versions
+
+The retirement review of plans/bump-arris-0-11 corrected two claims in the
+context above:
+
+- **The reward's version is not on every row.** `Score` records it, and
+  `Score.digest()` hashes it with `versions.arris` and `versions.numpy`
+  (`reward/_score.py`). The re-scored table's digest is built from those
+  `Score.digest()`s. `ExecResult` and `FidelityRow` carry no reward version.
+- **The fidelity table's digest hashes more than the pins.** It is the SHA-256
+  of the table's whole canonical JSON (`fidelity/_table.py`), so it hashes
+  `versions.arris_gym` too. ADR-0011's amendment keeps that version out of
+  every digest, so this is a gap. It is pre-existing and listed under
+  `docs/BACKLOG.md` Findings. C1's fidelity digest moved in this bump partly
+  through `arris_gym` (0.1.0.dev0 to 0.2.0.dev0).
+
+The decision is unchanged: a kernel bump is named by `versions.arris`, never
+by the reward's version.

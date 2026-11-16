@@ -9,6 +9,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   kernel's version and every digest hashes it, so a digest from an earlier run
   no longer matches, and a cached result from 0.10.0 is not reused. The
   reward's version is unchanged: a kernel bump is named by `versions.arris`.
+  On BenchCAD and CAD-Recode no status, measure, class or reward moves.
 
 - `dialect="cq"`: `faces(selector)` now runs on a part where a thin curved face
   (a cylinder's side showing 0.01 above a plate, say) lies beside the selected

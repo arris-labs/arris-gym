@@ -879,7 +879,7 @@ chamfered `manifold_block`, 2 slotted `spacer_ring`, 1 `connecting_rod` and 1
 `cq_bug` goes 7 to 6 (`connecting_rod_000131_s20260507` runs since the finer estimate of step 7b), `occt_wrong` to 841, in-subset refusals to 1,449, unclassified
 (all outside the subset) to 199, the table digest `6a6f857c…6414`; the oracle
 rows are the committed bytes. The 31 oracle timeouts stay. On arris 0.11.1
-(plans/bump-arris-0-11) both tables differ in `versions.arris` alone:
+(ADR-0021) both tables differ in `versions.arris` alone:
 BenchCAD `5f33dade…0584`, CAD-Recode `e2bf586c…7308`.
 
 **Six in-subset `cq_bug` rows stay**, all `connecting_rod`
