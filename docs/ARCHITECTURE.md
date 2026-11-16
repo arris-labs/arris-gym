@@ -518,7 +518,9 @@ When scoring fails the `Score`'s status is `runtime` (the kernel's words,
 verbatim: a target it cannot read, say), `timeout` or `crash`, and its reward
 −1.0, so a scorer that fails never pays. Weights, τ and N live in a frozen
 `RewardConfig` with a version, written into every result row, and a change
-that can move a reward bumps it.
+of arris-gym's that can move a reward bumps it; a bump of the pinned `arris`
+or `numpy` is named by the row's own `versions`, not by the reward's version
+(ADR-0021).
 
 **The field's metrics sit beside ours** under `s.field` (`FieldMetrics`,
 `reward/_field.py`), computed in the score worker as BenchCAD's own scorer

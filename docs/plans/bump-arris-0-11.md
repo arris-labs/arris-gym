@@ -71,7 +71,7 @@ tier (`.agents/tiers.md`). **[CI]**: the step's only test is a CI run.
 **[conductor-run]**: a run past 110 s, which the conductor starts in the
 background.
 
-- [ ] Step 1 **[2]**: the bump. Pin 0.11.1 and lock it, regenerate
+- [x] Step 1 **[2]**: the bump. Pin 0.11.1 and lock it, regenerate
   `docs/ARRIS_API.md`, and run the gate. Every fixture the gate fails on is
   fixed in this commit, so `main` stays green:
   - a strict `xfail` that now passes: confirm with `inspect` that it passes
@@ -81,7 +81,7 @@ background.
 
   The body names each one. Commit type `fixtures:` if any fixture changed.
   Add the CHANGELOG bullet.
-- [ ] Step 2 **[2]**: ADR-0021, "an arris bump moves `versions.arris`, not
+- [x] Step 2 **[2]**: ADR-0021, "an arris bump moves `versions.arris`, not
   the reward's version". Add its clause to `docs/ARCHITECTURE.md` §Reward and
   to gym.md.
 - [ ] Step 3 **[1]**: the regression fixtures that still fail. Each fixture
