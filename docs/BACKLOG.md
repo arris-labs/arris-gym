@@ -171,6 +171,14 @@ A defect a run measured, one block each:
 - `cq` seam placement and closed-form tool hardening (plans/lift-edges-and-blends review): `_placed_key` tests `info.axis[axis] != 0.0` exactly where the rest of the function uses `angular_tolerance` (a cylinder on a `transformed` plane loses its seam placement and ends `unsupported_api`); `_closed_form_job` catches every `ValueError`, so a bug inside a closed form reads as "another arrangement" (a dedicated exception); `_with_seams` mutates a workplane after it is derived (safe today, fragile).
 - The finer `faces` estimate pass tessellates at a chord of 1e-7 of the diagonal: measure its cost on large curved faces, since a slow machine turns it into a `timeout`, the one status wall-clock time may change.
 
+### sprocket-fixture-near-the-default-deadline
+- What: `cq/ok-sprocket-corpus-along-x` ends `timeout` on CI's ARM runner, failing the gate there; the fixture runs at the sandbox's default deadline, which its program nearly fills on any machine
+- Where: `tests/test_cq.py::test_a_fixture_program_gives_its_expected_result`, `tests/fixture_cases.py` `run` (no per-fixture deadline), `sandbox/_run.py` `DEFAULT_TIMEOUT` = 5.0 s
+- Seen: CI run 43722758106, job `test (ubuntu-24.04-arm)`, commit 6520054 (main), 2026-11-15; `test (ubuntu-latest)` green in the same run
+- Reproduce: `uv run pytest tests/test_cq.py -k ok-sprocket-corpus-along-x` on a slow or loaded machine
+- Measured: 4.55 s to `ok` alone on the development machine (AMD Ryzen 9 7950X, idle, arris 0.11.1), 91% of the deadline; on the ARM runner under the parallel gate, past 5 s
+- State: measured; give the fixture an explicit deadline in `expected.json` (read by `fixture_cases.run`), or move it to a slower lane
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)
