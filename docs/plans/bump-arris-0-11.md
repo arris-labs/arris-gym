@@ -94,7 +94,7 @@ background.
   report; the `fidelity/arris-report-expected.*` fixtures are regenerated if
   their version moved. Expect 200 agree and 100 `arris_bug`, or every change
   explained. New digests go in `c1/README.md`.
-- [ ] Step 5 **[1, conductor-run]**: C1's re-scored table. Run `arris-gym
+- [x] Step 5 **[1, conductor-run]**: C1's re-scored table. Run `arris-gym
   rescore benchcad` at 2 workers and at 16; the two `rescore.json` files are
   byte-identical. `tools/rescore_diff.py` against the committed table shows
   `versions` on every row and nothing else, or names each row that moved and

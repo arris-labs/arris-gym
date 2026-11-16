@@ -1,6 +1,6 @@
 # re-scored table
 
-Digest `f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812`.
+Digest `8621e0ccf239cfb4b0322c9fc75681d760308dcbc0dfeb972be563c7ae88d0cd`.
 
 Over 300 programs (every failure counted):
 
@@ -13,7 +13,7 @@ Over 300 programs (every failure counted):
 - timed out: none
 
 Sources: ` "BenchCAD/BenchCAD (code_gen) (CC-BY-4.0)" `.
-arris and numpy: ` "0.10.0" ` / ` "2.3.4" `; reward version ` "[1]" `.
+arris and numpy: ` "0.11.1" ` / ` "2.3.4" `; reward version ` "[1]" `.
 
 | name | stage | status | reward | IoU route | IoU | surface | measures | topology |
 |---|---|---|---|---|---|---|---|---|

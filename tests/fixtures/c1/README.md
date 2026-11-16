@@ -99,15 +99,20 @@ the gate); the same run leaves `oracle.jsonl` byte-identical. Read by
 `rescore.json` and `rescore.md` are the 300 slice programs run under `cq`
 and scored against their targets: `uv run --locked --extra corpus arris-gym
 rescore benchcad --out DIR --workers N` (network once, for the corpus; outside
-the gate). Digest `f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812`,
-equal from a run at 2 workers and a run at 16 (the two `rescore.json` files are
+the gate). Digest `8621e0ccf239cfb4b0322c9fc75681d760308dcbc0dfeb972be563c7ae88d0cd`
+(arris 0.11.1, plans/bump-arris-0-11 step 5), equal from a run at 2 workers and a run at 16 (the two `rescore.json` files are
 byte-identical). 300 rows: `ok` 200, `arris_refusal` 100, every other status
 0; stages `none` 200, `program` 100; IoU routes `exact` 100, `sampled` 100;
 timeouts none. Invalidity 1/3; mean reward 0.483560 over all 300, and 0.975340
 over the 200 valid ones alone (survivors, never reported without the first).
 Each row carries the source, CC-BY-4.0, and the arris, numpy and reward versions.
+Under arris 0.10.0 the digest was
+`f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812`; the
+0.11.1 table differs from it in each row's `versions.arris` alone, every
+status, measure, IoU route and reward bit-equal (ADR-0021: the reward's
+version stays 1).
 
-Across machines (CI run 42709431327 on commit 9d25b86, all 4 jobs green): the
+Across machines under arris 0.10.0 (CI run 42709431327 on commit 9d25b86, all 4 jobs green): the
 digest `f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812` was
 equal on three machines of two architectures:
 
