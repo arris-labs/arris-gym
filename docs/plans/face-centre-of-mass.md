@@ -79,7 +79,7 @@ Grades: **[1]** routine; **[2]** careful, a numeric, geometric or semantic
 case within a given design; **[3]** unproven. The grade is the tier
 (`.agents/tiers.md`). **[conductor-run]**: a run past 110 s.
 
-- [ ] Step 1 **[3]** — The evidence. `tools/cq_selector_probe.py --constructed`
+- [x] Step 1 **[3]** — The evidence. `tools/cq_selector_probe.py --constructed`
   gains: the half cylinder, the seam-split ring (the regression's shape), a
   cylinder side cut by a through slot into two disjoint faces, the near ties
   of ADR-0017, two slanted planar faces, and `workplane()` on an outer
@@ -140,11 +140,13 @@ case within a given design; **[3]** unproven. The grade is the tier
 
 ## Open questions
 
-- ⚠ OPEN: `_CENTRE_ERROR`'s value — measured by step 1, the agent decides.
-- ⚠ OPEN: does step 1 confirm "share an edge ⇔ one Open CASCADE face"
-  after every `clean()`ing call the subset has (`union`, `cut`, `hole`,
-  `cutBlind`)? If a call does not clean, the group rule applies only after
-  calls that do; the agent decides in step 2's ADR.
+- *Settled (ADR-0022 rule 1):* use `_CENTRE_ERROR = 1e-12`. In step 1's
+  constructions, both kernels' centre errors were at most 1.5e-16 times
+  the square root of the face area.
+- *Settled (ADR-0022 rule 2):* unify faces of the same surface and sense
+  linked by shared edges. The ring and slot constructions show the merged
+  and disjoint cases. The ADR applies the rule across the subset based on
+  CadQuery's default cleaning and the topology of the other supported calls.
 - *Settled (step 3):* drop the box pre-filter. A local selector timing on a
   box, cylinder and thin-band union put both tested axes under 2.5 ms per
   selection with quadrature. The box adds under 1 ms and the cylinder and
