@@ -100,7 +100,7 @@ def _p_pick(keys, maximum, tol):
     return sorted(clusters[-1] if maximum else clusters[0])
 
 
-def _p_candidate(f, axis, key, box):
+def _p_candidate(f, axis, key, box, com):
     lo = _PBox()
     _PBnd.AddOptimal_s(f.wrapped, lo, False, False)
     bounds = lo.Get()
@@ -108,9 +108,33 @@ def _p_candidate(f, axis, key, box):
     return {
         "type": f.geomType(),
         "key": key,
+        "area": f.Area(),
+        "centre": _p_v(com),
         "low": bounds[axis],
         "high": bounds[axis + 3],
         "plane_normal": None if n is None else _p_v(n),
+    }
+
+
+def _p_face_fields(i, f, c, box):
+    try:
+        proj = _PProj(c.toPnt(), _PTool.Surface_s(f.wrapped))
+        to_surface = proj.LowerDistance()
+    except Exception as exc:
+        to_surface = f"{type(exc).__name__}: {exc}"
+    try:
+        at_centre = _p_v(f.normalAt(c))
+    except Exception as exc:
+        at_centre = f"{type(exc).__name__}: {exc}"
+    return {
+        "index": i,
+        "type": f.geomType(),
+        "area": f.Area(),
+        "centre": _p_v(c),
+        "box_centre": box,
+        "centre_to_surface": to_surface,
+        "normal_at_centre": at_centre,
+        "normal_at_mid_uv": _p_v(f.normalAt()),
     }
 
 
@@ -130,38 +154,14 @@ def _p_faces_record(selector, receiver, out):
         gap = min(sel_keys) - max(rest) if maximum else min(rest) - max(sel_keys)
     else:
         gap = None
-    picked = []
-    for i in chosen:
-        f = faces[i]
-        c = com[i]
-        try:
-            proj = _PProj(c.toPnt(), _PTool.Surface_s(f.wrapped))
-            to_surface = proj.LowerDistance()
-        except Exception as exc:
-            to_surface = f"{type(exc).__name__}: {exc}"
-        try:
-            at_centre = _p_v(f.normalAt(c))
-        except Exception as exc:
-            at_centre = f"{type(exc).__name__}: {exc}"
-        picked.append(
-            {
-                "index": i,
-                "type": f.geomType(),
-                "area": f.Area(),
-                "centre": _p_v(c),
-                "box_centre": box[i],
-                "centre_to_surface": to_surface,
-                "normal_at_centre": at_centre,
-                "normal_at_mid_uv": _p_v(f.normalAt()),
-            }
-        )
+    picked = [_p_face_fields(i, faces[i], com[i], box[i]) for i in chosen]
     return {
         "selector": selector,
         "stack": [type(o).__name__ for o in receiver.objects],
         "candidates": len(faces),
         "candidate_types": sorted(f.geomType() for f in faces),
         "candidate_faces": [
-            _p_candidate(f, axis, k, b) for f, k, b in zip(faces, com_keys, box)
+            _p_candidate(f, axis, k, b, c) for f, k, b, c in zip(faces, com_keys, box, com)
         ],
         "selected": picked,
         "cadquery_order": [
@@ -174,10 +174,28 @@ def _p_faces_record(selector, receiver, out):
     }
 
 
+def _p_selected_record(selector, receiver, out):
+    # A selector that does not rank (a surface type, `%CYLINDER`): the faces it kept.
+    faces = receiver._collectProperty("Faces")
+    picked = []
+    for o in out.objects:
+        i = next(k for k, f in enumerate(faces) if f.isSame(o))
+        picked.append(_p_face_fields(i, o, o.Center(), _p_box_centre(o)))
+    return {
+        "selector": selector,
+        "stack": [type(o).__name__ for o in receiver.objects],
+        "candidates": len(faces),
+        "candidate_types": sorted(f.geomType() for f in faces),
+        "selected": picked,
+    }
+
+
 def _p_faces_wrap(self, selector=None, tag=None):
     out = _p_faces(self, selector, tag)
     if isinstance(selector, str) and tag is None and len(selector) == 2:
         _p_made.append((out, _p_faces_record(selector, self, out)))
+    elif isinstance(selector, str) and tag is None and selector.startswith("%"):
+        _p_made.append((out, _p_selected_record(selector, self, out)))
     return out
 
 
@@ -207,6 +225,10 @@ _pcq.Workplane.workplane = _p_workplane_wrap
 
 _HEAD = "import cadquery as cq\n\n"
 _SHOW = "\nshow_object(result)\n"
+# The same on y < 0.
+_BELOW = 'cq.Workplane("XY").transformed(offset=cq.Vector(0, -15, 0)).box(30, 30, 30)'
+# A box that takes away everything with x < 0 (the half of a part on x > 0 stays).
+_HALF = 'cq.Workplane("XY").transformed(offset=cq.Vector(-15, 0, 0)).box(30, 30, 30)'
 # Own programs, each a construction whose selection and plane have a closed form
 # (`tests/fixtures/selectors/README.md` gives them).
 CONSTRUCTED: dict[str, str] = {
@@ -268,6 +290,63 @@ CONSTRUCTED: dict[str, str] = {
     "box-centre-not-mass>X": (
         'result = (cq.Workplane("XY").polyline([(0, 0), (4, 0), (0, 3)]).close().extrude(1)'
         '.faces(">X").workplane())'
+    ),
+    # plans/face-centre-of-mass step 1: faces of one surface that arris splits, a
+    # near-tie's planes, and `workplane()` on one curved face of each kind.
+    "seam-split-ring>Z": (
+        'result = (cq.Workplane("YZ").cylinder(4, 5)'
+        '.union(cq.Workplane("XY").transformed(offset=cq.Vector(0, -11.5, 0)).box(5, 17, 4))'
+        '.faces(">Z").workplane())'
+    ),
+    "slot-split-side>Y": (
+        'result = (cq.Workplane("YZ").cylinder(4, 5)'
+        '.cut(cq.Workplane("XY").box(6, 2, 20)).faces(">Y").workplane())'
+    ),
+    "slanted-coplanar>X": (
+        'result = (cq.Workplane("XY").polyline([(0, 0), (4, 0), (6, 3), (0, 3)]).close()'
+        ".extrude(10)"
+        '.cut(cq.Workplane("XY").transformed(offset=cq.Vector(5, 1.5, 5)).box(6, 6, 2))'
+        '.faces(">X").workplane())'
+    ),
+    "slanted-apart>X": (
+        'result = (cq.Workplane("XY").polyline([(0, 0), (4, 0), (6, 3), (0, 3)]).close()'
+        ".extrude(10)"
+        '.cut(cq.Workplane("XY").transformed(offset=cq.Vector(5, 1.5, 5)).box(6, 6, 2))'
+        '.cut(cq.Workplane("XY").transformed(offset=cq.Vector(5, 1.5, 9)).box(6, 6, 2))'
+        '.faces(">X").workplane())'
+    ),
+    "half-cylinder-outer": (
+        'result = (cq.Workplane("XY").cylinder(4, 2).cut(' + _HALF + ")"
+        '.faces("%CYLINDER").workplane())'
+    ),
+    "half-bore": (
+        'result = (cq.Workplane("XY").box(10, 10, 4, centered=(False, True, True))'
+        '.cut(cq.Workplane("XY").cylinder(10, 2)).faces("%CYLINDER").workplane())'
+    ),
+    "half-cone": (
+        'result = (cq.Workplane("XY").newObject([cq.Solid.makeCone(2, 1, 4)])'
+        ".cut(" + _HALF + ').faces("%CONE").workplane())'
+    ),
+    "half-sphere": (
+        'result = (cq.Workplane("XY").sphere(3).cut(' + _HALF + ').faces("%SPHERE").workplane())'
+    ),
+    "half-torus": (
+        'result = (cq.Workplane("XY").newObject([cq.Solid.makeTorus(5, 1)])'
+        ".cut(" + _HALF + ').faces("%TORUS").workplane())'
+    ),
+    "quarter-torus": (
+        'result = (cq.Workplane("XY").newObject([cq.Solid.makeTorus(5, 1)])'
+        ".cut(" + _HALF + ").cut(" + _BELOW + ').faces("%TORUS").workplane())'
+    ),
+    "whole-cylinder": 'result = cq.Workplane("XY").cylinder(4, 2).faces("%CYLINDER").workplane()',
+    "whole-cone": (
+        'result = cq.Workplane("XY").newObject([cq.Solid.makeCone(2, 1, 4)])'
+        '.faces("%CONE").workplane()'
+    ),
+    "whole-sphere": 'result = cq.Workplane("XY").sphere(3).faces("%SPHERE").workplane()',
+    "whole-torus": (
+        'result = cq.Workplane("XY").newObject([cq.Solid.makeTorus(5, 1)])'
+        '.faces("%TORUS").workplane()'
     ),
 }
 
