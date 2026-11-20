@@ -366,8 +366,11 @@ and `runtime-faces-triangular-prism` are the larger `cylinder>X` and
 both discs tie. The prism's two selected side faces tie on x and fail
 CadQuery's signed centre check in either order. Both reach the recorded
 `ValueError` with the face keys from ADR-0022.
-`unsupported-faces-near-tie` is `near-tie-inside>Z` (tops 5e-5 apart,
-the oracle's plane at their area-weighted offset).
+`ok-faces-near-tie` extends the recorded `near-tie-inside>Z` construction.
+Its tops, 5e-5 apart, have areas 4 and 2. A blind bore at (-3, 0) cuts the
+lower top to z = 1.5000166666666666 − 0.5, fixing the area-weighted plane
+through the removed cylinder's depth. The fixture has a closed-form
+expectation and a recorded oracle report for the bored part.
 `unsupported-faces-half-cylinder` turns the recorded `half-cylinder>Z`
 construction about x so the selected half cylinder spans the arris seam.
 Its two quarter faces rank as one, as the oracle's half cylinder does.

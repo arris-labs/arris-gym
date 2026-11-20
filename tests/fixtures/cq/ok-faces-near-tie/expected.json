@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 25.607314008270667,
+    "area": 83.57074396691733,
+    "centroid": [
+      -0.11020062564549195,
+      0,
+      0.21514319058124137
+    ],
+    "bounds": [
+      [
+        -5,
+        -1,
+        -0.5
+      ],
+      [
+        5,
+        1,
+        1.50005
+      ]
+    ],
+    "faces": 20,
+    "shells": 2,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        19
+      ]
+    ]
+  },
+  "note": "Tops at 1.5 and 1.50005 have areas 4 and 2. The bore enters the left top at 1.5 and ends at 1.5 + 0.00005/3 - 0.5. The 10 x 2 x 1 slab and left box share a face and the right box is disjoint. Their exterior areas are 64 + 8 and 10. The bore adds its cylindrical wall and replaces the entry disc with an equal floor disc. The fused piece has 7 slab faces and 5 box faces before boring, the disjoint box has 6, and the bore adds 2."
+}

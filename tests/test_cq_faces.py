@@ -176,7 +176,7 @@ def test_every_ok_faces_fixture_is_the_closed_form() -> None:
         case.slug: case
         for case in fixture_cases.load("cq")
         if case.slug.startswith("ok-faces-")
-        and case.slug not in ("ok-faces-bolt-head", "ok-faces-coplanar-tops")
+        and case.slug not in ("ok-faces-bolt-head", "ok-faces-coplanar-tops", "ok-faces-near-tie")
         # Step 6's are written by tests/test_cq_contexts.py.
         and not case.slug.startswith(("ok-faces-compound-", "ok-faces-workplane-offset-"))
     }
@@ -303,10 +303,6 @@ def test_two_coplanar_faces_are_both_kept() -> None:
             lambda: cq.Workplane("XY").box(2, 2, 2).faces(">Z").extrude(1),
             "Workplane.extrude on selected faces",
         ),
-        (
-            lambda: tops((-3, 1, 2), (4, 1.00005, 1)).faces(">Z").workplane(),
-            "Workplane.workplane on parallel faces at different offsets",
-        ),
     ],
 )
 def test_what_the_subset_does_not_model_is_unsupported_naming_it(
@@ -368,6 +364,7 @@ def tops(*boxes: tuple[float, float, float]) -> cq.Workplane:
 # Each construction whose oracle record holds a plane, built here as written there.
 PLANES = {
     "coplanar-tops>Z": lambda: tops((-3, 1, 2), (4, 1, 1)).faces(">Z").workplane(),
+    "near-tie-inside>Z": lambda: tops((-3, 1, 2), (4, 1.00005, 1)).faces(">Z").workplane(),
     "near-tie-outside>Z": lambda: tops((-3, 1, 2), (4, 1.00015, 1)).faces(">Z").workplane(),
     "near-tie-chain>Z": lambda: (
         tops((-3, 1, 2), (0, 1.00008, 1), (4, 1.00016, 1)).faces(">Z").workplane()
@@ -386,11 +383,28 @@ def test_a_construction_places_the_oracles_plane(name: str) -> None:
     assert_close(z, tuple(plane["z"]))
 
 
-def test_coplanar_faces_give_their_plane_in_either_order() -> None:
-    # The two tops of `coplanar-tops>Z`, kept by CadQuery and by cq (ADR-0017 rule 4).
+@pytest.mark.parametrize("name", ["slanted-coplanar>X", "slanted-apart>X"])
+def test_slanted_faces_place_the_oracles_plane(name: str) -> None:
+    part = cq.Workplane("XY").polyline([(0, 0), (4, 0), (6, 3), (0, 3)]).close().extrude(10)
+    part = part.cut(cq.Workplane("XY", origin=(5, 1.5, 5)).box(6, 6, 2))
+    if name == "slanted-apart>X":
+        part = part.cut(cq.Workplane("XY", origin=(5, 1.5, 9)).box(6, 6, 2))
+    selected = part.faces(">X")
+    assert kept(selected) == 2
+    plane = constructed(name)["plane"]
+    assert isinstance(plane, dict)
+    origin, x, _, z = plane_of(selected.workplane())
+    assert_close(origin, tuple(plane["origin"]))
+    assert_close(x, tuple(plane["x"]))
+    assert_close(z, tuple(plane["z"]))
+
+
+@pytest.mark.parametrize("gap", [0, 0.00005])
+def test_parallel_faces_give_the_area_weighted_plane_in_either_order(gap: float) -> None:
+    # The two tops have areas 4 and 2, so the higher one contributes a third of the gap.
     from arris_gym.cq._selector import plane_on_faces
 
-    selected = tops((-3, 1, 2), (4, 1, 1)).faces(">Z")
+    selected = tops((-3, 1, 2), (4, 1 + gap, 1)).faces(">Z")
     (faces,) = selected._stack
     assert isinstance(faces, Faces)
     assert len(faces.groups) == 2
@@ -398,7 +412,7 @@ def test_coplanar_faces_give_their_plane_in_either_order() -> None:
     parent = arris.build.Workplane((1.0, 2.0, 3.0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
     for order in (faces.groups, faces.groups[::-1]):
         plane = plane_on_faces(order, parent, model)
-        assert_close(plane.origin, (1.0, 2.0, 1.5))
+        assert_close(plane.origin, (1.0, 2.0, 1.5 + gap / 3))
         assert_close(plane.z, (0.0, 0.0, 1.0))
         assert_close(plane.x, (1.0, 0.0, 0.0))
 
@@ -472,22 +486,25 @@ def test_the_coplanar_tops_fixture_is_its_closed_form() -> None:
     assert json.loads(json.dumps(case.expected["measures"])) == coplanar_tops_expected()
 
 
-# The step 4 fixtures with a recorded oracle report beside them.
+# Workplane fixtures with a recorded oracle report beside them.
 RECORDED = [
     "ok-faces-coplanar-tops",
+    "ok-faces-near-tie",
     "runtime-faces-workplane-mixed-surfaces",
     "runtime-faces-workplane-not-coplanar",
 ]
 
 
 @pytest.mark.parametrize("slug", RECORDED)
-def test_step_4_fixtures_agree_with_the_recorded_oracle(slug: str) -> None:
+def test_workplane_fixtures_agree_with_the_recorded_oracle(slug: str) -> None:
     case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
     path = fixture_cases.ROOT / "cq" / slug / "oracle.json"
     report = OracleReport.model_validate_json(path.read_text())
+    result = fixture_cases.run(case)
+    assert report.program_sha256 == result.program_sha256
     if report.status.value == "runtime":
         assert report.message == case.expected["message"]
-    assert compare(fixture_cases.run(case), report).outcome is FidelityOutcome.AGREE
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
 
 
 @pytest.mark.parametrize(
@@ -495,26 +512,15 @@ def test_step_4_fixtures_agree_with_the_recorded_oracle(slug: str) -> None:
     [
         ("runtime-faces-cylinder-side", "cylinder>X"),
         ("runtime-faces-triangular-prism", "box-centre-not-mass>X"),
-        ("unsupported-faces-near-tie", "near-tie-inside>Z"),
     ],
 )
 def test_a_construction_matches_its_oracle_record(slug: str, name: str) -> None:
     case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
     record = constructed(name)
-    selected = record["selected"]
-    assert isinstance(selected, list)
     assert case.program == record["program"]
     result = fixture_cases.run(case)
-    if name == "near-tie-inside>Z":
-        assert [f["centre"][2] for f in selected] == [1.50005, 1.5]
-        assert isinstance(record["plane"], dict)
-        assert record["plane"]["origin"][2] == pytest.approx(1.5000166666666666, abs=1e-12)
-    if slug.startswith("runtime-"):
-        assert result.status is ag.Status.RUNTIME
-        assert result.message == record["error"]
-    else:
-        assert result.status is ag.Status.UNSUPPORTED_API
-    assert result.message == case.expected["message"]
+    assert result.status is ag.Status.RUNTIME
+    assert result.message == record["error"] == case.expected["message"]
 
 
 def test_the_half_cylinder_ranks_as_one_unified_face() -> None:

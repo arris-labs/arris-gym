@@ -394,14 +394,13 @@ can change within the quadrature's error bound ends `unsupported_api`
 (ADR-0022 rule 1). `workplane()` on
 one planar face is that face's plane (x `(0, 0, 1)` crossed with the normal,
 the parent origin projected onto it) and keeps the solid in the chain; on
-several planar faces with one normal and one offset it is their one plane.
-Several faces not all planar, or planar ones that fail CadQuery's co-planar
-test whichever comes first, end `runtime` with CadQuery's `ValueError`.
-The co-planar rejection uses the normals and, for nonparallel faces, the
-signed separation of their centres. One unified curved face and planar near
-ties that need an area-weighted offset end
-`unsupported_api`. Planar selections whose co-planarity still depends on
-centres or face order also end `unsupported_api`. `workplane(offset=)`
+several planar faces with a common outward normal it is their area-weighted
+plane when every face order passes CadQuery's co-planar test (ADR-0022 rule 3).
+Mixed planar and curved faces, distinct curved faces or planar faces that fail
+the co-planar test whichever comes first end `runtime` with CadQuery's
+`ValueError`. The test uses the normals and the signed separation of the
+faces' centres. One unified curved face and order-dependent or uncertain
+planar selections end `unsupported_api`. `workplane(offset=)`
 on faces moves the plane along its normal, as on a solid. `faces` on a stack
 whose objects have no faces (an empty stack, a `moveTo` point, a drawn path, a
 sketch) is `runtime` with CadQuery's `ValueError`, even where the chain holds a

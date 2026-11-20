@@ -438,12 +438,13 @@ class Workplane:
         face (ADR-0017 rule 3): its normal the face's outward normal, its x
         `(0, 0, 1)` crossed with it (+x for a normal along z), its origin
         this workplane's origin projected onto the face's plane. The solid
-        stays in the chain. Several planar faces with one normal and one
-        offset give their one plane (rule 4); faces not all planar raise
-        CadQuery's `ValueError` (`runtime`), and so do planar faces that
-        fail its co-planar test whichever face comes first. A unified curved
-        face (ADR-0022) and several planar faces whose plane needs their areas
-        or centres are `UnsupportedApi`. An `offset`
+        stays in the chain. Several planar faces with a common outward normal
+        that pass CadQuery's co-planar test in every order place the plane at
+        their area-weighted offset (ADR-0022). Mixed planar and curved or
+        distinct curved faces raise CadQuery's `ValueError` (`runtime`), as do
+        planar faces that fail its co-planar test whichever face comes first.
+        A unified curved face or an order-dependent or uncertain planar
+        selection raises `UnsupportedApi`. An `offset`
         on faces moves the plane that far along its normal, as it does on a
         solid (read on the oracle: `ok-faces-workplane-offset-*`).
 

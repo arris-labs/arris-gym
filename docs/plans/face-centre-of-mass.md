@@ -103,7 +103,7 @@ case within a given design; **[3]** unproven. The grade is the tier
   regression fixture (strict `xfail` dropped, `fixtures:` in the message) and
   `unsupported-faces-half-cylinder`'s ranking. Fixture: the slot-split side
   ranks as two faces.
-- [ ] Step 5 **[2]** — Rule 4 with areas and centres; `unsupported-faces-near-tie`
+- [x] Step 5 **[2]** — Rule 4 with areas and centres; `unsupported-faces-near-tie`
   becomes `ok-faces-near-tie` (origin z = 1.5000167 by closed form, held by a bore).
 - [ ] Step 6 **[3]** — Rule 5 on cylinder, cone, sphere, torus: the foot and
   normal per kind; one `ok-…` fixture each, the plane fixed by a bore by

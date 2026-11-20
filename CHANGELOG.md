@@ -5,6 +5,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, `workplane()` on co-planar faces with a common
+  outward normal uses their area-weighted offset. This includes selected
+  faces at slightly different heights and selections on a slanted plane.
+
 - CadQuery face selectors now rank connected faces of the same surface by
   their combined centre of mass. This fixes workplane placement on parts
   such as a connecting rod whose cylinder is split at its seam. Edges

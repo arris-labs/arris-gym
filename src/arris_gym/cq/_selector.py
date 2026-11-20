@@ -685,7 +685,13 @@ def plane_on(
     info = model.surface(face)
     if info.kind != "plane" or info.normal is None or info.origin is None:
         raise UnsupportedApi(f"Workplane.workplane on a {info.kind} face")
-    n = info.normal
+    n, o = info.normal, parent.origin
+    return _projected_plane(n, o, _dot(_sub(o, info.origin), n))
+
+
+def _projected_plane(
+    n: Sequence[float], origin: Sequence[float], height: float
+) -> arris.build.Workplane:
     across = _cross((0.0, 0.0, 1.0), n)
     length = _length(across)
     x = (
@@ -694,9 +700,11 @@ def plane_on(
         else (across[0] / length, across[1] / length, across[2] / length)
     )
     y = _cross(n, x)
-    o, f = parent.origin, info.origin
-    height = (o[0] - f[0]) * n[0] + (o[1] - f[1]) * n[1] + (o[2] - f[2]) * n[2]
-    at = (o[0] - n[0] * height, o[1] - n[1] * height, o[2] - n[2] * height)
+    at = (
+        origin[0] - n[0] * height,
+        origin[1] - n[1] * height,
+        origin[2] - n[2] * height,
+    )
     return arris.build.Workplane(at, x, y, (n[0], n[1], n[2]))
 
 
@@ -792,12 +800,11 @@ def plane_on_faces(
     """The workplane CadQuery's `workplane()` builds on the faces a selector kept (ADR-0017).
 
     One unified face is `plane_on`'s. Several (rule 4): if any is curved,
-    raise CadQuery's `ValueError` (`NOT_PLANAR`). Planar faces with one outward
-    normal and one offset, within the model's tolerances, give that plane, whatever the
-    face order. Planar faces at offsets apart need their areas, opposite
-    normals and other normals their centres or CadQuery's face order, so
-    they are `UnsupportedApi` unless CadQuery rejects the faces whichever
-    comes first. That raises its `ValueError` (`NOT_COPLANAR`).
+    raise CadQuery's `ValueError` (`NOT_PLANAR`). Co-planar faces with a
+    common outward normal place the plane at their area-weighted offset
+    (ADR-0022 rule 3). If all face orders fail CadQuery's signed centre test,
+    raise its `ValueError` (`NOT_COPLANAR`). An order-dependent or uncertain
+    result raises `UnsupportedApi`.
 
     >>> import arris.build
     >>> slab = arris.build.Solid.box((0, 0, 0), (10, 10, 2))
@@ -813,38 +820,56 @@ def plane_on_faces(
     if any(info.kind != "plane" for info in infos):
         raise ValueError(NOT_PLANAR)
     normals: list[tuple[float, float, float]] = []
-    offsets: list[float] = []
+    origins: list[tuple[float, float, float]] = []
     for info in infos:
         if info.normal is None or info.origin is None:
             raise UnsupportedApi("Workplane.workplane on a plane without a frame")
-        n, o = info.normal, info.origin
-        normals.append((n[0], n[1], n[2]))
-        offsets.append(o[0] * n[0] + o[1] * n[1] + o[2] * n[2])
+        normals.append(info.normal)
+        origins.append(info.origin)
     n0 = normals[0]
-    if all(
-        _length(_cross(n0, n)) <= model.angular_tolerance
-        and n0[0] * n[0] + n0[1] * n[1] + n0[2] * n[2] > 0.0
-        for n in normals[1:]
-    ):
-        if all(abs(offset - offsets[0]) <= model.tolerance for offset in offsets[1:]):
-            return plane_on(faces[0], parent, model)
-        raise UnsupportedApi("Workplane.workplane on parallel faces at different offsets")
-    # CadQuery tests each face against its first. A rejection must hold
-    # for every possible first face. See runtime-faces-triangular-prism.
+    pairs = list(itertools.permutations(range(len(normals)), 2))
+    common_normal = all(
+        _length(_cross(normals[i], normals[j])) <= model.angular_tolerance
+        and _dot(normals[i], normals[j]) > 0.0
+        for i, j in pairs
+    )
     areas, centres = zip(*(_group_properties(model, group) for group in groups), strict=True)
     widths = [_CENTRE_ERROR * math.sqrt(area) for area in areas]
 
-    def rejects(i: int, j: int) -> bool:
+    def coplanar(i: int, j: int) -> bool | None:
         n, other = normals[i], normals[j]
         if not _normals_tie(n, other):
+            return False
+        if _dot(n, other) < 0 and _length(_cross(n, other)) <= model.angular_tolerance:
+            return None  # Opposite normals depend on CadQuery's face order.
+        # For faces with the same axial normal, the plane offsets give
+        # the signed centre distance without quadrature.
+        if n == other and sum(v == 0.0 for v in n) == 2:
+            separation = _dot(n, _sub(origins[i], origins[j]))
+            reach = _FLOAT_SLACK
+        else:
+            separation = _dot(n, _sub(centres[i], centres[j]))
+            reach = sum(abs(v) for v in n) * (widths[i] + widths[j]) + _FLOAT_SLACK
+        if separation - reach >= CQ_TOLERANCE:
+            return False
+        if separation + reach < CQ_TOLERANCE:
             return True
-        if _length(_cross(n, other)) <= model.angular_tolerance:
-            return False  # opposite normals remain unsupported (ADR-0022 rule 3)
-        # CadQuery compares the signed distance with its tolerance.
-        separation = _dot(n, _sub(centres[i], centres[j]))
-        reach = sum(abs(v) for v in n) * (widths[i] + widths[j])
-        return separation - reach - _FLOAT_SLACK >= CQ_TOLERANCE
+        return None
 
-    if all(any(rejects(i, j) for j in range(len(normals)) if j != i) for i in range(len(normals))):
+    # CadQuery tests each face against the first. Across possible orders,
+    # every directed pair must pass, or every first face must see a failure.
+    checks = [coplanar(i, j) for i, j in pairs]
+    if common_normal and all(check is True for check in checks):
+        heights = [
+            _dot(_sub(parent.origin, origin if n == n0 else centre), n0)
+            for origin, n, centre in zip(origins, normals, centres, strict=True)
+        ]
+        base = min(heights)
+        shift = math.fsum(a * (h - base) for a, h in zip(areas, heights, strict=True))
+        height = base + shift / math.fsum(areas)
+        return _projected_plane(n0, parent.origin, height)
+    if len({i for (i, _), check in zip(pairs, checks, strict=True) if check is False}) == len(
+        normals
+    ):
         raise ValueError(NOT_COPLANAR)
     raise UnsupportedApi("Workplane.workplane on faces whose co-planarity needs their centres")
