@@ -441,9 +441,9 @@ class Workplane:
         stays in the chain. Several planar faces with one normal and one
         offset give their one plane (rule 4); faces not all planar raise
         CadQuery's `ValueError` (`runtime`), and so do planar faces that
-        fail its co-planar test whichever face comes first. A curved
-        face, faces of one curved surface (rule 5) and several faces whose
-        plane needs their areas or centres are `UnsupportedApi`. An `offset`
+        fail its co-planar test whichever face comes first. A unified curved
+        face (ADR-0022) and several planar faces whose plane needs their areas
+        or centres are `UnsupportedApi`. An `offset`
         on faces moves the plane that far along its normal, as it does on a
         solid (read on the oracle: `ok-faces-workplane-offset-*`).
 
@@ -461,7 +461,7 @@ class Workplane:
         kept = [o for o in self._stack if isinstance(o, Faces)]
         if kept:
             (selected,) = kept
-            plane = plane_on_faces(selected.faces, self._plane, selected.solid.model)
+            plane = plane_on_faces(selected.groups, self._plane, selected.solid.model)
             # As on a solid below: moved along the unit normal, axes kept.
             n = plane.z
             at = (
@@ -498,22 +498,24 @@ class Workplane:
 
         `selector` is one of `>X <X >Y <Y >Z <Z`: the faces whose centre of
         mass lies furthest along (`>`) or least along (`<`) the axis, every one
-        within CadQuery's `1e-4` of the first of its cluster. They are the one
-        object on the new stack, in CadQuery's order, the solid stays in the
+        within CadQuery's `1e-4` of the first of its cluster. Faces of the same
+        surface and sense joined by an edge rank as one by their area-weighted
+        centre (ADR-0022). The kept groups form the one object on the new
+        stack, in CadQuery's order. The solid stays in the
         chain, and `workplane()` places a plane on them (ADR-0017). On a stack
         of selected faces a selector ranks those faces only, as CadQuery's does
         (ADR-0018 rule 5; `ok-ctx-faces-on-faces-*`): a single face stays
         whatever the second selector. Raises `UnsupportedApi` for any other
         selector or if the error bound on a face's centre of mass can change
-        the ranking (ADR-0022 rule 1). A stack with
-        no solid (empty, a `moveTo` point, a drawn path or a sketch, whose
+        the ranking (ADR-0022 rule 1). A stack with no solid (empty, a
+        `moveTo` point, a drawn path or a sketch, whose
         objects have no faces) raises CadQuery's `ValueError` (`runtime`),
         read on the oracle: `runtime-faces-on-*`. Where the solid is a compound
         the faces of every piece are candidates (`ok-faces-compound-*`).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 4, 6).faces("<X")
-        >>> len(wp._stack[0].faces)
+        >>> len(wp._stack[0].groups)
         1
         """
         if selector not in AXIS_SELECTORS:
@@ -525,7 +527,7 @@ class Workplane:
             # CadQuery ranks the stacked faces only (ADR-0018 rule 5).
             (prior,) = kept
             return self._derive(
-                Faces(prior.solid, select_faces(prior.solid, selector, prior.faces))
+                Faces(prior.solid, select_faces(prior.solid, selector, prior.groups))
             )
         solids = self._solids()
         if not solids:
@@ -544,17 +546,19 @@ class Workplane:
         least along (`<`) the axis, every one within CadQuery's `1e-4` of the
         first of its cluster, in ascending key; `|X`, `|Y` or `|Z`: the line
         edges parallel to the axis (a circle or arc never, a seam line when it
-        is parallel); or `>Z or <Z`: both ends' edges, each once. The candidates are the edges of
-        the solid on the stack, of the faces `faces` kept (each edge once, in the
-        order first found) or of the edges a selector kept before; a compound's
-        edges are those of every piece. They are the one object on the new
+        is parallel); or `>Z or <Z`: both ends' edges, each once. Candidates are
+        the solid's edges, the boundary edges of the unified faces `faces` kept
+        (each edge once, in first-encounter order), or the edges a selector kept
+        before. A compound's edges are those of every piece.
+        The selection is the one object on the new
         stack, which `fillet` and `chamfer` take; the solid stays in the chain.
         A degenerate edge is no candidate. A seam of a cylinder this chain built
         is ranked where Open CASCADE puts it, which the chain records (ADR-0020's
         amendment). Raises `UnsupportedApi` for any other selector and where the
         selection depends on an edge's place arris does not decide as CadQuery's
         kernel does (a seam no record places on a face about another axis, an
-        ellipse arc or B-spline edge able to reach the kept cluster).
+        ellipse arc or B-spline edge able to reach the kept cluster), or where
+        the selection depends on joining split boundary edges of a unified face.
         A selector on an empty stack raises CadQuery's `ValueError`
         (`runtime`), as `faces` does.
 
@@ -570,8 +574,8 @@ class Workplane:
                 kept = select_edges(o.solid, o.edges, selector, self._seams)
                 return self._derive(Edges(o.solid, kept))
             if isinstance(o, Faces):
-                candidates = edges_of_faces(o.solid, o.faces)
-                kept = select_edges(o.solid, candidates, selector, self._seams)
+                candidates, fragments = edges_of_faces(o.solid, o.groups)
+                kept = select_edges(o.solid, candidates, selector, self._seams, fragments=fragments)
                 return self._derive(Edges(o.solid, kept))
         solids = self._solids()
         if solids:
@@ -610,7 +614,9 @@ class Workplane:
             if isinstance(o, Edges):
                 candidates = o.edges
             elif isinstance(o, Faces):
-                candidates = edges_of_faces(o.solid, o.faces)
+                candidates, fragments = edges_of_faces(o.solid, o.groups)
+                if fragments:
+                    raise UnsupportedApi(f"{form} on a split unified face boundary")
             elif isinstance(o, arris.build.Solid):
                 candidates = edges_of_solid(o)
             else:

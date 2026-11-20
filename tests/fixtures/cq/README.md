@@ -366,13 +366,21 @@ and `runtime-faces-triangular-prism` are the larger `cylinder>X` and
 both discs tie. The prism's two selected side faces tie on x and fail
 CadQuery's signed centre check in either order. Both reach the recorded
 `ValueError` with the face keys from ADR-0022.
-`unsupported-faces-near-tie` is `near-tie-inside>Z` (tops 5e-5
-apart, the oracle's plane at their area-weighted offset), and
-`unsupported-faces-half-cylinder` is `half-cylinder>Z` rewritten in the
-subset (the record's `box(centered=)` and `mirror` are outside it): the oracle
-keeps one curved face and `cq` keeps its two quarter faces. Placing a plane
-on that curved surface ends `unsupported_api` (ADR-0017 rule 5).
-`tests/test_cq_faces.py` holds each against its record.
+`unsupported-faces-near-tie` is `near-tie-inside>Z` (tops 5e-5 apart,
+the oracle's plane at their area-weighted offset).
+`unsupported-faces-half-cylinder` turns the recorded `half-cylinder>Z`
+construction about x so the selected half cylinder spans the arris seam.
+Its two quarter faces rank as one, as the oracle's half cylinder does.
+Placing a plane on the curved face ends `unsupported_api`.
+`tests/test_cq_faces.py` checks the half cylinder's ranking, centre and area.
+
+`unsupported-edges-unified-face-boundary` selects the positive-y side of
+the `slot-split-side>Y` construction, then its edges furthest along x.
+The side ranks as one unified face, and its internal seam is excluded.
+CadQuery's selected edge is a single cap arc (recorded in `oracle.json`).
+arris retains two arcs at that cap, so the selection ends `unsupported_api`.
+The face can still supply its two straight edges along the slot, as held by
+`tests/test_cq_faces.py`.
 
 `ok-hole-*` are `hole(diameter)` read on the oracle (`tests/test_cq_hole.py`
 writes their expectations and holds each against its recorded report):

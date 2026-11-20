@@ -405,6 +405,16 @@ RUNTIME: dict[str, tuple[str, str]] = {
     ),
 }
 UNSUPPORTED: dict[str, tuple[str, str]] = {
+    "unsupported-edges-unified-face-boundary": (
+        "import cadquery as cq\n\nresult = (\n"
+        '    cq.Workplane("YZ")\n'
+        "    .cylinder(4, 5)\n"
+        '    .cut(cq.Workplane("XY").box(6, 2, 20))\n'
+        '    .faces(">Y")\n'
+        '    .edges(">X")\n'
+        ")\n",
+        "Workplane.edges('>X') on a split unified face boundary",
+    ),
     "unsupported-edges-revolved-side": (
         f"{HEAD}.polyline([(0, -2), (2, -2), (2, 2), (0, 2)]).close()"
         f'.revolve(360, (0, -2, 0), (0, 2, 0)).edges(">X"){TAIL}',

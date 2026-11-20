@@ -98,7 +98,7 @@ case within a given design; **[3]** unproven. The grade is the tier
   signed centre check when it rejects every face order. Hypothesis: on random
   unions of boxes and cylinders, `faces(sel)` agrees with a ranking over
   closed-form centres.
-- [ ] Step 4 **[3]** — Unified faces: grouping, `Faces.groups`, the second
+- [x] Step 4 **[3]** — Unified faces: grouping, `Faces.groups`, the second
   `faces` over groups, `edges_of_faces` without inner edges. Lifts the
   regression fixture (strict `xfail` dropped, `fixtures:` in the message) and
   `unsupported-faces-half-cylinder`'s ranking. Fixture: the slot-split side
@@ -155,3 +155,9 @@ case within a given design; **[3]** unproven. The grade is the tier
   The signed test of their centres rejects both orders and belongs in step 3
   to reproduce its oracle row. Step 5 still owns placing the plane when
   co-planarity holds and lifting near ties.
+
+- *Settled (step 4):* the slot-split side's two circular boundary arcs each
+  remain two fragments in arris after the internal seam is removed. Edge
+  selection and blending return `unsupported_api` where they require the
+  joined arcs, as held by `unsupported-edges-unified-face-boundary`. A selector
+  that can choose its edges independently of the fragments still runs.

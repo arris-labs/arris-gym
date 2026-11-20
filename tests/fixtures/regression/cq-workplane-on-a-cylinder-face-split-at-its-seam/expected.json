@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 (as 0.10.0) keeps the cylinder's side as two faces split at its seam where the box's window crosses it, and the upper half's centre (above z = 2) wins faces('>Z'), so cq ends unsupported_api, \"Workplane.workplane on a cylinder face\"; Open CASCADE keeps one side face, centred on the axis, and CadQuery 2.3.0 places the plane on the box's top",
   "measures": {
     "volume": 623.5615770291864,
     "area": 571.8575069911271,

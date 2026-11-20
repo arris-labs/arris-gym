@@ -386,7 +386,10 @@ rejects, and the row is `by_design` on this anchor.
 CadQuery's `DirectionMinMaxSelector` does (ADR-0017): by centre of mass along
 the axis, greedy clusters of `1e-4`, `>` the last and `<` the first. A planar
 face normal to the axis is ranked by its exact plane offset. Other face keys
-come from arris's surface centroid quadrature. A selection whose membership
+come from arris's surface centroid quadrature. Faces of one surface and sense
+that share edges transitively rank as one unified face, by their area-weighted
+centre. A second selector ranks only the unified faces already kept.
+A selection whose membership
 can change within the quadrature's error bound ends `unsupported_api`
 (ADR-0022 rule 1). `workplane()` on
 one planar face is that face's plane (x `(0, 0, 1)` crossed with the normal,
@@ -395,8 +398,8 @@ several planar faces with one normal and one offset it is their one plane.
 Several faces not all planar, or planar ones that fail CadQuery's co-planar
 test whichever comes first, end `runtime` with CadQuery's `ValueError`.
 The co-planar rejection uses the normals and, for nonparallel faces, the
-signed separation of their centres. A curved face or faces of one curved
-surface and planar near ties that need an area-weighted offset end
+signed separation of their centres. One unified curved face and planar near
+ties that need an area-weighted offset end
 `unsupported_api`. Planar selections whose co-planarity still depends on
 centres or face order also end `unsupported_api`. `workplane(offset=)`
 on faces moves the plane along its normal, as on a solid. `faces` on a stack
@@ -491,10 +494,13 @@ CadQuery's axis selectors (`>X <X >Y <Y >Z <Z`) rank faces by centre of mass
 and greedy 1e-4 clusters (ADR-0017 rule 1). A planar face normal to the axis
 has its exact plane offset as its key. Other keys are projected centres of
 mass from arris, with a half-width of 1e-12 times the square root of the
-face area (ADR-0022 rule 1). If the bound can affect selection membership,
-`faces` returns `unsupported_api`. `workplane()` follows CadQuery's
-`ProjectedOrigin` rule on planar faces, and a selection kept on one curved
-surface ends `unsupported_api`.
+face area (ADR-0022 rule 1). A unified face uses its combined area and
+area-weighted centre. If the bound can affect selection membership, `faces`
+returns `unsupported_api`. Edges inside a unified face are excluded from
+`edges()`, `fillet()` and `chamfer()` candidates. An edge selection or blend
+that depends on joining boundary fragments ends `unsupported_api`.
+`workplane()` follows CadQuery's `ProjectedOrigin` rule on planar faces.
+One unified curved face ends `unsupported_api`.
 
 ## The reward
 

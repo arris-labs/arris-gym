@@ -507,7 +507,7 @@ def test_a_selector_on_one_stacked_face_keeps_it(
     twice = box.faces(first).faces(second)._stack[0]
     assert isinstance(once, Faces)
     assert isinstance(twice, Faces)
-    assert twice.faces == once.faces
+    assert twice.groups == once.groups
 
 
 def test_the_context_doctests_run() -> None:

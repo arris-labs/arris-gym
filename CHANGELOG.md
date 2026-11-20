@@ -5,6 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- CadQuery face selectors now rank connected faces of the same surface by
+  their combined centre of mass. This fixes workplane placement on parts
+  such as a connecting rod whose cylinder is split at its seam. Edges
+  inside a unified face are skipped. Edge selection and blending that
+  depend on joining split boundary edges return `unsupported_api`.
+
 - arris-gym now requires `arris` 0.11.1 (was 0.10.0). Every row records the
   kernel's version and every digest hashes it, so a digest from an earlier run
   no longer matches, and a cached result from 0.10.0 is not reused. The

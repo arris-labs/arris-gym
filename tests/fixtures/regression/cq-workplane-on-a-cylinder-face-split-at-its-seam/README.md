@@ -4,6 +4,7 @@ Shrunk from the 6 in-subset `connecting_rod` programs of [BenchCAD](https://hugg
 
 arris 0.10.0 keeps the cylinder's side as two faces, split at the seam where the box's window crosses it (with the box entering from +y it keeps one face, and `cq` agrees with the oracle). `faces(">Z")` ranks the upper half's centre, about z = 3, over the box's top at z = 2, so `cq` keeps a cylinder face and refuses the workplane. Open CASCADE keeps one side face (12 faces in `oracle.json`, the side one of them), centred on the cylinder's axis at z = 0: CadQuery 2.3.0 keeps the box's top and places the plane z = 2 there, origin (0, 0, 2), x along +x. `oracle.json` is its recorded report, `uv run tools/oracle_run.py` on `program.py` less `seconds`, and agrees with the closed form of `expected.json`'s `note`: the blind bore of depth 1 at local (1, -10) fixes the plane's height and its x direction.
 
-Desired: `ok`, the closed form. Marked strict `xfail`. The step filed the face's centre with arris as `face-surface-properties.md` (2026-11-14, now arris's plan of that name); this shrink shows that a face's exact centre does not lift it alone: the half face's centre is above the box's top whichever way it is computed, so the case also needs the side seen as one face, as Open CASCADE keeps it.
-
-Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+With unified faces (ADR-0022), `cq` ranks both pieces together by their
+area-weighted centre at z = 0. Both selectors keep the box's top, and the
+bored part passes the closed-form checks in `expected.json` with status
+`ok` on arris 0.11.1.

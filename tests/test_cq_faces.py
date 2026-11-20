@@ -19,7 +19,7 @@ from hypothesis import strategies as st
 import arris_gym as ag
 import arris_gym.cq as cq
 import fixture_cases
-from arris_gym.cq._selector import CQ_TOLERANCE, Faces
+from arris_gym.cq._selector import CQ_TOLERANCE, Edges, Faces
 from arris_gym.fidelity import FidelityOutcome, OracleReport, compare
 
 Vec = tuple[float, float, float]
@@ -268,7 +268,7 @@ def test_a_cylinder_disc_places_the_new_plane_by_the_closed_form(
 def kept(wp: cq.Workplane) -> int:
     (selected,) = wp._stack
     assert isinstance(selected, Faces)
-    return len(selected.faces)
+    return len(selected.groups)
 
 
 def test_a_stepped_part_keeps_only_the_faces_at_the_extreme() -> None:
@@ -393,10 +393,10 @@ def test_coplanar_faces_give_their_plane_in_either_order() -> None:
     selected = tops((-3, 1, 2), (4, 1, 1)).faces(">Z")
     (faces,) = selected._stack
     assert isinstance(faces, Faces)
-    assert len(faces.faces) == 2
+    assert len(faces.groups) == 2
     model = faces.solid.model
     parent = arris.build.Workplane((1.0, 2.0, 3.0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
-    for order in (faces.faces, faces.faces[::-1]):
+    for order in (faces.groups, faces.groups[::-1]):
         plane = plane_on_faces(order, parent, model)
         assert_close(plane.origin, (1.0, 2.0, 1.5))
         assert_close(plane.z, (0.0, 0.0, 1.0))
@@ -496,7 +496,6 @@ def test_step_4_fixtures_agree_with_the_recorded_oracle(slug: str) -> None:
         ("runtime-faces-cylinder-side", "cylinder>X"),
         ("runtime-faces-triangular-prism", "box-centre-not-mass>X"),
         ("unsupported-faces-near-tie", "near-tie-inside>Z"),
-        ("unsupported-faces-half-cylinder", "half-cylinder>Z"),
     ],
 )
 def test_a_construction_matches_its_oracle_record(slug: str, name: str) -> None:
@@ -504,13 +503,7 @@ def test_a_construction_matches_its_oracle_record(slug: str, name: str) -> None:
     record = constructed(name)
     selected = record["selected"]
     assert isinstance(selected, list)
-    if name == "half-cylinder>Z":
-        # The fixture rewrites the oracle's out-of-subset box(centered=) and mirror.
-        assert [f["type"] for f in selected] == ["CYLINDER"]
-        assert selected[0]["centre_to_surface"] == pytest.approx(1 - 2 / math.pi, abs=1e-9)
-        assert 'faces(">Z")' in case.program
-    else:
-        assert case.program == record["program"]
+    assert case.program == record["program"]
     result = fixture_cases.run(case)
     if name == "near-tie-inside>Z":
         assert [f["centre"][2] for f in selected] == [1.50005, 1.5]
@@ -524,6 +517,123 @@ def test_a_construction_matches_its_oracle_record(slug: str, name: str) -> None:
     assert result.message == case.expected["message"]
 
 
+def test_the_half_cylinder_ranks_as_one_unified_face() -> None:
+    # Rotate the recorded half-cylinder>Z about x so the trimmed side crosses
+    # the arris seam. The half cylinder's centre is 2r/pi from its axis.
+    record = constructed("half-cylinder>Z")
+    selected = record["selected"]
+    assert isinstance(selected, list)
+    assert [face["type"] for face in selected] == ["CYLINDER"]
+    assert selected[0]["centre"][2] == pytest.approx(2 / math.pi)
+    assert selected[0]["centre_to_surface"] == pytest.approx(1 - 2 / math.pi)
+    part = (
+        cq.Workplane("YZ")
+        .cylinder(4, 1)
+        .cut(cq.Workplane("XY").transformed(offset=cq.Vector(0, -5, 0)).box(10, 10, 10))
+    )
+    (stack,) = part.faces(">Y").faces(">Z")._stack
+    assert isinstance(stack, Faces)
+    (group,) = stack.groups
+    assert len(group) == 2
+    model = stack.solid.model
+    properties = [model.surface_properties(face) for face in group]
+    area = sum(p.area for p in properties)
+    assert area == pytest.approx(4 * math.pi)
+    assert sum(p.area * p.centroid[1] for p in properties) / area == pytest.approx(2 / math.pi)
+
+
+def test_coplanar_faces_join_transitively_in_kernel_order() -> None:
+    # Each post's front shares an edge with the slab's front. The posts
+    # are apart from each other, but all three fronts are one unified face.
+    slab = cq.Workplane("XY").box(10, 2, 1)
+    for x in (-3, 3):
+        slab = slab.union(cq.Workplane("XY", origin=(x, 0, 1)).box(2, 2, 1))
+    (stack,) = slab.faces(">Y").faces(">Z")._stack
+    assert isinstance(stack, Faces)
+    model = stack.solid.model
+    expected = tuple(
+        face for face in model.faces(stack.solid.body) if model.surface(face).normal == (0, 1, 0)
+    )
+    assert len(expected) == 3
+    assert stack.groups == (expected,)
+    assert_close(slab.faces(">Y").workplane()._plane.origin, (0, 1, 0))
+
+
+def test_adjacent_cylinders_of_the_same_radius_keep_distinct_faces() -> None:
+    # The two cylinders overlap, so their exposed sides meet along two edges,
+    # but their axes are an offset apart. Symmetry puts every face key at y=0.
+    left = cq.Workplane("XY", origin=(-1, 0, 0)).cylinder(4, 2)
+    right = cq.Workplane("XY", origin=(1, 0, 0)).cylinder(4, 2)
+    (stack,) = left.union(right).faces(">Y")._stack
+    assert isinstance(stack, Faces)
+    model = stack.solid.model
+    cylinders = [group for group in stack.groups if model.surface(group[0]).kind == "cylinder"]
+    assert len(cylinders) == 2
+    for group in cylinders:
+        origins = [model.surface(face).origin for face in group]
+        assert all(origin is not None and origin[0] in (-1, 1) for origin in origins)
+        assert all(origin == origins[0] for origin in origins)
+
+
+def slot_split_side() -> cq.Workplane:
+    """A slot cuts a cylinder into a positive-y and a negative-y arc."""
+    return cq.Workplane("YZ").cylinder(4, 5).cut(cq.Workplane("XY").box(6, 2, 20))
+
+
+@pytest.mark.parametrize(("selector", "sign", "pieces"), [(">Y", 1, 2), ("<Y", -1, 1)])
+def test_slot_split_side_ranks_as_two_faces(selector: str, sign: int, pieces: int) -> None:
+    # All candidate centres lie on z=0. Rank the surviving groups again on y.
+    part = slot_split_side()
+    (stack,) = part.faces(">Z").faces(selector)._stack
+    assert isinstance(stack, Faces)
+    (group,) = stack.groups
+    assert len(group) == pieces
+    model = stack.solid.model
+    assert all(model.surface(face).kind == "cylinder" for face in group)
+    properties = [model.surface_properties(face) for face in group]
+    half_angle = math.acos(1 / 5)
+    area = sum(p.area for p in properties)
+    assert area == pytest.approx(40 * half_angle)
+    assert sum(p.area * p.centroid[1] for p in properties) / area == pytest.approx(
+        sign * 5 * math.sin(half_angle) / half_angle
+    )
+
+
+@pytest.mark.parametrize(
+    ("selector", "z"),
+    [(">Z", (1,)), ("<Z", (-1,)), ("|X", (-1, 1)), (">Z or <Z", (-1, 1)), ("<Y", (-1, 1))],
+)
+def test_edges_of_a_unified_face_omit_the_internal_seam(selector: str, z: tuple[int, ...]) -> None:
+    # Each slot boundary line runs along x at y=1, z=±sqrt(24). The
+    # internal seam runs along x at y=5, z=0 and must never be returned.
+    (stack,) = slot_split_side().faces(">Y").edges(selector)._stack
+    assert isinstance(stack, Edges)
+    model = stack.solid.model
+    centres = [model.curve(edge).start for edge in stack.edges]
+    assert sorted(c[2] for c in centres) == pytest.approx([sign * math.sqrt(24) for sign in z])
+    assert [c[1] for c in centres] == pytest.approx([1] * len(z))
+
+
+@pytest.mark.parametrize(
+    "operation",
+    [
+        "edges()",
+        'edges(">X")',
+        'edges("<X")',
+        'edges(">Y")',
+        "fillet(0.1)",
+        "chamfer(0.1)",
+    ],
+)
+def test_selection_or_blending_that_needs_a_joined_boundary_is_refused(operation: str) -> None:
+    slug = "unsupported-edges-unified-face-boundary"
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    text = case.program.replace('edges(">X")', operation)
+    result = ag.run(text, dialect="cq")
+    assert result.status is ag.Status.UNSUPPORTED_API
+    assert result.message.endswith(" on a split unified face boundary")
+
+
 def one_solid(part: cq.Workplane) -> arris.build.Solid:
     (solid,) = part._solids()
     return solid
@@ -534,10 +644,9 @@ def faces_of(solid: arris.build.Solid, kind: str) -> list[arris.Face]:
     return [f for f in model.faces(solid.body) if model.surface(f).kind == kind]
 
 
-def test_faces_of_one_curved_surface_are_refused() -> None:
-    # A tiny half cylinder cut in two across its axis: two faces of one cylinder, both
-    # ranked 2r / pi high and kept by `>Z`. Open CASCADE may hold one surface as one face,
-    # so the plane would hang on a centre arris does not give (rule 5).
+def test_disjoint_faces_of_one_curved_surface_raise_cadquerys_error() -> None:
+    # A slot across the axis separates two pieces of the half cylinder.
+    # Both side faces tie at 2r / pi and remain distinct.
     half = (
         cq.Workplane("YZ")
         .cylinder(0.4, 0.1)
@@ -546,9 +655,10 @@ def test_faces_of_one_curved_surface_are_refused() -> None:
     )
     selected = half.faces(">Z")
     assert kept(selected) == 2
-    with pytest.raises(cq.UnsupportedApi) as raised:
+    with pytest.raises(
+        ValueError, match=r"^If multiple objects selected, they all must be planar faces\.$"
+    ):
         selected.workplane()
-    assert str(raised.value) == "Workplane.workplane on a cylinder face"
 
 
 def test_curved_faces_of_two_kinds_raise_cadquerys_error() -> None:
@@ -560,7 +670,7 @@ def test_curved_faces_of_two_kinds_raise_cadquerys_error() -> None:
         .cylinder(1, 1)
         .union(cq.Workplane("XY").transformed(offset=cq.Vector(5, 0, 0)).sphere(1))
     )
-    pair = [faces_of(solid, "cylinder")[0], faces_of(solid, "sphere")[0]]
+    pair = [(faces_of(solid, "cylinder")[0],), (faces_of(solid, "sphere")[0],)]
     with pytest.raises(ValueError, match=NOT_PLANAR):
         plane_on_faces(pair, arris.build.Workplane.XY(), solid.model)
 
@@ -575,14 +685,14 @@ def test_opposite_and_unrelated_normals_follow_cadquerys_coplanar_test() -> None
     # Opposite normals pass CadQuery's normal test (x agrees), so its answer needs the
     # faces' centres and its face order (rule 4).
     with pytest.raises(cq.UnsupportedApi) as raised:
-        plane_on_faces([top, bottom], arris.build.Workplane.XY(), model)
+        plane_on_faces([(top,), (bottom,)], arris.build.Workplane.XY(), model)
     assert str(raised.value) == (
         "Workplane.workplane on faces whose co-planarity needs their centres"
     )
     # The adjacent top and side share a zero normal component. The signed
     # separation still rejects both orders, as in runtime-faces-triangular-prism.
     side = by_normal[(1.0, 0.0, 0.0)]
-    for pair in ([top, side], [side, top]):
+    for pair in ([(top,), (side,)], [(side,), (top,)]):
         with pytest.raises(ValueError, match=NOT_COPLANAR):
             plane_on_faces(pair, arris.build.Workplane.XY(), model)
     # A box turned 30 degrees about x and z: its top's and its +x side's normals differ in
@@ -599,7 +709,7 @@ def test_opposite_and_unrelated_normals_follow_cadquerys_coplanar_test() -> None
         for f, n in zip(planes, normals, strict=True)
         if n is not None and all(abs(n[k] - na[k]) >= CQ_TOLERANCE for k in range(3))
     )
-    for pair in ([a, b], [b, a]):
+    for pair in ([(a,), (b,)], [(b,), (a,)]):
         with pytest.raises(ValueError, match=NOT_COPLANAR):
             plane_on_faces(pair, arris.build.Workplane.XY(), turned.model)
 
@@ -624,7 +734,7 @@ def test_signed_centre_check_refuses_an_order_dependent_pair() -> None:
         for f in planes
         if model.surface(f).normal == (1, 0, 0) and model.surface_properties(f).centroid[0] < 2
     )
-    for pair in ([top, side], [side, top]):
+    for pair in ([(top,), (side,)], [(side,), (top,)]):
         with pytest.raises(cq.UnsupportedApi, match="co-planarity needs their centres"):
             plane_on_faces(pair, arris.build.Workplane.XY(), model)
 
@@ -735,6 +845,6 @@ def test_faces_ranks_box_and_cylinder_unions_by_closed_form_centres(
     assert isinstance(selected, Faces)
     observed = sorted(
         tuple(round(v, 9) for v in selected.solid.model.surface_properties(face).centroid)
-        for face in selected.faces
+        for (face,) in selected.groups
     )
     assert observed == expected

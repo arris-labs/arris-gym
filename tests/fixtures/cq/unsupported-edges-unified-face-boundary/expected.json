@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "unsupported_api",
+  "message": "Workplane.edges('>X') on a split unified face boundary"
+}

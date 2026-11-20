@@ -1,7 +1,7 @@
 """CadQuery's axis selectors over arris: which faces `faces(">Z")` keeps, and the plane on them.
 
-ADR-0017, and ADR-0020 for edges. Private: `Workplane.faces`, `Workplane.workplane`,
-`Workplane.edges`, `Workplane.fillet` and `Workplane.chamfer` call it.
+ADR-0017 and ADR-0022 for faces, and ADR-0020 for edges. Private: `Workplane.faces`,
+`Workplane.workplane`, `Workplane.edges`, `Workplane.fillet` and `Workplane.chamfer` call it.
 """
 
 from __future__ import annotations
@@ -68,16 +68,19 @@ _EDGE_CHORD = 1e-5
 _EDGE_MARGIN = 1e-4
 
 
+_FaceGroup = tuple[arris.Face, ...]
+
+
 @dataclass(frozen=True)
 class Faces:
-    """The faces a selector kept, on a stack: the solid they belong to and the faces.
+    """The solid on the stack and its selected unified faces (ADR-0022 rule 2).
 
-    The faces are in CadQuery's order, ascending by their key along the
-    selector's axis, a tie in the kernel's face order.
+    Groups are in ascending key, with ties in kernel face order. Each group's
+    members are also in kernel face order.
     """
 
     solid: arris.build.Solid
-    faces: tuple[arris.Face, ...]
+    groups: tuple[_FaceGroup, ...]
 
 
 @dataclass(frozen=True)
@@ -234,36 +237,65 @@ def _pick_widths(keys: Sequence[float], width: Sequence[float], maximum: bool) -
     return _pick(keys, maximum)
 
 
+def _face_groups(model: arris.Model, faces: Sequence[arris.Face]) -> list[_FaceGroup]:
+    """Connected faces of one surface and sense, in kernel face order."""
+    by_edge: dict[int, list[int]] = {}
+    infos = [model.surface(face) for face in faces]
+    parents = list(range(len(faces)))
+
+    def find(i: int) -> int:
+        while parents[i] != i:
+            parents[i] = parents[parents[i]]
+            i = parents[i]
+        return i
+
+    for i, face in enumerate(faces):
+        # A seam can be visited twice on one face. It cannot join two faces.
+        for edge in dict.fromkeys(edge.index for edge in model.edges_of(face)):
+            neighbours = by_edge.setdefault(edge, [])
+            for j in neighbours:
+                if _same_surface(infos[i], infos[j], face.reversed == faces[j].reversed, model):
+                    parents[find(i)] = find(j)
+            neighbours.append(i)
+    groups: dict[int, list[arris.Face]] = {}
+    for i, face in enumerate(faces):
+        groups.setdefault(find(i), []).append(face)
+    return [tuple(group) for group in groups.values()]
+
+
 def select_faces(
-    solid: arris.build.Solid, selector: str, among: Sequence[arris.Face] | None = None
-) -> tuple[arris.Face, ...]:
-    """The faces of `solid`, or of `among` them, that CadQuery's `selector` keeps (ADR-0017).
+    solid: arris.build.Solid, selector: str, among: Sequence[_FaceGroup] | None = None
+) -> tuple[_FaceGroup, ...]:
+    """The unified faces that CadQuery's axis selector keeps (ADR-0022).
 
-    `among` are faces of `solid` a selector kept before (a `faces` on a stack
-    of faces, ADR-0018 rule 5): CadQuery ranks those only.
-
-    `selector` is one of `AXIS_SELECTORS`. A face's key is the projection
-    of its centre of mass onto the axis. A plane normal to that axis has
-    its exact plane offset. Other keys have arris's quadrature error bound
-    (ADR-0022 rule 1). Raises `UnsupportedApi` if the bound can change the
-    selection.
+    With `among`, ranks only the groups a preceding selector kept.
+    A singleton planar face normal to the axis has its exact plane offset.
+    Other keys are area-weighted centres projected onto the axis. Raises
+    `UnsupportedApi` if the quadrature bound can change the selection.
 
     >>> import arris.build
     >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
-    >>> [box.model.surface(f).origin for f in select_faces(box, ">Z")]
-    [(0.0, 0.0, 6.0)]
+    >>> [(top,)] = select_faces(box, ">Z")
+    >>> box.model.surface(top).origin
+    (0.0, 0.0, 6.0)
     """
     maximum = selector[0] == ">"
     axis = _AXIS[selector[1]]
     unit = tuple(1.0 if i == axis else 0.0 for i in range(3))
     model = solid.model
-    faces = list(model.faces(solid.body) if among is None else among)
+    faces = model.faces(solid.body)
+    if among is None:
+        groups = _face_groups(model, faces)
+    else:
+        order = {face.index: i for i, face in enumerate(faces)}
+        groups = sorted(among, key=lambda group: order[group[0].index])
     keys: list[float] = []
     widths: list[float] = []
-    for face in faces:
-        info = model.surface(face)
+    for group in groups:
+        info = model.surface(group[0])
         if (
-            info.kind == "plane"
+            len(group) == 1
+            and info.kind == "plane"
             and info.normal is not None
             and info.origin is not None
             and _length(_cross(info.normal, unit)) <= model.angular_tolerance
@@ -271,15 +303,29 @@ def select_faces(
             keys.append(info.origin[axis])
             widths.append(0.0)
         else:
-            properties = model.surface_properties(face)
-            keys.append(properties.centroid[axis])
-            widths.append(_CENTRE_ERROR * math.sqrt(properties.area))
+            area, centre = _group_properties(model, group)
+            keys.append(centre[axis])
+            widths.append(_CENTRE_ERROR * math.sqrt(area))
     kept = _pick_widths(keys, widths, maximum) if any(widths) else _pick(keys, maximum)
     if kept is None:
         raise UnsupportedApi(
             f"Workplane.faces({selector!r}): the face key error bound can change the selection"
         )
-    return tuple(faces[k] for k in _ordered(kept, keys))
+    return tuple(groups[k] for k in _ordered(kept, keys))
+
+
+def _group_properties(
+    model: arris.Model, group: _FaceGroup
+) -> tuple[float, tuple[float, float, float]]:
+    properties = [model.surface_properties(face) for face in group]
+    if len(properties) == 1:
+        return properties[0].area, properties[0].centroid
+    area = sum(p.area for p in properties)
+    return area, (
+        sum(p.area * p.centroid[0] for p in properties) / area,
+        sum(p.area * p.centroid[1] for p in properties) / area,
+        sum(p.area * p.centroid[2] for p in properties) / area,
+    )
 
 
 def _ordered(kept: Sequence[int], keys: Sequence[float]) -> list[int]:
@@ -300,20 +346,67 @@ def edges_of_solid(solid: arris.build.Solid) -> tuple[arris.Edge, ...]:
     return tuple(e for e in model.edges(solid.body) if model.curve(e).kind != "degenerate")
 
 
-def edges_of_faces(solid: arris.build.Solid, faces: Sequence[arris.Face]) -> tuple[arris.Edge, ...]:
-    """The candidate edges of `faces`: each edge once, in the order first found (ADR-0020 rule 1).
+def edges_of_faces(
+    solid: arris.build.Solid, groups: Sequence[_FaceGroup]
+) -> tuple[tuple[arris.Edge, ...], frozenset[int]]:
+    """The edges of the unified faces, each once and in first-encounter order.
 
-    Each is the solid's own edge value, so that an edge shared by two faces
-    is one, and a reversed edge is read as the solid's body does.
+    An edge joining members of one group is absent after CadQuery's cleaning.
+    Each candidate is the solid's own edge value (ADR-0020 rule 1).
+    The second result marks boundary edges that may join where an inner edge
+    ends (see unsupported-edges-unified-face-boundary).
     """
     model = solid.model
     own = {e.index: e for e in edges_of_solid(solid)}
     found: dict[int, arris.Edge] = {}
-    for face in faces:
-        for edge in model.edges_of(face):
-            if edge.index in own and edge.index not in found:
-                found[edge.index] = own[edge.index]
-    return tuple(found.values())
+    fragments: set[int] = set()
+    for group in groups:
+        first: dict[int, int] = {}
+        inner: set[int] = set()
+        for face in group:
+            for edge in model.edges_of(face):
+                if first.setdefault(edge.index, face.index) != face.index:
+                    inner.add(edge.index)
+        boundary = [own[index] for index in first if index in own and index not in inner]
+        for edge in boundary:
+            found.setdefault(edge.index, edge)
+        if inner:
+            vertices = {
+                v.index for index in inner if index in own for v in model.vertices_of(own[index])
+            }
+            at_vertex: dict[int, list[arris.Edge]] = {}
+            for edge in boundary:
+                for v in model.vertices_of(edge):
+                    if v.index in vertices:
+                        at_vertex.setdefault(v.index, []).append(edge)
+            for adjacent in at_vertex.values():
+                for a, b in itertools.combinations(adjacent, 2):
+                    if a != b and _may_join(model, a, b):
+                        fragments.update((a.index, b.index))
+    return tuple(found.values()), frozenset(fragments)
+
+
+def _may_join(model: arris.Model, a: arris.Edge, b: arris.Edge) -> bool:
+    """Whether boundary edges meeting at a vertex may be on the same curve."""
+    p, q = model.curve(a), model.curve(b)
+    if p.kind != q.kind:
+        return False
+    if p.axis is None or q.axis is None:
+        return True
+    if _length(_cross(p.axis, q.axis)) > model.angular_tolerance:
+        return False
+    if p.kind == "line":
+        return True
+    if p.kind == "circle":
+        assert p.origin is not None
+        assert q.origin is not None
+        assert p.radius is not None
+        assert q.radius is not None
+        return (
+            _length(_sub(p.origin, q.origin)) <= model.tolerance
+            and abs(p.radius - q.radius) <= model.tolerance
+        )
+    return True
 
 
 def _sub(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
@@ -510,6 +603,8 @@ def select_edges(
     edges: Sequence[arris.Edge],
     selector: str | None,
     seams: Sequence[Seam] | None = None,
+    *,
+    fragments: frozenset[int] = frozenset(),
 ) -> tuple[arris.Edge, ...]:
     """The `edges` of `solid` that CadQuery's `selector` keeps (ADR-0020).
 
@@ -525,7 +620,8 @@ def select_edges(
     as CadQuery's kernel does: a seam on a face about another axis that
     `seams`, the chain's records of where Open CASCADE puts its seams, do not
     place (`None`: no seam of the chain is placed), or an ellipse arc or
-    B-spline edge in the kept cluster or able to reach it.
+    B-spline edge in the kept cluster or able to reach it. Also refuses a
+    selection that depends on joining fragments of a unified face's boundary.
 
     >>> import arris.build
     >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
@@ -533,26 +629,41 @@ def select_edges(
     >>> len(select_edges(box, candidates, ">Z")), len(select_edges(box, candidates, "|Z"))
     (4, 4)
     """
-    if selector is None:
-        return tuple(edges)
     if selector in OR_SELECTORS:
         both = {
             edge.index
             for side in selector.split(" or ")
-            for edge in select_edges(solid, edges, side, seams)
+            for edge in select_edges(solid, edges, side, seams, fragments=fragments)
         }
         return tuple(e for e in edges if e.index in both)
-    if selector in PARALLEL_SELECTORS:
-        return _parallel(solid.model, edges, _AXIS[selector[1]])
-    maximum = selector[0] == ">"
-    keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]], seams)
-    kept = _pick_widths(keys, widths, maximum) if any(widths) else _pick(keys, maximum)
-    if kept is None or any(widths[k] for k in kept):
-        raise UnsupportedApi(
-            f"Workplane.edges({selector!r}): the selection depends on an edge's place, "
-            "which arris does not decide as CadQuery's kernel does"
-        )
-    return tuple(edges[k] for k in _ordered(kept, keys))
+    if selector is None:
+        selected = tuple(edges)
+    elif selector in PARALLEL_SELECTORS:
+        selected = _parallel(solid.model, edges, _AXIS[selector[1]])
+    else:
+        maximum = selector[0] == ">"
+        keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]], seams)
+        fragment_slots = [i for i, edge in enumerate(edges) if edge.index in fragments]
+        if fragment_slots:
+            # A joined edge's key is a length-weighted mean of its fragment
+            # keys. Enclose every possible mean, including the unjoined keys.
+            lo = min(keys[i] - widths[i] for i in fragment_slots)
+            hi = max(keys[i] + widths[i] for i in fragment_slots)
+            mid = lo + (hi - lo) / 2
+            for i in fragment_slots:
+                keys[i], widths[i] = mid, max(mid - lo, hi - mid)
+        kept = _pick_widths(keys, widths, maximum) if any(widths) else _pick(keys, maximum)
+        if kept is None and fragment_slots:
+            raise UnsupportedApi(f"Workplane.edges({selector!r}) on a split unified face boundary")
+        if kept is None or any(widths[k] for k in kept if edges[k].index not in fragments):
+            raise UnsupportedApi(
+                f"Workplane.edges({selector!r}): the selection depends on an edge's place, "
+                "which arris does not decide as CadQuery's kernel does"
+            )
+        selected = tuple(edges[k] for k in _ordered(kept, keys))
+    if any(edge.index in fragments for edge in selected):
+        raise UnsupportedApi(f"Workplane.edges({selector!r}) on a split unified face boundary")
+    return selected
 
 
 def plane_on(
@@ -567,7 +678,7 @@ def plane_on(
 
     >>> import arris.build
     >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
-    >>> top = select_faces(box, ">Z")[0]
+    >>> [(top,)] = select_faces(box, ">Z")
     >>> plane_on(top, arris.build.Workplane.XY(), box.model).origin
     (0.0, 0.0, 6.0)
     """
@@ -599,23 +710,74 @@ NO_SUITABLE_EDGES = "Standard_Failure: There are no suitable edges for chamfer o
 # as `ValueError` (ADR-0017 rule 4).
 NOT_PLANAR = "If multiple objects selected, they all must be planar faces."
 NOT_COPLANAR = "Selected faces must be co-planar."
-# The parameters two curved surfaces of one kind share when they are one surface.
-_SHAPE = ("radius", "major_radius", "minor_radius", "half_angle")
 
 
-def _surely_apart(a: arris.SurfaceInfo, b: arris.SurfaceInfo, model: arris.Model) -> bool:
-    """Whether two curved surfaces are certainly not one: another kind, or another size.
+def _cone_apex(info: arris.SurfaceInfo) -> tuple[float, float, float]:
+    """The apex from the reference circle of arris's cone."""
+    origin, axis, radius, angle = info.origin, info.axis, info.radius, info.half_angle
+    assert origin is not None
+    assert axis is not None
+    assert radius is not None
+    assert angle is not None
+    height = radius / math.tan(angle)
+    return (
+        origin[0] + axis[0] * height,
+        origin[1] + axis[1] * height,
+        origin[2] + axis[2] * height,
+    )
 
-    Surfaces of one kind and one size may be one surface the kernels split
-    differently, so they are never called apart (ADR-0017 rule 5).
-    """
-    if a.kind != b.kind:
-        return True
-    for name in _SHAPE:
-        p, q = getattr(a, name), getattr(b, name)
-        within = model.angular_tolerance if name == "half_angle" else model.tolerance
-        if p is not None and q is not None and abs(p - q) > within:
-            return True
+
+def _same_surface(
+    a: arris.SurfaceInfo, b: arris.SurfaceInfo, same_sense: bool, model: arris.Model
+) -> bool:
+    """Whether adjacent faces have one oriented analytic surface (ADR-0022 rule 2)."""
+    if a.kind != b.kind or a.origin is None or b.origin is None:
+        return False
+    tolerance, angular = model.tolerance, model.angular_tolerance
+    delta = _sub(a.origin, b.origin)
+    if a.kind == "plane":
+        n, m = a.normal, b.normal
+        return (
+            n is not None
+            and m is not None
+            and _dot(n, m) > 0.0
+            and _length(_cross(n, m)) <= angular
+            and max(abs(_dot(delta, n)), abs(_dot(delta, m))) <= tolerance
+        )
+    if not same_sense:
+        return False
+    if a.kind == "sphere":
+        assert a.radius is not None
+        assert b.radius is not None
+        return _length(delta) <= tolerance and abs(a.radius - b.radius) <= tolerance
+    u, v = a.axis, b.axis
+    if u is None or v is None or _length(_cross(u, v)) > angular:
+        return False
+    if a.kind == "cone":
+        assert a.half_angle is not None
+        assert b.half_angle is not None
+        return (
+            _dot(u, v) > 0.0
+            and abs(a.half_angle - b.half_angle) <= angular
+            and _length(_sub(_cone_apex(a), _cone_apex(b))) <= tolerance
+        )
+    if a.kind == "torus":
+        assert a.major_radius is not None
+        assert b.major_radius is not None
+        assert a.minor_radius is not None
+        assert b.minor_radius is not None
+        return (
+            _length(delta) <= tolerance
+            and abs(a.major_radius - b.major_radius) <= tolerance
+            and abs(a.minor_radius - b.minor_radius) <= tolerance
+        )
+    if a.kind == "cylinder":
+        assert a.radius is not None
+        assert b.radius is not None
+        return (
+            abs(a.radius - b.radius) <= tolerance
+            and max(_length(_cross(delta, u)), _length(_cross(delta, v))) <= tolerance
+        )
     return False
 
 
@@ -625,15 +787,13 @@ def _normals_tie(n0: Sequence[float], n1: Sequence[float]) -> bool:
 
 
 def plane_on_faces(
-    faces: Sequence[arris.Face], parent: arris.build.Workplane, model: arris.Model
+    groups: Sequence[_FaceGroup], parent: arris.build.Workplane, model: arris.Model
 ) -> arris.build.Workplane:
     """The workplane CadQuery's `workplane()` builds on the faces a selector kept (ADR-0017).
 
-    One face is `plane_on`'s. Several (rule 4): faces that are not all planar
-    raise CadQuery's `ValueError` (`NOT_PLANAR`), unless all lie on curved
-    surfaces of one kind and size, which may be one face to Open CASCADE and
-    are `UnsupportedApi` (rule 5). Planar faces with one outward normal and
-    one offset, within the model's tolerances, give that plane, whatever the
+    One unified face is `plane_on`'s. Several (rule 4): if any is curved,
+    raise CadQuery's `ValueError` (`NOT_PLANAR`). Planar faces with one outward
+    normal and one offset, within the model's tolerances, give that plane, whatever the
     face order. Planar faces at offsets apart need their areas, opposite
     normals and other normals their centres or CadQuery's face order, so
     they are `UnsupportedApi` unless CadQuery rejects the faces whichever
@@ -646,15 +806,11 @@ def plane_on_faces(
     >>> len(tops), plane_on_faces(tops, arris.build.Workplane.XY(), part.model).origin
     (2, (0.0, 0.0, 2.0))
     """
+    faces = [group[0] for group in groups]
     if len(faces) == 1:
         return plane_on(faces[0], parent, model)
     infos = [model.surface(face) for face in faces]
-    curved = [info for info in infos if info.kind != "plane"]
-    if curved:
-        if len(curved) == len(infos) and not any(
-            _surely_apart(curved[0], other, model) for other in curved[1:]
-        ):
-            raise UnsupportedApi(f"Workplane.workplane on a {curved[0].kind} face")
+    if any(info.kind != "plane" for info in infos):
         raise ValueError(NOT_PLANAR)
     normals: list[tuple[float, float, float]] = []
     offsets: list[float] = []
@@ -675,8 +831,8 @@ def plane_on_faces(
         raise UnsupportedApi("Workplane.workplane on parallel faces at different offsets")
     # CadQuery tests each face against its first. A rejection must hold
     # for every possible first face. See runtime-faces-triangular-prism.
-    properties = [model.surface_properties(face) for face in faces]
-    widths = [_CENTRE_ERROR * math.sqrt(p.area) for p in properties]
+    areas, centres = zip(*(_group_properties(model, group) for group in groups), strict=True)
+    widths = [_CENTRE_ERROR * math.sqrt(area) for area in areas]
 
     def rejects(i: int, j: int) -> bool:
         n, other = normals[i], normals[j]
@@ -685,7 +841,7 @@ def plane_on_faces(
         if _length(_cross(n, other)) <= model.angular_tolerance:
             return False  # opposite normals remain unsupported (ADR-0022 rule 3)
         # CadQuery compares the signed distance with its tolerance.
-        separation = _dot(n, _sub(properties[i].centroid, properties[j].centroid))
+        separation = _dot(n, _sub(centres[i], centres[j]))
         reach = sum(abs(v) for v in n) * (widths[i] + widths[j])
         return separation - reach - _FLOAT_SLACK >= CQ_TOLERANCE
 
