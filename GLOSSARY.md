@@ -247,6 +247,16 @@ exact on a line, a circle and an arc, bounded on a seam whose face's axis
 crosses the selector's unless `cq` placed it, estimated on an ellipse arc or a
 B-spline (ADR-0020).
 
+**Face key**:
+What an axis selector ranks a face by: its centre of mass along the axis, exact
+on a plane normal to it, else arris's `surface_properties` quadrature, an
+interval √area × `_CENTRE_ERROR` wide (ADR-0022).
+
+**Unified face**:
+Faces of one surface that share an edge, taken as one: ranked by their
+area-weighted centre, kept or dropped together and with no edge between them,
+as CadQuery's `clean()` leaves them (ADR-0022).
+
 **Seam**:
 An edge with one face on both sides, where a closed surface (a cylinder, a
 sphere) meets itself. Where it lies is the kernel's choice; a blend passes

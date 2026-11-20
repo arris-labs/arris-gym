@@ -248,3 +248,11 @@ volume, area, centroid and bounds are the closed form of
 `tools/cq_closed_forms.py` (`sprocket_measures`) and arris's, while the oracle's
 chamfer on the tooth outline takes less than the mitre does, `occt_wrong` for
 all 18 rows (each passes `compare` against both sides).
+
+## Amendment (2026-11-20): ADR-0022 replaces rules 2, 4 and 5
+
+arris 0.11.1 gives a face's exact centre of mass and area. ADR-0022 ranks every
+face by it, in place of rule 2's estimate, margin and finer pass and the two
+amendments above; it places `workplane()` on a near tie and on one unified
+curved face (rules 4 and 5); and it ranks faces of one surface that share an edge
+as one. Rules 1 and 3 stand.

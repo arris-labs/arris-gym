@@ -67,7 +67,11 @@ and the C2 tables, re-run, count 0 in-subset `cq_bug` on both corpora.
   `tests/fixtures/cq/unsupported-faces-{cylinder-side,half-cylinder,near-tie,triangular-prism}`,
   `tests/test_cq_faces.py` (the size-dependent cases), the regression fixture;
   each is renamed to its new status in the commit that lifts it.
-- **Glossary**: *Face key* and *Unified face*, new.
+- **Foot band (step 2's ADR-0022, rule 4)**: a centre on a curved face's axis (or the
+  sphere's centre, the torus's tube circle) has no foot: `runtime` with the oracle's
+  words where d ≤ `_CENTRE_ERROR`·√area, `unsupported_api` up to `_FOOT_MIN`·√area
+  (1e-3, step 6 measures it), the closed-form foot beyond. Private constants.
+- **Glossary**: *Face key* and *Unified face*, new (written in step 2).
 
 ## Steps
 
@@ -85,7 +89,7 @@ case within a given design; **[3]** unproven. The grade is the tier
   arris's per-face centroid against the same, which measures `_CENTRE_ERROR`.
   It must show Open CASCADE's one face where arris has two sharing an edge,
   and two where they share none; if not, stop and re-plan.
-- [ ] Step 2 **[2]** — ADR-0022 from step 1's figures; ADR-0017's pointer
+- [x] Step 2 **[2]** — ADR-0022 from step 1's figures; ADR-0017's pointer
   amendment; `GLOSSARY.md` *Face key*, *Unified face*.
 - [ ] Step 3 **[2]** — Exact keys in `select_faces`: the estimate gone,
   `_CENTRE_ERROR` in. The size-dependent cases end `runtime` at every size;
