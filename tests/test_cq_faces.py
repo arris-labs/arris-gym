@@ -307,11 +307,6 @@ def test_two_coplanar_faces_are_both_kept() -> None:
             lambda: tops((-3, 1, 2), (4, 1.00005, 1)).faces(">Z").workplane(),
             "Workplane.workplane on parallel faces at different offsets",
         ),
-        (
-            lambda: cq.Workplane("XY").cylinder(6, 2).faces(">X"),
-            "Workplane.faces('>X'): the selection depends on the centre of a face that arris "
-            "does not give",
-        ),
     ],
 )
 def test_what_the_subset_does_not_model_is_unsupported_naming_it(
@@ -495,41 +490,37 @@ def test_step_4_fixtures_agree_with_the_recorded_oracle(slug: str) -> None:
     assert compare(fixture_cases.run(case), report).outcome is FidelityOutcome.AGREE
 
 
-# The step 4 refusals of ADR-0017's constructions: fixture -> the construction's record, and
-# what CadQuery did with it (an error, or the faces it kept).
-REFUSED = {
-    "unsupported-faces-near-tie": "near-tie-inside>Z",
-    "unsupported-faces-cylinder-side": "cylinder>X",
-    "unsupported-faces-triangular-prism": "box-centre-not-mass>X",
-    "unsupported-faces-half-cylinder": "half-cylinder>Z",
-}
-
-
-@pytest.mark.parametrize("slug", sorted(REFUSED))
-def test_a_refused_construction_is_one_the_oracle_records(slug: str) -> None:
-    """Each refusal stands beside its oracle record: the program as recorded (the half
-    cylinder rewritten in the subset, `box(centered=)` and `mirror` being outside it) and
-    what made CadQuery's answer one arris cannot give (ADR-0017 rules 2, 4 and 5)."""
+@pytest.mark.parametrize(
+    ("slug", "name"),
+    [
+        ("runtime-faces-cylinder-side", "cylinder>X"),
+        ("runtime-faces-triangular-prism", "box-centre-not-mass>X"),
+        ("unsupported-faces-near-tie", "near-tie-inside>Z"),
+        ("unsupported-faces-half-cylinder", "half-cylinder>Z"),
+    ],
+)
+def test_a_construction_matches_its_oracle_record(slug: str, name: str) -> None:
     case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
-    record = constructed(REFUSED[slug])
+    record = constructed(name)
     selected = record["selected"]
     assert isinstance(selected, list)
-    if slug == "unsupported-faces-half-cylinder":
-        # One half-cylinder face, its centre off the surface: the plane hangs on that centre.
+    if name == "half-cylinder>Z":
+        # The fixture rewrites the oracle's out-of-subset box(centered=) and mirror.
         assert [f["type"] for f in selected] == ["CYLINDER"]
         assert selected[0]["centre_to_surface"] == pytest.approx(1 - 2 / math.pi, abs=1e-9)
         assert 'faces(">Z")' in case.program
     else:
         assert case.program == record["program"]
-    if slug == "unsupported-faces-near-tie":
-        # Two faces 5e-5 apart: the plane sits at their area-weighted offset.
+    result = fixture_cases.run(case)
+    if name == "near-tie-inside>Z":
         assert [f["centre"][2] for f in selected] == [1.50005, 1.5]
         assert isinstance(record["plane"], dict)
         assert record["plane"]["origin"][2] == pytest.approx(1.5000166666666666, abs=1e-12)
-    if slug in ("unsupported-faces-cylinder-side", "unsupported-faces-triangular-prism"):
-        assert "error" in record
-    result = fixture_cases.run(case)
-    assert result.status is ag.Status.UNSUPPORTED_API
+    if slug.startswith("runtime-"):
+        assert result.status is ag.Status.RUNTIME
+        assert result.message == record["error"]
+    else:
+        assert result.status is ag.Status.UNSUPPORTED_API
     assert result.message == case.expected["message"]
 
 
@@ -588,10 +579,12 @@ def test_opposite_and_unrelated_normals_follow_cadquerys_coplanar_test() -> None
     assert str(raised.value) == (
         "Workplane.workplane on faces whose co-planarity needs their centres"
     )
-    # Normals along z and along x share y = 0, so the test passes there too.
+    # The adjacent top and side share a zero normal component. The signed
+    # separation still rejects both orders, as in runtime-faces-triangular-prism.
     side = by_normal[(1.0, 0.0, 0.0)]
-    with pytest.raises(cq.UnsupportedApi):
-        plane_on_faces([top, side], arris.build.Workplane.XY(), model)
+    for pair in ([top, side], [side, top]):
+        with pytest.raises(ValueError, match=NOT_COPLANAR):
+            plane_on_faces(pair, arris.build.Workplane.XY(), model)
     # A box turned 30 degrees about x and z: its top's and its +x side's normals differ in
     # every component, whichever is first, so CadQuery raises.
     turned = one_solid(cq.Workplane("XY").transformed(rotate=cq.Vector(30, 0, 30)).box(2, 3, 4))
@@ -611,41 +604,45 @@ def test_opposite_and_unrelated_normals_follow_cadquerys_coplanar_test() -> None
             plane_on_faces(pair, arris.build.Workplane.XY(), turned.model)
 
 
+def test_signed_centre_check_refuses_an_order_dependent_pair() -> None:
+    from arris_gym.cq._selector import plane_on_faces
+
+    # The top of the right box rejects the left box's side (positive z
+    # separation), but the side accepts the top (negative x separation).
+    part = one_solid(
+        cq.Workplane("XY").box(2, 2, 2).union(cq.Workplane("XY", origin=(5, 0, 0)).box(2, 2, 2))
+    )
+    model = part.model
+    planes = faces_of(part, "plane")
+    top = next(
+        f
+        for f in planes
+        if model.surface(f).normal == (0, 0, 1) and model.surface_properties(f).centroid[0] > 4
+    )
+    side = next(
+        f
+        for f in planes
+        if model.surface(f).normal == (1, 0, 0) and model.surface_properties(f).centroid[0] < 2
+    )
+    for pair in ([top, side], [side, top]):
+        with pytest.raises(cq.UnsupportedApi, match="co-planarity needs their centres"):
+            plane_on_faces(pair, arris.build.Workplane.XY(), model)
+
+
 @pytest.mark.parametrize(
-    ("height", "radius", "status"),
-    [
-        (0.2, 0.1, ag.Status.RUNTIME),
-        (0.5, 0.3, ag.Status.UNSUPPORTED_API),
-        (1, 0.5, ag.Status.UNSUPPORTED_API),
-        (2, 1, ag.Status.UNSUPPORTED_API),
-        (20, 10, ag.Status.UNSUPPORTED_API),
-    ],
+    ("height", "radius"), [(0.2, 0.1), (0.5, 0.3), (1, 0.5), (2, 1), (20, 10), (2000, 1000)]
 )
-def test_rule_4s_error_is_reached_only_on_a_small_part(
-    height: float, radius: float, status: ag.Status
-) -> None:
-    # A cylinder's `>X`: its side's centre lies on the axis and ties with both discs', all
-    # three estimated, so CadQuery raises its not-planar `ValueError` at every size. The tie
-    # holds within the margin (1e-4 of the box diagonal, twice over for two estimated keys,
-    # against an absolute CQ_TOLERANCE) only for a diagonal under 0.5: 0.35 here for
-    # (0.2, 0.1), 0.98 for (0.5, 0.3). ADR-0017's 2026-11-14 amendment.
+def test_mixed_surface_error_is_reached_at_every_tested_size(height: float, radius: float) -> None:
+    # Both discs and the side have centre x = 0.
     from arris_gym.cq._selector import NOT_PLANAR
 
-    diagonal = math.sqrt(2 * (2 * radius) ** 2 + height**2)
-    assert (diagonal < 0.5) is (status is ag.Status.RUNTIME)
     result = ag.run(
         "import cadquery as cq\n"
         f'result = cq.Workplane("XY").cylinder({height}, {radius}).faces(">X").workplane()\n',
         dialect="cq",
     )
-    assert result.status is status, result.message
-    if status is ag.Status.RUNTIME:
-        assert result.message == f"ValueError: {NOT_PLANAR}"
-    else:
-        assert result.message == (
-            "Workplane.faces('>X'): the selection depends on the centre of a face that arris "
-            "does not give"
-        )
+    assert result.status is ag.Status.RUNTIME
+    assert result.message == f"ValueError: {NOT_PLANAR}"
 
 
 def test_the_selector_doctests_run() -> None:
@@ -664,26 +661,80 @@ def _box_and_pin(height: float) -> cq.Workplane:
 
 
 @pytest.mark.parametrize("proud", [0.005, 0.0025])
-def test_a_thin_band_the_first_margin_cannot_place_is_placed_by_the_refined_one(
-    proud: float,
-) -> None:
-    # The band (the cylinder's side above the box) is `proud` high, its centre `proud / 2`
-    # below the disc at 10 + proud: 0.0025 and 0.00125, over the refined margin (1e-6 of the
-    # diagonal 57, 5.7e-5) and CQ_TOLERANCE, under the first (1e-4 of it, 5.7e-3). The
-    # disc alone is kept, as CadQuery does (`ok-thin-band-top-face`).
+def test_a_thin_band_below_the_top_cluster_leaves_only_the_disc(proud: float) -> None:
+    # The band's centre is proud / 2 below the disc, beyond the selector tolerance.
     top = _box_and_pin(20 + 2 * proud).faces(">Z")
-    (kept_faces,) = [o for o in top._stack if isinstance(o, Faces)]
-    assert len(kept_faces.faces) == 1
+    assert kept(top) == 1
     assert top.workplane()._plane.origin == pytest.approx((0, 0, 10 + proud), abs=1e-9)
 
 
-def test_a_band_that_ties_the_top_face_is_still_refused() -> None:
-    # A band 1.5e-4 high: its centre 7.5e-5 below the disc, inside CQ_TOLERANCE (1e-4), so
-    # CadQuery keeps band and disc, and with the refined margin (5.7e-5) the tie cannot be
-    # told from a near miss: `UnsupportedApi`, as before the refined pass.
+def test_a_band_joins_the_cluster_started_by_the_slab_top() -> None:
+    # The slab top at z=10 clusters with the band at z=10.000075. The disc
+    # at z=10.00015 starts a new cluster even though it is close to the band.
+    top = _box_and_pin(20.0003).faces(">Z")
+    assert kept(top) == 1
+    assert top.workplane()._plane.origin == pytest.approx((0, 0, 10.00015), abs=1e-9)
+
+
+def test_a_band_and_disc_tie_with_the_slab_if_all_fit_the_cluster() -> None:
+    # The slab top at z=10 starts the cluster and the disc lies 8e-5 above it.
+    assert kept(_box_and_pin(20.00016).faces(">Z")) == 3
+
+
+def test_a_band_at_the_tolerance_boundary_has_an_uncertain_rank() -> None:
+    # The band's centre is CQ_TOLERANCE below the disc, within the quadrature bound.
     with pytest.raises(cq.UnsupportedApi) as raised:
-        _box_and_pin(20.0003).faces(">Z")
+        _box_and_pin(20 + 4 * CQ_TOLERANCE).faces(">Z")
     assert str(raised.value) == (
-        "Workplane.faces('>Z'): the selection depends on the centre of a face "
-        "that arris does not give"
+        "Workplane.faces('>Z'): the face key error bound can change the selection"
     )
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    boxes=st.lists(st.tuples(*(st.integers(1, 8) for _ in range(3))), min_size=1, max_size=3),
+    cylinders=st.lists(st.tuples(st.integers(1, 8), st.integers(1, 4)), min_size=1, max_size=3),
+    origin=st.tuples(*(st.integers(-10, 10) for _ in range(3))),
+    selector=st.sampled_from(tuple(AXES)),
+)
+def test_faces_ranks_box_and_cylinder_unions_by_closed_form_centres(
+    boxes: list[tuple[int, int, int]],
+    cylinders: list[tuple[int, int]],
+    origin: tuple[int, int, int],
+    selector: str,
+) -> None:
+    # Disjoint pieces keep all their faces. Spacing along y distinguishes the
+    # pieces while allowing ties on x and z. The cylinder's side ranks at its
+    # axis, irrespective of radius.
+    pieces: list[cq.Workplane] = []
+    centres: list[Vec] = []
+    for i, (length, width, height) in enumerate(boxes):
+        x, y, z = origin[0], origin[1] + 12 * i, origin[2]
+        pieces.append(cq.Workplane("XY", origin=(x, y, z)).box(length, width, height))
+        for sign in (-1, 1):
+            centres.extend(
+                [
+                    (x + sign * length / 2, y, z),
+                    (x, y + sign * width / 2, z),
+                    (x, y, z + sign * height / 2),
+                ]
+            )
+    for i, (height, radius) in enumerate(cylinders, start=len(boxes)):
+        x, y, z = origin[0], origin[1] + 12 * i, origin[2]
+        pieces.append(cq.Workplane("YZ", origin=(x, y, z)).cylinder(height, radius))
+        centres.extend([(x, y, z), (x - height / 2, y, z), (x + height / 2, y, z)])
+    part = pieces[0]
+    for piece in pieces[1:]:
+        part = part.union(piece)
+
+    axis = "XYZ".index(selector[1])
+    extreme = max if selector[0] == ">" else min
+    edge = extreme(c[axis] for c in centres)
+    expected = sorted(c for c in centres if abs(c[axis] - edge) <= CQ_TOLERANCE)
+    (selected,) = part.faces(selector)._stack
+    assert isinstance(selected, Faces)
+    observed = sorted(
+        tuple(round(v, 9) for v in selected.solid.model.surface_properties(face).centroid)
+        for face in selected.faces
+    )
+    assert observed == expected

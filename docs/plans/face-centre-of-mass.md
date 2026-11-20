@@ -43,7 +43,7 @@ and the C2 tables, re-run, count 0 in-subset `cq_bug` on both corpora.
   quadrature, so it is an interval `_CENTRE_ERROR` wide, measured by step 1
   (relative to the face's √area, as arris's own tests hold it), through the
   existing `_pick_widths`. `_estimates`, `_ESTIMATE_*`, `_REFINED_*` and the
-  second pass go. Whether the box pre-filter stays is step 3's call, by cost.
+  second pass go. See the settled box pre-filter decision below.
 - **Unified face.** Faces of one surface (same kind, frame and size within
   the model's tolerances, `_surely_apart` negated) joined through shared
   edges are one: key from the area-weighted centroid, kept or dropped
@@ -91,11 +91,13 @@ case within a given design; **[3]** unproven. The grade is the tier
   and two where they share none; if not, stop and re-plan.
 - [x] Step 2 **[2]** — ADR-0022 from step 1's figures; ADR-0017's pointer
   amendment; `GLOSSARY.md` *Face key*, *Unified face*.
-- [ ] Step 3 **[2]** — Exact keys in `select_faces`: the estimate gone,
+- [x] Step 3 **[2]** — Exact keys in `select_faces`: the estimate gone,
   `_CENTRE_ERROR` in. The size-dependent cases end `runtime` at every size;
   `unsupported-faces-cylinder-side` and `-triangular-prism` move to
-  `runtime-…` (CadQuery's `ValueError`). Hypothesis: random unions of boxes
-  and cylinders, `faces(sel)` equal to a ranking over closed-form centres.
+  `runtime-…` (CadQuery's `ValueError`). For the prism, this includes the
+  signed centre check when it rejects every face order. Hypothesis: on random
+  unions of boxes and cylinders, `faces(sel)` agrees with a ranking over
+  closed-form centres.
 - [ ] Step 4 **[3]** — Unified faces: grouping, `Faces.groups`, the second
   `faces` over groups, `edges_of_faces` without inner edges. Lifts the
   regression fixture (strict `xfail` dropped, `fixtures:` in the message) and
@@ -143,5 +145,11 @@ case within a given design; **[3]** unproven. The grade is the tier
   after every `clean()`ing call the subset has (`union`, `cut`, `hole`,
   `cutBlind`)? If a call does not clean, the group rule applies only after
   calls that do; the agent decides in step 2's ADR.
-- ⚠ OPEN: keep the box pre-filter or call the quadrature on every face —
-  step 3, by the corpus run's cost.
+- *Settled (step 3):* drop the box pre-filter. A local selector timing on a
+  box, cylinder and thin-band union put both tested axes under 2.5 ms per
+  selection with quadrature. The box adds under 1 ms and the cylinder and
+  union get faster. Step 7 checks the cost on both full corpora.
+- *Settled (step 3):* the prism's two faces share a zero normal component.
+  The signed test of their centres rejects both orders and belongs in step 3
+  to reproduce its oracle row. Step 5 still owns placing the plane when
+  co-planarity holds and lifting near ties.

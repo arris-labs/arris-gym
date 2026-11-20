@@ -385,22 +385,20 @@ rejects, and the row is `by_design` on this anchor.
 `faces(selector)` keeps the faces of the solid on the stack as
 CadQuery's `DirectionMinMaxSelector` does (ADR-0017): by centre of mass along
 the axis, greedy clusters of `1e-4`, `>` the last and `<` the first. A planar
-face normal to the axis is ranked by its exact plane offset, any other by its
-box where that settles it, else by a tessellation estimate trusted at a margin;
-a selection the margin cannot settle ends `unsupported_api`, after a second
-estimate a hundred times finer that settles a gap but never a tie (ADR-0017's
-2026-11-15 amendment). `workplane()` on
+face normal to the axis is ranked by its exact plane offset. Other face keys
+come from arris's surface centroid quadrature. A selection whose membership
+can change within the quadrature's error bound ends `unsupported_api`
+(ADR-0022 rule 1). `workplane()` on
 one planar face is that face's plane (x `(0, 0, 1)` crossed with the normal,
 the parent origin projected onto it) and keeps the solid in the chain; on
 several planar faces with one normal and one offset it is their one plane.
-Several faces not all planar, or planar ones whose normals fail CadQuery's
-co-planar test whichever comes first, end `runtime` with CadQuery's
-`ValueError`, but only on a small part: the margin is relative to the box
-diagonal and CadQuery's clusters are absolute, so such a tie is held under a
-diagonal of 0.5 to 1 and ends `unsupported_api` in `faces` above it (ADR-0017's
-2026-11-14 amendment). A curved face or faces of one curved surface, several faces
-whose plane needs their areas or centres (a near tie, other normals) and every
-call but `workplane` on a stack of faces end `unsupported_api`. `workplane(offset=)`
+Several faces not all planar, or planar ones that fail CadQuery's co-planar
+test whichever comes first, end `runtime` with CadQuery's `ValueError`.
+The co-planar rejection uses the normals and, for nonparallel faces, the
+signed separation of their centres. A curved face or faces of one curved
+surface and planar near ties that need an area-weighted offset end
+`unsupported_api`. Planar selections whose co-planarity still depends on
+centres or face order also end `unsupported_api`. `workplane(offset=)`
 on faces moves the plane along its normal, as on a solid. `faces` on a stack
 whose objects have no faces (an empty stack, a `moveTo` point, a drawn path, a
 sketch) is `runtime` with CadQuery's `ValueError`, even where the chain holds a
@@ -489,12 +487,12 @@ metadata exports belong to the caller's `arris_gym.cq`; the program-facing
 module keeps `UnsupportedApi`, `Vector` and `Workplane`. The metadata uses
 frozen standard-library dataclasses to keep `cq`'s import boundary.
 
-CadQuery's axis selectors (`>X <X >Y <Y >Z <Z`) map onto arris as ADR-0017
-decides. `cq` ranks faces by CadQuery's
-centre of mass and greedy 1e-4 clusters, not by `Selection.extreme`'s box
-centre. A planar face normal to the axis has its exact key, its plane's offset;
-another face is settled by its box or by a tessellation estimate trusted only
-at a margin, else `unsupported_api`. `workplane()` follows CadQuery's
+CadQuery's axis selectors (`>X <X >Y <Y >Z <Z`) rank faces by centre of mass
+and greedy 1e-4 clusters (ADR-0017 rule 1). A planar face normal to the axis
+has its exact plane offset as its key. Other keys are projected centres of
+mass from arris, with a half-width of 1e-12 times the square root of the
+face area (ADR-0022 rule 1). If the bound can affect selection membership,
+`faces` returns `unsupported_api`. `workplane()` follows CadQuery's
 `ProjectedOrigin` rule on planar faces, and a selection kept on one curved
 surface ends `unsupported_api`.
 

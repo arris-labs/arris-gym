@@ -11,11 +11,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   reward's version is unchanged: a kernel bump is named by `versions.arris`.
   On BenchCAD and CAD-Recode no status, measure, class or reward moves.
 
-- `dialect="cq"`: `faces(selector)` now runs on a part where a thin curved face
-  (a cylinder's side showing 0.01 above a plate, say) lies beside the selected
-  face, within the estimate's margin but not tied with it, as CadQuery keeps
-  the flat face alone: a sprocket's hub through its plates now ends `ok`. A tie
-  with a curved face is still `unsupported_api`.
+- `dialect="cq"` now ranks faces using the kernel's surface centre of mass.
+  Tied planar and curved faces can reach `workplane()` and return CadQuery's
+  `ValueError` as `runtime`. Nonparallel planar faces that fail its coplanarity
+  check in either order also return `runtime`.
 
 - `dialect="cq"` now runs `edges()` and `edges(selector)` with the axis
   selectors `>X <X >Y <Y >Z <Z`, the parallel selectors `|X |Y |Z` and

@@ -360,15 +360,18 @@ row. `runtime-faces-workplane-mixed-surfaces` (a 0.2 × radius 0.1 cylinder's
 `>X`: its side and both discs tie) and `runtime-faces-workplane-not-coplanar`
 (a small triangular prism turned 30° about x, `>X` keeping two faces whose
 normals differ in every component) end in CadQuery's own `ValueError`, each
-with a recorded oracle report saying the same. They are small so the
-estimate's margin (ADR-0017 rule 2) settles the selection; at the
-constructions' size it does not, and `unsupported-faces-cylinder-side` and
-`unsupported-faces-triangular-prism`, the constructions as recorded, end at
-`faces`. `unsupported-faces-near-tie` is `near-tie-inside>Z` (tops 5e-5
+with a recorded oracle report saying the same. `runtime-faces-cylinder-side`
+and `runtime-faces-triangular-prism` are the larger `cylinder>X` and
+`box-centre-not-mass>X` constructions as recorded. The cylinder's side and
+both discs tie. The prism's two selected side faces tie on x and fail
+CadQuery's signed centre check in either order. Both reach the recorded
+`ValueError` with the face keys from ADR-0022.
+`unsupported-faces-near-tie` is `near-tie-inside>Z` (tops 5e-5
 apart, the oracle's plane at their area-weighted offset), and
 `unsupported-faces-half-cylinder` is `half-cylinder>Z` rewritten in the
-subset (the record's `box(centered=)` and `mirror` are outside it): one
-curved face kept, a plane arris cannot place (rule 5).
+subset (the record's `box(centered=)` and `mirror` are outside it): the oracle
+keeps one curved face and `cq` keeps its two quarter faces. Placing a plane
+on that curved surface ends `unsupported_api` (ADR-0017 rule 5).
 `tests/test_cq_faces.py` holds each against its record.
 
 `ok-hole-*` are `hole(diameter)` read on the oracle (`tests/test_cq_hole.py`

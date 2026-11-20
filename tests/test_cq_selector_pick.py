@@ -1,4 +1,4 @@
-"""`_pick_within` (ADR-0017 rule 2): a selection it returns holds under every shift."""
+"""`_pick_widths` (ADR-0022 rule 1): a selection it returns holds under every shift."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import itertools
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from arris_gym.cq._selector import CQ_TOLERANCE, _pick, _pick_within
+from arris_gym.cq._selector import CQ_TOLERANCE, _pick, _pick_widths
 
 MARGIN = 2e-4
 
@@ -17,7 +17,7 @@ def test_two_estimated_keys_moved_in_opposite_directions_are_refused() -> None:
     # Uniform and one-at-a-time shifts keep [1]; moving key 1 down and key 0 up keeps [0, 1].
     assert _pick(keys, True) == [1]
     assert _pick([keys[0] + MARGIN, keys[1] - MARGIN], True) == [0, 1]
-    assert _pick_within(keys, [True, True], MARGIN, True) is None
+    assert _pick_widths(keys, [MARGIN, MARGIN], True) is None
 
 
 def test_a_margin_that_reaches_the_tolerance_in_floats_is_refused() -> None:
@@ -25,13 +25,13 @@ def test_a_margin_that_reaches_the_tolerance_in_floats_is_refused() -> None:
     difference is a ulp over it and the keys tie no more, so the tie is not kept."""
     keys = [0.00056, 0.00056]
     assert _pick([keys[0], keys[1] + CQ_TOLERANCE], False) == [0]
-    assert _pick_within(keys, [False, True], CQ_TOLERANCE, False) is None
+    assert _pick_widths(keys, [0.0, CQ_TOLERANCE], False) is None
 
 
 def test_a_selection_clear_of_the_margin_is_kept() -> None:
-    assert _pick_within([0.0, 1.0], [True, True], MARGIN, True) == [1]
-    assert _pick_within([0.0, 1.0], [True, True], MARGIN, False) == [0]
-    assert _pick_within([0.0, 0.0], [False, False], MARGIN, True) == [0, 1]
+    assert _pick_widths([0.0, 1.0], [MARGIN, MARGIN], True) == [1]
+    assert _pick_widths([0.0, 1.0], [MARGIN, MARGIN], False) == [0]
+    assert _pick_widths([0.0, 0.0], [0.0, 0.0], True) == [0, 1]
 
 
 @settings(max_examples=300, deadline=None)
@@ -49,7 +49,7 @@ def test_a_returned_selection_holds_at_every_corner_of_the_box(
     keys: list[float], flags: list[bool], margin: float, maximum: bool
 ) -> None:
     estimated = flags[: len(keys)]
-    kept = _pick_within(keys, estimated, margin, maximum)
+    kept = _pick_widths(keys, [margin if e else 0.0 for e in estimated], maximum)
     if kept is None:
         return
     moving = [i for i, e in enumerate(estimated) if e]

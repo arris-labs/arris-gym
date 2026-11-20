@@ -57,22 +57,15 @@ CQ_TOLERANCE = 1e-4
 # `_pick` compares keys after summing and subtracting them in floats, so a
 # difference worked out one way can fall a few ulps (of keys under 1) on the
 # other side of `CQ_TOLERANCE` from the same difference worked out another.
-# `_pick_within` keeps this much clear of that edge: a selection within it is
+# `_pick_widths` keeps this much clear of that edge: a selection within it is
 # refused, as one the margin could change. In model units.
 _FLOAT_SLACK = 1e-12
-# The chord a face's tessellation is cut at when its centre is estimated, as a
-# fraction of the solid's box diagonal (ADR-0017 rule 2). The estimate's error
-# is about 0.4 chords.
-_ESTIMATE_CHORD = 1e-5
-# How far an estimated key is trusted, as a fraction of the same diagonal:
-# ten chords, 25 times the error measured on a half cylinder (ADR-0017 rule 2).
-_ESTIMATE_MARGIN = 1e-4
-# The finer pass `select_faces` makes when the first leaves a selection undecided: a chord and a
-# margin 100 times smaller, so the error measured at the first (0.4 of a chord) and the margin
-# (ten chords) both scale down with the chord (ADR-0017's 2026-11-15 amendment). It only
-# settles a gap: a selection that keeps an estimated face, a tie, is refused as before.
-_REFINED_CHORD = 1e-7
-_REFINED_MARGIN = 1e-6
+# Quadrature error per sqrt(face area), bounded by ADR-0022 rule 1.
+_CENTRE_ERROR = 1e-12
+# Edge polyline chord and centre error as fractions of the solid's box diagonal
+# (ADR-0020 rule 2).
+_EDGE_CHORD = 1e-5
+_EDGE_MARGIN = 1e-4
 
 
 @dataclass(frozen=True)
@@ -178,13 +171,6 @@ def _cell(d: float) -> tuple[bool, bool, bool, bool]:
     return (d > CQ_TOLERANCE, d > 0.0, d < 0.0, d < -CQ_TOLERANCE)
 
 
-def _pick_within(
-    keys: Sequence[float], estimated: Sequence[bool], margin: float, maximum: bool
-) -> list[int] | None:
-    """`_pick_widths` with every estimated key `margin` wide and every other exact."""
-    return _pick_widths(keys, [margin if e else 0.0 for e in estimated], maximum)
-
-
 def _pick_widths(keys: Sequence[float], width: Sequence[float], maximum: bool) -> list[int] | None:
     """What `_pick` keeps if it keeps the same under every shift of an uncertain key.
 
@@ -248,54 +234,19 @@ def _pick_widths(keys: Sequence[float], width: Sequence[float], maximum: bool) -
     return _pick(keys, maximum)
 
 
-def _estimates(
-    model: arris.Model, body: arris.Body, faces: Sequence[arris.Face], axis: int, chord: float
-) -> list[float]:
-    """The area centroid of each face's tessellation along `axis`, in `faces` order.
-
-    Summed in triangle order in Python floats, so it has the same bits on
-    every machine (ADR-0017 rule 2). Raises `UnsupportedApi` for a face
-    without area in the mesh.
-    """
-    mesh = model.tessellate_faces(body, faces, chord)
-    points = struct.unpack(f"<{3 * mesh.n_positions}d", mesh.positions)
-    corners = struct.unpack(f"<{3 * mesh.n_triangles}I", mesh.triangles)
-    runs = {face: (first, end) for face, first, end in mesh.faces}
-    found: list[float] = []
-    for face in faces:
-        first, end = runs[face]
-        weighted = 0.0
-        area = 0.0
-        for t in range(first, end):
-            a, b, c = (
-                points[3 * corners[3 * t + k] : 3 * corners[3 * t + k] + 3] for k in range(3)
-            )
-            ab = (b[0] - a[0], b[1] - a[1], b[2] - a[2])
-            ac = (c[0] - a[0], c[1] - a[1], c[2] - a[2])
-            twice = _length(_cross(ab, ac))
-            weighted += twice * (a[axis] + b[axis] + c[axis]) / 3.0
-            area += twice
-        if area == 0.0:
-            raise UnsupportedApi(f"Workplane.faces: a face with no area in its mesh ({face!r})")
-        found.append(weighted / area)
-    return found
-
-
 def select_faces(
     solid: arris.build.Solid, selector: str, among: Sequence[arris.Face] | None = None
 ) -> tuple[arris.Face, ...]:
     """The faces of `solid`, or of `among` them, that CadQuery's `selector` keeps (ADR-0017).
 
     `among` are faces of `solid` a selector kept before (a `faces` on a stack
-    of faces, ADR-0018 rule 5): CadQuery ranks those only. The solid still
-    gives the part's box, the scale of the margin.
+    of faces, ADR-0018 rule 5): CadQuery ranks those only.
 
-    `selector` is one of `AXIS_SELECTORS`. A face's key is its centre of mass
-    along the axis: its plane's offset where it is a plane normal to the axis
-    (exact), else known from its box where that settles the selection, else
-    the area centroid of its tessellation, trusted at a margin. Raises
-    `UnsupportedApi` where moving an estimated key by that margin could change
-    the selection: it then depends on a centre arris does not give.
+    `selector` is one of `AXIS_SELECTORS`. A face's key is the projection
+    of its centre of mass onto the axis. A plane normal to that axis has
+    its exact plane offset. Other keys have arris's quadrature error bound
+    (ADR-0022 rule 1). Raises `UnsupportedApi` if the bound can change the
+    selection.
 
     >>> import arris.build
     >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
@@ -307,9 +258,9 @@ def select_faces(
     unit = tuple(1.0 if i == axis else 0.0 for i in range(3))
     model = solid.model
     faces = list(model.faces(solid.body) if among is None else among)
-    exact: dict[int, float] = {}
-    loose: list[int] = []
-    for i, face in enumerate(faces):
+    keys: list[float] = []
+    widths: list[float] = []
+    for face in faces:
         info = model.surface(face)
         if (
             info.kind == "plane"
@@ -317,73 +268,23 @@ def select_faces(
             and info.origin is not None
             and _length(_cross(info.normal, unit)) <= model.angular_tolerance
         ):
-            exact[i] = info.origin[axis]
+            keys.append(info.origin[axis])
+            widths.append(0.0)
         else:
-            loose.append(i)
-    # A loose face's box says where its key can lie. One the exact keys put
-    # out of reach of the cluster, by more than the tolerance, is left out.
-    exact_keys = sorted(exact.values())
-    start = _last_start(exact_keys) if exact_keys else 0.0
-    below = [k for k in exact_keys if k < start]
-    # The last cluster's start holds against a key below it only past a gap.
-    gap = not below or below[-1] < start - CQ_TOLERANCE
-    undecided: list[int] = []
-    for i in loose:
-        box = model.bounds(faces[i])
-        if box is None or not exact_keys:
-            undecided.append(i)
-        elif maximum:
-            if not (gap and box[1][axis] < start - CQ_TOLERANCE):
-                undecided.append(i)
-        elif not box[0][axis] > exact_keys[0] + CQ_TOLERANCE:
-            undecided.append(i)
-    if not undecided:
-        keys = list(exact.values())
-        order = list(exact)
-        return tuple(faces[order[k]] for k in _ordered(_pick(keys, maximum), keys))
-    whole = model.bounds(solid.body)
-    if whole is None:
-        raise UnsupportedApi("Workplane.faces on a solid without a box")
-    diagonal = _length([whole[1][k] - whole[0][k] for k in range(3)])
-    order = [*exact, *undecided]
-    kept: list[int] | None = None
-    for refined, (chord, share) in enumerate(
-        ((_ESTIMATE_CHORD, _ESTIMATE_MARGIN), (_REFINED_CHORD, _REFINED_MARGIN))
-    ):
-        values = _estimates(
-            model, solid.body, [faces[i] for i in undecided], axis, diagonal * chord
-        )
-        keys = [*exact.values(), *values]
-        kept = _pick_within(
-            keys, [i >= len(exact) for i in range(len(keys))], diagonal * share, maximum
-        )
-        if kept is not None and (not refined or max(kept) < len(exact)):
-            break
-        kept = None  # the finer pass settles a gap only: it keeps no estimated face
+            properties = model.surface_properties(face)
+            keys.append(properties.centroid[axis])
+            widths.append(_CENTRE_ERROR * math.sqrt(properties.area))
+    kept = _pick_widths(keys, widths, maximum) if any(widths) else _pick(keys, maximum)
     if kept is None:
-        raise UnsupportedApi(_depends(selector))
-    return tuple(faces[order[k]] for k in _ordered(kept, keys))
+        raise UnsupportedApi(
+            f"Workplane.faces({selector!r}): the face key error bound can change the selection"
+        )
+    return tuple(faces[k] for k in _ordered(kept, keys))
 
 
 def _ordered(kept: Sequence[int], keys: Sequence[float]) -> list[int]:
     """`kept` in ascending key, a tie in the order given."""
     return sorted(kept, key=lambda k: keys[k])
-
-
-def _last_start(sorted_keys: Sequence[float]) -> float:
-    """The first key of the last greedy cluster of `sorted_keys`."""
-    start = sorted_keys[0]
-    for key in sorted_keys:
-        if key - start > CQ_TOLERANCE:
-            start = key
-    return start
-
-
-def _depends(selector: str) -> str:
-    return (
-        f"Workplane.faces({selector!r}): the selection depends on the centre of a face "
-        "that arris does not give"
-    )
 
 
 # --- edges (ADR-0020) -------------------------------------------------------
@@ -571,10 +472,10 @@ def _edge_keys(
                 continue
         if centre is None:
             if polylines is None:
-                polylines = _polyline_centres(model, solid.body, diagonal * _ESTIMATE_CHORD)
+                polylines = _polyline_centres(model, solid.body, diagonal * _EDGE_CHORD)
             centre = polylines[edge.index]
             keys.append(centre[axis])
-            widths.append(diagonal * _ESTIMATE_MARGIN)
+            widths.append(diagonal * _EDGE_MARGIN)
             continue
         keys.append(centre[axis])
         widths.append(0.0)
@@ -735,9 +636,8 @@ def plane_on_faces(
     one offset, within the model's tolerances, give that plane, whatever the
     face order. Planar faces at offsets apart need their areas, opposite
     normals and other normals their centres or CadQuery's face order, so
-    they are `UnsupportedApi`, except where every face's normal fails
-    CadQuery's co-planar normal test against another face, whichever comes
-    first: that raises its `ValueError` (`NOT_COPLANAR`).
+    they are `UnsupportedApi` unless CadQuery rejects the faces whichever
+    comes first. That raises its `ValueError` (`NOT_COPLANAR`).
 
     >>> import arris.build
     >>> slab = arris.build.Solid.box((0, 0, 0), (10, 10, 2))
@@ -773,11 +673,22 @@ def plane_on_faces(
         if all(abs(offset - offsets[0]) <= model.tolerance for offset in offsets[1:]):
             return plane_on(faces[0], parent, model)
         raise UnsupportedApi("Workplane.workplane on parallel faces at different offsets")
-    # CadQuery tests each face against its first, an order the kernels do not
-    # share: its error is certain only when it holds for every first face.
-    if all(
-        any(not _normals_tie(normals[i], normals[j]) for j in range(len(normals)) if j != i)
-        for i in range(len(normals))
-    ):
+    # CadQuery tests each face against its first. A rejection must hold
+    # for every possible first face. See runtime-faces-triangular-prism.
+    properties = [model.surface_properties(face) for face in faces]
+    widths = [_CENTRE_ERROR * math.sqrt(p.area) for p in properties]
+
+    def rejects(i: int, j: int) -> bool:
+        n, other = normals[i], normals[j]
+        if not _normals_tie(n, other):
+            return True
+        if _length(_cross(n, other)) <= model.angular_tolerance:
+            return False  # opposite normals remain unsupported (ADR-0022 rule 3)
+        # CadQuery compares the signed distance with its tolerance.
+        separation = _dot(n, _sub(properties[i].centroid, properties[j].centroid))
+        reach = sum(abs(v) for v in n) * (widths[i] + widths[j])
+        return separation - reach - _FLOAT_SLACK >= CQ_TOLERANCE
+
+    if all(any(rejects(i, j) for j in range(len(normals)) if j != i) for i in range(len(normals))):
         raise ValueError(NOT_COPLANAR)
     raise UnsupportedApi("Workplane.workplane on faces whose co-planarity needs their centres")
