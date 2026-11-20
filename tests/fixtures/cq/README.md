@@ -371,11 +371,31 @@ Its tops, 5e-5 apart, have areas 4 and 2. A blind bore at (-3, 0) cuts the
 lower top to z = 1.5000166666666666 − 0.5, fixing the area-weighted plane
 through the removed cylinder's depth. The fixture has a closed-form
 expectation and a recorded oracle report for the bored part.
-`unsupported-faces-half-cylinder` turns the recorded `half-cylinder>Z`
+`ok-faces-half-cylinder` turns the recorded `half-cylinder>Z`
 construction about x so the selected half cylinder spans the arris seam.
 Its two quarter faces rank as one, as the oracle's half cylinder does.
-Placing a plane on the curved face ends `unsupported_api`.
-`tests/test_cq_faces.py` checks the half cylinder's ranking, centre and area.
+The plane at y = 2/π sets the start of an enclosed bore. `ok-faces-half-bore`
+cuts a half-cylinder tool through a larger cylinder. Its inner face has
+normal −z at the foot, so the offset bore runs towards +z from z = 4/π.
+`ok-faces-half-cone` sets the bore along the normal (0, 4, 1)/√17 to the
+plane through the curved face's centre (0, 28/(9π), 16/9).
+`ok-faces-half-sphere` starts its bore at x = 3/2.
+`ok-faces-quarter-torus` uses a quarter turn symmetric about the xz plane.
+The major radius is 5, the tube radius 1 and the surface centroid is at
+x = 5.1 · 2√2/π. The foot faces −x. The offset −0.6 puts the bore inside the
+tube, pointing +x.
+In all five fixtures the bore removes πr² times its depth, adds its wall
+and both cap areas, and moves the centroid by the removed mass's moment.
+The bounds are unchanged and the bore adds one shell. Each has a recorded
+oracle report for the bored part.
+
+`runtime-faces-workplane-no-foot` selects a whole sphere, whose centre has
+no unique foot. Its recorded oracle report carries the projection failure.
+`unsupported-faces-workplane-foot-band` selects the side of a 359° cylinder
+sector. The centre's distance from the axis divided by √area is about
+7.87e-4. CadQuery places a plane, while `cq` refuses this band under
+ADR-0022 rule 4. `tests/test_cq_faces.py` checks both sides of the band and
+the half cylinder's plane over varying dimensions and senses.
 
 `unsupported-edges-unified-face-boundary` selects the positive-y side of
 the `slot-split-side>Y` construction, then its edges furthest along x.

@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, `workplane()` on a single unified cylinder, cone,
+  sphere or torus face uses the normal at the centre of mass's projection onto
+  the surface. An ambiguous projection at the centre or on the axis returns
+  `runtime`. A projection too close to that ambiguity returns `unsupported_api`.
+
 - In the CadQuery dialect, `workplane()` on co-planar faces with a common
   outward normal uses their area-weighted offset. This includes selected
   faces at slightly different heights and selections on a slanted plane.

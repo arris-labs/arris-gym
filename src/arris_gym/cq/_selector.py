@@ -62,6 +62,12 @@ CQ_TOLERANCE = 1e-4
 _FLOAT_SLACK = 1e-12
 # Quadrature error per sqrt(face area), bounded by ADR-0022 rule 1.
 _CENTRE_ERROR = 1e-12
+# Minimum projection distance per sqrt(face area) for at most 1e-9
+# directional error from the centre (ADR-0022 rule 4).
+_FOOT_MIN = 1e-3
+# Open CASCADE's projection failure on a whole curved face, raised here as
+# RuntimeError (ADR-0022 rule 4; see runtime-faces-workplane-no-foot).
+_NO_FOOT = "StdFail_NotDone: GeomAPI_ProjectPointOnSurf::LowerDistanceParameters"
 # Edge polyline chord and centre error as fractions of the solid's box diagonal
 # (ADR-0020 rule 2).
 _EDGE_CHORD = 1e-5
@@ -667,26 +673,70 @@ def select_edges(
 
 
 def plane_on(
-    face: arris.Face, parent: arris.build.Workplane, model: arris.Model
+    group: _FaceGroup, parent: arris.build.Workplane, model: arris.Model
 ) -> arris.build.Workplane:
-    """The workplane CadQuery's `workplane()` builds on one planar `face` (ADR-0017 rule 3).
+    """The workplane CadQuery builds on one unified face (ADR-0017 and ADR-0022).
 
-    Its normal is the face's outward normal, its x is `(0, 0, 1)` crossed with
-    the normal and normalised, or +x when that is shorter than `CQ_TOLERANCE`,
-    and its origin is `parent`'s origin projected onto the face's plane.
-    Raises `UnsupportedApi` for a face that is not a plane.
+    Its origin is the parent origin projected onto the plane through the face's
+    centre. Its normal is outward, taken at the centre's foot for curved
+    faces. A singular foot raises RuntimeError. Unsupported surfaces and
+    poorly conditioned feet raise UnsupportedApi.
 
     >>> import arris.build
     >>> box = arris.build.Solid.box((0, 0, 0), (2, 4, 6))
-    >>> [(top,)] = select_faces(box, ">Z")
+    >>> [top] = select_faces(box, ">Z")
     >>> plane_on(top, arris.build.Workplane.XY(), box.model).origin
     (0.0, 0.0, 6.0)
     """
+    face = group[0]
     info = model.surface(face)
-    if info.kind != "plane" or info.normal is None or info.origin is None:
+    origin = parent.origin
+    if info.kind == "plane" and info.normal is not None and info.origin is not None:
+        return _projected_plane(info.normal, origin, _dot(_sub(origin, info.origin), info.normal))
+    if info.kind not in ("cylinder", "cone", "sphere", "torus"):
         raise UnsupportedApi(f"Workplane.workplane on a {info.kind} face")
-    n, o = info.normal, parent.origin
-    return _projected_plane(n, o, _dot(_sub(o, info.origin), n))
+    area, centre = _group_properties(model, group)
+    n = _curved_normal(info, centre, math.sqrt(area))
+    if face.reversed:
+        n = (-n[0], -n[1], -n[2])
+    return _projected_plane(n, origin, _dot(_sub(origin, centre), n))
+
+
+def _foot_direction(vector: tuple[float, float, float], scale: float) -> tuple[float, float, float]:
+    distance = _length(vector)
+    if distance <= _CENTRE_ERROR * scale:
+        raise RuntimeError(_NO_FOOT)
+    if distance <= _FOOT_MIN * scale:
+        # See unsupported-faces-workplane-foot-band.
+        raise UnsupportedApi("Workplane.workplane on a curved face with an unstable foot")
+    return (vector[0] / distance, vector[1] / distance, vector[2] / distance)
+
+
+def _curved_normal(
+    info: arris.SurfaceInfo, centre: tuple[float, float, float], scale: float
+) -> tuple[float, float, float]:
+    """The untrimmed surface's normal at the centre's nearest point."""
+    assert info.origin is not None
+    delta = _sub(centre, info.origin)
+    if info.kind == "sphere":
+        return _foot_direction(delta, scale)
+    axis = info.axis
+    assert axis is not None
+    height = _dot(delta, axis)
+    radial = _foot_direction(_sub(delta, tuple(height * v for v in axis)), scale)
+    if info.kind == "cone":
+        assert info.half_angle is not None
+        cosine, sine = math.cos(info.half_angle), math.sin(info.half_angle)
+        # The arris cone widens along its axis, so its normal tilts back.
+        return (
+            cosine * radial[0] - sine * axis[0],
+            cosine * radial[1] - sine * axis[1],
+            cosine * radial[2] - sine * axis[2],
+        )
+    if info.kind == "torus":
+        assert info.major_radius is not None
+        return _foot_direction(_sub(delta, tuple(info.major_radius * v for v in radial)), scale)
+    return radial
 
 
 def _projected_plane(
@@ -799,7 +849,8 @@ def plane_on_faces(
 ) -> arris.build.Workplane:
     """The workplane CadQuery's `workplane()` builds on the faces a selector kept (ADR-0017).
 
-    One unified face is `plane_on`'s. Several (rule 4): if any is curved,
+    One unified face uses its plane or the plane through its centre at the
+    normal of its foot (ADR-0022 rule 4). For several faces, if any is curved,
     raise CadQuery's `ValueError` (`NOT_PLANAR`). Co-planar faces with a
     common outward normal place the plane at their area-weighted offset
     (ADR-0022 rule 3). If all face orders fail CadQuery's signed centre test,
@@ -813,10 +864,9 @@ def plane_on_faces(
     >>> len(tops), plane_on_faces(tops, arris.build.Workplane.XY(), part.model).origin
     (2, (0.0, 0.0, 2.0))
     """
-    faces = [group[0] for group in groups]
-    if len(faces) == 1:
-        return plane_on(faces[0], parent, model)
-    infos = [model.surface(face) for face in faces]
+    if len(groups) == 1:
+        return plane_on(groups[0], parent, model)
+    infos = [model.surface(group[0]) for group in groups]
     if any(info.kind != "plane" for info in infos):
         raise ValueError(NOT_PLANAR)
     normals: list[tuple[float, float, float]] = []

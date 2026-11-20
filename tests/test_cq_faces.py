@@ -41,6 +41,13 @@ HEIGHT = 2.0
 # The world axis a named plane's normal lies along, and a box's world half
 # sizes from its (length, width, height) on that plane (x, y, normal local).
 PLANE_NORMAL = {"XY": 2, "YZ": 0, "XZ": 1, "ZX": 1}
+CURVED_FIXTURES = (
+    "ok-faces-half-bore",
+    "ok-faces-half-cone",
+    "ok-faces-half-cylinder",
+    "ok-faces-half-sphere",
+    "ok-faces-quarter-torus",
+)
 
 
 def world_halves(plane: str, size: tuple[float, float, float]) -> Vec:
@@ -177,6 +184,7 @@ def test_every_ok_faces_fixture_is_the_closed_form() -> None:
         for case in fixture_cases.load("cq")
         if case.slug.startswith("ok-faces-")
         and case.slug not in ("ok-faces-bolt-head", "ok-faces-coplanar-tops", "ok-faces-near-tie")
+        and case.slug not in CURVED_FIXTURES  # Enclosed bores, with their own closed forms.
         # Step 6's are written by tests/test_cq_contexts.py.
         and not case.slug.startswith(("ok-faces-compound-", "ok-faces-workplane-offset-"))
     }
@@ -490,6 +498,7 @@ def test_the_coplanar_tops_fixture_is_its_closed_form() -> None:
 RECORDED = [
     "ok-faces-coplanar-tops",
     "ok-faces-near-tie",
+    *CURVED_FIXTURES,
     "runtime-faces-workplane-mixed-surfaces",
     "runtime-faces-workplane-not-coplanar",
 ]
@@ -505,6 +514,139 @@ def test_workplane_fixtures_agree_with_the_recorded_oracle(slug: str) -> None:
     if report.status.value == "runtime":
         assert report.message == case.expected["message"]
     assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
+@pytest.mark.parametrize("slug", CURVED_FIXTURES)
+def test_curved_workplane_bore_matches_its_closed_form(slug: str) -> None:
+    pi = math.pi
+    slant = math.sqrt(17)
+    # The half cone's surface centre has radial coordinate 28/(9π) and
+    # height 16/9. Project the origin and move 1.5 along local y, then
+    # half the bore's depth along -z (both expressed in world coordinates).
+    cone_height = (4 * 28 / (9 * pi) + 16 / 9) / slant - 0.2
+    cone_bore = (0, (4 * cone_height - 1.5) / slant, (cone_height + 6) / slant)
+    # Along the bisector of the quarter turn, the solid and surface centres
+    # are at the angular mean times their cross-section's mean radii.
+    sinc = 2 * math.sqrt(2) / pi
+    pieces = {
+        "ok-faces-half-cylinder": (2 * pi, 5 * pi + 8, (0, 4 / (3 * pi), 0), (0, 2 / pi - 0.2, 0)),
+        "ok-faces-half-bore": (
+            56 * pi,
+            68 * pi + 16,
+            (0, 0, -8 / (21 * pi)),
+            (0, 2.6, 4 / pi + 0.2),
+        ),
+        "ok-faces-half-cone": (
+            14 * pi / 3,
+            1.5 * pi * slant + 2.5 * pi + 12,
+            (0, 15 / (7 * pi), 11 / 7),
+            cone_bore,
+        ),
+        "ok-faces-half-sphere": (18 * pi, 27 * pi, (9 / 8, 0, 0), (1.3, 0, 0)),
+        "ok-faces-quarter-torus": (
+            2.5 * pi**2,
+            5 * pi**2 + 2 * pi,
+            (5.05 * sinc, 0, 0),
+            (5.1 * sinc + 0.75, 0, 0),
+        ),
+    }
+    volume, area, centre, bore_centre = pieces[slug]
+    depth = 0.3 if slug == "ok-faces-quarter-torus" else 0.4
+    radius = 0.2
+    removed = pi * radius**2 * depth
+    got = fixture_cases.run(next(c for c in fixture_cases.load("cq") if c.slug == slug))
+    assert got.status is ag.Status.OK
+    assert got.measures is not None
+    assert got.measures.volume == pytest.approx(volume - removed, abs=1e-10)
+    assert got.measures.area == pytest.approx(area + 2 * pi * radius * (depth + radius), abs=1e-10)
+    assert got.measures.centroid == pytest.approx(
+        tuple(
+            (volume * c - removed * b) / (volume - removed)
+            for c, b in zip(centre, bore_centre, strict=True)
+        ),
+        abs=1e-10,
+    )
+
+
+def test_workplane_on_a_whole_sphere_reports_the_oracles_projection_failure() -> None:
+    slug = "runtime-faces-workplane-no-foot"
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    path = fixture_cases.ROOT / "cq" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text())
+    result = fixture_cases.run(case)
+    assert report.program_sha256 == result.program_sha256
+    assert result.status is ag.Status.RUNTIME
+    assert result.message == case.expected["message"]
+    assert report.message.removeprefix("OCP.OCP.StdFail.") == result.message.removeprefix(
+        "RuntimeError: "
+    )
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
+def test_the_foot_band_refuses_a_projection_the_oracle_tries() -> None:
+    slug = "unsupported-faces-workplane-foot-band"
+    case = next(c for c in fixture_cases.load("cq") if c.slug == slug)
+    path = fixture_cases.ROOT / "cq" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text())
+    result = fixture_cases.run(case)
+    assert report.program_sha256 == result.program_sha256
+    assert report.status.value == "ok"
+    assert result.status is ag.Status.UNSUPPORTED_API
+    assert result.message == case.expected["message"]
+
+
+@given(
+    radius=st.floats(min_value=0.75, max_value=8),
+    height=st.floats(min_value=1, max_value=12),
+    inward=st.booleans(),
+)
+def test_half_cylinder_workplane_uses_the_unified_centre_and_face_sense(
+    radius: float, height: float, inward: bool
+) -> None:
+    origin = (1.25, -2.5, 3.0)
+    x, y, z = origin
+    cylinder = cq.Workplane("YZ", origin=origin).cylinder(2 * height if inward else height, radius)
+    clip = cq.Workplane("XY", origin=(x, y, z - 2 * radius)).box(3 * height, 4 * radius, 4 * radius)
+    half = cylinder.cut(clip)
+    if inward:
+        outer = cq.Workplane("YZ", origin=origin).cylinder(height, 2 * radius)
+        part = outer.cut(half)
+    else:
+        part = half
+
+    at, side, up, normal = plane_of(part.faces(">Z").workplane())
+    sense = -1 if inward else 1
+    assert at == pytest.approx((x, y, z + 2 * radius / math.pi), abs=1e-10)
+    assert side == pytest.approx((1, 0, 0), abs=1e-10)
+    assert up == pytest.approx((0, sense, 0), abs=1e-10)
+    assert normal == pytest.approx((0, 0, sense), abs=1e-10)
+
+
+@pytest.mark.parametrize(("degrees", "accepted"), [(359, False), (358, True)])
+def test_curved_foot_band_scales_with_face_area(degrees: int, accepted: bool) -> None:
+    radius, height = 100, 200
+    part = (
+        cq.Workplane("XZ")
+        .polyline([(0, -100), (-100, -100), (-100, 100), (0, 100)])
+        .close()
+        .revolve(degrees, (0, 0, 0), (0, 1, 0))
+    )
+    kept = part.faces(">X")
+    # The side's centroid lies on the sector's bisector.
+    angle = math.radians(degrees)
+    bisector = math.pi + angle / 2
+    distance = radius * math.sin(angle / 2) / (angle / 2)
+    scale = math.sqrt(radius * height * angle)
+    assert (distance / scale > 1e-3) == accepted
+    if not accepted:
+        with pytest.raises(cq.UnsupportedApi, match="unstable foot"):
+            kept.workplane()
+        return
+
+    normal = (math.cos(bisector), math.sin(bisector), 0)
+    at, _, _, got_normal = plane_of(kept.workplane())
+    assert got_normal == pytest.approx(normal, abs=1e-9)
+    assert at == pytest.approx(tuple(distance * v for v in normal), abs=1e-9)
 
 
 @pytest.mark.parametrize(

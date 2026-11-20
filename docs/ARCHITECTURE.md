@@ -399,8 +399,12 @@ plane when every face order passes CadQuery's co-planar test (ADR-0022 rule 3).
 Mixed planar and curved faces, distinct curved faces or planar faces that fail
 the co-planar test whichever comes first end `runtime` with CadQuery's
 `ValueError`. The test uses the normals and the signed separation of the
-faces' centres. One unified curved face and order-dependent or uncertain
-planar selections end `unsupported_api`. `workplane(offset=)`
+faces' centres. Order-dependent or uncertain planar selections end
+`unsupported_api`. A unified cylinder, cone, sphere or torus face places
+the plane through its centre of mass, oriented by the outward normal at
+the centre's foot on the untrimmed surface (ADR-0022 rule 4). The parent
+origin projects onto that plane. A singular foot ends `runtime`. An unstable
+foot or an unsupported surface ends `unsupported_api`. `workplane(offset=)`
 on faces moves the plane along its normal, as on a solid. `faces` on a stack
 whose objects have no faces (an empty stack, a `moveTo` point, a drawn path, a
 sketch) is `runtime` with CadQuery's `ValueError`, even where the chain holds a
@@ -498,8 +502,10 @@ area-weighted centre. If the bound can affect selection membership, `faces`
 returns `unsupported_api`. Edges inside a unified face are excluded from
 `edges()`, `fillet()` and `chamfer()` candidates. An edge selection or blend
 that depends on joining boundary fragments ends `unsupported_api`.
-`workplane()` follows CadQuery's `ProjectedOrigin` rule on planar faces.
-One unified curved face ends `unsupported_api`.
+`workplane()` follows CadQuery's `ProjectedOrigin` rule. On a unified
+cylinder, cone, sphere or torus face, it projects onto the plane through the
+face's centre of mass, with the outward normal taken at the centre's foot
+on the untrimmed surface (ADR-0022 rule 4).
 
 ## The reward
 

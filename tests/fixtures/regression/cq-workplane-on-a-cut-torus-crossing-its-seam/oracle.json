@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: If multiple objects selected, they all must be planar faces.",
+  "program_sha256": "d25641a9292410da31fde639c268a68e7ea4917e88970fc8e9dd61ee425bbe04",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

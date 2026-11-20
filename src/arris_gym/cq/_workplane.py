@@ -440,11 +440,16 @@ class Workplane:
         this workplane's origin projected onto the face's plane. The solid
         stays in the chain. Several planar faces with a common outward normal
         that pass CadQuery's co-planar test in every order place the plane at
-        their area-weighted offset (ADR-0022). Mixed planar and curved or
-        distinct curved faces raise CadQuery's `ValueError` (`runtime`), as do
-        planar faces that fail its co-planar test whichever face comes first.
-        A unified curved face or an order-dependent or uncertain planar
-        selection raises `UnsupportedApi`. An `offset`
+        their area-weighted offset (ADR-0022). One unified cylinder, cone,
+        sphere or torus face places the plane through its centre of mass,
+        normal to the surface at the centre's foot. The origin again projects
+        from this workplane. A missing foot raises `RuntimeError`. An unstable
+        foot or an unsupported surface raises `UnsupportedApi`.
+        Mixed planar and curved or distinct curved faces raise CadQuery's
+        `ValueError` (`runtime`), as do planar faces that fail its co-planar
+        test whichever face comes first.
+        An order-dependent or uncertain planar selection raises
+        `UnsupportedApi`. An `offset`
         on faces moves the plane that far along its normal, as it does on a
         solid (read on the oracle: `ok-faces-workplane-offset-*`).
 

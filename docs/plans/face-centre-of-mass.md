@@ -105,7 +105,7 @@ case within a given design; **[3]** unproven. The grade is the tier
   ranks as two faces.
 - [x] Step 5 **[2]** — Rule 4 with areas and centres; `unsupported-faces-near-tie`
   becomes `ok-faces-near-tie` (origin z = 1.5000167 by closed form, held by a bore).
-- [ ] Step 6 **[3]** — Rule 5 on cylinder, cone, sphere, torus: the foot and
+- [x] Step 6 **[3]** — Rule 5 on cylinder, cone, sphere, torus: the foot and
   normal per kind; one `ok-…` fixture each, the plane fixed by a bore by
   construction; the no-foot case as step 1 recorded. Hypothesis: a cylinder
   of random r, h, sense, `>Z` on its half, plane at 2r/π.
@@ -161,3 +161,13 @@ case within a given design; **[3]** unproven. The grade is the tier
   selection and blending return `unsupported_api` where they require the
   joined arcs, as held by `unsupported-edges-unified-face-boundary`. A selector
   that can choose its edges independently of the fragments still runs.
+- *Settled (step 6):* keep `_FOOT_MIN = 1e-3` as specified in ADR-0022.
+  Cylinder sectors of 359° and 358° give d/√area of 7.87e-4 and 1.58e-3.
+  The centre errors on both kernels were below 3.4e-14 model units, and
+  arris-gym's accepted normal was within 7.3e-15 of the closed form. The
+  threshold uses the conservative `_CENTRE_ERROR` bound.
+- ⚠ OPEN: Step 6 exposed two limits of step 4's grouping, now strict
+  regression fixtures. Adjacent cone faces with different reference circles
+  produce different apices in the grouping test. A half torus cut from a
+  whole torus can retain two faces in CadQuery across its seam, where
+  `cq` groups them. Both are tracked in the backlog.

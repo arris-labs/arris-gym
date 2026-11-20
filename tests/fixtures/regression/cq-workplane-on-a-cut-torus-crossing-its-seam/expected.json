@@ -1,0 +1,6 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: If multiple objects selected, they all must be planar faces.",
+  "xfail": "The face unification merges quarter-torus faces that CadQuery keeps separate after the cut."
+}

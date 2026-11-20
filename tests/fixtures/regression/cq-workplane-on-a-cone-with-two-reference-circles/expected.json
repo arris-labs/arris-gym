@@ -1,0 +1,28 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 14.61050023429493,
+    "area": 40.03764138595882,
+    "centroid": [
+      0.0,
+      0.6817127253949662,
+      1.5708338545397142
+    ],
+    "bounds": [
+      [
+        -2,
+        0,
+        0
+      ],
+      [
+        2,
+        2,
+        4
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "xfail": "Cone face unification computes different apices for reference circles of the same cone."
+}

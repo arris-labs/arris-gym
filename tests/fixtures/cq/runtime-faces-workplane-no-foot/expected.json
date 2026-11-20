@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "RuntimeError: StdFail_NotDone: GeomAPI_ProjectPointOnSurf::LowerDistanceParameters"
+}
