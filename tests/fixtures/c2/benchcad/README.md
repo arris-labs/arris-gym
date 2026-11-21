@@ -35,7 +35,12 @@ tests/fixtures/c1/verdicts.json tests/fixtures/c2/benchcad/verdicts.json
 oracle environment; outside the gate), which saves its work in chunks and resumes.
 Pass a fresh `--work-dir` when re-running after a code or verdict change.
 No program text is committed. Each figure is over all 17,900 programs.
-The latest re-run (plans/resolve-benchcad-unclassified step 3, 2026-11-21) follows the ADR-0006 amendment (`unsupported_api` against `invalid` is `cq_bug`) and a measured corpus oracle deadline of 240 s (ADR-0013's amendment). It moves no in-subset figure and no reach. The ADR-0022 re-run changed six rows, all `connecting_rod`. In each, the
+The sketch lift re-run (plans/lift-sketches step 8, 2026-11-21) covered all
+17,900 programs in a fresh work directory using the committed verdicts and
+oracle reports. The fidelity table, reach report, oracle rows and both arris
+reports were byte-identical to the committed files. Reach stayed at
+9,998/17,900.
+The preceding re-run (plans/resolve-benchcad-unclassified step 3, 2026-11-21) follows the ADR-0006 amendment (`unsupported_api` against `invalid` is `cq_bug`) and a measured corpus oracle deadline of 240 s (ADR-0013's amendment). It moves no in-subset figure and no reach. The ADR-0022 re-run changed six rows, all `connecting_rod`. In each, the
 unified cylinder side ranks below the box's planar face, which supplies the
 workplane for the cross bore. Both kernels build all six. Two agree
 (`000909`, `007540`) and four are `occt_wrong` (`002995`, `007023`,

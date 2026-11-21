@@ -125,7 +125,7 @@ Grades are tiers (`.agents/tiers.md`):
   closed-form verdict (`tools/cq_closed_forms.py`), or an arris refusal or bug
   filed in `../arris/docs/ideas/`. Commits the table, reports and README
   figures. Checks the committed reach report against the current subset again.
-- [ ] Step 8 **[1, conductor-run]** — re-run BenchCAD. The table digest
+- [x] Step 8 **[1, conductor-run]** — re-run BenchCAD. The table digest
   (`45ee27a1…`) and the reach report are byte-equal; the README names the
   re-run.
 
