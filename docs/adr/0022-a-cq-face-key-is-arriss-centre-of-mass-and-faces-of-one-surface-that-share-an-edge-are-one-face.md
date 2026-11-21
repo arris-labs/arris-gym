@@ -180,3 +180,21 @@ and fixes `_FOOT_MIN`.
   one face where CadQuery ranks two.
 - **A closed form for a curved face's centre per surface kind.** It serves
   rule 4 only and still needs the split; the quadrature serves every face.
+
+## Amendment (2026-11-21): key evaluation and projection evidence
+
+The selector evaluates every candidate key. It reads surface properties for
+each candidate that uses a centroid and uses the exact offset for a single
+axial planar face. Both full corpora complete with zero arris timeouts.
+
+The `359°` and `358°` cylinder sectors have centre distances from the axis
+of `7.87e-4` and `1.58e-3` times the square root of the face area. Their
+centre errors on both kernels are below `3.4e-14` model units. The accepted
+normal is within `7.3e-15` of its closed form. These probes bracket the
+`_FOOT_MIN` threshold of `1e-3`.
+
+For an almost vertical normal, global +x supplies the reference axis. The
+frame projects it into the plane, as CadQuery's local geometry transform
+does. The tilted hemisphere in
+`regression/cq-workplane-on-a-nearly-horizontal-curved-face` checks this
+axis with an off-centre bore.

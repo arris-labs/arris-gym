@@ -388,6 +388,8 @@ In all five fixtures the bore removes πr² times its depth, adds its wall
 and both cap areas, and moves the centroid by the removed mass's moment.
 The bounds are unchanged and the bore adds one shell. Each has a recorded
 oracle report for the bored part.
+`regression/cq-workplane-on-a-nearly-horizontal-curved-face` uses an off-axis
+bore on a tilted hemisphere to check the workplane's local x axis.
 
 `runtime-faces-workplane-no-foot` selects a whole sphere, whose centre has
 no unique foot. Its recorded oracle report carries the projection failure.

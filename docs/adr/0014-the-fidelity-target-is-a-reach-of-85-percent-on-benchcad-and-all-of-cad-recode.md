@@ -154,5 +154,7 @@ The seven named rows all build. ADR-0020's finer estimate reached the first
 row, which is `occt_wrong` by closed form. ADR-0022 reaches the other six
 using arris's face centres and ranking each seam-split cylinder side as one
 face. Two agree and four are `occt_wrong` by closed form. Both corpora now
-have zero in-subset `cq_bug`. The reach targets and static membership rule
-still apply.
+have zero in-subset `cq_bug` and zero in-subset unclassified rows. The reach
+targets, static membership rule and C2 requirement of zero unclassified rows
+across both full corpora still apply. BenchCAD has 199 unclassified rows
+outside the subset.

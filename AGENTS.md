@@ -36,13 +36,11 @@ unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
 (ADR-0008 to ADR-0010); `arris-gym rescore benchcad` re-scores the slice
 against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **0.1.0 published** (2026-11-10).
-**C2 target set** (2026-11-12): ADR-0014 fixes the fidelity target, a reach of
-85% on BenchCAD and 100% on CAD-Recode with no in-subset `cq_bug`. Reach is
-9,998/17,900 on BenchCAD and 104/968 on CAD-Recode. Face centres and unified
-faces (ADR-0022, 2026-11-21) clear the six remaining in-subset `cq_bug` rows,
-bringing both corpora to zero. The kernel pin is `arris` 0.11.1 (ADR-0021).
-**Next:** C2's growth: bundle 4, CAD-Recode's sketch API, then the knee's other
-bundles, riskiest first (ADR-0014, `docs/ROADMAP.md`).
+**C2:** Face selectors (ADR-0022) bring in-subset `cq_bug` and unclassified
+rows to zero on both corpora, at reach 9,998/17,900 and 104/968. C2 still
+owes classification of 199 out-of-subset BenchCAD rows and reach of 85% on
+BenchCAD and 100% on CAD-Recode (ADR-0014). The kernel pin is `arris` 0.11.1.
+**Next:** Bundle 4 lifts CAD-Recode's sketch API (`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code
 

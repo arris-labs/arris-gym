@@ -248,14 +248,15 @@ crosses the selector's unless `cq` placed it, estimated on an ellipse arc or a
 B-spline (ADR-0020).
 
 **Face key**:
-What an axis selector ranks a face by: its centre of mass along the axis, exact
-on a plane normal to it, else arris's `surface_properties` quadrature, an
-interval √area × `_CENTRE_ERROR` wide (ADR-0022).
+The centre-of-mass coordinate an axis selector ranks. A single planar face
+normal to the axis uses its exact plane offset. Other keys use arris's
+`surface_properties` quadrature with an interval half-width of
+√area × `_CENTRE_ERROR` (ADR-0022).
 
 **Unified face**:
-Faces of one surface that share an edge, taken as one: ranked by their
-area-weighted centre, kept or dropped together and with no edge between them,
-as CadQuery's `clean()` leaves them (ADR-0022).
+Faces of one surface linked by shared edges. The selector ranks them as one
+by their area-weighted centre and omits internal edges. This models
+CadQuery's same-domain cleaning (ADR-0022).
 
 **Seam**:
 An edge with one face on both sides, where a closed surface (a cylinder, a

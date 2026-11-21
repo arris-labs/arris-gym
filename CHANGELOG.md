@@ -6,30 +6,28 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 ## Unreleased
 
 - In the CadQuery dialect, `workplane()` on a single unified cylinder, cone,
-  sphere or torus face uses the normal at the centre of mass's projection onto
-  the surface. An ambiguous projection at the centre or on the axis returns
-  `runtime`. A projection too close to that ambiguity returns `unsupported_api`.
+  sphere or torus face now places a plane through its centre of mass with the
+  outward normal at its projection onto the surface. A singular projection
+  returns `runtime`. A poorly conditioned projection returns `unsupported_api`.
 
 - In the CadQuery dialect, `workplane()` on co-planar faces with a common
   outward normal uses their area-weighted offset. This includes selected
   faces at slightly different heights and selections on a slanted plane.
 
-- CadQuery face selectors now rank connected faces of the same surface by
-  their combined centre of mass. This fixes workplane placement on parts
-  such as a connecting rod whose cylinder is split at its seam. Edges
-  inside a unified face are skipped. Edge selection and blending that
-  depend on joining split boundary edges return `unsupported_api`.
+- CadQuery face selectors use the kernel's surface centre of mass and rank
+  connected faces of the same surface by their combined centre. This fixes
+  workplane placement on parts such as a connecting rod whose cylinder is
+  split at its seam. Edges inside a unified face are skipped. Edge selection
+  and blending that depend on joining split boundary edges return
+  `unsupported_api`. Mixed planar and curved selections, multiple distinct
+  curved faces, and planar selections that fail the co-planarity check in every
+  order now reach CadQuery's `ValueError` as `runtime`.
 
 - arris-gym now requires `arris` 0.11.1 (was 0.10.0). Every row records the
   kernel's version and every digest hashes it, so a digest from an earlier run
   no longer matches, and a cached result from 0.10.0 is not reused. The
   reward's version is unchanged: a kernel bump is named by `versions.arris`.
   On BenchCAD and CAD-Recode no status, measure, class or reward moves.
-
-- `dialect="cq"` now ranks faces using the kernel's surface centre of mass.
-  Tied planar and curved faces can reach `workplane()` and return CadQuery's
-  `ValueError` as `runtime`. Nonparallel planar faces that fail its coplanarity
-  check in either order also return `runtime`.
 
 - `dialect="cq"` now runs `edges()` and `edges(selector)` with the axis
   selectors `>X <X >Y <Y >Z <Z`, the parallel selectors `|X |Y |Z` and

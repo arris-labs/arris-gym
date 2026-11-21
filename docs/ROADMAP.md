@@ -121,12 +121,13 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status: the face-centre lift clears the six connecting-rod rows
-(2026-11-21, ADR-0022).** BenchCAD reach is 9,998/17,900 and CAD-Recode
-reach is 104/968, with zero in-subset `cq_bug` and zero unclassified
-rows in the subset on both (the tables are in `docs/ARCHITECTURE.md`
-§Fidelity). Bundle 4 lifts CAD-Recode's sketch API, followed by the head
-(bundle 5) and the tail (`shell` and the rest), riskiest first (ADR-0014).
+**Status: face selectors reach zero in-subset `cq_bug` and unclassified
+rows on both corpora (2026-11-21, ADR-0022).** BenchCAD reach is 9,998/17,900
+and CAD-Recode reach is 104/968. BenchCAD has 199 unclassified rows outside
+the subset (168 invalid oracle results and 31 oracle timeouts), which keep
+the corpus-wide C2 acceptance open (`docs/ARCHITECTURE.md` §Fidelity).
+Bundle 4 lifts CAD-Recode's sketch API, followed by the head (bundle 5)
+and the tail (`shell` and the rest), riskiest first (ADR-0014).
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified

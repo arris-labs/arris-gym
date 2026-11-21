@@ -391,6 +391,8 @@ that share edges transitively rank as one unified face, by their area-weighted
 centre. Cone faces with different reference circles share a surface when
 their axes, opening angles and reconstructed apices agree within the
 model's tolerances. A second selector ranks only the unified faces already kept.
+A half torus cut across its seam can retain two quarter faces in CadQuery.
+`cq` currently groups them (`regression/cq-workplane-on-a-cut-torus-crossing-its-seam`).
 A selection whose membership
 can change within the quadrature's error bound ends `unsupported_api`
 (ADR-0022 rule 1). `workplane()` on
@@ -903,8 +905,10 @@ agree and four are `occt_wrong` by `part_measures`
 (`tools/cq_closed_forms.py`). The cross bore meets the ring's wall and the
 oracle volumes differ from the closed forms by 2.1e-9 to 3.0e-6 relative.
 Both corpora have zero in-subset `cq_bug` and zero unclassified rows in the
-subset. Reach is unchanged. BenchCAD's table digest is `b6c94989…ac32`;
-CAD-Recode's table is byte-identical.
+subset. The 199 out-of-subset unclassified BenchCAD rows pair `unsupported_api`
+with 168 invalid oracle shapes and 31 oracle timeouts. Reach is unchanged.
+BenchCAD's table digest is `b6c94989…ac32`. CAD-Recode reproduces its table
+byte for byte.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
