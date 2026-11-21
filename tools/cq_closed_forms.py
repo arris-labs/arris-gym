@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Closed forms of the BenchCAD parts the oracle gets wrong (ADR-0006's `ClosedForm`).
 
-Outside the gate, no oracle imported or run. Reads the pinned BenchCAD corpus
+Outside the gate. In its default mode it reads the pinned BenchCAD corpus
 (the `[corpus]` extra) and the committed oracle rows, works out each listed
 family's measures from how the part is built (never from either kernel's output),
 and writes one `Verdict` per stem that the row's measures can test:
@@ -69,6 +69,10 @@ one of them raises, never guessed):
   torus a quadrature over its angle (`screw_closed_form`).
 
 - **crossing cylinders**: the one CAD-Recode program whose row nothing classes (`CROSSING`).
+- **CAD-Recode sketch solids** (`--sketch-boundary`): integrate the planar
+  and cylindrical boundary in an oracle worker, independently of GProp's
+  volume and surface quadrature. Compare the two resolutions before using
+  the finer integral. The bounds come from Open CASCADE's tight box.
 
 The integrals are tanh-sinh quadrature (endpoint square-root singularities are
 what it is for) over intervals split where an integrand's formula changes or turns
@@ -98,6 +102,15 @@ if TYPE_CHECKING:
     from arris_gym import ExecResult
     from arris_gym.fidelity import OracleReport
     from arris_gym.sandbox.outcome import ArrisRefusal
+
+_BOUNDARY_MARK = "SketchBoundaryRecord: "
+# Gauss-Legendre order on each slice of a smooth pcurve interval. The two
+# subdivision counts are in tools/oracle/sketch_boundary.py.
+_BOUNDARY_ORDER = 24
+# Keep the evidence well inside ADR-0005 and discard the quadrature's last
+# digits before serializing. Coordinates in this corpus are in [-100, 100].
+_BOUNDARY_SIGNIFICANT_DIGITS = 10
+_BOUNDARY_COORDINATE_PLACES = 8
 
 # Quadrature: the step of the tanh-sinh sum and its half-width. At 1/32 and 3.5 a
 # square-root endpoint is integrated to full double precision (the weights past 3.5
@@ -2857,7 +2870,11 @@ def verdicts_for(
     out: dict[str, dict[str, object]] = {}
     jobs: list[tuple[str, str, str]] = []  # rows a closed form may class: stem, text, SHA-256
     for entry in rows:
-        if entry.row.outcome.value != "unclassified" and entry.row.verdict is None:
+        if (
+            entry.row.outcome.value != "unclassified"
+            and entry.row.verdict is None
+            and not (entry.name in bugs and entry.row.status is Status.CHECKER_FAIL)
+        ):
             continue
         if entry.row.status is Status.UNSUPPORTED_API:
             continue  # outside the subset: the kernel never saw it, so no finding classes it
@@ -2982,23 +2999,104 @@ def check_overlap_cause(result: ExecResult, report: OracleReport, fixture: str) 
 
 def check_bug_cause(result: ExecResult, report: OracleReport, fixture: str) -> None:
     """Raise `ValueError` unless the row shows the cause of its `--arris-bug` `fixture`."""
-    if Path(fixture).name == "cq-chamfers-overlap-on-a-face":
+    name = Path(fixture).name
+    if name == "cq-chamfers-overlap-on-a-face":
         check_overlap_cause(result, report, fixture)
+    elif name == "cq-sketch-post-tangent-to-cap":
+        from arris_gym import Status
+        from arris_gym.fidelity import OracleStatus
+
+        if (
+            result.status is not Status.CHECKER_FAIL
+            or report.status is not OracleStatus.OK
+            or len(result.violations) != 1
+            or not re.fullmatch(r"L5 f\d+: loops 0 and 1 intersect", result.violations[0])
+        ):
+            raise ValueError("the row lacks the tangent cap's intersecting-loop violation")
     else:
         check_bounds_cause(result, report, fixture)
+
+
+def sketch_boundary_forms(
+    texts: Sequence[str],
+) -> list[dict[str, object]]:
+    """Integrate the planar and cylindrical faces of CAD-Recode sketch solids.
+
+    Run in oracle workers and raise if the two quadratures do not converge
+    within the fidelity tolerance. The integral uses the B-Rep's trim curves
+    and no kernel mass properties.
+    """
+    from numpy.polynomial.legendre import leggauss
+
+    import oracle_run
+    from arris_gym.fidelity import ClosedForm, OracleStatus
+    from arris_gym.fidelity._agreement import figures_agree
+
+    points, weights = leggauss(_BOUNDARY_ORDER)
+    nodes = tuple(zip(points.tolist(), weights.tolist(), strict=True))
+    probe = (oracle_run.ORACLE / "sketch_boundary.py").read_text(encoding="utf-8")
+    suffix = f"\n{probe}\nreport_sketch_boundary(r, {nodes!r})\n"
+    reports = oracle_run.run_many([text + suffix for text in texts], workers=WORKERS)
+    forms = []
+    for report in reports:
+        if report.status is not OracleStatus.RUNTIME or not report.message.startswith(
+            _BOUNDARY_MARK
+        ):
+            raise ValueError(f"boundary probe ended {report.status.value}: {report.message}")
+        bbox, coarse, fine = json.loads(report.message.removeprefix(_BOUNDARY_MARK))
+        bounds = (tuple(bbox[:3]), tuple(bbox[3:]))
+        note = (
+            "Exact v antiderivatives of the area and flux on planar and cylindrical faces, "
+            "integrated along the trims (Green's theorem); both quadratures agree. Tight "
+            "bounds from AddOptimal. tools/cq_closed_forms.py --sketch-boundary"
+        )
+        a = ClosedForm(
+            volume=coarse[0], area=coarse[1], centroid=coarse[2:], bounds=bounds, note=note
+        )
+        b = ClosedForm(volume=fine[0], area=fine[1], centroid=fine[2:], bounds=bounds, note=note)
+        if not figures_agree(a, b):
+            raise ValueError(f"boundary integrals disagree: {coarse} and {fine}")
+        volume, area = (float(f"{v:.{_BOUNDARY_SIGNIFICANT_DIGITS}g}") for v in fine[:2])
+        forms.append(
+            ClosedForm(
+                volume=volume,
+                area=area,
+                centroid=_boundary_coordinates(b.centroid),
+                bounds=(
+                    _boundary_coordinates(b.bounds[0]),
+                    _boundary_coordinates(b.bounds[1]),
+                ),
+                note=note,
+            ).model_dump(mode="json")
+        )
+    return forms
+
+
+def _boundary_coordinates(point: Vec) -> Vec:
+    x, y, z = point
+    return (
+        round(x, _BOUNDARY_COORDINATE_PLACES),
+        round(y, _BOUNDARY_COORDINATE_PLACES),
+        round(z, _BOUNDARY_COORDINATE_PLACES),
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Write the verdicts of a corpus table's unclassified rows, checked against both sides."""
     import arris_gym as ag
     from arris_gym.census import benchcad, cadrecode
-    from arris_gym.fidelity import OracleReport, Verdict, compare
+    from arris_gym.fidelity import FidelityOutcome, FidelityTable, OracleReport, Verdict, compare
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--corpus", choices=("benchcad", "cadrecode"), default="benchcad")
     parser.add_argument("--table", type=Path, required=True, help="a fidelity.json.gz")
     parser.add_argument("--oracle-rows", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument(
+        "--sketch-boundary",
+        action="store_true",
+        help="check CAD-Recode sketch measures with independent boundary quadrature",
+    )
     parser.add_argument(
         "--refusal",
         action="append",
@@ -3014,11 +3112,25 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="class a family's rows (or a stem's) arris_bug by this regression fixture directory",
     )
     args = parser.parse_args(argv)
+    if args.sketch_boundary and args.corpus != "cadrecode":
+        parser.error("--sketch-boundary requires --corpus cadrecode")
     refusals = dict(item.split("=", 1) for item in args.refusal)
     arris_bugs = dict(item.split("=", 1) for item in args.arris_bug)
     programs = benchcad.read() if args.corpus == "benchcad" else cadrecode.read()
     texts = {p.stem: p.text for p in programs}
     verdicts = verdicts_for(args.table, texts, refusals, arris_bugs)
+    if args.sketch_boundary:
+        table = FidelityTable.model_validate_json(gzip.decompress(args.table.read_bytes()))
+        sketch_stems = [
+            entry.name
+            for entry in table.entries
+            if entry.name not in verdicts
+            and entry.row.status is ag.Status.OK
+            and (entry.row.outcome is FidelityOutcome.UNCLASSIFIED or entry.row.verdict is not None)
+        ]
+        forms = sketch_boundary_forms([texts[stem] for stem in sketch_stems])
+        for stem, boundary_form in zip(sketch_stems, forms, strict=True):
+            verdicts[stem] = {"disagreement": "occt_wrong", "evidence": boundary_form}
     reports = {}
     for line in gzip.decompress(args.oracle_rows.read_bytes()).decode("utf-8").splitlines():
         row = json.loads(line)

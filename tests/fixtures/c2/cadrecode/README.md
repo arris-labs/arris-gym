@@ -57,48 +57,63 @@ the library's code licence does not replace it.
 
 ## The table
 
-`fidelity.json.gz` is the `FidelityTable` of all 968 programs under `cq` (arris
-0.11.1) against the oracle (CadQuery 2.3.0,
-`cadquery-ocp` 7.9.3.0), with its one verdict (`verdicts.json`); `oracle.jsonl.gz` the oracle's rows
-(STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
-report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
-`uv run --extra corpus tools/cq_corpus.py --corpus cadrecode --verdicts tests/fixtures/c2/cadrecode/verdicts.json --oracle-rows tests/fixtures/c2/cadrecode/oracle.jsonl.gz` (network, the oracle environment; outside the gate), which saves
-its work in chunks and resumes. Pass a fresh `--work-dir` after a code or
-verdict change. The ADR-0022 re-run reproduced every table, report and oracle
-byte. No program text is committed. Each figure is
-over all 968 programs. Re-run by plans/lift-edges-and-blends step 8 (2026-11-15), after `Workplane.edges`, `fillet`, `chamfer`, the selectors `|X |Y |Z` and `'>Z or <Z'` and the seams and `faces` estimate refinements were lifted (no corpus program reaches them: every figure and both digests are unchanged); before that by plans/lift-arrays-and-blind-cuts step 7 (2026-11-15), after `Workplane.rarray`, `polarArray` and `cutBlind` were lifted (no corpus program writes them: every figure and both digests are unchanged); before that by plans/lift-holes-and-points step 8 (2026-11-14), after `Workplane.pushPoints`, `cboreHole`, `cskHole`, `hole`'s `depth=` and the holes' contexts were lifted (no corpus program writes them: every figure and both digests are unchanged); before that by plans/lift-face-selectors step 8 (2026-11-14), after `Workplane.faces`, the axis selectors and the plan's other lifts (no corpus program reaches them: every figure and both digests are unchanged); before that by plans/lift-extrude-both step 5, after `extrude(…, both=True)` and `polyline` after a lone `moveTo` point were lifted (no corpus program writes them: every figure and both digests are unchanged); before that by plans/lift-polygon step 4, after `Workplane.polygon` was lifted (no corpus program writes it: every figure and both digests are unchanged, as after `Workplane.sphere`, plans/lift-sphere step 5, and after `Workplane.threePointArc`, plans/lift-three-point-arc step 5); before that by plans/lift-cylinder step 6
-(2026-11-13), after `Workplane.cylinder`, and `union` on a chain holding no solid,
-were lifted (before that, by plans/in-subset-cq-bugs step 10: both workers read `r`
-(ADR-0015), and `origin=`, `workplane(offset=…)`, `box` on a `moveTo` point and a
-compound result (ADR-0016) were lifted).
+`fidelity.json.gz` compares all 968 programs under `cq` on arris 0.11.1
+with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
+`arris-report.json` and `.md` carry the refusals and bug. `reach-report.json`
+checks this table against the census and the current subset.
 
-- Reach: 104/968 in-subset (37 before `cylinder`, the curve's item 1; C1's subset reaches 0).
-- Agreement: 103 agree; outcomes {'agree': 103, 'disagree': 865, 'unclassified': 0}.
-- Classes: {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 864, 'occt_wrong': 1}.
-- Arris statuses: {'arris_refusal': 0, 'checker_fail': 0, 'crash': 0, 'ok': 104, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 864}.
-- Oracle statuses: {'crash': 0, 'invalid': 0, 'no_result': 0, 'ok': 968, 'runtime': 0, 'syntax': 0, 'timeout': 0}.
-- Timeouts: 0.
-- In-subset: outcomes {'agree': 103, 'disagree': 1, 'unclassified': 0}, classes {'arris_bug': 0, 'arris_refusal': 0, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 1};
-  `in_subset_cq_bug` 0, `in_subset_by_design` 0. The one disagreement is stem `550`
-  (two crossing cylinders), `occt_wrong` by its closed form (Verdicts, below).
+Regenerate with the synced oracle environment and a fresh work directory
+(outside the gate):
 
-Table digest: `e2bf586c6f8970875a98f631d1d2bb645ac69bbaf0f02532f61f8c8932107308` (arris 0.11.1, plans/bump-arris-0-11 step 7: every row differs from 0.10.0's table, digest `24c2f92a7cee01073348e62949c92f0a1caecc795a13bf288c1b4a38ea923448`, in `versions.arris` alone; the reach report is byte-equal). Oracle rows SHA-256 (uncompressed): `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
+```sh
+root=tests/fixtures/c2/cadrecode
+work=$(mktemp -d .scratch/cadrecode-fidelity.XXXXXX)
+uv run --locked --extra corpus tools/cq_corpus.py --corpus cadrecode \
+  --verdicts "$root/verdicts.json" --oracle-rows "$root/oracle.jsonl.gz" \
+  --out-dir "$work/out" --work-dir "$work/chunks"
+```
 
-Every agreement is two `ok` builds: the oracle builds all 968 programs, and the 864
-`cq_bug` rows are `unsupported_api` on forms outside the subset (`sketch()` and its
-calls, `finalize`, `push`, the curve's later items). Five of the 103 are unions of
-disjoint boxes that both sides build as a compound (ADR-0016). The oracle rows are
-the committed bytes, none re-run (their digest above is unchanged); the 67 programs
-`cylinder` reached are all new `cq` runs against them. The table digest before this
-re-run, with the 37 reached programs and no verdict, was
-`2aa87494c795c2321de08d8bee2d5effa8ba426c5fe50067eca163b70ce588f4`.
+All counts are over the 968 programs. The sketch lift (ADR-0023) raises
+reach from 104 to **968**, meeting the CAD-Recode fidelity target (ADR-0014).
+All 873 agreements are two successful builds. The 95 disagreements are
+75 `arris_refusal`, one `arris_bug` and 19 `occt_wrong`. There are zero
+`cq_bug`, `by_design`, unclassified or timed-out rows. The oracle ends `ok`
+on all 968. arris ends `ok` on 892, `arris_refusal` on 75 and `checker_fail`
+on one.
 
-The baseline (plans/fidelity-target step 6, table digest
-`7f19ee794233d27fc3c0d7f0a5f885ae3e5ea65d37bb00fef28a8f95408ea440`) had
-reach 0 and 968 vacuous agreements: neither worker read `r = …` as a result
-(`unsupported_api` against `no_result`), so every oracle row changed with
-ADR-0015, as intended.
+Table digest: `fe2861b7598b1d3e31651641cc00ff7c98f55c4a77394cded62125ebfadf71cc`.
+The previous table (reach 104) had digest
+`e2bf586c6f8970875a98f631d1d2bb645ac69bbaf0f02532f61f8c8932107308`.
+The oracle file is byte-equal to the committed input. Its uncompressed
+SHA-256 is `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
 
 ## Verdicts
 
-`verdicts.json` holds the verdict of the one row no rule classes: stem `550`, two crossing cylinders, `occt_wrong` by its closed form (`tools/cq_closed_forms.py`, `--corpus cadrecode`): arris is within 1e-11 of it on volume, area and centroid, and Open CASCADE's volume is 2.6e-9 off, past ADR-0005's 1e-9. The table is run with `--verdicts tests/fixtures/c2/cadrecode/verdicts.json`.
+Stem `550` still uses the closed form for two crossing cylinders. Another
+18 builds agree with the boundary integral of the oracle's planar and
+cylindrical faces. The integral evaluates area and flux through the trim
+curves at two resolutions (Green's theorem and the divergence theorem).
+It uses the oracle's B-Rep and tight bounds and computes the measures
+independently of the oracle's default GProp integration. The comparator
+checks each verdict against both sides at the ADR-0005 tolerance. Stem
+`239` reproduces the intersecting cap loops in
+[`cq-sketch-post-tangent-to-cap`](../../regression/cq-sketch-post-tangent-to-cap/README.md).
+
+Regenerate the verdicts from the table with:
+
+```sh
+root=tests/fixtures/c2/cadrecode
+uv run --locked --extra corpus tools/cq_closed_forms.py --corpus cadrecode \
+  --table "$root/fidelity.json.gz" --oracle-rows "$root/oracle.jsonl.gz" \
+  --sketch-boundary --arris-bug 239=tests/fixtures/regression/cq-sketch-post-tangent-to-cap \
+  --out "$root/verdicts.json"
+```
+
+## Baseline
+
+The first table had reach 0 and 968 agreements between
+`unsupported_api` and `no_result` (digest
+`7f19ee794233d27fc3c0d7f0a5f885ae3e5ea65d37bb00fef28a8f95408ea440`).
+Both workers then began reading `r = …` (ADR-0015). Reach rose to 37
+with the workplane and compound lifts (ADR-0016), then to 104 with
+`Workplane.cylinder`. BenchCAD's later lifts left those figures unchanged.

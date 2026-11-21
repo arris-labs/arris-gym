@@ -1,0 +1,26 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.11.1 finds a one-coedge edge",
+  "measures": {
+    "volume": 337.1681469282041,
+    "area": 377.6991118430775,
+    "centroid": [
+      0.5590550617924338,
+      0,
+      2.5
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        0
+      ],
+      [
+        5,
+        4,
+        5
+      ]
+    ]
+  }
+}

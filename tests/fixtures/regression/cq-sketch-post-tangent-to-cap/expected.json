@@ -1,0 +1,26 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.11.1 returns a cap with intersecting loops after fusing a post tangent to the edge",
+  "measures": {
+    "volume": 12937.212343763855,
+    "area": 3700.1415625092363,
+    "centroid": [
+      -7.479237708654337,
+      4.792377086543374,
+      -11.586459180790847
+    ],
+    "bounds": [
+      [
+        -23,
+        -3,
+        -25
+      ],
+      [
+        8,
+        13,
+        19
+      ]
+    ]
+  }
+}

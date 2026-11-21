@@ -135,3 +135,24 @@ if present (ADR-0007, ADR-0016).
 - **Evaluate planar booleans before extruding.** That would need planar
   operations on lines, arcs and circles with holes. The prism fold uses the
   pinned wheel's solid operations and preserves the section's point set.
+
+## Amendment (2026-11-21): keep the prism fold for interior cuts
+
+CAD-Recode reaches 968/968. The table has 873 agreements, 75 arris
+refusals (51 `OpDegenerateError`, 17 `OpInternalError`, seven
+`OpProfileError`), one arris bug, and 19 `occt_wrong` rows. It has zero
+`cq_bug`, `by_design`, unclassified and timed-out rows. The
+[CAD-Recode table](../../tests/fixtures/c2/cadrecode/README.md) records
+the digests and verdicts. With the analytic area and flux integrated
+along the planar and cylindrical trim curves, 18 new measure gaps fall
+within ADR-0005's tolerances for arris. The oracle's default GProp
+integration lies outside them.
+
+The fold still cuts even when the tool lies strictly inside the section.
+Two reduced section cuts touch the outer boundary at one point
+(`regression/cq-sketch-tangent-cut-from-left` and
+`regression/cq-sketch-tangent-cut-from-bottom`). A profile with a strictly
+interior hole would exclude that contact. The checker failure is a fuse
+of a post to a cap with its footprint tangent to an edge
+(`regression/cq-sketch-post-tangent-to-cap`). The direct prism fold
+keeps the same operation order for both ordinary and contact cases.

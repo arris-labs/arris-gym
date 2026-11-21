@@ -118,7 +118,7 @@ Grades are tiers (`.agents/tiers.md`):
   a non-sketch argument (`unsupported_api`). An offline reach test over the
   committed census rows gives 968/968 on CAD-Recode and 9,998/17,900 on
   BenchCAD. CHANGELOG bullet.
-- [ ] Step 7 **[3, conductor-run]** — re-run CAD-Recode under `cq` against
+- [x] Step 7 **[3, conductor-run]** — re-run CAD-Recode under `cq` against
   the committed oracle rows (`tools/cq_corpus.py --corpus cadrecode`, fresh
   `--work-dir`). Class every new in-subset disagreement: a `cq` fault shrunk
   to a fixture and fixed (the commit carries its step's suffix), a
@@ -168,11 +168,10 @@ Grades are tiers (`.agents/tiers.md`):
 - *Settled* (step 5). An empty edge list fails the same single-loop rule
   as an open chain. The dialect raises `ValueError` at assembly, and
   the empty assembly trace records the oracle's `IndexError`.
-- ⚠ OPEN: arris may refuse prism folds that Open CASCADE builds. Those rows
-  are `arris_refusal` and do not block the target. At step 7 the agent decides
-  whether to build a profile with holes for cuts that lie strictly inside, and
-  records the choice in ADR-0023 by amendment. Step 4's strict regression
-  fixtures also hold corner contact, common after a fused contact, and
-  the second fuse of three nested prisms. The coordinate-compression
-  property generates rectangle pairs with distinct sides and checks a
-  mixed three-call fold explicitly.
+- *Settled* (step 7, ADR-0023 amendment). Keep the prism fold for strictly
+  interior cuts too. The reduced tangent cuts and tangent post require
+  contact handling, and the boundary integral resolves the 18 new
+  measurement gaps without changing the fold. CAD-Recode reaches 968/968,
+  with 873 agreements, 75 arris refusals, one arris bug and 19
+  `occt_wrong`. There are no in-subset `cq_bug` or `by_design` rows,
+  unclassified rows or timeouts. The committed oracle bytes are unchanged.

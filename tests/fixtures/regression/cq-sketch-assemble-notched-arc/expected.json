@@ -1,0 +1,21 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.11.1 reports a self-crossing where the arc and the notch edge are disjoint",
+  "measures": {
+    "volume": 339.3646827287006,
+    "area": 374.65796470781663,
+    "bounds": [
+      [
+        28,
+        9,
+        0
+      ],
+      [
+        36.0146931829632,
+        26,
+        5
+      ]
+    ]
+  }
+}

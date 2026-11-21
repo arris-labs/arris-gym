@@ -16,7 +16,6 @@ import gzip
 import hashlib
 import json
 from collections import Counter
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -55,17 +54,17 @@ FIGURES = {
         "oracle_ok": 17_568,
     },
     "cadrecode": {
-        "in_subset": 104,
-        "agree": 103,
+        "in_subset": 968,
+        "agree": 873,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 0,
         "classes": {
-            "arris_bug": 0,
-            "arris_refusal": 0,
+            "arris_bug": 1,
+            "arris_refusal": 75,
             "by_design": 0,
-            "cq_bug": 864,
-            "occt_wrong": 1,
+            "cq_bug": 0,
+            "occt_wrong": 19,
         },
         "unclassified": 0,
         "oracle_ok": 968,
@@ -128,19 +127,7 @@ def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
     rows = census_rows(corpus)
-    measured = cq.subset()
-    if corpus == "cadrecode":
-        # The committed table predates ADR-0023. Check it against the forms
-        # at that run until lift-sketches step 7 publishes the new table.
-        measured = replace(
-            measured,
-            forms=tuple(
-                form
-                for form in measured.forms
-                if form.name != "Workplane.sketch" and not form.name.startswith("Sketch.")
-            ),
-        )
-    assert reach_report(table, rows, measured) == committed
+    assert reach_report(table, rows, cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, rows, fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]
@@ -214,7 +201,7 @@ def test_cadrecodes_agreements_are_not_two_failures() -> None:
     table = table_of("cadrecode")
     assert table.oracle_statuses["no_result"] == 0
     agree = [e for e in table.entries if e.row.outcome is FidelityOutcome.AGREE]
-    assert len(agree) == 103
+    assert len(agree) == 873
     assert all(e.row.status is Status.OK and e.row.oracle_status is OracleStatus.OK for e in agree)
 
 

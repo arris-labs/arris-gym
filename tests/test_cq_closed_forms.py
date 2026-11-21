@@ -658,6 +658,44 @@ def test_the_crossing_cylinders_are_what_arris_builds() -> None:
     assert _agrees(ag.run(text, dialect="cq"), cf.crossing_closed_form(sha)) == []
 
 
+@pytest.mark.oracle
+def test_boundary_integrals_match_closed_forms_on_sketches_and_crossing_cylinders() -> None:
+    from arris_gym.fidelity._agreement import figures_agree
+
+    sketch = C2.parent / "sketch"
+    texts = []
+    expected = []
+    for name in ("ok-sketch-ring", "ok-sketch-disjoint-adds", "ok-sketch-yz-negative"):
+        directory = sketch / name
+        text = (directory / "program.py").read_text("utf-8")
+        texts.append(text + ("\nr = result\n" if "result =" in text else ""))
+        measures = json.loads((directory / "expected.json").read_text("utf-8"))["measures"]
+        expected.append(
+            ClosedForm.model_validate(
+                {
+                    **{key: measures[key] for key in ("volume", "area", "centroid", "bounds")},
+                    "note": name,
+                }
+            )
+        )
+    # Perpendicular equal cylinders with an entire Steinmetz intersection.
+    texts.append(
+        "import cadquery as cq\n"
+        'r = cq.Workplane("XY").cylinder(8, 2).union(cq.Workplane("YZ").cylinder(8, 2))\n'
+    )
+    expected.append(
+        ClosedForm(
+            volume=64 * math.pi - 128 / 3,
+            area=80 * math.pi - 64,
+            centroid=(0, 0, 0),
+            bounds=((-4, -2, -4), (4, 2, 4)),
+            note="equal cylinders crossing",
+        )
+    )
+    for got, want in zip(cf.sketch_boundary_forms(texts), expected, strict=True):
+        assert figures_agree(ClosedForm.model_validate(got), want), (got, want)
+
+
 def test_a_part_of_boxes_and_cylinders_meets_its_textbook_figures() -> None:
     # A 4 x 6 x 8 box less a through bore of radius 1 off its axis: V = 192 - 8 pi, the
     # bore's side added and its two discs taken from the faces, the centroid opposite it.

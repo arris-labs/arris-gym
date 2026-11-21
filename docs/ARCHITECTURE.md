@@ -957,6 +957,16 @@ wrong (`BRepGProp` with `OnlyClosed = false`, one solid order of
 `cq/ok-compound-occt-centroid`): such a row is `unclassified` until a
 closed-form verdict classes it `occt_wrong`.
 
+The sketch lift (ADR-0023) reaches all 968 CAD-Recode programs. Of these,
+873 agree, 75 are arris refusals, one is an arris bug and 19 are
+`occt_wrong`. There are zero `cq_bug`, `by_design`, unclassified or
+timed-out rows. The checker failure is a post whose footprint touches a
+cap edge (`regression/cq-sketch-post-tangent-to-cap`). A boundary integral
+of the planar and cylindrical faces resolves 18 measurement gaps in the
+oracle's default GProp integration. The earlier crossing-cylinder verdict
+continues to use its closed form. The table reuses the committed oracle
+rows byte for byte. CAD-Recode meets its fidelity target (ADR-0014).
+
 With the corpus deadline of 240 s, well above the slowest program, load no
 longer moves a BenchCAD status. The oracle's bytes are not repeatable run to
 run for some programs: on the BenchCAD re-run 214 rows of 8
