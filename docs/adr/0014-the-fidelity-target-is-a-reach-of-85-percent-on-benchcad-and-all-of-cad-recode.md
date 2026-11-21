@@ -147,3 +147,12 @@ read as one face, as Open CASCADE reads it
 declaration is not narrowed: the count stays in the table as the measure of
 what arris still owes, and each lift's table states it. The target is met
 when the seven agree.
+
+## Amendment (2026-11-21): the connecting-rod exception is closed
+
+The seven named rows all build. ADR-0020's finer estimate reached the first
+row, which is `occt_wrong` by closed form. ADR-0022 reaches the other six
+using arris's face centres and ranking each seam-split cylinder side as one
+face. Two agree and four are `occt_wrong` by closed form. Both corpora now
+have zero in-subset `cq_bug`. The reach targets and static membership rule
+still apply.

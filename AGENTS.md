@@ -37,13 +37,10 @@ unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
 against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **0.1.0 published** (2026-11-10).
 **C2 target set** (2026-11-12): ADR-0014 fixes the fidelity target, a reach of
-85% on BenchCAD and 100% on CAD-Recode with no in-subset `cq_bug`. Now
-(2026-11-15): reach 9,998/17,900 on BenchCAD and 104/968 on CAD-Recode
-(the face selectors, `hole`, the point stacks, `cutBlind`, `edges`, `fillet`,
-`chamfer` and the parallel selectors lifted, ADR-0017 to ADR-0020), in-subset
-`cq_bug` 0 on CAD-Recode and 6 on BenchCAD (`connecting_rod`, waiting on arris,
-ADR-0014's amendment). `arris` 0.11.1 pinned (2026-11-16): no row moved, and a
-kernel bump is named by `versions.arris`, not the reward's version (ADR-0021).
+85% on BenchCAD and 100% on CAD-Recode with no in-subset `cq_bug`. Reach is
+9,998/17,900 on BenchCAD and 104/968 on CAD-Recode. Face centres and unified
+faces (ADR-0022, 2026-11-21) clear the six remaining in-subset `cq_bug` rows,
+bringing both corpora to zero. The kernel pin is `arris` 0.11.1 (ADR-0021).
 **Next:** C2's growth: bundle 4, CAD-Recode's sketch API, then the knee's other
 bundles, riskiest first (ADR-0014, `docs/ROADMAP.md`).
 

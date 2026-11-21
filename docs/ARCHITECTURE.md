@@ -747,12 +747,12 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
 | reach | 9,998 (55.9%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 7,413 (41.4%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,701 / 1,457 / 289 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 841 | 0 | 1 | 0 |
+| agree (all programs) | 7,415 (41.4%) | 980 | 103 (10.6%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,695 / 1,457 / 289 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 845 | 0 | 1 | 0 |
 | unclassified (all outside the subset) | 199 | 363 | 0 | 0 |
 | timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
-| in-subset `cq_bug` | 6 | 717 | 0 | 0 |
+| in-subset `cq_bug` | 0 | 717 | 0 | 0 |
 | in-subset `by_design` | 0 | 0 | 0 | 0 |
 
 The baseline's 717 in-subset `cq_bug` rows were all `unsupported_api` where the
@@ -891,18 +891,17 @@ rows are the committed bytes. The 31 oracle timeouts stay. On arris 0.11.1
 (ADR-0021) both tables differ in `versions.arris` alone:
 BenchCAD `5f33dade…0584`, CAD-Recode `e2bf586c…7308`.
 
-**Six in-subset `cq_bug` rows stay**, all `connecting_rod`
-(ADR-0014's amendment of 2026-11-14 named seven; one now runs and is
-`occt_wrong` by closed form): `faces(">Z").faces(">Z")` keeps a
-cylinder face, and `workplane()` on it (6 of the original 7) or `faces(">Y")` ranking by its
-centre ends `unsupported_api` where the oracle builds the part. They need
-a face's exact centre of mass (`face-surface-properties`, a plan in arris)
-and, for the 6, the side of a cylinder that arris splits in two where a box's
-window crosses its seam read as one face, as Open CASCADE reads it, in arris
-or by `cq` merging the halves before ranking
-(`regression/cq-workplane-on-a-cylinder-face-split-at-its-seam`). The count
-stays visible rather than the declaration narrowed. The oracle rows were the
-committed bytes, the digest unchanged.
+Face keys from arris's surface properties and unified faces (ADR-0022)
+clear BenchCAD's six remaining in-subset `cq_bug` rows. Each
+`connecting_rod` now ranks the cylinder side as one face and places the
+workplane on the box's planar face
+(`regression/cq-workplane-on-a-cylinder-face-split-at-its-seam`). Two
+agree and four are `occt_wrong` by `part_measures`
+(`tools/cq_closed_forms.py`). The cross bore meets the ring's wall and the
+oracle volumes differ from the closed forms by 2.1e-9 to 3.0e-6 relative.
+Both corpora have zero in-subset `cq_bug` and zero unclassified rows in the
+subset. Reach is unchanged. BenchCAD's table digest is `b6c94989…ac32`;
+CAD-Recode's table is byte-identical.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

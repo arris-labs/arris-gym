@@ -121,13 +121,11 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status: the edges and blends lifted 2026-11-15** (target set
-2026-11-12, ADR-0014; the tables are in `docs/ARCHITECTURE.md` §Fidelity):
-BenchCAD reach 9,998/17,900 and CAD-Recode 104/968, in-subset `cq_bug` 0 on
-CAD-Recode and 6 on BenchCAD (`connecting_rod`, waiting on arris: ADR-0014's
-amendment of 2026-11-14 named 7, one now runs), nothing unclassified in the
-subset on both. The tables were re-run on the `arris` 0.11.1 bump
-(2026-11-16): every row equal but for `versions.arris` (ADR-0021). Next: bundle 4, CAD-Recode's sketch API, then the head
+**Status: the face-centre lift clears the six connecting-rod rows
+(2026-11-21, ADR-0022).** BenchCAD reach is 9,998/17,900 and CAD-Recode
+reach is 104/968, with zero in-subset `cq_bug` and zero unclassified
+rows in the subset on both (the tables are in `docs/ARCHITECTURE.md`
+§Fidelity). Bundle 4 lifts CAD-Recode's sketch API, followed by the head
 (bundle 5) and the tail (`shell` and the rest), riskiest first (ADR-0014).
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the

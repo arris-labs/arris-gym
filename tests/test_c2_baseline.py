@@ -1,4 +1,4 @@
-"""The C2 tables (plans/fidelity-target step 6, re-run by plans/lift-edges-and-blends step 8).
+"""The C2 tables (plans/fidelity-target step 6, re-run by plans/face-centre-of-mass step 7).
 
 `tools/cq_corpus.py` wrote `tests/fixtures/c2/<corpus>/` (network, the oracle
 environment, outside the gate). This reads the committed rows only: the table
@@ -39,16 +39,16 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 FIGURES = {
     "benchcad": {
         "in_subset": 9_998,
-        "agree": 7_413,
-        "in_subset_cq_bug": 6,
+        "agree": 7_415,
+        "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 31,
         "classes": {
             "arris_bug": 289,
             "arris_refusal": 1_457,
             "by_design": 0,
-            "cq_bug": 7_701,
-            "occt_wrong": 841,
+            "cq_bug": 7_695,
+            "occt_wrong": 845,
         },
         "unclassified": 199,
         "oracle_ok": 17_537,
@@ -165,26 +165,24 @@ def test_benchcads_arris_bugs_are_verdict_families_and_checker_fail_caps() -> No
             assert e.row.verdict is not None
 
 
-def test_benchcads_in_subset_cq_bugs_are_the_parked_connecting_rods() -> None:
-    """The 6 in-subset `cq_bug` rows are step 7b's, blocked on arris (the amendment named 7).
-
-    Each is a `connecting_rod` that `cq` refuses with `unsupported_api` while the oracle
-    builds it: `faces(">Z").faces(">Z").workplane()` on a cylinder face, the plane's normal
-    being CadQuery's `normalAt()` there (`face-surface-properties.md` in arris's ideas).
-    The count stays visible in FIGURES rather than the declaration being narrowed.
-    """
-    table = table_of("benchcad")
-    committed = ReachReport.model_validate_json((C2 / "benchcad" / "reach-report.json").read_text())
+def test_benchcads_previously_refused_connecting_rods_build_on_both_kernels() -> None:
+    """ADR-0022 ranks the seam-split cylinder side as one face for all six rows."""
+    agreements = {"000909", "007540"}
+    oracle_errors = {"002995", "007023", "015811", "016153"}
     inside = set(reach_stems("benchcad"))
-    parked = [
-        e
-        for e in table.entries
-        if e.name in inside and e.row.disagreement is DisagreementClass.CQ_BUG
-    ]
-    assert len(parked) == committed.in_subset_cq_bug == 6
-    assert Counter(e.name.rsplit("_", 2)[0] for e in parked) == {"connecting_rod": 6}
-    assert all(e.row.status is Status.UNSUPPORTED_API for e in parked)
-    assert all(e.row.oracle_status is OracleStatus.OK for e in parked)
+    rows = {entry.name: entry.row for entry in table_of("benchcad").entries}
+    for number in sorted(agreements | oracle_errors):
+        stem = f"connecting_rod_{number}_s20260505"
+        assert stem in inside
+        row = rows[stem]
+        assert row.status is Status.OK
+        assert row.oracle_status is OracleStatus.OK
+        if number in agreements:
+            assert row.outcome is FidelityOutcome.AGREE
+        else:
+            assert row.disagreement is DisagreementClass.OCCT_WRONG
+            assert row.verdict is not None
+            assert row.verdict.evidence.kind == "closed_form"
 
 
 def test_cadrecodes_agreements_are_not_two_failures() -> None:

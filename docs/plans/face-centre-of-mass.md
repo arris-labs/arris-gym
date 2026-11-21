@@ -109,7 +109,7 @@ case within a given design; **[3]** unproven. The grade is the tier
   normal per kind; one `ok-…` fixture each, the plane fixed by a bore by
   construction; the no-foot case as step 1 recorded. Hypothesis: a cylinder
   of random r, h, sense, `>Z` on its half, plane at 2r/π.
-- [ ] Step 7 **[2, conductor-run]** — Re-run C2's tables (`tools/cq_corpus.py
+- [x] Step 7 **[2, conductor-run]** — Re-run C2's tables (`tools/cq_corpus.py
   --corpus benchcad|cadrecode --oracle-rows`). Every moved row has a cause;
   the 6 `connecting_rod` rows agree or are classed by closed form; in-subset
   `cq_bug` 0 on both. A row that is not becomes a regression fixture here.
@@ -171,3 +171,6 @@ case within a given design; **[3]** unproven. The grade is the tier
   produce different apices in the grouping test. A half torus cut from a
   whole torus can retain two faces in CadQuery across its seam, where
   `cq` groups them. Both are tracked in the backlog.
+- ⚠ OPEN: Step 7 has zero unclassified rows in the subset on both corpora.
+  BenchCAD has the same 199 unclassified rows outside the subset as before,
+  so the plan's corpus-wide zero-unclassified acceptance remains open.
