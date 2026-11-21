@@ -507,7 +507,8 @@ that depends on joining boundary fragments ends `unsupported_api`.
 `workplane()` follows CadQuery's `ProjectedOrigin` rule. On a unified
 cylinder, cone, sphere or torus face, it projects onto the plane through the
 face's centre of mass, with the outward normal taken at the centre's foot
-on the untrimmed surface (ADR-0022 rule 4).
+on the untrimmed surface (ADR-0022 rule 4). If that normal is almost vertical,
+the frame projects global +x onto the plane to set its local x axis.
 
 ## The reward
 

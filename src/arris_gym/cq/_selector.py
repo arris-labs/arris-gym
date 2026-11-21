@@ -744,17 +744,20 @@ def _projected_plane(
 ) -> arris.build.Workplane:
     across = _cross((0.0, 0.0, 1.0), n)
     length = _length(across)
-    x = (
-        (1.0, 0.0, 0.0)
-        if length < CQ_TOLERANCE
-        else (across[0] / length, across[1] / length, across[2] / length)
-    )
-    y = _cross(n, x)
     at = (
         origin[0] - n[0] * height,
         origin[1] - n[1] * height,
         origin[2] - n[2] * height,
     )
+    if 0.0 < length < CQ_TOLERANCE:
+        # CadQuery's geometry transform squares the fallback x to the normal.
+        return arris.build.Workplane.of(at, n, x_axis=(1.0, 0.0, 0.0))
+    x = (
+        (1.0, 0.0, 0.0)
+        if length == 0.0
+        else (across[0] / length, across[1] / length, across[2] / length)
+    )
+    y = _cross(n, x)
     return arris.build.Workplane(at, x, y, (n[0], n[1], n[2]))
 
 
