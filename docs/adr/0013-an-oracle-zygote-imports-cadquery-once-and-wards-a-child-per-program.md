@@ -133,3 +133,28 @@ Measured on this machine (Linux 7.0, x86-64, 32 logical processors, Python
   payload what it was.
 - **Keeping ADR-0004's worker per program**: about 1.4 s a program, about
   seven hours of import serially over BenchCAD's 17,900 programs.
+
+## Amendment (2026-11-21): a corpus run's oracle deadline is measured
+
+A corpus run's oracle deadline, `tools/cq_corpus.py`'s `ORACLE_TIMEOUT` (the
+`--oracle-timeout` default), is 240 s. The oracle's own `DEFAULT_TIMEOUT`
+(30 s, for the slice and the fixtures) is unchanged.
+
+The 31 `double_simplex_sprocket` programs of BenchCAD that timed out at 30 s
+were run alone at 300 s, 16 workers. All 31 ended oracle status `ok`: none
+timed out and none crashed. Wall-clock seconds per program under that load:
+minimum 31.8, median 49.4, maximum 57.3 (`double_simplex_sprocket_001903_s20260505`).
+The deadline is the next multiple of 30 s above 4 times the slowest, 4 x 57.3 =
+229.2, so 240 s. The factor of 4 leaves room for a machine four times slower
+or more loaded than the one that measured.
+
+- Wall-clock time still reaches a status only, never a score. With the slowest
+  program well inside the deadline, load no longer moves BenchCAD's statuses,
+  so ADR-0014's "digest equal across architectures" holds for BenchCAD, where
+  at 30 s a slower machine would have timed more of these programs out.
+- The zygote's lifetime, `oracle_run.ZYGOTE_LIFETIME` (600 s), stays above
+  the deadline plus the backstop: `run` restarts a zygote before a program
+  whose `timeout + BACKSTOP` (240 + 2 = 242 s) would pass its lifetime, so
+  every program of a corpus run has 242 s of it left at least.
+- A timeout is still never cached; a program slower than 240 s is a `timeout`
+  row and is run again on resume.

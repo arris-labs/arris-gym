@@ -12,6 +12,7 @@ import cq_corpus
 import oracle_run
 from arris_gym.census import CorpusProgram
 from arris_gym.fidelity import OracleReport, OracleStatus, OracleVersions
+from arris_gym.sandbox._zygote import BACKSTOP
 from test_fidelity_table import entries
 
 
@@ -85,3 +86,12 @@ def test_a_saved_row_is_reused_only_from_this_oracle_and_never_a_timeout(
     read = cq_corpus.read_oracle(path)
     assert read == {r.program_sha256: r for r in saved}
     assert list(cq_corpus.reusable(read, V1)) == ["a" * 64]
+
+
+def test_the_oracle_deadline_is_a_measured_multiple_and_inside_a_zygotes_lifetime() -> None:
+    """ADR-0013's amendment: 240 s is the next multiple of 30 s above 4 x the slowest
+    BenchCAD program (57.3 s), and a program of it still fits a zygote."""
+    slowest = 57.3
+    assert cq_corpus.ORACLE_TIMEOUT == 240.0
+    assert (int(4 * slowest // 30) + 1) * 30 == cq_corpus.ORACLE_TIMEOUT
+    assert cq_corpus.ORACLE_TIMEOUT + BACKSTOP < oracle_run.ZYGOTE_LIFETIME

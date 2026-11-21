@@ -55,6 +55,11 @@ from arris_gym.fidelity import (
 C2 = pathlib.Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "c2"
 # The sandbox's own deadline for a program, as `cq_slice.py` has it.
 TIMEOUT = 30.0
+# The oracle's deadline for a corpus run, the `--oracle-timeout` default (ADR-0013's 2026-11-21
+# amendment): the next multiple of 30 s above 4 x the slowest program measured on BenchCAD
+# (57.3 s, a `double_simplex_sprocket`, under 16 workers), so load does not move a status.
+# It stays below `oracle_run.ZYGOTE_LIFETIME` less the sandbox's `BACKSTOP`.
+ORACLE_TIMEOUT = 240.0
 # Programs per saved chunk: a chunk's sandbox and oracle runs finish in one foreground call
 # (under ~110 s at the baseline's rates), and an interrupted run loses at most one chunk.
 CHUNK = 500
@@ -245,7 +250,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--out-dir", type=pathlib.Path)
     parser.add_argument("--timeout", type=float, default=TIMEOUT)
-    parser.add_argument("--oracle-timeout", type=float, default=oracle_run.DEFAULT_TIMEOUT)
+    parser.add_argument("--oracle-timeout", type=float, default=ORACLE_TIMEOUT)
     parser.add_argument("--chunk", type=int, default=CHUNK, help="programs per saved chunk")
     parser.add_argument("--budget", type=float, help="stop starting chunks after this many seconds")
     parser.add_argument("--work-dir", type=pathlib.Path, help="saved chunks; default OUT/.work")
