@@ -133,7 +133,10 @@ none of them (ADR-0003).
   sorted keyword names), the **selector string** of a `faces`-style call,
   calls on a receiver the census cannot place (`?`, listed with their text),
   calls on `builtin` and other modules (`foreign`, counted, not ranked), and
-  the program's end form.
+  the program's end form. A chain carries its root constructor's receiver,
+  switches to `Sketch` after `sketch()`, and returns to the root receiver
+  after `finalize()`. An assigned name carries that receiver when all its
+  bindings agree.
 - **The ranking.** Per family: distinct calls, then distinct selector
   strings, then distinct API forms, ascending, ties by name. `select_slice`
   takes the first 3 families with at least 100 programs and the first 100
@@ -175,8 +178,7 @@ none of them (ADR-0003).
   1,871/17,900; seven forms reach 4,523, the first selector (`>Z`) comes
   fifteenth, and twenty-four items pass half (9,061); all 17,900 after 57. On
   CAD-Recode the C1 curve's end form `r = …` comes first: 37/968 after
-  three items, 299 after 14 items, 697 after 15, all 968
-  after 18. Input order cannot move the curve's canonical-JSON digest.
+  three items, 104 after four, 697 after 17 and all 968 after 20. Input order cannot move the curve's canonical-JSON digest.
 - **The command.** `arris-gym census --corpus benchcad|cadrecode [--out DIR]`
   writes `census.json`, `programs.jsonl.gz` and `reach.json` (`slice.txt` for
   BenchCAD only), and prints totals and the census digest. Per-program rows

@@ -56,10 +56,10 @@ ADR-0023 gives the edge and mode errors and their oracle records.
 **C. Public surface.** New private module `cq/_sketch.py`, and a
 program-facing `Sketch` reached only through `sketch()`. `cq.Sketch` stays
 `UnsupportedApi`; any other attribute raises `UnsupportedApi("Sketch.<name>")`.
-`cq.subset()` gains 13 declarations:
+`cq.subset()` gains 13 declarations covering 16 API forms:
 - `Workplane.sketch()`
 - `Sketch.finalize()`, `push(list)`, `reset()`, `close()`, `assemble()`
-- `Sketch.circle(num; mode=str)`, `rect(num, num; mode=str)`, `face(call; mode=str)`
+- `Sketch.circle(num)`, `rect(num, num)`, `face(call)`, each also with `mode=str`
 - `Sketch.segment(tuple)`, `segment(tuple, tuple)`, `arc(tuple, tuple)`, `arc(tuple, tuple, tuple)`
 
 `kind_of` reads a `Sketch` as `call`. No existing public type or method
@@ -85,7 +85,7 @@ Grades are tiers (`.agents/tiers.md`):
   `tests/fixtures/sketch/constructed.json` and its README.
 - [x] Step 2 **[3]** — ADR-0023: delta B, settled from step 1's records,
   closing the first `⚠ OPEN`. Doc only.
-- [ ] Step 3 **[2]** — the census types sketch chains (delta A), with
+- [x] Step 3 **[2]** — the census types sketch chains (delta A), with
   ADR-0003's amendment and unit cases: a chained sketch, a sketch bound to a
   name, `finalize().extrude`. The never-raises property still holds.
   Regenerates CAD-Recode's census, `programs.jsonl.gz`, `reach.json` and
@@ -93,8 +93,10 @@ Grades are tiers (`.agents/tiers.md`):
   110 s). Amends ADR-0014 for the renamed CAD-Recode items and the 725.
   CHANGELOG bullet.
 - [ ] Step 4 **[3]** — `cq` core in `cq/_sketch.py`: `Workplane.sketch()`,
-  `Sketch.finalize`, `push`, `reset`, `circle` and `rect` with `mode=`, and
-  `extrude(num)` of a sketch (delta B). Fixtures by construction in
+  `Sketch.finalize`, `push`, `reset`, `circle` and `rect` with and without
+  `mode=`, and `extrude(num)` of a sketch (delta B). Keep the frozen C1
+  subset in `tests/fixture_cases.py` free of the bundle's declarations.
+  Fixtures by construction in
   `tests/fixtures/sketch/`: a plate minus a disc, a ring, `push rect rect-s`,
   disjoint adds (a compound, ADR-0016), disjoint and overlapping `i`
   placements including ADR-0023's 4 × 4 base, cuts and intersections that
@@ -108,7 +110,7 @@ Grades are tiers (`.agents/tiers.md`):
   disc on its chord), an arc ending on the start with no `close`,
   `assemble` after `push` and again after `reset`, implicit starts and
   `close` with no edges, `close` on a closed loop, and the open chain.
-- [ ] Step 6 **[2]** — `Sketch.face(sketch; mode=)` and `kind_of` for a
+- [ ] Step 6 **[2]** — `Sketch.face(sketch)` with and without `mode=`, and `kind_of` for a
   `Sketch`. Fixtures: a disc minus an assembled triangle (closed form);
   `reset` against `push` before `face`; a tool mutated after `face`;
   a non-sketch argument (`unsupported_api`). An offline reach test over the
@@ -144,6 +146,12 @@ Grades are tiers (`.agents/tiers.md`):
 - `CHANGELOG.md` bullets come from steps 3 and 6; no reward moves.
 
 ## Open questions
+- *Settled* (step 3, ADR-0014 amendment). The receiver change exposes
+  `Sketch.circle(num)` and `Sketch.close()` in the C1 reach curve because C1
+  only admitted their workplane counterparts. The curve now takes 20
+  items. The subset declarations name both the default and explicit modes
+  used by the corpus for `circle`, `rect` and `face`; the reach target is
+  still 968/968.
 - *Settled* (step 2, ADR-0023). One `i` call intersects with the union of its
   placements, as the two-point records show. `assemble` orders and reverses
   edges to form one closed loop, as the shuffled triangle requires. An open

@@ -98,6 +98,8 @@ FRAGMENTS = (
     "cq.Workplane(",
     "W(",
     ".faces(",
+    ".sketch()",
+    ".finalize()",
     ".union(",
     "'>Z'",
     '"\\d"',
@@ -189,11 +191,11 @@ class Link:
         parts = [a.text for a in self.args] + [f"{k}={a.text}" for k, a in self.keywords]
         return f".{self.method}({', '.join(parts)})"
 
-    def form(self) -> str:
+    def form(self, receiver: str) -> str:
         positional = ", ".join(a.kind for a in self.args)
         named = ", ".join(f"{k}={a.kind}" for k, a in self.keywords)
         inside = f"{positional}; {named}" if positional and named else positional or named
-        return f"Workplane.{self.method}({inside})"
+        return f"{receiver}.{self.method}({inside})"
 
     def selector(self) -> str | None:
         if self.method not in SELECTOR_METHODS:
@@ -205,7 +207,7 @@ class Link:
 
 LINKS = st.builds(
     Link,
-    st.one_of(IDENTIFIER, st.sampled_from(SELECTOR_METHODS)),
+    st.one_of(IDENTIFIER, st.sampled_from((*SELECTOR_METHODS, "sketch", "finalize"))),
     st.lists(ARGS, max_size=3).map(tuple),
     st.dictionaries(st.one_of(IDENTIFIER, st.just("selector")), ARGS, max_size=3).map(
         lambda d: tuple(sorted(d.items()))
@@ -218,16 +220,28 @@ def test_a_chain_built_from_drawn_calls_counts_exactly_those_calls(
     links: list[Link], one_statement_per_call: bool
 ) -> None:
     lines = ["import cadquery as cq", "x = 1", "result = cq.Workplane('XY')"]
-    if one_statement_per_call:
+    if one_statement_per_call and any(link.method == "sketch" for link in links):
+        lines[-1] = "base = cq.Workplane('XY')"
+        name = "base"
+        for i, link in enumerate(links):
+            lines.append(f"p{i} = {name}{link.text()}")
+            name = f"p{i}"
+        lines.append(f"result = {name}")
+    elif one_statement_per_call:
         lines += [f"result = result{link.text()}" for link in links]
     else:
         lines[-1] += "".join(link.text() for link in links)
     calls: Counter[str] = Counter({"cq.Workplane": 1})
     forms: Counter[str] = Counter({"cq.Workplane(str)": 1})
     selectors: Counter[str] = Counter()
+    receiver = "Workplane"
     for link in links:
-        calls[f"Workplane.{link.method}"] += 1
-        forms[link.form()] += 1
+        calls[f"{receiver}.{link.method}"] += 1
+        forms[link.form(receiver)] += 1
+        if link.method == "sketch":
+            receiver = "Sketch"
+        elif link.method == "finalize":
+            receiver = "Workplane"
         for arg in (*link.args, *(a for _, a in link.keywords)):
             for call, form in arg.calls:
                 calls[call] += 1
@@ -246,6 +260,32 @@ def test_a_chain_built_from_drawn_calls_counts_exactly_those_calls(
     assert got.end_form == "result = …"
 
 
+@pytest.mark.parametrize(
+    "body",
+    [
+        "r = w.sketch().rect(1, 2, mode='a').finalize().extrude(3)",
+        "s = w.sketch()\ns = s.rect(1, 2, mode='a')\np = s.finalize()\nr = p.extrude(3)",
+    ],
+)
+def test_sketch_receivers_survive_bindings_and_finalize_restores_workplane(body: str) -> None:
+    got = census(f"import cadquery as cq\nw = cq.Workplane()\n{body}\n")
+    assert isinstance(got, ProgramCensus), got
+    assert dict(got.forms) == {
+        "cq.Workplane()": 1,
+        "Workplane.sketch()": 1,
+        "Sketch.rect(num, num; mode=str)": 1,
+        "Sketch.finalize()": 1,
+        "Workplane.extrude(num)": 1,
+    }
+    assert not got.unknown
+
+
+def test_bindings_with_different_receivers_leave_a_name_unplaced() -> None:
+    got = census("import cadquery as cq\nw = cq.Workplane()\nw = w.sketch()\nw.rect(1, 2)\n")
+    assert isinstance(got, ProgramCensus), got
+    assert dict(got.unknown) == {"w.sketch": 1, "w.rect": 1}
+
+
 def test_foreign_calls_are_those_on_builtin_and_other_modules() -> None:
     case = next(c for c in CASES if c.slug == "aliased-import")
     got = census(case.program, stem=case.slug)
@@ -253,10 +293,23 @@ def test_foreign_calls_are_those_on_builtin_and_other_modules() -> None:
     assert dict(got.foreign) == {"builtin.show_object": 1, "math.sqrt": 1}
 
 
-def test_counting_a_chain_is_linear_in_its_length(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.parametrize(
+    ("segment", "expected"),
+    [
+        (".b()", {"Workplane.b": 1}),
+        (
+            ".sketch().b().finalize().b()",
+            {"Workplane.sketch": 1, "Sketch.b": 1, "Sketch.finalize": 1, "Workplane.b": 1},
+        ),
+    ],
+)
+def test_counting_a_chain_is_linear_in_its_length(
+    monkeypatch: pytest.MonkeyPatch, segment: str, expected: dict[str, int]
+) -> None:
     # The work is counted, not timed: each call node of a chain is placed once.
-    n = 2000
-    text = "import cadquery as cq\nx = cq.Workplane()" + ".b()" * n + "\n"
+    repetitions = 2000 // sum(expected.values())
+    n = repetitions * sum(expected.values())
+    text = "import cadquery as cq\nx = cq.Workplane()" + segment * repetitions + "\n"
     steps = 0
     dotted = _program._Program.dotted
 
@@ -268,7 +321,10 @@ def test_counting_a_chain_is_linear_in_its_length(monkeypatch: pytest.MonkeyPatc
     monkeypatch.setattr(_program._Program, "dotted", counted)
     got = census(text)
     assert isinstance(got, ProgramCensus), got
-    assert dict(got.calls) == {"cq.Workplane": 1, "Workplane.b": n}
+    assert dict(got.calls) == {
+        "cq.Workplane": 1,
+        **{call: count * repetitions for call, count in expected.items()},
+    }
     assert steps <= 4 * (n + 1)
 
 

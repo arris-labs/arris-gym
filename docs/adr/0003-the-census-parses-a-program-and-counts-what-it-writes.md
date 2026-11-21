@@ -125,3 +125,16 @@ the census needs.
 - **Ranking by the number of distinct API forms alone.** One number, but a
   family with a few calls in many argument forms would rank behind one with
   many calls in one form each, though the first costs `cq` less.
+
+## Amendment (2026-11-21): sketch receivers
+
+A CadQuery chain still carries its root constructor. A call to `sketch()`
+also marks the resulting chain as a sketch, so subsequent calls are counted
+on `Sketch` through `finalize()`. The result of `finalize()` carries the root
+constructor again. For example,
+`cq.Workplane().sketch().rect(1, 2).finalize().extrude(3)` includes
+`Workplane.sketch()`, `Sketch.rect(num, num)`, `Sketch.finalize()` and
+`Workplane.extrude(num)`. A name carries the receiver and root when all
+its bindings agree, under the same scope- and order-insensitive rules.
+The traversal remains iterative and places each chain link once when
+counting calls. The census still counts every program without running it.

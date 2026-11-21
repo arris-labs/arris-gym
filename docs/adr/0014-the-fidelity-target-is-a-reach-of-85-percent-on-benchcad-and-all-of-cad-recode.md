@@ -166,3 +166,20 @@ ADR-0006's amendment of this date, 31 by a corpus oracle deadline measured from
 them (ADR-0013's amendment). Both corpora hold zero unclassified rows and zero
 timeouts, so the accept line "table digest equal across architectures" no
 longer rests on a load-dependent status. What C2 still owes is reach.
+
+## Amendment (2026-11-21): CAD-Recode sketch forms
+
+ADR-0003's sketch receivers make CAD-Recode's C1 reach curve 20 items long.
+The four items preceding the sketch forms still reach 104/968. The sketch
+items are `Workplane.sketch()` and the `Sketch` forms for `finalize`, `push`,
+`assemble`, `close`, `reset`, `segment` (one or two points), `arc` (two or
+three points), and `circle`, `rect` and `face` (each with and without
+`mode=`). C1 already admitted `Workplane.circle(num)` and `Workplane.close()`;
+their sketch forms are distinct items. The curve reaches 697/968 at item
+17, 830/968 at item 19 and 968/968 at item 20. The 100% target stands.
+
+At the pre-bundle subset, declaring `Workplane.rect(num, num)` for the
+sketch lift would admit 725 additional BenchCAD programs that use the
+workplane method. Declaring `Sketch.rect(num, num)` keeps those programs
+outside the subset. No BenchCAD program writes `sketch()`, and the full
+census rerun reproduces the committed bytes.

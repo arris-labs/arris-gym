@@ -210,8 +210,9 @@ _Avoid_: invalid program
 
 **Receiver**:
 What the census says a call is made on: `cq`, a root constructor
-(`Workplane`), `builtin`, an imported module, or `?` when it cannot place
-it. Written as the program reads, not CadQuery's runtime type (ADR-0003).
+(`Workplane`), `Sketch` for calls after `sketch()` through `finalize()`,
+`builtin`, an imported module, or `?` when it cannot place it. The chain
+returns to its root receiver after `finalize()` (ADR-0003).
 
 **API form**:
 A call with its argument form, the kinds of its arguments:

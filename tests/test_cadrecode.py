@@ -98,6 +98,9 @@ def test_committed_cadrecode_census_and_curve_recheck_offline() -> None:
     assert curve.initial.in_subset == 0
     assert (curve.steps[0].kind, curve.steps[0].item) == ("end_form", "r = …")
     assert curve.steps[1].in_subset == 0  # every program needs several items
+    assert len(curve.steps) == 20
+    assert {step.item for step in curve.steps} >= {"Sketch.circle(num)", "Sketch.close()"}
+    assert curve.steps[3].in_subset == 104
     assert curve.steps[-1].in_subset == 968
 
 

@@ -190,20 +190,37 @@ _Binding = ast.expr | _Path | None
 """One binding of a name: an assigned value, an import, or None for anything else."""
 
 
+@dataclass(frozen=True)
+class _Receiver:
+    root: str
+    in_sketch: bool = False
+
+    @property
+    def name(self) -> str:
+        return "Sketch" if self.in_sketch else self.root
+
+    def after(self, method: str) -> _Receiver:
+        if method == "sketch" and not self.in_sketch:
+            return _Receiver(self.root, in_sketch=True)
+        if method == "finalize" and self.in_sketch:
+            return _Receiver(self.root)
+        return self
+
+
 class _Pending:
-    """A chain rooted in a name whose root is not yet known (the fixpoint's bottom)."""
+    """A chain through a name whose receiver is not yet known (the fixpoint's bottom)."""
 
 
 _PENDING: Final = _Pending()
+_Chain = _Receiver | _Pending | None
 
 
 class _Program:
     def __init__(self, tree: ast.Module) -> None:
         self.bindings: dict[str, list[_Binding]] = {}
         self._collect(tree)
-        self.roots = self._resolve_roots()
-        # The root of each chain link under the final `roots`, filled as calls are placed.
-        self.placed: dict[ast.expr, str | _Pending | None] = {}
+        self.receivers = self._resolve_receivers()
+        self.placed: dict[ast.expr, _Chain] = {}
 
     def _bind(self, name: str, binding: _Binding) -> None:
         self.bindings.setdefault(name, []).append(binding)
@@ -272,70 +289,68 @@ class _Program:
             return None
         return ".".join([path, *reversed(attrs)])
 
-    def chain_root(
+    def chain_receiver(
         self,
         node: ast.expr,
-        roots: dict[str, str | None],
-        memo: dict[ast.expr, str | _Pending | None] | None = None,
-    ) -> str | _Pending | None:
-        """The root constructor of the chain `node` is: `Workplane` for `cq.Workplane(…).box(…)`.
-
-        Every link walked has the same root, so with `memo` each is walked once
-        over all the calls of a program, not once per call above it.
-        """
-        walked: list[ast.expr] = []
-        root: str | _Pending | None = None
+        receivers: dict[str, _Chain],
+        memo: dict[ast.expr, _Chain] | None = None,
+    ) -> _Chain:
+        """Walk to a known receiver, then apply sketch transitions from the inside out."""
+        links: list[tuple[ast.Call, str]] = []
+        receiver: _Chain = None
         while True:
             if memo is not None and node in memo:
-                root = memo[node]
+                receiver = memo[node]
                 break
-            walked.append(node)
             if isinstance(node, ast.Call):
                 path = self.dotted(node.func)
                 if path is not None:
-                    is_constructor = _is_cadquery(path) and "." in path
-                    root = path.rsplit(".", 1)[-1] if is_constructor else None
+                    if _is_cadquery(path) and "." in path:
+                        receiver = _Receiver(path.rsplit(".", 1)[-1])
                     break
                 if isinstance(node.func, ast.Attribute):
+                    links.append((node, node.func.attr))
                     node = node.func.value
                     continue
-                break
-            if isinstance(node, ast.Name) and node.id in roots:
-                found = roots[node.id]
-                root = _PENDING if found == "" else found
+            elif isinstance(node, ast.Name):
+                receiver = receivers.get(node.id)
             break
         if memo is not None:
-            for link in walked:
-                memo[link] = root
-        return root
+            memo[node] = receiver
+        for link, method in reversed(links):
+            if isinstance(receiver, _Receiver):
+                receiver = receiver.after(method)
+            if memo is not None:
+                memo[link] = receiver
+        return receiver
 
-    def _resolve_roots(self) -> dict[str, str | None]:
-        # The least fixpoint over bottom ("") < one root < None (no single root).
-        # Each name only moves up, so this ends within two passes per name.
-        roots: dict[str, str | None] = dict.fromkeys(self.bindings, "")
+    def _resolve_receivers(self) -> dict[str, _Chain]:
+        # Each name moves from pending to one receiver to None (no single receiver).
+        receivers: dict[str, _Chain] = dict.fromkeys(self.bindings, _PENDING)
         changed = True
         while changed:
             changed = False
             for name, bindings in self.bindings.items():
-                found = self._root_from(bindings, roots)
-                if found != roots[name]:
-                    roots[name] = found
+                found = self._receiver_from(bindings, receivers)
+                if found != receivers[name]:
+                    receivers[name] = found
                     changed = True
-        return {name: (root or None) for name, root in roots.items()}
+        return {
+            name: None if receiver is _PENDING else receiver for name, receiver in receivers.items()
+        }
 
-    def _root_from(self, bindings: Iterable[_Binding], roots: dict[str, str | None]) -> str | None:
-        found: set[str] = set()
+    def _receiver_from(self, bindings: Iterable[_Binding], receivers: dict[str, _Chain]) -> _Chain:
+        found: _Chain = _PENDING
         for binding in bindings:
             if not isinstance(binding, ast.expr):
                 return None
-            root = self.chain_root(binding, roots)
-            if root is None:
+            receiver = self.chain_receiver(binding, receivers)
+            if receiver is _PENDING:
+                continue
+            if receiver is None or (found is not _PENDING and found != receiver):
                 return None
-            if isinstance(root, str):
-                found.add(root)
-        if len(found) > 1:
-            return None
-        return found.pop() if found else ""
+            found = receiver
+        return found
 
 
 def _is_cadquery(path: str) -> bool:
@@ -359,9 +374,9 @@ def _callee(program: _Program, call: ast.Call) -> tuple[str, bool, bool]:
             return f"{BUILTIN}.{func.id}", False, True
         return f"{UNKNOWN}.{func.id}", True, False
     if isinstance(func, ast.Attribute):
-        root = program.chain_root(func.value, program.roots, program.placed)
-        if isinstance(root, str):
-            return f"{root}.{func.attr}", False, False
+        receiver = program.chain_receiver(func.value, program.receivers, program.placed)
+        if isinstance(receiver, _Receiver):
+            return f"{receiver.name}.{func.attr}", False, False
         return f"{UNKNOWN}.{func.attr}", True, False
     return f"{UNKNOWN}.<expr>", True, False
 

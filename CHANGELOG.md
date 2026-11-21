@@ -5,6 +5,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- The census counts calls after `Workplane.sketch()` through `finalize()`
+  under `Sketch.*`. Calls after `finalize()` return to the workplane
+  receiver. CAD-Recode's census and reach curve digests change.
+
 - A fidelity row that pairs the CadQuery dialect's `unsupported_api` with an
   oracle shape that fails CadQuery's validity check is now classed `cq_bug`,
   as an `unsupported_api` against a valid oracle shape already was; it was
