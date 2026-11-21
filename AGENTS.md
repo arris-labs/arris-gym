@@ -37,9 +37,9 @@ unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
 against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **0.1.0 published** (2026-11-10).
 **C2:** Face selectors (ADR-0022) bring in-subset `cq_bug` and unclassified
-rows to zero on both corpora, at reach 9,998/17,900 and 104/968. C2 still
-owes classification of 199 out-of-subset BenchCAD rows and reach of 85% on
-BenchCAD and 100% on CAD-Recode (ADR-0014). The kernel pin is `arris` 0.11.1.
+rows to zero on both corpora, at reach 9,998/17,900 and 104/968; BenchCAD's
+199 out-of-subset rows are classed too (ADR-0006, ADR-0013). C2 still owes
+reach of 85% on BenchCAD and 100% on CAD-Recode (ADR-0014). The kernel pin is `arris` 0.11.1.
 **Next:** Bundle 4 lifts CAD-Recode's sketch API (`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code

@@ -158,3 +158,11 @@ have zero in-subset `cq_bug` and zero in-subset unclassified rows. The reach
 targets, static membership rule and C2 requirement of zero unclassified rows
 across both full corpora still apply. BenchCAD has 199 unclassified rows
 outside the subset.
+
+## Amendment (2026-11-21): the 199 rows are classed
+
+BenchCAD's 199 unclassified rows outside the subset are classed: 168 by
+ADR-0006's amendment of this date, 31 by a corpus oracle deadline measured from
+them (ADR-0013's amendment). Both corpora hold zero unclassified rows and zero
+timeouts, so the accept line "table digest equal across architectures" no
+longer rests on a load-dependent status. What C2 still owes is reach.

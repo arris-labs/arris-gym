@@ -754,10 +754,10 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | programs | 17,900 | 17,900 | 968 | 968 |
 | reach | 9,998 (55.9%) | 1,871 | 104 (10.7%) | 0 |
 | agree (all programs) | 7,415 (41.4%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,695 / 1,457 / 289 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,894 / 1,457 / 289 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
 | `occt_wrong` (all, in the subset) | 845 | 0 | 1 | 0 |
-| unclassified (all outside the subset) | 199 | 363 | 0 | 0 |
-| timeouts | 31 (oracle, `double_simplex_sprocket`) | 31 | 0 | 0 |
+| unclassified (all outside the subset) | 0 | 363 | 0 | 0 |
+| timeouts | 0 | 31 | 0 | 0 |
 | in-subset `cq_bug` | 0 | 717 | 0 | 0 |
 | in-subset `by_design` | 0 | 0 | 0 | 0 |
 
@@ -906,10 +906,18 @@ agree and four are `occt_wrong` by `part_measures`
 (`tools/cq_closed_forms.py`). The cross bore meets the ring's wall and the
 oracle volumes differ from the closed forms by 2.1e-9 to 3.0e-6 relative.
 Both corpora have zero in-subset `cq_bug` and zero unclassified rows in the
-subset. The 199 out-of-subset unclassified BenchCAD rows pair `unsupported_api`
-with 168 invalid oracle shapes and 31 oracle timeouts. Reach is unchanged.
-BenchCAD's table digest is `b6c94989…ac32`. CAD-Recode reproduces its table
-byte for byte.
+subset. Reach is unchanged. BenchCAD's table digest is `b6c94989…ac32`.
+CAD-Recode reproduces its table byte for byte.
+
+The 199 BenchCAD rows left unclassified were all outside the subset, and none
+is now. 168 paired `unsupported_api` with an invalid oracle shape: ADR-0006's
+amendment of 2026-11-21 classes them `cq_bug`, as an `unsupported_api` against
+`ok` already is, since `unsupported_api` makes no claim about the program. 31
+`double_simplex_sprocket` programs had timed out at the oracle's 30 s. A corpus
+run's oracle deadline is now 240 s, the next multiple of 30 s above four times
+the slowest program measured (57.3 s; ADR-0013's amendment of 2026-11-21), so
+all 31 ran to an oracle `ok` and class `cq_bug` too. BenchCAD's table digest is
+`45ee27a1…af7a` and its oracle rows differ from before in those 31 rows alone.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
@@ -922,8 +930,9 @@ wrong (`BRepGProp` with `OnlyClosed = false`, one solid order of
 `cq/ok-compound-occt-centroid`): such a row is `unclassified` until a
 closed-form verdict classes it `occt_wrong`.
 
-The oracle's timeouts move with the machine's load, and its bytes are not
-repeatable run to run for some programs: on the BenchCAD re-run 214 rows of 8
+With the corpus deadline of 240 s, well above the slowest program, load no
+longer moves a BenchCAD status. The oracle's bytes are not repeatable run to
+run for some programs: on the BenchCAD re-run 214 rows of 8
 families (`sheet_metal_tray`, `washer`, `spacer_ring`, `snap_clip`,
 `ratchet_sector`, `hollow_tube`, `spline_hub`, `parallel_key`) differed from
 the baseline's in the STEP's SHA-256 and the last digits of centroid, volume
