@@ -50,6 +50,15 @@ different selections. The cases that use sketch forms outside the
 subset record how CadQuery handles those programs. `Sketch.clean` has a
 refusal fixture for the unsupported method.
 
+The `face` fixtures cover subtraction of an assembled triangle from a
+disc, placement before and after `reset`, later edits to the tool, a
+nested section with a hole, and intersection at two points on a
+shifted YZ plane. They also hold the errors for an empty tool and a
+non-sketch argument. Passing a sketch to `transformed` as a vector
+remains outside the subset. The placement fixture uses the
+`face-at-selection` trace. The other programs have individual reports
+from `tools/oracle_run.py` with elapsed time omitted.
+
 The prism fold's known kernel limits have strict fixtures under
 `regression/`. `cq-sketch-corner-contact` expects two solids that touch
 along a vertical edge. `cq-sketch-common-after-contact` expects an empty

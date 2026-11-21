@@ -62,6 +62,7 @@ program-facing `Sketch` reached only through `sketch()`. `cq.Sketch` stays
 - `Sketch.circle(num)`, `rect(num, num)`, `face(call)`, each also with `mode=str`
 - `Sketch.segment(tuple)`, `segment(tuple, tuple)`, `arc(tuple, tuple)`, `arc(tuple, tuple, tuple)`
 
+`Sketch.face(sketch, *, mode="a")` returns the receiving sketch.
 `kind_of` reads a `Sketch` as `call`. No existing public type or method
 changes. `cq` still imports only `arris`.
 
@@ -111,7 +112,7 @@ Grades are tiers (`.agents/tiers.md`):
   `assemble` after `push` and again after `reset`, implicit starts and
   `close` with no edges, `close` on a closed loop, and the open chain.
   A triangle property checks assembly under permutation, reversal and translation.
-- [ ] Step 6 **[2]** — `Sketch.face(sketch)` with and without `mode=`, and `kind_of` for a
+- [x] Step 6 **[2]** — `Sketch.face(sketch)` with and without `mode=`, and `kind_of` for a
   `Sketch`. Fixtures: a disc minus an assembled triangle (closed form);
   `reset` against `push` before `face`; a tool mutated after `face`;
   a non-sketch argument (`unsupported_api`). An offline reach test over the

@@ -436,6 +436,9 @@ class Workplane:
         >>> [round(c, 9) for c in wp.box(2, 2, 2)._solids()[0].measure().centroid]
         [1.0, 2.0, 3.0]
         """
+        if isinstance(rotate, Sketch) or isinstance(offset, Sketch):
+            # A Sketch has the census kind "call" (`unsupported-sketch-transformed-vector`).
+            raise UnsupportedApi("Workplane.transformed requires Vector arguments")
         self._refuse_pending("Workplane.transformed")
         plane = self._plane
         turned = plane

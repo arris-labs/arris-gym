@@ -50,7 +50,9 @@ def test_sketch_fixture(case: fixture_cases.Case) -> None:
         assert oracle.status is OracleStatus.INVALID
     elif case.slug in (
         "unsupported-sketch-arc-three-coordinates",
+        "unsupported-sketch-face-non-sketch",
         "unsupported-sketch-segment-three-coordinates",
+        "unsupported-sketch-transformed-vector",
     ):
         assert oracle.status is OracleStatus.RUNTIME
         assert outcome is FidelityOutcome.AGREE
@@ -82,9 +84,12 @@ def test_sketch_forms_are_available_only_in_the_current_subset() -> None:
         "Sketch.arc",
         "Sketch.close",
         "Sketch.assemble",
+        "Sketch.face",
     }
     assert {form.name for form in supported.forms} & names == names
     assert not {form.name for form in original.forms} & names
+    assert supported.admits("Sketch.face(call)")
+    assert supported.admits("Sketch.face(call; mode=str)")
 
 
 @settings(max_examples=60, deadline=None)

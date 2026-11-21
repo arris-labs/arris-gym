@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 151.07963267948966,
+    "area": 231.1225883022135,
+    "centroid": [
+      -0.026476103555837106,
+      -0.039714155333755656,
+      1
+    ],
+    "bounds": [
+      [
+        -5,
+        -5,
+        0
+      ],
+      [
+        5,
+        5,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1,
+    "faces": 6,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        5
+      ]
+    ]
+  },
+  "note": "Radius 5 disc minus a right triangle of area 3 and centroid (2/3, 1), extruded by 2."
+}

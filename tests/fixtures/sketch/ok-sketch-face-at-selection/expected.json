@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 16,
+    "area": 48,
+    "centroid": [
+      3.5,
+      0.5,
+      1
+    ],
+    "bounds": [
+      [
+        0,
+        -2,
+        0
+      ],
+      [
+        7,
+        3,
+        2
+      ]
+    ],
+    "shells": 2,
+    "genus": 0,
+    "faces": 12,
+    "face_kinds": [
+      [
+        "plane",
+        12
+      ]
+    ]
+  },
+  "note": "Two 2 by 2 by 2 cubes centred at (6, 2, 1) and (1, -1, 1)."
+}

@@ -466,7 +466,11 @@ from the last end, and `close` draws a line back to the first start.
 `assemble` orders and reverses the edges as needed to form one closed
 loop. It retains those edges and adds a copy of the region at every
 selected point, or at the origin when the selection is empty. Assembly
-requires one closed loop and otherwise ends `runtime`. The mode adds
+requires one closed loop and otherwise ends `runtime`. `face(tool)` places
+a snapshot of another sketch's section in plane-local coordinates, including
+its holes. Its workplane frame and later edits have no effect. An empty
+tool ends `runtime` and an argument other than a sketch ends
+`unsupported_api`. For `circle`, `rect` and `face`, the mode adds
 (`a`), subtracts (`s`) or intersects (`i`) the current section with the
 union of that call's placements. `finalize()` returns the workplane with
 the live sketch on its stack. `extrude(d)` combines the prisms in drawing

@@ -5,6 +5,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, use `Sketch.face(tool)` to add a copy of another
+  sketch's section at the selected points, or use `mode="s"` to subtract it
+  and `mode="i"` to intersect it. Later edits to the tool leave that copy intact.
+
 - The CadQuery dialect supports `Workplane.sketch()` on an empty stack.
   Draw circles and rectangles at selected points, add, subtract or intersect
   them, then use `finalize().extrude(distance)` to build the solid.

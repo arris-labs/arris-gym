@@ -17,16 +17,15 @@ from arris_gym.cq._unsupported import UnsupportedApi
 
 __all__ = ["census_form", "kind_of", "numbers_of", "shape_of"]
 
-# What the census writes for an argument that is itself a call's value: a
-# `Vector(...)` or a `Workplane` is a "call" there, whatever it holds. Told by
-# class name, since `Vector` itself decorates its constructor with this module.
+# The census writes "call" for `Vector`, `Workplane` and `Sketch` values.
+# Use class names since these classes decorate methods with this module.
 _CALL = "call"
-_CALL_CLASSES = ("Vector", "Workplane")
+_CALL_CLASSES = ("Vector", "Workplane", "Sketch")
 
 
 def kind_of(value: object) -> str:
     """The census's kind of a runtime value: `num`, `bool`, `str`, `none`, `tuple`,
-    `list` or `call` (a `Vector` or a `Workplane`); any other value is its type's name.
+    `list` or `call` (a `Vector`, `Workplane` or `Sketch`); any other value is its type's name.
 
     >>> kind_of(1.5), kind_of(True), kind_of((1, 2)), kind_of({})
     ('num', 'bool', 'tuple', 'dict')

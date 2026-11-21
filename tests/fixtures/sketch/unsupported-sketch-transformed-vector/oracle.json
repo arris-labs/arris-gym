@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "TypeError: object of type 'Sketch' has no len()",
+  "program_sha256": "80cde9e87e60b9ca656ff522d134083bac43b82e7898c983057625ef16126c62",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

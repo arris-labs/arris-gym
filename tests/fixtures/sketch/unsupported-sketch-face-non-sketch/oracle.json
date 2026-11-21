@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "ValueError: Unsupported argument Vector: (0.0, 0.0, 0.0)",
+  "program_sha256": "6e0377c87857dd325389fb1e5c272ecf936b46aae5f0205fac4a3aea7ff3c730",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 81.68140899333463,
+    "area": 169.64600329384882,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -4,
+        -4,
+        0
+      ],
+      [
+        4,
+        4,
+        2
+      ]
+    ],
+    "shells": 2,
+    "genus": 1,
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        3
+      ],
+      [
+        "plane",
+        4
+      ]
+    ]
+  },
+  "note": "A ring of radii 4 and 2 surrounds a separate radius 1 disc. Both are extruded by 2."
+}

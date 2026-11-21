@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "IndexError: tuple index out of range",
+  "program_sha256": "2f983f1f8cfe4b3d2b2bb7e2e7206762ed74b5f1e6b5fab4246ac9acb2d880e8",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

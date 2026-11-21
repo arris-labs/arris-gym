@@ -53,7 +53,70 @@ def _edge_point(point: object, method: str) -> _Point:
 @dataclass(frozen=True)
 class _Call:
     mode: _Mode
-    regions: tuple[arris.build.Sketch, ...]
+    regions: tuple[arris.build.Sketch | _PlacedFold, ...]
+
+
+@dataclass(frozen=True)
+class _PlacedFold:
+    calls: tuple[_Call, ...]
+    point: _Point
+
+
+def _prism(
+    region: arris.build.Sketch | _PlacedFold,
+    plane: arris.build.Workplane,
+    distance: float,
+    model: arris.Model,
+) -> arris.build.Solid | None:
+    if isinstance(region, _PlacedFold):
+        (placed,) = plane.at((region.point,))
+        return _fold(region.calls, placed, distance, model)
+    return region.moved_to(plane).extrude(distance, model=model)
+
+
+def _fold(
+    calls: Sequence[_Call],
+    plane: arris.build.Workplane,
+    distance: float,
+    model: arris.Model,
+) -> arris.build.Solid | None:
+    """Evaluate the grouped prism fold in call and selection order."""
+    extended = plane.offset(-distance)
+    current: arris.build.Solid | None = None
+    for call in calls:
+        if call.mode == "a":
+            for region in call.regions:
+                tool = _prism(region, plane, distance, model)
+                if tool is not None:
+                    current = tool if current is None else current.fuse(tool)
+            continue
+        if current is None:
+            raise ValueError("Null TopoDS_Shape object")
+        # Extend the tools across both caps of the section, in either
+        # extrusion direction. The section inside that interval is unchanged.
+        section = current
+        if call.mode == "i":
+            current = None
+        for region in call.regions:
+            target = section if call.mode == "i" else current
+            if target is None:
+                break
+            tool = _prism(region, extended, 3 * distance, model)
+            if tool is None:
+                continue
+            found = model.interference(target.body, tool.body)
+            if call.mode == "s":
+                if found.a_in_b:
+                    current = None
+                elif found.kind == "overlapping":
+                    current = target.cut(tool)
+            elif found.a_in_b:
+                current = section
+                break
+            elif found.kind == "overlapping":
+                piece = section.common(tool)
+                current = piece if current is None else current.fuse(piece)
+    return current
 
 
 class Sketch:
@@ -152,6 +215,34 @@ class Sketch:
             mode,
             tuple(_LOCAL.rect(abs(w), abs(h), center=p) for p in self._selection or (_ORIGIN,)),
         )
+
+    @census_form("Sketch.face", [("call",)], keywords={"mode": ("str",)})
+    def face(self, sketch: Sketch, *, mode: str = "a") -> Sketch:
+        """Place a snapshot of a sketch's local section at each selected point.
+
+        Use the origin with an empty selection. Modes a, s and i add,
+        subtract and intersect the placed sections, respectively. The tool's
+        workplane and later edits have no effect. An empty tool raises
+        `ValueError`, or `IndexError` for an add to an empty section.
+        An invalid mode raises `ValueError`. Other argument types raise
+        `UnsupportedApi`.
+
+        >>> from arris_gym.cq import Workplane
+        >>> tool = Workplane("XY").sketch().rect(2, 2)
+        >>> s = Workplane("XY").sketch().rect(4, 4).face(tool, mode="s")
+        >>> round(s.finalize().extrude(2)._solids()[0].measure().volume, 6)
+        24.0
+        """
+        if not isinstance(sketch, Sketch):
+            # A Vector also has the census kind "call" (`unsupported-sketch-face-non-sketch`).
+            raise UnsupportedApi("Sketch.face requires a Sketch")
+        calls = tuple(sketch._calls)
+        regions = (
+            tuple(_PlacedFold(calls, p) for p in self._selection or (_ORIGIN,))
+            if sketch._has_section()
+            else ()
+        )
+        return self._append(mode, regions)
 
     @census_form("Sketch.segment", [("tuple",)], alternatives=[[("tuple",)] * 2])
     def segment(self, p1: tuple[float, float], p2: tuple[float, float] | None = None) -> Sketch:
@@ -266,9 +357,15 @@ class Sketch:
             raise ValueError(message)
         return ordered
 
-    def _append(self, mode: str, regions: tuple[arris.build.Sketch, ...]) -> Sketch:
+    def _append(self, mode: str, regions: tuple[arris.build.Sketch | _PlacedFold, ...]) -> Sketch:
         match mode:
             case "a" | "s" | "i" as valid_mode:
+                if not regions:
+                    # CadQuery's two empty-tool failures are held by
+                    # `runtime-sketch-face-empty-add` and `runtime-sketch-face-empty-tool`.
+                    if valid_mode == "a" and not self._has_section():
+                        raise IndexError("tuple index out of range")
+                    raise ValueError("Null TopoDS_Shape object")
                 if valid_mode != "a" and not self._has_section():
                     raise ValueError("Null TopoDS_Shape object")
                 self._calls.append(_Call(valid_mode, regions))
@@ -285,7 +382,7 @@ class Sketch:
         # leave nothing. Resolve that before accepting another drawing call,
         # so a program can catch its ValueError at that call.
         return self._calls[-1].mode == "a" or (
-            self._fold(_LOCAL, _SECTION_DEPTH, arris.Model()) is not None
+            _fold(self._calls, _LOCAL, _SECTION_DEPTH, arris.Model()) is not None
         )
 
     def _extrusion(self, distance: float) -> arris.build.Solid:
@@ -294,48 +391,10 @@ class Sketch:
             if not self._has_section():
                 raise ValueError("No pending wires present")
             raise ValueError("Workplane.extrude: a zero distance")
-        section = self._fold(self._workplane._plane, distance, arris.build.default_model())
+        section = _fold(self._calls, self._workplane._plane, distance, arris.build.default_model())
         if section is None:
             raise ValueError("No pending wires present")
         return section
-
-    def _fold(
-        self, plane: arris.build.Workplane, distance: float, model: arris.Model
-    ) -> arris.build.Solid | None:
-        """Evaluate the grouped prism fold in call and selection order."""
-        extended = plane.offset(-distance)
-        current: arris.build.Solid | None = None
-        for call in self._calls:
-            if call.mode == "a":
-                for region in call.regions:
-                    tool = region.moved_to(plane).extrude(distance, model=model)
-                    current = tool if current is None else current.fuse(tool)
-                continue
-            if current is None:
-                raise ValueError("Null TopoDS_Shape object")
-            # Extend the tools across both caps of the section, in either
-            # extrusion direction. The section inside that interval is unchanged.
-            section = current
-            if call.mode == "i":
-                current = None
-            for region in call.regions:
-                target = section if call.mode == "i" else current
-                if target is None:
-                    break
-                tool = region.moved_to(extended).extrude(3 * distance, model=model)
-                found = model.interference(target.body, tool.body)
-                if call.mode == "s":
-                    if found.a_in_b:
-                        current = None
-                    elif found.kind == "overlapping":
-                        current = target.cut(tool)
-                elif found.a_in_b:
-                    current = section
-                    break
-                elif found.kind == "overlapping":
-                    piece = section.common(tool)
-                    current = piece if current is None else current.fuse(piece)
-        return current
 
     def __getattr__(self, name: str) -> NoReturn:
         if is_python_name(name):

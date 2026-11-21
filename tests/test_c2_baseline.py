@@ -105,6 +105,13 @@ def table_of(corpus: str) -> FidelityTable:
     )
 
 
+@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 9_998)])
+def test_current_subset_reach_over_the_committed_census(corpus: str, expected: int) -> None:
+    measured = reach(census_rows(corpus), cq.subset())
+    assert measured.programs == CORPORA[corpus][1]
+    assert measured.in_subset == expected
+
+
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
 def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpus: str) -> None:
     licence, count = CORPORA[corpus]

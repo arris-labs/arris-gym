@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 16,
+    "area": 48,
+    "centroid": [
+      6,
+      8,
+      9
+    ],
+    "bounds": [
+      [
+        5,
+        5,
+        8
+      ],
+      [
+        7,
+        11,
+        10
+      ]
+    ],
+    "shells": 2,
+    "genus": 0,
+    "faces": 12,
+    "face_kinds": [
+      [
+        "plane",
+        12
+      ]
+    ]
+  },
+  "note": "The two 2 by 2 squares are within the base rectangle. The YZ plane extrudes them into two cubes along negative X."
+}
