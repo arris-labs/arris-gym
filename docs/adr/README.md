@@ -39,3 +39,4 @@ training cycle starts from.
 | [0020](0020-a-cq-edge-selection-ranks-edges-by-their-centre-of-mass-and-a-blend-passes-over-seams-in-one-call.md) | A `cq` edge selection ranks edges by their centre of mass, and a blend passes over seams in one call | accepted |
 | [0021](0021-an-arris-bump-moves-the-recorded-arris-version-not-the-rewards.md) | An arris bump moves the recorded arris version, not the reward's | accepted |
 | [0022](0022-a-cq-face-key-is-arriss-centre-of-mass-and-faces-of-one-surface-that-share-an-edge-are-one-face.md) | A `cq` face key is arris's centre of mass, and faces of one surface that share an edge are one face | accepted |
+| [0023](0023-a-cq-sketch-extrudes-as-an-ordered-fold-of-prisms.md) | A `cq` sketch extrudes as an ordered fold of prisms | accepted |

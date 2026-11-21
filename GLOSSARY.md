@@ -241,6 +241,11 @@ draws circles that `extrude` builds posts from and `cutBlind` cuts pockets with.
 `edges` puts a **stack of edges** on it, the solid's, the stacked faces' or
 the stacked edges' own, which `fillet` and `chamfer` blend (ADR-0020).
 
+**Sketch**:
+A mutable `cq` value on a workplane's plane, with an ordered fold of
+placed regions, a selection of plane-local points, and free edges.
+`finalize` puts that sketch on a workplane's stack for `extrude` (ADR-0023).
+
 **Edge key**:
 What an axis selector ranks an edge by: its centre of mass along the axis,
 exact on a line, a circle and an arc, bounded on a seam whose face's axis

@@ -35,35 +35,23 @@ Under `Sketch.*` names the lift admits 0 BenchCAD programs. No BenchCAD
 program writes `sketch()`, so BenchCAD's census digest (`043db6d9…`) does not
 move. CAD-Recode's (`6ac45480…`) and its reach curve do.
 
-**B. A `cq` sketch is the ordered fold of its regions' prisms** (ADR-0023, step 2).
-- `Workplane.sketch()` on an empty stack returns a sketch on the plane.
-  `finalize()` returns the workplane `sketch()` derived, whose stack holds
-  that same sketch. Any other stack ends `unsupported_api`: CadQuery places a
-  copy at each object's centre.
-- The sketch is mutable, as CadQuery's is: each call changes it and returns
-  it, and `extrude` reads it when it runs. `Workplane` stays frozen (ADR-0007).
-- State: a **fold**, the ordered `(mode, regions)` list; a **selection**, the
-  pushed plane-local points, kept until the next `push` or `reset`; and the
-  free edges, which `assemble` does not clear, as in CadQuery.
-- One region is placed at each selected point, or at the origin when nothing
-  is selected: `circle(r)` a disc, `rect(w, h)` a rectangle centred there
-  (`w` along local x), `assemble()` the free edges' one closed loop, and
-  `face(s)` another sketch's fold translated there (`s`'s own placement
-  ignored).
-- Edges: `segment(p1, p2)`, `segment(p2)`, `arc(p1, p2, p3)` and
-  `arc(p2, p3)`. The one-point forms start at the last edge's end; with no
-  edges they end `runtime` ("No free edges available"). `close()` always adds
-  a segment from the last edge's end to the first edge's start.
-- Modes: `a` fuses, `s` cuts, `i` keeps the common part. `c` without a tag,
-  and an unknown mode, end `runtime` with CadQuery's `ValueError` words.
-- `extrude(d)` builds each region's prism along the normal and folds the
-  prisms left to right with arris's `fuse`, `cut` and `common`. A cut or
-  common tool spans −|d| to 2|d|, so no boolean meets a coplanar cap.
-  Extrusion commutes with set operations, so this is the point set of
-  CadQuery's 2D fold extruded.
-- The result is fused with the chain's solid (CadQuery's `combine`). A fold
-  that leaves nothing ends `runtime` ("No pending wires present"). Face counts
-  may differ between the kernels; they are carried, never judged (ADR-0005).
+**B. A `cq` sketch is the ordered fold of its regions' prisms**
+([ADR-0023](../adr/0023-a-cq-sketch-extrudes-as-an-ordered-fold-of-prisms.md),
+step 2). `sketch()` on an empty stack derives a frozen workplane holding a
+mutable sketch, which `finalize()` returns. The sketch holds a fold of
+calls, a selection in plane coordinates and the free edges. Each call
+places its regions at every selected point or, for an empty selection, at
+the origin. `face(s)` captures `s`'s local fold, and `assemble()` records
+one closed loop in the fold while retaining the free edges.
+
+`extrude(d)` folds left to right. Each call fuses, cuts or intersects with
+the union of its placements. For `i`, intersect each tool with the original
+section and fuse the surviving pieces. The extrusion interval is 0 to |d|
+on the signed axis, and cut or common tools extend from −|d| to 2|d|.
+`Model.interference` detects an empty cut or common from containment or
+overlap. A fold that finishes empty ends `runtime` ("No pending wires
+present"). A nonempty fold is fused with the chain's solid if it has one.
+ADR-0023 gives the edge and mode errors and their oracle records.
 
 **C. Public surface.** New private module `cq/_sketch.py`, and a
 program-facing `Sketch` reached only through `sketch()`. `cq.Sketch` stays
@@ -77,8 +65,8 @@ program-facing `Sketch` reached only through `sketch()`. `cq.Sketch` stays
 `kind_of` reads a `Sketch` as `call`. No existing public type or method
 changes. `cq` still imports only `arris`.
 
-**Glossary.** New: **Sketch** (delta B's fold, selection and free edges).
-Sharpened: **Receiver** (it changes at `sketch()` and `finalize()`).
+**Glossary.** Step 2 defines **Sketch** (delta B's fold, selection and free
+edges). Step 3 sharpens **Receiver** at `sketch()` and `finalize()`.
 
 ## Steps
 Grades are tiers (`.agents/tiers.md`):
@@ -95,7 +83,7 @@ Grades are tiers (`.agents/tiers.md`):
   points; a sketch a cut empties; disjoint adds; zero and negative sizes; a
   `close` on a chain already closed; an open chain assembled. Writes
   `tests/fixtures/sketch/constructed.json` and its README.
-- [ ] Step 2 **[3]** — ADR-0023: delta B, settled from step 1's records,
+- [x] Step 2 **[3]** — ADR-0023: delta B, settled from step 1's records,
   closing the first `⚠ OPEN`. Doc only.
 - [ ] Step 3 **[2]** — the census types sketch chains (delta A), with
   ADR-0003's amendment and unit cases: a chained sketch, a sketch bound to a
@@ -108,19 +96,24 @@ Grades are tiers (`.agents/tiers.md`):
   `Sketch.finalize`, `push`, `reset`, `circle` and `rect` with `mode=`, and
   `extrude(num)` of a sketch (delta B). Fixtures by construction in
   `tests/fixtures/sketch/`: a plate minus a disc, a ring, `push rect rect-s`,
-  disjoint adds (a compound, ADR-0016), a sketch a cut empties, and `YZ` with
-  `origin=` and a negative distance. Property (`hypothesis`): axis-aligned
-  rects on an integer grid under modes `a s i`; the extruded volume equals
-  their rectilinear area by coordinate compression times |d|.
+  disjoint adds (a compound, ADR-0016), disjoint and overlapping `i`
+  placements including ADR-0023's 4 × 4 base, cuts and intersections that
+  empty the section, and `YZ` with `origin=` and a negative distance. Hold
+  the mode and size cases in ADR-0023. Check mutation after `finalize()`
+  and an add after an empty section. Property (`hypothesis`): axis-aligned
+  rects on an integer grid under modes `a s i`, with extruded volume equal
+  to their rectilinear area by coordinate compression times |d|.
 - [ ] Step 5 **[2]** — `segment`, `arc`, `close`, `assemble()`. Fixtures: a
-  triangle; a D (a half disc on its chord); an arc ending on the start with no
-  `close`; `assemble` after `push`; `segment(p)` with no edges; step 2's open
-  chain.
+  triangle in drawing order and shuffled with a reversed edge, a D (a half
+  disc on its chord), an arc ending on the start with no `close`,
+  `assemble` after `push` and again after `reset`, implicit starts and
+  `close` with no edges, `close` on a closed loop, and the open chain.
 - [ ] Step 6 **[2]** — `Sketch.face(sketch; mode=)` and `kind_of` for a
   `Sketch`. Fixtures: a disc minus an assembled triangle (closed form);
-  `reset` against `push` before `face`; a non-sketch argument
-  (`unsupported_api`). An offline reach test over the committed census rows
-  gives 968/968 on CAD-Recode and 9,998/17,900 on BenchCAD. CHANGELOG bullet.
+  `reset` against `push` before `face`; a tool mutated after `face`;
+  a non-sketch argument (`unsupported_api`). An offline reach test over the
+  committed census rows gives 968/968 on CAD-Recode and 9,998/17,900 on
+  BenchCAD. CHANGELOG bullet.
 - [ ] Step 7 **[3, conductor-run]** — re-run CAD-Recode under `cq` against
   the committed oracle rows (`tools/cq_corpus.py --corpus cadrecode`, fresh
   `--work-dir`). Class every new in-subset disagreement: a `cq` fault shrunk
@@ -147,13 +140,15 @@ Grades are tiers (`.agents/tiers.md`):
 - `docs/ARCHITECTURE.md` §Fidelity: CAD-Recode's figures.
 - `docs/ROADMAP.md` §C2 status: bundle 4 done, CAD-Recode's target met, bundle 5 next.
 - `AGENTS.md` current state.
-- `GLOSSARY.md`: **Sketch** (new), **Receiver** (sharpened).
+- `GLOSSARY.md`: **Sketch** (step 2), **Receiver** (step 3).
 - `CHANGELOG.md` bullets come from steps 3 and 6; no reward moves.
 
 ## Open questions
-- ⚠ OPEN: mode `i` at several points, and an open or unordered edge chain at
-  `assemble`: CadQuery's result, `runtime`, or `unsupported_api`? The agent
-  decides by step 2, from step 1's records.
+- *Settled* (step 2, ADR-0023). One `i` call intersects with the union of its
+  placements, as the two-point records show. `assemble` orders and reverses
+  edges to form one closed loop, as the shuffled triangle requires. An open
+  chain ends `runtime` at `assemble` because it cannot bound a valid section.
+  The oracle's invalid extrusion stays in the fixture.
 - ⚠ OPEN: arris may refuse prism folds that Open CASCADE builds. Those rows
   are `arris_refusal` and do not block the target. At step 7 the agent decides
   whether to build a profile with holes for cuts that lie strictly inside, and
