@@ -144,6 +144,22 @@ The 31 `double_simplex_sprocket` programs of BenchCAD that timed out at 30 s
 were run alone at 300 s, 16 workers. All 31 ended oracle status `ok`: none
 timed out and none crashed. Wall-clock seconds per program under that load:
 minimum 31.8, median 49.4, maximum 57.3 (`double_simplex_sprocket_001903_s20260505`).
+Per stem (all oracle status `ok`; suffix `double_simplex_sprocket_` omitted),
+seconds: 009298_s20260505 31.8; 000096_s20260507 34.9; 017450_s20260505 35.7;
+006239_s20260505 37.5; 009305_s20260505 37.6; 011558_s20260505 37.9;
+011240_s20260505 37.9; 000362_s20260505 41.1; 008730_s20260505 41.5;
+019054_s20260505 42.4; 005335_s20260505 42.9; 002863_s20260505 44.2;
+018137_s20260505 46.2; 000227_s20260507 46.5; 006936_s20260505 47.6;
+003298_s20260505 47.7; 005308_s20260505 47.8; 015710_s20260505 48.8;
+009101_s20260505 49.4; 011173_s20260505 49.5; 000372_s20260505 50.4;
+019587_s20260505 50.9; 013040_s20260505 52.1; 009108_s20260505 52.1;
+013358_s20260505 53.1; 007225_s20260505 53.1; 007025_s20260505 53.2;
+009154_s20260505 53.3; 013907_s20260505 54.8; 011623_s20260505 56.8;
+001903_s20260505 57.3. The committed oracle rows carry no seconds, so this
+table is the record. It comes from an isolated run of the 31 stems under
+`--oracle-timeout 300` at 16 workers, through `oracle_run.slice_reports`,
+on 2026-11-21.
+
 The deadline is the next multiple of 30 s above 4 times the slowest, 4 x 57.3 =
 229.2, so 240 s. The factor of 4 leaves room for a machine four times slower
 or more loaded than the one that measured.
