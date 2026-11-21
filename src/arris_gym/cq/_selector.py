@@ -777,7 +777,8 @@ def _cone_apex(info: arris.SurfaceInfo) -> tuple[float, float, float]:
     assert axis is not None
     assert radius is not None
     assert angle is not None
-    height = radius / math.tan(angle)
+    # The radius increases along the axis, so the apex is behind the reference circle.
+    height = -radius / math.tan(angle)
     return (
         origin[0] + axis[0] * height,
         origin[1] + axis[1] * height,

@@ -388,7 +388,9 @@ the axis, greedy clusters of `1e-4`, `>` the last and `<` the first. A planar
 face normal to the axis is ranked by its exact plane offset. Other face keys
 come from arris's surface centroid quadrature. Faces of one surface and sense
 that share edges transitively rank as one unified face, by their area-weighted
-centre. A second selector ranks only the unified faces already kept.
+centre. Cone faces with different reference circles share a surface when
+their axes, opening angles and reconstructed apices agree within the
+model's tolerances. A second selector ranks only the unified faces already kept.
 A selection whose membership
 can change within the quadrature's error bound ends `unsupported_api`
 (ADR-0022 rule 1). `workplane()` on

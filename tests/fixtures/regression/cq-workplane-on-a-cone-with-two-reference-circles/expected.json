@@ -23,6 +23,5 @@
     ],
     "shells": 2,
     "genus": 0
-  },
-  "xfail": "Cone face unification computes different apices for reference circles of the same cone."
+  }
 }
