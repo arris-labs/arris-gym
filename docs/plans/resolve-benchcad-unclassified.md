@@ -81,7 +81,7 @@ numeric, geometric or semantic case to get right within a given design;
   A, CQ, U, U)`. Re-count `table-expected.json` and the arris report.
   Write `CHANGELOG.md` under Unreleased and the rule's sentence in
   `docs/ARCHITECTURE.md` §The oracle.
-- [ ] Step 3 **[2, conductor-run]**: re-run BenchCAD (the README's command,
+- [x] Step 3 **[2, conductor-run]**: re-run BenchCAD (the README's command,
   `--oracle-rows`, a fresh `--work-dir`). Only `cq` and the 31 stems run.
   Commit the tables and the C2 README section, and update `FIGURES` and the
   pinned oracle-rows SHA-256 (`fixtures:` in the message).

@@ -35,7 +35,7 @@ tests/fixtures/c1/verdicts.json tests/fixtures/c2/benchcad/verdicts.json
 oracle environment; outside the gate), which saves its work in chunks and resumes.
 Pass a fresh `--work-dir` when re-running after a code or verdict change.
 No program text is committed. Each figure is over all 17,900 programs.
-The ADR-0022 re-run changes six rows, all `connecting_rod`. In each, the
+The latest re-run (plans/resolve-benchcad-unclassified step 3, 2026-11-21) follows the ADR-0006 amendment (`unsupported_api` against `invalid` is `cq_bug`) and a measured corpus oracle deadline of 240 s (ADR-0013's amendment). It moves no in-subset figure and no reach. The ADR-0022 re-run changed six rows, all `connecting_rod`. In each, the
 unified cylinder side ranks below the box's planar face, which supplies the
 workplane for the cross bore. Both kernels build all six. Two agree
 (`000909`, `007540`) and four are `occt_wrong` (`002995`, `007023`,
@@ -52,18 +52,17 @@ step 10, after the `YZ`, `XZ`, `ZX`, `origin=`, `workplane(offset=…)`, `circle
 `box` on a `moveTo` point and compound lifts).
 
 - Reach: 9,998/17,900 in-subset (also 9,998 before ADR-0022, 6,565 before `edges`, `fillet`, `chamfer` and the parallel and `or` selectors; 6,154 before `rarray`, `polarArray` and `cutBlind`; 5,295 before `pushPoints`, `cboreHole`, `cskHole` and `hole`'s `depth=`; 4,345 before `faces` and its selectors, 4,103 before `extrude(both=)`, 4,011 before `polygon`, 3,667 before `sphere`, 3,304 before `threePointArc`, 1,871 before `cylinder`; C1's subset reaches 1,871).
-- Agreement: 7,415 agree; outcomes {'agree': 7415, 'disagree': 10286, 'unclassified': 199}.
-- Classes: {'arris_bug': 289, 'arris_refusal': 1457, 'by_design': 0, 'cq_bug': 7695, 'occt_wrong': 845}.
+- Agreement: 7,415 agree; outcomes {'agree': 7415, 'disagree': 10485, 'unclassified': 0}.
+- Classes: {'arris_bug': 289, 'arris_refusal': 1457, 'by_design': 0, 'cq_bug': 7894, 'occt_wrong': 845}.
 - Arris statuses: {'arris_refusal': 1558, 'checker_fail': 41, 'crash': 0, 'ok': 8407, 'runtime': 0, 'syntax': 0, 'timeout': 0, 'unsupported_api': 7894}.
-- Oracle statuses: {'crash': 0, 'invalid': 332, 'no_result': 0, 'ok': 17537, 'runtime': 0, 'syntax': 0, 'timeout': 31}.
-- Timeouts: 31 (all oracle-side, on double_simplex_sprocket programs; each ran again and timed out again).
+- Oracle statuses: {'crash': 0, 'invalid': 332, 'no_result': 0, 'ok': 17568, 'runtime': 0, 'syntax': 0, 'timeout': 0}.
+- Timeouts: 0. The 31 `double_simplex_sprocket` programs that timed out at the oracle's 30 s ran under the 240 s deadline (31.8 to 57.3 s each) and all ended `ok`; each pairs `unsupported_api` with `ok`, so `cq_bug`.
 - In-subset: outcomes {'agree': 7415, 'disagree': 2583, 'unclassified': 0}, classes {'arris_bug': 289, 'arris_refusal': 1449, 'by_design': 0, 'cq_bug': 0, 'occt_wrong': 845};
   `in_subset_cq_bug` 0, `in_subset_by_design` 0, no in-subset row unclassified. The 289 in-subset
   `arris_bug` rows are the 100 `lobed_knob` verdicts, 37 `bearing_retainer_cap` (`checker_fail`:
-  the `faces(sel).workplane().hole(d)` programs), 24 `shaft_collar` and 126 `clevis_pin` cross holes (both `regression/cq-cross-hole-bounds`, each row held to it by `check_bounds_cause`: `ok` on both sides, arris's box 1.4e-4 to 5e-3 past the oracle's; the `clevis_pin` rows are chamfered cylinders), 1 `shaft_collar` (`shaft_collar_016155`, arris's own `OpInternalError` on two rim chamfers wider together than their face, the oracle's shape `invalid`: `regression/cq-chamfers-overlap-on-a-face`) and 1 `spacer_ring` (`regression/cq-chamfer-slot-bounds`); the 845 `occt_wrong` are 202 `u_bolt`, 184 `j_hook`, 141 `t_pipe_fitting`, 126 `double_simplex_sprocket`, 82 `sprocket`, 33 `manifold_block`, 29 `pan_head_screw`, 25 `bellows`, 20 `connecting_rod`, 2 `spacer_ring` and 1 `shaft_collar`, each by a closed form (the edges-and-blends re-run's 257 are the sprockets, the screws, 16 chamfered `manifold_block`, 1 `connecting_rod`, 2 slotted `spacer_ring` and `shaft_collar_004924`, whose three cuts are one cylinder and which Open CASCADE builds 3.5e-7 off in volume, plans/lift-edges-and-blends steps 7c and 7d). The 199
-  unclassified rows are all outside the subset. The 1,449 in-subset refusals are 312 more than the previous re-run's 1,137: the blends next to a boolean's edges and the revolves across their axis, as the arris report lists them (`ball_knob` 231, `hinge` 220, `pull_handle` 176, `cotter_pin` 159, `dome_cap` 159, `rivet` 122).
+  the `faces(sel).workplane().hole(d)` programs), 24 `shaft_collar` and 126 `clevis_pin` cross holes (both `regression/cq-cross-hole-bounds`, each row held to it by `check_bounds_cause`: `ok` on both sides, arris's box 1.4e-4 to 5e-3 past the oracle's; the `clevis_pin` rows are chamfered cylinders), 1 `shaft_collar` (`shaft_collar_016155`, arris's own `OpInternalError` on two rim chamfers wider together than their face, the oracle's shape `invalid`: `regression/cq-chamfers-overlap-on-a-face`) and 1 `spacer_ring` (`regression/cq-chamfer-slot-bounds`); the 845 `occt_wrong` are 202 `u_bolt`, 184 `j_hook`, 141 `t_pipe_fitting`, 126 `double_simplex_sprocket`, 82 `sprocket`, 33 `manifold_block`, 29 `pan_head_screw`, 25 `bellows`, 20 `connecting_rod`, 2 `spacer_ring` and 1 `shaft_collar`, each by a closed form (the edges-and-blends re-run's 257 are the sprockets, the screws, 16 chamfered `manifold_block`, 1 `connecting_rod`, 2 slotted `spacer_ring` and `shaft_collar_004924`, whose three cuts are one cylinder and which Open CASCADE builds 3.5e-7 off in volume, plans/lift-edges-and-blends steps 7c and 7d). No row is unclassified. Of the 199 rows that were, all outside the subset, 168 paired `unsupported_api` with an oracle `invalid` shape and are `cq_bug` by ADR-0006's amendment, and 31 were the sprocket timeouts, now `cq_bug` as above (7,695 + 168 + 31 = 7,894). The 1,449 in-subset refusals are 312 more than the previous re-run's 1,137: the blends next to a boolean's edges and the revolves across their axis, as the arris report lists them (`ball_knob` 231, `hinge` 220, `pull_handle` 176, `cotter_pin` 159, `dome_cap` 159, `rivet` 122).
 
-Table digest: `b6c949893c7f0647cf1394c13d0e057e7e759c0e10755f6455033150fa97ac32`. Before ADR-0022 the digest was `5f33dadef00e40c581d9e9adc20e9b62730bb698b6ee698311c05ab7ee2b0584` (arris 0.11.1, plans/bump-arris-0-11 step 7: every row differs from 0.10.0's table, digest `6a6f857c4d42a2e5994e9296db3d8388023576f1f148e69f2f66b165d1856414`, in `versions.arris` alone; the reach report is byte-equal, and the 31 oracle timeouts ran again and timed out again). Oracle rows SHA-256 (uncompressed): `e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, unchanged, the baseline's: this re-run's oracle rows (all 17,900) are byte-equal to the committed file.
+Table digest: `45ee27a1bc5736d26a1ca21954c438aef7d69cd04b6b45f4a9607ee9f469af7a`. Before this re-run (ADR-0022) it was `b6c949893c7f0647cf1394c13d0e057e7e759c0e10755f6455033150fa97ac32` (199 unclassified, 31 timeouts, `cq_bug` 7,695; the reach is the same 9,998); before ADR-0022 it was `5f33dadef00e40c581d9e9adc20e9b62730bb698b6ee698311c05ab7ee2b0584` (arris 0.11.1, plans/bump-arris-0-11 step 7: every row differs from 0.10.0's table, digest `6a6f857c4d42a2e5994e9296db3d8388023576f1f148e69f2f66b165d1856414`, in `versions.arris` alone). Oracle rows SHA-256 (uncompressed): `db298f073af368bc5a73f6856134cd0c8bcafa4bb3a9f6a7911de668fd49136b`. They differ from the previous rows (`e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, the C2 baseline's) in exactly the 31 `double_simplex_sprocket` rows, which timed out and now hold an `ok` report.
 
 The table before the repair of step 7c (a family-keyed `--arris-bug` had classed rows with no cause check; 290 `arris_bug`, 840 `occt_wrong`) had digest `8daf4d7c0be6dca9d1995c161563078213bd21257ece15a727817715329bbbac`.
 
@@ -77,7 +76,7 @@ The table before that (plans/lift-extrude-both step 5, reach 4,345, 2,943 agree,
 
 The table before this re-run (plans/lift-polygon step 4, reach 4,103, 2,826 agree, no in-subset `cq_bug`) had digest `db6adfc4d5cb0793eb1a7389e607ba6928ffc692ae132f957314350057de2cee`.
 
-**The oracle rows are the baseline's bytes**, and not the re-run's. The re-run's
+**The oracle rows were the baseline's bytes** until the 2026-11-21 re-run, and not the earlier re-run's (they are now those 17,869 baseline rows plus the 31 sprocket rows answered under the 240 s deadline). The re-run's
 oracle gave the same status, solids and faces for every program, but 214 rows
 of 8 families (`sheet_metal_tray` 101, `washer` 49, `spacer_ring` 32,
 `snap_clip` 13, `ratchet_sector` 11, `hollow_tube` 3, `spline_hub` 3,
@@ -88,7 +87,7 @@ some runs and not on others: Open CASCADE's boolean, chamfer and shell order
 depends on memory addresses (address-space layout and a job's position on its
 zygote). No fidelity row moved (all 214 are the same as the baseline's, so the
 table's digest does not depend on which oracle bytes are kept), so the baseline
-rows stay committed (BACKLOG Findings `oracle-nondeterministic-step`).
+rows stayed committed (BACKLOG Findings `oracle-nondeterministic-step`).
 
 The one before it (plans/lift-sphere step 5, reach 4,011, 2,734 agree, no in-subset `cq_bug`) had digest `651fe2c161d62d738f67632f2c01a4ccd590ea73fa2634665206ae9a373c1f5a`.
 The one before it (plans/lift-three-point-arc step 5, reach 3,667, 2,543 agree, no in-subset `cq_bug`) had digest `bb3f58f3f7bcb3c8003f860bcf3a80389cadaf4287009e4680511f7b2286bf6c`.
@@ -99,9 +98,8 @@ The baseline (plans/fidelity-target step 6, the C1 subset, no verdicts) had
 reach 1,871, 980 agree, 717 in-subset `cq_bug`, 174 in-subset
 `arris_refusal`, table digest
 `be896a2b1a9c0f686ec794d327fc781c06798a580ecdf612b599966379b40bbc`
-(`docs/adr/0014`). The oracle's timeouts depend on the machine's load (a
-program that takes about 30 s on the oracle), so a re-run can move them and
-with them the table digest.
+(`docs/adr/0014`). Its oracle's timeouts depended on the machine's load (a
+program that takes about 30 s on the oracle at the 30 s deadline); the 240 s corpus deadline has removed them.
 
 ## The 717's diagnosis
 

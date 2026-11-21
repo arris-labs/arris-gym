@@ -42,16 +42,16 @@ FIGURES = {
         "agree": 7_415,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
-        "timed_out": 31,
+        "timed_out": 0,
         "classes": {
             "arris_bug": 289,
             "arris_refusal": 1_457,
             "by_design": 0,
-            "cq_bug": 7_695,
+            "cq_bug": 7_894,
             "occt_wrong": 845,
         },
-        "unclassified": 199,
-        "oracle_ok": 17_537,
+        "unclassified": 0,
+        "oracle_ok": 17_568,
     },
     "cadrecode": {
         "in_subset": 104,
@@ -72,9 +72,13 @@ FIGURES = {
 }
 # Reach under the C1 subset, before C2 lifted `r = …`, `origin=`, `workplane` and `cylinder`.
 C1_REACH = {"benchcad": 1_871, "cadrecode": 0}
-# The SHA-256 of BenchCAD's uncompressed oracle rows at the C2 baseline
-# (plans/fidelity-target step 6), pinned so the committed file stays them.
-BENCHCAD_BASELINE_ORACLE_ROWS = "e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157"
+# The SHA-256 of BenchCAD's uncompressed oracle rows as re-run under the 240 s
+# corpus oracle deadline (plans/resolve-benchcad-unclassified step 3), pinned so
+# the committed file stays them. They differ from the C2 baseline's rows
+# (SHA-256 e992583501c7…3157, plans/fidelity-target step 6) in the 31
+# double_simplex_sprocket rows alone, which timed out at 30 s and now ran.
+BENCHCAD_ORACLE_ROWS = "db298f073af368bc5a73f6856134cd0c8bcafa4bb3a9f6a7911de668fd49136b"
+SPROCKETS_ONCE_TIMED_OUT = 31
 
 
 def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
@@ -193,15 +197,26 @@ def test_cadrecodes_agreements_are_not_two_failures() -> None:
     assert all(e.row.status is Status.OK and e.row.oracle_status is OracleStatus.OK for e in agree)
 
 
-def test_benchcads_committed_oracle_rows_are_the_pinned_baseline_file() -> None:
-    """The committed `oracle.jsonl.gz` is the C2 baseline's, by its pinned hash.
+def test_benchcads_committed_oracle_rows_are_the_pinned_file() -> None:
+    """The committed `oracle.jsonl.gz` is the 240 s re-run's, by its pinned hash.
 
-    It does not show that a re-run reproduces the baseline: the step-10 re-run
+    It does not show that a re-run reproduces it: a re-run of the baseline
     differed in `report` on 214 rows (Open CASCADE's build order, BACKLOG
-    `oracle-nondeterministic-step`) and its rows were not committed.
+    `oracle-nondeterministic-step`) and its rows were not committed. The 31
+    sprocket rows, which timed out at 30 s, are the only ones that differ
+    from the baseline's; each now ends `ok` and none times out.
     """
     data = gzip.decompress((C2 / "benchcad" / "oracle.jsonl.gz").read_bytes())
-    assert hashlib.sha256(data).hexdigest() == BENCHCAD_BASELINE_ORACLE_ROWS
+    assert hashlib.sha256(data).hexdigest() == BENCHCAD_ORACLE_ROWS
+    sprockets = [
+        e
+        for e in table_of("benchcad").entries
+        if e.row.oracle_status is OracleStatus.OK
+        and e.row.status is Status.UNSUPPORTED_API
+        and e.name.startswith("double_simplex_sprocket")
+    ]
+    assert len(sprockets) >= SPROCKETS_ONCE_TIMED_OUT
+    assert all(e.row.disagreement is DisagreementClass.CQ_BUG for e in sprockets)
 
 
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
