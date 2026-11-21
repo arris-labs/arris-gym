@@ -122,8 +122,10 @@ case within a given design; **[3]** unproven. The grade is the tier
   the step 3 and step 6 properties.
 - `regression/cq-workplane-on-a-cylinder-face-split-at-its-seam` passes
   without `xfail`: `ok`, V = 623.5616, A = 571.8575 (its `expected.json`).
-- `tests/fixtures/c2/benchcad` and `cadrecode`: 0 unclassified, in-subset
-  `cq_bug` 0 on both; reach not lower than 9,998 and 104; new digests recorded.
+- `tests/fixtures/c2/benchcad` and `cadrecode`: 0 in-subset unclassified and
+  0 in-subset `cq_bug` on both; reach not lower than 9,998 and 104; new
+  digests recorded. Corpus-wide classification remains a C2 requirement
+  (ADR-0014).
 
 ## Docs to update on completion
 
@@ -171,6 +173,6 @@ case within a given design; **[3]** unproven. The grade is the tier
   produce different apices in the grouping test. A half torus cut from a
   whole torus can retain two faces in CadQuery across its seam, where
   `cq` groups them. Both are tracked in the backlog.
-- ⚠ OPEN: Step 7 has zero unclassified rows in the subset on both corpora.
-  BenchCAD has the same 199 unclassified rows outside the subset as before,
-  so the plan's corpus-wide zero-unclassified acceptance remains open.
+- *Settled:* the plan's acceptance covers the supported subset. BenchCAD's
+  199 unclassified rows outside the subset remain open under C2's
+  corpus-wide acceptance.
