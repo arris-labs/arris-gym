@@ -91,7 +91,10 @@ _CALLS: dict[str, tuple[str, ...]] = {
     "rect-negative-width": ("rect(-4, 2)",),
     "rect-negative-height": ("rect(4, -2)",),
     "close-already-closed": (*_TRIANGLE, "segment((0, 0))", "close()"),
+    "close-without-edges": ("close()",),
+    "assemble-without-edges": ("assemble()",),
     "assemble-open-chain": (*_TRIANGLE, "assemble()"),
+    "assemble-ordered-chain": (*_TRIANGLE, "close()", "assemble()"),
     "assemble-unordered-chain": (
         "segment((4, 0), (0, 2))",
         "segment((0, 0), (4, 0))",
@@ -101,6 +104,23 @@ _CALLS: dict[str, tuple[str, ...]] = {
     "assemble-half-disc": ("segment((-1, 0), (1, 0))", "arc((0, 1), (-1, 0))", "assemble()"),
     "assemble-half-disc-three-point-arc": (
         "arc((1, 0), (0, 1), (-1, 0))",
+        "close()",
+        "assemble()",
+    ),
+    "assemble-reversed-arc-at-selection": (
+        "push([(3, 5)])",
+        "segment((-1, 0), (1, 0))",
+        "arc((-1, 0), (0, 1), (1, 0))",
+        "assemble()",
+    ),
+    "segment-three-coordinates": (
+        "segment((0, 0, 0), (4, 0))",
+        "segment((0, 2))",
+        "close()",
+        "assemble()",
+    ),
+    "arc-three-coordinates": (
+        "arc((1, 0), (0, 1, 0), (-1, 0))",
         "close()",
         "assemble()",
     ),

@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 16,
+    "area": 57.88854381999832,
+    "centroid": [
+      3.833333333333333,
+      2.1666666666666665,
+      1
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        9,
+        5,
+        2
+      ]
+    ],
+    "faces": 10,
+    "face_kinds": [
+      [
+        "plane",
+        10
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "note": "Two copies of the right triangle, one at (5, 3) and one at the origin, extruded by 2."
+}

@@ -10,6 +10,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   them, then use `finalize().extrude(distance)` to build the solid.
   A section with no material returns `runtime` at extrusion.
 
+- In the CadQuery dialect, draw sketch outlines with `segment` and `arc`.
+  Use `close` to draw a closing line and `assemble` to add the region
+  at the sketch's selected points. Assembly returns `runtime` when
+  the edges fail to form one closed loop.
+
 - The census counts calls after `Workplane.sketch()` through `finalize()`
   under `Sketch.*`. Calls after `finalize()` return to the workplane
   receiver. CAD-Recode's census and reach curve digests change.

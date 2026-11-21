@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "unsupported_api",
+  "message": "Sketch.arc(tuple with a point of 3 numbers)"
+}

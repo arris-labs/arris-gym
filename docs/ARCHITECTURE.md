@@ -460,7 +460,13 @@ argument is `combine`) stay `unsupported_api`.
 `sketch()` on an empty stack returns a mutable sketch attached to a new
 workplane on the same plane. `push` replaces its plane-local selection
 and `reset` clears it. Each `circle` or `rect` places a region at each
-selected point, or at the origin for an empty selection. The mode adds
+selected point, or at the origin for an empty selection. `segment` and
+`arc` draw free edges in plane coordinates. An implicit start continues
+from the last end, and `close` draws a line back to the first start.
+`assemble` orders and reverses the edges as needed to form one closed
+loop. It retains those edges and adds a copy of the region at every
+selected point, or at the origin when the selection is empty. Assembly
+requires one closed loop and otherwise ends `runtime`. The mode adds
 (`a`), subtracts (`s`) or intersects (`i`) the current section with the
 union of that call's placements. `finalize()` returns the workplane with
 the live sketch on its stack. `extrude(d)` combines the prisms in drawing

@@ -32,6 +32,7 @@ UNBOUNDED: Section = (1, None, None)
 
 # One section per successful call after sketch() and before finalize().
 SECTIONS: dict[str, tuple[Section, ...]] = {
+    "arc-three-coordinates": (),
     "arc-without-edges": (),
     "assemble-at-selection": (
         EMPTY,
@@ -45,10 +46,19 @@ SECTIONS: dict[str, tuple[Section, ...]] = {
     "assemble-half-disc": (EMPTY, EMPTY, HALF_DISC),
     "assemble-half-disc-three-point-arc": (EMPTY, EMPTY, HALF_DISC),
     "assemble-open-chain": (EMPTY, EMPTY, TRIANGLE),
+    "assemble-ordered-chain": (EMPTY, EMPTY, EMPTY, TRIANGLE),
+    "assemble-reversed-arc-at-selection": (
+        EMPTY,
+        EMPTY,
+        EMPTY,
+        (1, math.pi / 2, (3, 5 + 4 / (3 * math.pi), 0)),
+    ),
     "assemble-unordered-chain": (EMPTY, EMPTY, EMPTY, TRIANGLE),
+    "assemble-without-edges": (),
     "circle-negative": (),
     "circle-zero": (),
     "close-already-closed": (EMPTY, EMPTY, EMPTY),
+    "close-without-edges": (),
     "cut-to-empty": (SQUARE, EMPTY),
     "disjoint-adds": (SQUARE, SQUARE, (2, 12.0, (10 / 3, 2 / 3, 0.0))),
     "empty-add": (SQUARE,),
@@ -78,6 +88,7 @@ SECTIONS: dict[str, tuple[Section, ...]] = {
     "rect-zero-height": (UNBOUNDED,),
     "rect-zero-width": (UNBOUNDED,),
     "ring": ((1, 4 * math.pi, ORIGIN), (1, 3 * math.pi, ORIGIN)),
+    "segment-three-coordinates": (),
     "segment-without-edges": (),
 }
 
@@ -88,6 +99,8 @@ PRISMS: dict[str, tuple[float, int]] = {
     "assemble-at-selection": (2 * _TRIANGLE_PERIMETER, 2),
     "assemble-half-disc": (2 + math.pi, 1),
     "assemble-half-disc-three-point-arc": (2 + math.pi, 1),
+    "assemble-ordered-chain": (_TRIANGLE_PERIMETER, 1),
+    "assemble-reversed-arc-at-selection": (2 + math.pi, 1),
     "assemble-unordered-chain": (_TRIANGLE_PERIMETER, 1),
     "disjoint-adds": (8 + 12, 2),
     "empty-add": (8, 1),
@@ -106,13 +119,21 @@ PRISMS: dict[str, tuple[float, int]] = {
 _INVALID = {"assemble-open-chain", "rect-zero-height", "rect-zero-width"}
 _NO_TAG = "ValueError: No tag specified - the geometry will be unreachable"
 _NO_EDGES = "ValueError: No free edges available"
+_SKETCH_TYPE = "<class 'cadquery.sketch.Sketch'>"
+_TUPLE_TYPE = "<class 'tuple'>"
 _RUNTIME = {
+    "arc-three-coordinates": (
+        f"multimethod.DispatchError: ('arc: 0 methods found', "
+        f"({_SKETCH_TYPE}, {_TUPLE_TYPE}, {_TUPLE_TYPE}, {_TUPLE_TYPE}), set())"
+    ),
     "arc-without-edges": _NO_EDGES,
+    "assemble-without-edges": "IndexError: list index out of range",
     "circle-negative": (
         "OCP.OCP.Standard.Standard_ConstructionError: gp_Circ() - radius should be positive number"
     ),
     "circle-zero": "ValueError: Cannot build face(s): wires not planar",
     "close-already-closed": "OCP.OCP.StdFail.StdFail_NotDone: BRep_API: command not done",
+    "close-without-edges": _NO_EDGES,
     "cut-to-empty": "ValueError: No pending wires present",
     "empty-intersect": "ValueError: Null TopoDS_Shape object",
     "empty-subtract": "ValueError: Null TopoDS_Shape object",
@@ -120,6 +141,10 @@ _RUNTIME = {
     "nonempty-construction": _NO_TAG,
     "empty-unknown": "ValueError: Invalid mode: other",
     "nonempty-unknown": "ValueError: Invalid mode: other",
+    "segment-three-coordinates": (
+        f"multimethod.DispatchError: ('segment: 0 methods found', "
+        f"({_SKETCH_TYPE}, {_TUPLE_TYPE}, {_TUPLE_TYPE}), set())"
+    ),
     "segment-without-edges": _NO_EDGES,
 }
 

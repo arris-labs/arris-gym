@@ -43,9 +43,17 @@ def test_sketch_fixture(case: fixture_cases.Case) -> None:
         return
     assert oracle.program_sha256 == program_sha256(case.program)
     outcome = compare(result, oracle).outcome
-    if case.slug.startswith("runtime-sketch-rect-zero-"):
-        # ADR-0023 refuses the zero-width face at the drawing call.
+    if case.slug.startswith("runtime-sketch-rect-zero-") or case.slug == (
+        "runtime-sketch-assemble-open-chain"
+    ):
+        # ADR-0023 refuses these sections at the drawing call.
         assert oracle.status is OracleStatus.INVALID
+    elif case.slug in (
+        "unsupported-sketch-arc-three-coordinates",
+        "unsupported-sketch-segment-three-coordinates",
+    ):
+        assert oracle.status is OracleStatus.RUNTIME
+        assert outcome is FidelityOutcome.AGREE
     elif (
         case.slug.startswith("unsupported-sketch-")
         and case.slug != "unsupported-sketch-free-constructor"
@@ -70,9 +78,50 @@ def test_sketch_forms_are_available_only_in_the_current_subset() -> None:
         "Sketch.rect",
         "Sketch.circle",
         "Sketch.finalize",
+        "Sketch.segment",
+        "Sketch.arc",
+        "Sketch.close",
+        "Sketch.assemble",
     }
     assert {form.name for form in supported.forms} & names == names
     assert not {form.name for form in original.forms} & names
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    width=st.integers(1, 12),
+    height=st.integers(1, 12),
+    x=st.integers(-12, 12),
+    y=st.integers(-12, 12),
+    order=st.permutations((0, 1, 2)),
+    reverse=st.tuples(st.booleans(), st.booleans(), st.booleans()),
+)
+def test_assembly_preserves_the_triangle_under_shuffling_and_reversal(
+    width: int,
+    height: int,
+    x: int,
+    y: int,
+    order: list[int],
+    reverse: tuple[bool, bool, bool],
+) -> None:
+    points = ((0, 0), (width, 0), (0, height), (0, 0))
+    edges = list(pairwise(points))
+    lines = [
+        "import cadquery as cq",
+        f's = cq.Workplane("XY").sketch().push([({x}, {y})])',
+    ]
+    for index in order:
+        start, end = edges[index]
+        if reverse[index]:
+            start, end = end, start
+        lines.append(f"s.segment({start}, {end})")
+    lines.append("result = s.assemble().finalize().extrude(2)")
+    result = ag.run("\n".join(lines) + "\n", dialect="cq")
+    assert result.status is ag.Status.OK, result.message
+    assert result.measures is not None
+    assert fixture_cases.close(result.measures.volume, width * height)
+    for got, want in zip(result.measures.centroid, (x + width / 3, y + height / 3, 1), strict=True):
+        assert fixture_cases.close(got, want)
 
 
 def test_finalize_keeps_the_original_workplane_and_the_sketch_identity() -> None:

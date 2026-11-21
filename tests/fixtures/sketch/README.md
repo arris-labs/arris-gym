@@ -1,6 +1,6 @@
 # CadQuery sketch traces
 
-`tools/cq_sketch_probe.py` writes `constructed.json` from 31 constructed
+`tools/cq_sketch_probe.py` writes `constructed.json` from 37 constructed
 programs on CadQuery 2.3.0 and `cadquery-ocp` 7.9.3.0. The probe runs outside
 the gate in the synced oracle environment.
 
@@ -28,6 +28,9 @@ when the oracle built a shape.
 | `circle-*`, `rect-*` | Zero and negative circle radii raise different exceptions. A negative rectangle dimension builds the same part as its positive magnitude. A zero dimension makes an unbounded plane and the extrusion is invalid. The recorded measures for those invalid extrusions are kernel diagnostics. |
 | `close-already-closed`, `assemble-*-chain` | Closing creates a zero-length segment and raises when the chain is already closed. An open chain yields a face, then an invalid extrusion. The unordered closed chain assembles and extrudes as the triangle. |
 | `assemble-half-disc*`, `*-without-edges` | Both arc forms make the half-disc with its chord. An implicit start for a segment or arc requires a preceding edge. |
+| `close-without-edges`, `assemble-without-edges` | Closing with no edges raises `ValueError`. Assembly raises `IndexError` on the oracle and `ValueError` in `cq`. |
+| `assemble-ordered-chain`, `assemble-reversed-arc-at-selection` | The triangle in drawing order has the same measures as the shuffled triangle. Reversing an arc keeps its middle point and the selection translates the assembled half-disc. |
+| `*-three-coordinates` | The oracle's tuple dispatch refuses the third coordinate. The dialect returns `unsupported_api`. |
 
 A run with four zygotes and a run with one produced identical bytes.
 `tests/test_sketch_probe.py` checks the recorded call order, closed forms
@@ -41,7 +44,9 @@ expected statuses. `tests/test_cq_sketch.py` checks each program against
 either the matching trace above or the fixture's own `oracle.json`. It
 checks negative extrusion on a shifted YZ plane, placement selection,
 grouped intersections, mutation after `finalize()` and fusion with a
-solid earlier in the chain. The cases that use sketch forms outside the
+solid earlier in the chain. It also checks triangle and half-disc assembly,
+including a reversed arc and two assemblies of the same edges with
+different selections. The cases that use sketch forms outside the
 subset record how CadQuery handles those programs. `Sketch.clean` has a
 refusal fixture for the unsupported method.
 

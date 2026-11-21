@@ -1,5 +1,29 @@
 [
  {
+  "name": "arc-three-coordinates",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.arc((1, 0), (0, 1, 0), (-1, 0))\ns.close()\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "multimethod.DispatchError: ('arc: 0 methods found', (<class 'cadquery.sketch.Sketch'>, <class 'tuple'>, <class 'tuple'>, <class 'tuple'>), set())",
+   "program_sha256": "3f21b13ebd098c211123d86f03b8c83b2f826814c6398e93c4e30f4c14951bf5",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
   "name": "arc-without-edges",
   "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.arc((0, 1), (-1, 0))\nw = s.finalize()\nresult = w.extrude(2)\n",
   "report": {
@@ -368,6 +392,174 @@
   ]
  },
  {
+  "name": "assemble-ordered-chain",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((0, 0), (4, 0))\ns.segment((0, 2))\ns.close()\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 28.94427190999916,
+    "bounds": [
+     [
+      -8.881784197001252e-16,
+      0.0,
+      0.0
+     ],
+     [
+      4.0,
+      2.0000000000000004,
+      2.0
+     ]
+    ],
+    "centroid": [
+     1.3333333333333335,
+     0.6666666666666667,
+     1.0
+    ],
+    "faces": 5,
+    "solids": 1,
+    "volume": 8.0
+   },
+   "message": "",
+   "program_sha256": "326b2a977b1bf97d44b2ff789c7c58391fa8d75be2bae0b9e24af3fe7b283807",
+   "status": "ok",
+   "step_sha256": "6653fbc6e4358010da8f097c41253c51b039fd0891f0c4d8dd6129f9f3851381",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 0), (4, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 2))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.close()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "s.assemble()",
+    "centroid": [
+     1.3333333333333335,
+     0.6666666666666666,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     1.3333333333333335,
+     0.6666666666666666,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "assemble-reversed-arc-at-selection",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.push([(3, 5)])\ns.segment((-1, 0), (1, 0))\ns.arc((-1, 0), (0, 1), (1, 0))\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 13.42477796076938,
+    "bounds": [
+     [
+      2.0,
+      5.0,
+      0.0
+     ],
+     [
+      4.0,
+      6.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     2.9999999999999996,
+     5.424413181578387,
+     1.0
+    ],
+    "faces": 4,
+    "solids": 1,
+    "volume": 3.1415926535897936
+   },
+   "message": "",
+   "program_sha256": "81729fc07c26274da4d87ed623dcb462f67cc170a6db5034eb1729e2a213c253",
+   "status": "ok",
+   "step_sha256": "41a6640364057c31c461eda676106d81c86406adde1631e0d3bfc5aa09b72ad1",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.push([(3, 5)])",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((-1, 0), (1, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.arc((-1, 0), (0, 1), (1, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 1.570796326794897,
+    "call": "s.assemble()",
+    "centroid": [
+     3.0000000000000004,
+     5.424413181578388,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 1.570796326794897,
+    "call": "w = s.finalize()",
+    "centroid": [
+     3.0000000000000004,
+     5.424413181578388,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
   "name": "assemble-unordered-chain",
   "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((4, 0), (0, 2))\ns.segment((0, 0), (4, 0))\ns.segment((0, 0), (0, 2))\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
   "report": {
@@ -448,6 +640,30 @@
      0.0
     ],
     "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "assemble-without-edges",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "IndexError: list index out of range",
+   "program_sha256": "17f892e39a84dbfbc8e67218ffe7cb2d9b23475502963c54417fed11bd197f4f",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
    }
   ]
  },
@@ -536,6 +752,30 @@
    {
     "area": 0.0,
     "call": "s.segment((0, 0))",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "close-without-edges",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.close()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: No free edges available",
+   "program_sha256": "422abfeae1b271d76a3f656506a88bdc05249e10474e5b3aeb5509296b13c2d2",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
     "centroid": null,
     "faces": 0
    }
@@ -1836,6 +2076,30 @@
      0.0
     ],
     "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "segment-three-coordinates",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((0, 0, 0), (4, 0))\ns.segment((0, 2))\ns.close()\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "multimethod.DispatchError: ('segment: 0 methods found', (<class 'cadquery.sketch.Sketch'>, <class 'tuple'>, <class 'tuple'>), set())",
+   "program_sha256": "6df1109d9d2a8fb92e3f8630761ecab42a4cb175672daaf3aa49d49d0ed33171",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
    }
   ]
  },

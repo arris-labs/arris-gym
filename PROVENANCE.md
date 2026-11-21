@@ -163,6 +163,10 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   on a `moveTo` point, on an empty stack, after `lineTo` and after an arc,
   on each named plane, closed by a line and by an arc ending on the start,
   extruded both ways and revolved.
+- `Sketch.segment`, `arc`, `close` and `assemble` (`cadquery/sketch.py`):
+  implicit starts use the last free edge's end, closing draws a line to
+  the first start, and assembly retains the free edges. Confirmed in
+  `tests/fixtures/sketch/constructed.json` (ADR-0023).
 - `Workplane.revolve` and `Solid.revolve` (`cadquery/cq.py`,
   `cadquery/occ_impl/shapes.py`): the angle in degrees taken modulo 360, 0
   meaning a full turn, turned into radians by `2 * pi / 360`; the axis

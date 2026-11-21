@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 3.141592653589793,
+    "area": 13.42477796076938,
+    "centroid": [
+      0,
+      0.4244131815783876,
+      1
+    ],
+    "bounds": [
+      [
+        -1,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        2
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        3
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "Upper half of the unit disc, extruded by 2."
+}

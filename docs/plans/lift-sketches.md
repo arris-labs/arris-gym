@@ -105,11 +105,12 @@ Grades are tiers (`.agents/tiers.md`):
   and an add after an empty section. Property (`hypothesis`): axis-aligned
   rects on an integer grid under modes `a s i`, with extruded volume equal
   to their rectilinear area by coordinate compression times |d|.
-- [ ] Step 5 **[2]** — `segment`, `arc`, `close`, `assemble()`. Fixtures: a
+- [x] Step 5 **[2]** — `segment`, `arc`, `close`, `assemble()`. Fixtures: a
   triangle in drawing order and shuffled with a reversed edge, a D (a half
   disc on its chord), an arc ending on the start with no `close`,
   `assemble` after `push` and again after `reset`, implicit starts and
   `close` with no edges, `close` on a closed loop, and the open chain.
+  A triangle property checks assembly under permutation, reversal and translation.
 - [ ] Step 6 **[2]** — `Sketch.face(sketch)` with and without `mode=`, and `kind_of` for a
   `Sketch`. Fixtures: a disc minus an assembled triangle (closed form);
   `reset` against `push` before `face`; a tool mutated after `face`;
@@ -143,7 +144,7 @@ Grades are tiers (`.agents/tiers.md`):
 - `docs/ROADMAP.md` §C2 status: bundle 4 done, CAD-Recode's target met, bundle 5 next.
 - `AGENTS.md` current state.
 - `GLOSSARY.md`: **Sketch** (step 2), **Receiver** (step 3).
-- `CHANGELOG.md` bullets come from steps 3, 4 and 6; no reward moves.
+- `CHANGELOG.md` bullets come from steps 3 through 6; no reward moves.
 
 ## Open questions
 - *Settled* (step 3, ADR-0014 amendment). The receiver change exposes
@@ -163,6 +164,9 @@ Grades are tiers (`.agents/tiers.md`):
   still folds at the requested signed depth in the program's model. The
   partial lift reaches 193 of 968 CAD-Recode programs. The committed table
   is checked against its pre-sketch subset until the step 7 re-run.
+- *Settled* (step 5). An empty edge list fails the same single-loop rule
+  as an open chain. The dialect raises `ValueError` at assembly, and
+  the empty assembly trace records the oracle's `IndexError`.
 - ⚠ OPEN: arris may refuse prism folds that Open CASCADE builds. Those rows
   are `arris_refusal` and do not block the target. At step 7 the agent decides
   whether to build a profile with holes for cuts that lie strictly inside, and
