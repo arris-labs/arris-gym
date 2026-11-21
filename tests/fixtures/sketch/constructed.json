@@ -1,0 +1,1866 @@
+[
+ {
+  "name": "arc-without-edges",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.arc((0, 1), (-1, 0))\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: No free edges available",
+   "program_sha256": "5d02cea8d14276c9dbacf4b6593aba6573a3d7c1b0f8ce477b9ae446b09b1984",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "assemble-at-selection",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.push([(5, 3)])\ns.segment((0, 0), (4, 0))\ns.segment((0, 2))\ns.close()\ns.assemble()\ns.reset()\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 57.88854381999832,
+    "bounds": [
+     [
+      -8.881784197001252e-16,
+      0.0,
+      0.0
+     ],
+     [
+      9.0,
+      5.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     3.8333333333333344,
+     2.1666666666666665,
+     0.9999999999999998
+    ],
+    "faces": 10,
+    "solids": 2,
+    "volume": 16.000000000000004
+   },
+   "message": "",
+   "program_sha256": "e2eb6cb94fb63cdd8cff75cfa20016d909f496688c4ce501e93e4c15dfdfaf4e",
+   "status": "ok",
+   "step_sha256": "ccc9413059fe768457660928e28285fabe467bccb398e0c91730fb793f4e2b06",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.push([(5, 3)])",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 0), (4, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 2))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.close()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "s.assemble()",
+    "centroid": [
+     6.333333333333334,
+     3.6666666666666665,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "s.reset()",
+    "centroid": [
+     6.333333333333334,
+     3.6666666666666665,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 8.0,
+    "call": "s.assemble()",
+    "centroid": [
+     3.833333333333334,
+     2.1666666666666665,
+     0.0
+    ],
+    "faces": 2
+   },
+   {
+    "area": 8.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     3.833333333333334,
+     2.1666666666666665,
+     0.0
+    ],
+    "faces": 2
+   }
+  ]
+ },
+ {
+  "name": "assemble-half-disc",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((-1, 0), (1, 0))\ns.arc((0, 1), (-1, 0))\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 13.42477796076938,
+    "bounds": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      1.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     -9.432558900623889e-17,
+     0.42441318157838775,
+     1.0
+    ],
+    "faces": 4,
+    "solids": 1,
+    "volume": 3.141592653589793
+   },
+   "message": "",
+   "program_sha256": "778c33135a33134dc0858646f86a8e02c584ac6d5ef8f4fd7176afaf3133a93f",
+   "status": "ok",
+   "step_sha256": "18d44c9e8816da85db78cc9a9889072b1e6a83eb715e0a4efd3a0320425c7449",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((-1, 0), (1, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.arc((0, 1), (-1, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 1.5707963267948966,
+    "call": "s.assemble()",
+    "centroid": [
+     -1.0581813203458523e-16,
+     0.42441318157838764,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 1.5707963267948966,
+    "call": "w = s.finalize()",
+    "centroid": [
+     -1.0581813203458523e-16,
+     0.42441318157838764,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "assemble-half-disc-three-point-arc",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.arc((1, 0), (0, 1), (-1, 0))\ns.close()\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 13.42477796076938,
+    "bounds": [
+     [
+      -1.0,
+      0.0,
+      0.0
+     ],
+     [
+      1.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     -1.2353954500828128e-16,
+     0.42441318157838764,
+     1.0
+    ],
+    "faces": 4,
+    "solids": 1,
+    "volume": 3.141592653589793
+   },
+   "message": "",
+   "program_sha256": "a513bdbe15b9ca2640ea848039f54af8ee9fe3655a7a83a58fce85bf7c0c6c77",
+   "status": "ok",
+   "step_sha256": "8390ab7b1d605d665bef6480dee040d82ba52a076fd30a97676ffa95ad0794b6",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.arc((1, 0), (0, 1), (-1, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.close()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 1.5707963267948963,
+    "call": "s.assemble()",
+    "centroid": [
+     -8.156504329376622e-17,
+     0.4244131815783876,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 1.5707963267948963,
+    "call": "w = s.finalize()",
+    "centroid": [
+     -8.156504329376622e-17,
+     0.4244131815783876,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "assemble-open-chain",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((0, 0), (4, 0))\ns.segment((0, 2))\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 24.94427190999916,
+    "bounds": [
+     [
+      -8.881784197001252e-16,
+      0.0,
+      0.0
+     ],
+     [
+      4.0,
+      2.0000000000000004,
+      2.0
+     ]
+    ],
+    "centroid": [
+     1.7499999999999996,
+     0.5625000000000001,
+     1.0
+    ],
+    "faces": 4,
+    "solids": 1,
+    "volume": 5.333333333333334
+   },
+   "message": "BRepCheck_Analyzer: shape is not valid",
+   "program_sha256": "7ca6a10634549b1d958c9405491a73556c938fa843ea15565873f7b0288c8329",
+   "status": "invalid",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 0), (4, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 2))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.000000000000002,
+    "call": "s.assemble()",
+    "centroid": [
+     1.3333333333333328,
+     0.6666666666666667,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.000000000000002,
+    "call": "w = s.finalize()",
+    "centroid": [
+     1.3333333333333328,
+     0.6666666666666667,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "assemble-unordered-chain",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((4, 0), (0, 2))\ns.segment((0, 0), (4, 0))\ns.segment((0, 0), (0, 2))\ns.assemble()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 28.94427190999916,
+    "bounds": [
+     [
+      -8.881784197001252e-16,
+      0.0,
+      0.0
+     ],
+     [
+      4.0,
+      2.0000000000000004,
+      2.0
+     ]
+    ],
+    "centroid": [
+     1.3333333333333335,
+     0.6666666666666667,
+     1.0
+    ],
+    "faces": 5,
+    "solids": 1,
+    "volume": 8.0
+   },
+   "message": "",
+   "program_sha256": "9678d072777c6128b0daa8cfa02f50cc3c2f9c2d89028d056f50dd12a7fb15c8",
+   "status": "ok",
+   "step_sha256": "289731d74b3b1a1622b544256cdf8c096a8f8c60d826d47ad57b2dfc6e94b41c",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((4, 0), (0, 2))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 0), (4, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 0), (0, 2))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "s.assemble()",
+    "centroid": [
+     1.3333333333333335,
+     0.6666666666666666,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     1.3333333333333335,
+     0.6666666666666666,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "circle-negative",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.circle(-2)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "OCP.OCP.Standard.Standard_ConstructionError: gp_Circ() - radius should be positive number",
+   "program_sha256": "6af926c193760cff2fd45d8375ac2a363461c96206051ce4341f41de8cde7d99",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "circle-zero",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.circle(0)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: Cannot build face(s): wires not planar",
+   "program_sha256": "c185983fae6c5eddc12e20503c363be6ff89026fca2b930403b46a67339c2e6d",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "close-already-closed",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((0, 0), (4, 0))\ns.segment((0, 2))\ns.segment((0, 0))\ns.close()\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "OCP.OCP.StdFail.StdFail_NotDone: BRep_API: command not done",
+   "program_sha256": "07b0c81a4fd740efdc3d69f695bfbc0fe24e5c1f3aa2479c35334803fadf2551",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 0), (4, 0))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 2))",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.segment((0, 0))",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "cut-to-empty",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(2, 2)\ns.rect(4, 4, mode='s')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: No pending wires present",
+   "program_sha256": "88e4a0cd0194912c6a78b7ccd680b4842855e34338d6f4203b671f3e992597f2",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "s.rect(2, 2)",
+    "centroid": [
+     1.6046192152785466e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 0.0,
+    "call": "s.rect(4, 4, mode='s')",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "w = s.finalize()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "disjoint-adds",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(2, 2)\ns.push([(5, 1)])\ns.rect(4, 2)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 64.0,
+    "bounds": [
+     [
+      -1.0,
+      -1.0,
+      0.0
+     ],
+     [
+      7.0,
+      2.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     3.3333333333333335,
+     0.6666666666666666,
+     1.0
+    ],
+    "faces": 12,
+    "solids": 2,
+    "volume": 24.0
+   },
+   "message": "",
+   "program_sha256": "4a4cb96204b4c88405d88f4a6643c92ef0d4561bbdddd4dfbf104b74537e6245",
+   "status": "ok",
+   "step_sha256": "fb2eba3063d9a9a35c34294ecb3f8acd566f305d40d96fea342d59fdfbe21c93",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "s.rect(2, 2)",
+    "centroid": [
+     1.6046192152785466e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "s.push([(5, 1)])",
+    "centroid": [
+     1.6046192152785466e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 12.0,
+    "call": "s.rect(4, 2)",
+    "centroid": [
+     3.3333333333333335,
+     0.6666666666666666,
+     0.0
+    ],
+    "faces": 2
+   },
+   {
+    "area": 12.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     3.3333333333333335,
+     0.6666666666666666,
+     0.0
+    ],
+    "faces": 2
+   }
+  ]
+ },
+ {
+  "name": "empty-add",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(2, 2, mode='a')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 24.0,
+    "bounds": [
+     [
+      -1.0,
+      -1.0,
+      0.0
+     ],
+     [
+      1.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     7.04731412115578e-18,
+     -1.0408340855860847e-17,
+     1.0
+    ],
+    "faces": 6,
+    "solids": 1,
+    "volume": 7.999999999999998
+   },
+   "message": "",
+   "program_sha256": "8106c2fba6bdfaa7c7bba1579b99d1eb3f46f2a65edf7977c7c83a449a36ca35",
+   "status": "ok",
+   "step_sha256": "506d745d81f9e75e14e047e4f2c8ec85e8ebce1bdd9b537369ded1882269052c",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "s.rect(2, 2, mode='a')",
+    "centroid": [
+     1.6046192152785466e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     1.6046192152785466e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "empty-construction",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(2, 2, mode='c')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: No tag specified - the geometry will be unreachable",
+   "program_sha256": "82b7d8ca2d12a3ca603926a7620c97ae8ca6d14584e7823fa76a4650fc689fcb",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "empty-intersect",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(2, 2, mode='i')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: Null TopoDS_Shape object",
+   "program_sha256": "3f10b2e443f98f98b33da2eeca22877ca0cad226a1fae2c3570cf7d43621cadd",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "empty-subtract",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(2, 2, mode='s')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: Null TopoDS_Shape object",
+   "program_sha256": "9e51f6b17c6c573f29b0de85c52d269a0292ec309a45db0b73283fa685eb03f6",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "empty-unknown",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(2, 2, mode='other')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: Invalid mode: other",
+   "program_sha256": "5c61487edd8b05855cb3bf09ee9ba06bebbed3ce17607ba5b9607f74d81bb1fd",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ },
+ {
+  "name": "face-at-selection",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ntool = cq.Workplane(\"XY\", origin=(17, 19, 0)).sketch()\ntool.push([(1, -1)])\ntool.rect(2, 2)\ns.push([(5, 3)])\ns.face(tool)\ns.reset()\ns.face(tool)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 48.0,
+    "bounds": [
+     [
+      0.0,
+      -2.0,
+      0.0
+     ],
+     [
+      7.0,
+      3.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     3.4999999999999996,
+     0.5000000000000001,
+     1.0
+    ],
+    "faces": 12,
+    "solids": 2,
+    "volume": 16.0
+   },
+   "message": "",
+   "program_sha256": "9bf210783a426328fb3f73b6fef6eca145beb2b4a43cc908d9fe16a243e1c130",
+   "status": "ok",
+   "step_sha256": "c18e269cb46b29aa9d3caa041d2b8537ab3b8f51db4db911c4f49d45497549d4",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "tool = cq.Workplane(\"XY\", origin=(17, 19, 0)).sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "tool.push([(1, -1)])",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "tool.rect(2, 2)",
+    "centroid": [
+     1.0,
+     -1.0,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 0.0,
+    "call": "s.push([(5, 3)])",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 4.0,
+    "call": "s.face(tool)",
+    "centroid": [
+     6.0,
+     2.0,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "s.reset()",
+    "centroid": [
+     6.0,
+     2.0,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 8.0,
+    "call": "s.face(tool)",
+    "centroid": [
+     3.5,
+     0.5,
+     0.0
+    ],
+    "faces": 2
+   },
+   {
+    "area": 8.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     3.5,
+     0.5,
+     0.0
+    ],
+    "faces": 2
+   }
+  ]
+ },
+ {
+  "name": "intersect-at-disjoint-points",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(10, 4)\ns.push([(-3, 0), (3, 0)])\ns.rect(2, 2, mode='i')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 48.0,
+    "bounds": [
+     [
+      -4.0,
+      -1.0,
+      0.0
+     ],
+     [
+      4.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     5.551115123125785e-17,
+     -1.9081958235744887e-17,
+     1.0
+    ],
+    "faces": 12,
+    "solids": 2,
+    "volume": 15.999999999999993
+   },
+   "message": "",
+   "program_sha256": "56f9326f3ff36662d0da10ef06374db8fdf0b05130f5c364d6bcde5adef4c2ac",
+   "status": "ok",
+   "step_sha256": "7ec40deb64b983bc48d79e405f0b750795c6e33ca973d4346172774fa05ddd89",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 39.99999999999999,
+    "call": "s.rect(10, 4)",
+    "centroid": [
+     -1.7347234759768074e-17,
+     -4.440892098500627e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 39.99999999999999,
+    "call": "s.push([(-3, 0), (3, 0)])",
+    "centroid": [
+     -1.7347234759768074e-17,
+     -4.440892098500627e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 8.0,
+    "call": "s.rect(2, 2, mode='i')",
+    "centroid": [
+     0.0,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 2
+   },
+   {
+    "area": 8.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     0.0,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 2
+   }
+  ]
+ },
+ {
+  "name": "intersect-at-overlapping-points",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(10, 4)\ns.push([(-1, 0), (1, 0)])\ns.rect(4, 2, mode='i')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 56.0,
+    "bounds": [
+     [
+      -3.0,
+      -1.0,
+      0.0
+     ],
+     [
+      3.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     1.8865117801247777e-17,
+     0.0,
+     1.0
+    ],
+    "faces": 6,
+    "solids": 1,
+    "volume": 24.0
+   },
+   "message": "",
+   "program_sha256": "f5a0e94a023462470ee3343429379d46fc1ebcf379efb0bfa03a588f1e6e6bb8",
+   "status": "ok",
+   "step_sha256": "cf6921584f700fbb3e1f5092794e5b4e531f610950390ad9c1e16445a9f3cb93",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 39.99999999999999,
+    "call": "s.rect(10, 4)",
+    "centroid": [
+     -1.7347234759768074e-17,
+     -4.440892098500627e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 39.99999999999999,
+    "call": "s.push([(-1, 0), (1, 0)])",
+    "centroid": [
+     -1.7347234759768074e-17,
+     -4.440892098500627e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 12.0,
+    "call": "s.rect(4, 2, mode='i')",
+    "centroid": [
+     5.3487307175951555e-18,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 3
+   },
+   {
+    "area": 12.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     5.3487307175951555e-18,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 3
+   }
+  ]
+ },
+ {
+  "name": "nonempty-add",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(6, 4)\ns.rect(2, 2, mode='a')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 88.0,
+    "bounds": [
+     [
+      -3.0,
+      -2.0,
+      0.0
+     ],
+     [
+      3.0,
+      2.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     0.0,
+     7.228014483236697e-18,
+     1.0
+    ],
+    "faces": 6,
+    "solids": 1,
+    "volume": 48.0
+   },
+   "message": "",
+   "program_sha256": "6b3d73ede6952439744d1057df09c2dfbd9d5d7bbc4f106d2d15db74e4e8d11e",
+   "status": "ok",
+   "step_sha256": "d7be9aa15aa5d116decbd9e630809709219525815dd6ee8e56a1b5d2a4b3c914",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 24.0,
+    "call": "s.rect(6, 4)",
+    "centroid": [
+     -5.204170427930421e-18,
+     0.0,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 24.0,
+    "call": "s.rect(2, 2, mode='a')",
+    "centroid": [
+     2.6743653587975777e-18,
+     -2.7755575615628914e-17,
+     0.0
+    ],
+    "faces": 2
+   },
+   {
+    "area": 24.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     2.6743653587975777e-18,
+     -2.7755575615628914e-17,
+     0.0
+    ],
+    "faces": 2
+   }
+  ]
+ },
+ {
+  "name": "nonempty-construction",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(6, 4)\ns.rect(2, 2, mode='c')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: No tag specified - the geometry will be unreachable",
+   "program_sha256": "15ead5a1fdd69d9890c5ffcbee41026ce1fecc0e8dd10e0536f28a08bcf4e29c",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 24.0,
+    "call": "s.rect(6, 4)",
+    "centroid": [
+     -5.204170427930421e-18,
+     0.0,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "nonempty-intersect",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(6, 4)\ns.rect(2, 2, mode='i')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 24.0,
+    "bounds": [
+     [
+      -1.0,
+      -1.0,
+      0.0
+     ],
+     [
+      1.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     7.04731412115578e-18,
+     -1.0408340855860847e-17,
+     1.0
+    ],
+    "faces": 6,
+    "solids": 1,
+    "volume": 7.999999999999998
+   },
+   "message": "",
+   "program_sha256": "decdaa417d9fe324b7fb1f21f207adfd33e2219934d6e722e87bcb496a38f452",
+   "status": "ok",
+   "step_sha256": "506d745d81f9e75e14e047e4f2c8ec85e8ebce1bdd9b537369ded1882269052c",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 24.0,
+    "call": "s.rect(6, 4)",
+    "centroid": [
+     -5.204170427930421e-18,
+     0.0,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "s.rect(2, 2, mode='i')",
+    "centroid": [
+     1.6046192152785466e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 4.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     1.6046192152785466e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "nonempty-subtract",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(6, 4)\ns.rect(2, 2, mode='s')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 96.0,
+    "bounds": [
+     [
+      -3.0,
+      -2.0,
+      0.0
+     ],
+     [
+      3.0,
+      2.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     0.0,
+     4.250072516143176e-18,
+     1.0000000000000002
+    ],
+    "faces": 10,
+    "solids": 1,
+    "volume": 40.0
+   },
+   "message": "",
+   "program_sha256": "c3a3e65a34987d2338ef6ac354399d8f5d9b1552d16bbbcce323df3b2fe4cc12",
+   "status": "ok",
+   "step_sha256": "29023d29bedccfb9af71ac00a9cc5a3d2ad81644dbf92a8a2dd17dee8c09003e",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 24.0,
+    "call": "s.rect(6, 4)",
+    "centroid": [
+     -5.204170427930421e-18,
+     0.0,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 20.0,
+    "call": "s.rect(2, 2, mode='s')",
+    "centroid": [
+     0.0,
+     -2.4980018054066023e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 20.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     0.0,
+     -2.4980018054066023e-17,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "nonempty-unknown",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(6, 4)\ns.rect(2, 2, mode='other')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: Invalid mode: other",
+   "program_sha256": "fc591aa3541a9463dbb86a15a2359b268528c4678048afe0d84f877233a4eadd",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 24.0,
+    "call": "s.rect(6, 4)",
+    "centroid": [
+     -5.204170427930421e-18,
+     0.0,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "push-rect-rect-s",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.push([(-4, 1), (3, 1)])\ns.rect(4, 4)\ns.rect(2, 2, mode='s')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 144.0,
+    "bounds": [
+     [
+      -6.0,
+      -1.0,
+      0.0
+     ],
+     [
+      5.0,
+      3.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     -0.49999999999999906,
+     1.0,
+     1.0
+    ],
+    "faces": 20,
+    "solids": 2,
+    "volume": 47.99999999999999
+   },
+   "message": "",
+   "program_sha256": "03f71267ada24ccd825b587d09f3f0d2b57e0dd1fe75847a2320da4ddb893bb8",
+   "status": "ok",
+   "step_sha256": "33df3e6e4ebe662de3194b8fe7c5096d4177983ac9ee22b3d221180549fd09ed",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 0.0,
+    "call": "s.push([(-4, 1), (3, 1)])",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 32.0,
+    "call": "s.rect(4, 4)",
+    "centroid": [
+     -0.5,
+     1.0,
+     0.0
+    ],
+    "faces": 2
+   },
+   {
+    "area": 24.0,
+    "call": "s.rect(2, 2, mode='s')",
+    "centroid": [
+     -0.5,
+     1.0,
+     0.0
+    ],
+    "faces": 2
+   },
+   {
+    "area": 24.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     -0.5,
+     1.0,
+     0.0
+    ],
+    "faces": 2
+   }
+  ]
+ },
+ {
+  "name": "rect-negative-height",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(4, -2)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 40.0,
+    "bounds": [
+     [
+      -2.0,
+      -1.0,
+      0.0
+     ],
+     [
+      2.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     1.409462824231156e-17,
+     -1.0408340855860847e-17,
+     1.0
+    ],
+    "faces": 6,
+    "solids": 1,
+    "volume": 15.999999999999996
+   },
+   "message": "",
+   "program_sha256": "13e27555608b8948667c9d73fd6b5303f957676bf7bb5e6b8dd70d04921eeb98",
+   "status": "ok",
+   "step_sha256": "193e4256403bc1e80741486141b2553ecc8dc8a9c3139642c4bc58e3e0fa184b",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 8.0,
+    "call": "s.rect(4, -2)",
+    "centroid": [
+     3.209238430557093e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 8.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     3.209238430557093e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "rect-negative-width",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(-4, 2)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 40.0,
+    "bounds": [
+     [
+      -2.0,
+      -1.0,
+      0.0
+     ],
+     [
+      2.0,
+      1.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     1.409462824231156e-17,
+     -1.0408340855860847e-17,
+     1.0
+    ],
+    "faces": 6,
+    "solids": 1,
+    "volume": 15.999999999999996
+   },
+   "message": "",
+   "program_sha256": "34e3a4b283590f6dc98b9983b5ab6cc465ad99e2e0b463370473cb5d65418da0",
+   "status": "ok",
+   "step_sha256": "193e4256403bc1e80741486141b2553ecc8dc8a9c3139642c4bc58e3e0fa184b",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 8.0,
+    "call": "s.rect(-4, 2)",
+    "centroid": [
+     3.209238430557093e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 8.0,
+    "call": "w = s.finalize()",
+    "centroid": [
+     3.209238430557093e-17,
+     -4.163336342344337e-17,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "rect-zero-height",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(4, 0)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 1.6e+101,
+    "bounds": [
+     [
+      -1e+100,
+      -1e+100,
+      0.0
+     ],
+     [
+      1e+100,
+      1e+100,
+      2.0
+     ]
+    ],
+    "centroid": [
+     3.6425041729232415e+83,
+     -7.499999999999999e+99,
+     1.4999999999999998
+    ],
+    "faces": 2,
+    "solids": 1,
+    "volume": 5.333333333333334e+100
+   },
+   "message": "BRepCheck_Analyzer: shape is not valid",
+   "program_sha256": "f75c534f0af089f9cd668bf945becf3d70a9ddd7f2c4a1626315b6a7e7e337a8",
+   "status": "invalid",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 8e+100,
+    "call": "s.rect(4, 0)",
+    "centroid": [
+     -5e+99,
+     -5e+99,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 8e+100,
+    "call": "w = s.finalize()",
+    "centroid": [
+     -5e+99,
+     -5e+99,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "rect-zero-width",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.rect(0, 2)\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 1.6e+101,
+    "bounds": [
+     [
+      -1e+100,
+      -1e+100,
+      0.0
+     ],
+     [
+      1e+100,
+      1e+100,
+      2.0
+     ]
+    ],
+    "centroid": [
+     3.6425041729232415e+83,
+     -7.499999999999999e+99,
+     1.4999999999999998
+    ],
+    "faces": 2,
+    "solids": 1,
+    "volume": 5.333333333333334e+100
+   },
+   "message": "BRepCheck_Analyzer: shape is not valid",
+   "program_sha256": "fa44b36491176eb4e622b985c93121e65f9f8f35910706afd0657ced41ad3ebd",
+   "status": "invalid",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 8e+100,
+    "call": "s.rect(0, 2)",
+    "centroid": [
+     -5e+99,
+     -5e+99,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 8e+100,
+    "call": "w = s.finalize()",
+    "centroid": [
+     -5e+99,
+     -5e+99,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "ring",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.circle(2)\ns.circle(1, mode='s')\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": {
+    "area": 56.54866776461627,
+    "bounds": [
+     [
+      -2.0,
+      -2.0,
+      0.0
+     ],
+     [
+      2.0,
+      2.0,
+      2.0
+     ]
+    ],
+    "centroid": [
+     -8.481479150569382e-16,
+     1.5106550269964705e-17,
+     1.0
+    ],
+    "faces": 4,
+    "solids": 1,
+    "volume": 18.84955592153875
+   },
+   "message": "",
+   "program_sha256": "f2e21741699898c1913b03a0a1cdb1b77759f4c6af52240447d5c3a71ee6ad27",
+   "status": "ok",
+   "step_sha256": "f223a28159a9bad36df1d470cd2600730e146951a23dbdc77e750ea8d1caa813",
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   },
+   {
+    "area": 12.566370614359167,
+    "call": "s.circle(2)",
+    "centroid": [
+     -8.881784197001252e-16,
+     -8.76035355368288e-17,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 9.424777960769376,
+    "call": "s.circle(1, mode='s')",
+    "centroid": [
+     0.0,
+     -1.6306400674181992e-16,
+     0.0
+    ],
+    "faces": 1
+   },
+   {
+    "area": 9.424777960769376,
+    "call": "w = s.finalize()",
+    "centroid": [
+     0.0,
+     -1.6306400674181992e-16,
+     0.0
+    ],
+    "faces": 1
+   }
+  ]
+ },
+ {
+  "name": "segment-without-edges",
+  "program": "import cadquery as cq\n\ns = cq.Workplane(\"XY\").sketch()\ns.segment((4, 0))\nw = s.finalize()\nresult = w.extrude(2)\n",
+  "report": {
+   "measures": null,
+   "message": "ValueError: No free edges available",
+   "program_sha256": "5081d8f8b0130d756b60bdac95cc3c6038e2a1c7cd5f4c1c97e774e2a6432b5d",
+   "status": "runtime",
+   "step_sha256": null,
+   "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+   }
+  },
+  "snapshots": [
+   {
+    "area": 0.0,
+    "call": "s = cq.Workplane(\"XY\").sketch()",
+    "centroid": null,
+    "faces": 0
+   }
+  ]
+ }
+]
