@@ -147,3 +147,20 @@ Consequences:
   the `unsupported_api` rows above; the other 31 are sprockets whose oracle
   now ends `ok` (also `cq_bug`, ADR-0013's amendment). Bundle 5's plan classes
   them once the subset reaches each program.
+
+## Amendment (2026-11-21): independent integration of CAD-Recode sketch measures
+
+For the 18 CAD-Recode sketch rows in ADR-0023, an independent integral of
+the oracle's planar and cylindrical trim curves can settle a discrepancy
+in Open CASCADE's GProp volume, area or centroid. The integral uses Green's
+theorem and the divergence theorem, evaluated at two resolutions that agree
+within the existing agreement tolerance. Both builds succeed. The arris
+measures agree with the integral, and the committed oracle measures differ
+from it under ADR-0005. The oracle's tight bounds are used as a common check
+against arris and provide no independent evidence about a bounds difference.
+
+The verdict stores the measures as `ClosedForm` with the integration method
+identified in its note. `compare` applies the same checks as for a measure
+derived from construction. This evidence settles the measurement discrepancy
+for the supplied boundary. A disagreement about the constructed geometry
+still requires measures derived from construction or a second kernel.

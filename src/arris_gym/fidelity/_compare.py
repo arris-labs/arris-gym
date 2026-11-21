@@ -54,8 +54,12 @@ class FidelityOutcome(enum.Enum):
 
 
 class ClosedForm(BaseModel):
-    """A part's measures worked out from how it is built, never from a kernel's
-    output; `note` says how. `compare` holds both sides to it."""
+    """Reference measures derived from construction, with the method in `note`.
+
+    ADR-0006 also admits independent boundary integration for the documented
+    CAD-Recode mass-property discrepancies. `compare` checks both builds
+    against the reference measures.
+    """
 
     model_config = _CONFIG
 
