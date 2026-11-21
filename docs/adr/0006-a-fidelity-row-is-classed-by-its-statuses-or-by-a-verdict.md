@@ -117,3 +117,30 @@ timeouts by name.
   with no way to correct it.
 - **A timeout classed as agreement when both sides time out**: a status
   that wall-clock time decides would then decide a class.
+
+## Amendment (2026-11-21): an `unsupported_api` against an invalid shape is a `cq` bug
+
+The row `unsupported_api` against an oracle `invalid` is `cq_bug`. The table's
+row "`ok`, `syntax`, `runtime`, `unsupported_api`, `arris_refusal` against
+`crash` or `invalid`: unclassified" no longer holds for `unsupported_api`
+against `invalid`; every other pair of it stands.
+
+`unsupported_api` declares that `cq` does not run the form, so it makes no claim
+about the program. The oracle's checker failure cannot be what the two sides
+disagree on: the row is a program the subset does not reach, exactly as against
+`ok`. The original rule left `invalid` unclassified because an arris side that
+tried the program may have answered rightly (a `runtime` on a degenerate
+input), and that holds only for the statuses that ran it. In the subset the
+row counts against the target, as an `unsupported_api` against `ok` does.
+Only the comparer's `_oracle_broke` changes; no public type or signature does.
+
+Consequences:
+
+- BenchCAD's 168 `unsupported_api` rows against an `invalid` shape are `cq_bug`
+  rather than unclassified. They stay outside the subset: reach and the
+  in-subset class counts do not move.
+- `unsupported_api` against `crash`, and `runtime` or `arris_refusal` against
+  `crash` or `invalid`, stay unclassified.
+- An `ok` against `invalid` row stays unclassified until a verdict. BenchCAD's
+  136 out-of-subset rows of that pair belong to bundle 5's plan, which classes
+  them once the subset reaches each program.

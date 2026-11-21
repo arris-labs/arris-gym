@@ -1,5 +1,5 @@
 {
-  "programs": 27,
+  "programs": 28,
   "licences": ["MIT OR Apache-2.0"],
   "arris_versions": ["0.11.1"],
   "numpy_versions": ["2.3.4"],

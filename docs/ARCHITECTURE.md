@@ -707,7 +707,8 @@ report, verdict=None)` gives a **fidelity row** (`FidelityRow`): `agree`,
 `disagree` with its **disagreement class**, or `unclassified`. The rule
 (ADR-0006) classes what the two statuses settle. An arris refusal, crash or
 checker failure, or a `runtime` where the oracle builds the part, has a
-class. Two ordinary failures agree. Two `ok` sides agree inside the agreement
+class, as is an `unsupported_api` against an `ok` or an `invalid` oracle shape (`cq_bug`: the subset
+declared it does not run the form). Two ordinary failures agree. Two `ok` sides agree inside the agreement
 tolerance when the oracle holds one solid, or as many solids as arris's body
 has shells (a compound, ADR-0016). A measure gap, the oracle failing alone and a timeout on either
 side are `unclassified` until a **verdict** (a class and its evidence: a

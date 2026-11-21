@@ -1,0 +1,34 @@
+{
+  "status": "invalid",
+  "message": "the shape fails CadQuery's isValid check",
+  "measures": {
+    "volume": 1.0,
+    "area": 8.0,
+    "centroid": [
+      0.0,
+      0.0,
+      5.0
+    ],
+    "bounds": [
+      [
+        -2.5,
+        -2.5,
+        0.0
+      ],
+      [
+        2.5,
+        2.5,
+        10.0
+      ]
+    ],
+    "faces": 4,
+    "solids": 1
+  },
+  "step_sha256": null,
+  "program_sha256": "d5a679ae083fb46ec56b8d300286760521c2d6ba1ce12cc291fa6ee28a2f3778",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

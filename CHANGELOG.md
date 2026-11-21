@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- A fidelity row that pairs the CadQuery dialect's `unsupported_api` with an
+  oracle shape that fails CadQuery's validity check is now classed `cq_bug`,
+  as an `unsupported_api` against a valid oracle shape already was; it was
+  `unclassified`. No reward moves.
+
 - In the CadQuery dialect, `workplane()` on a single unified cylinder, cone,
   sphere or torus face now places a plane through its centre of mass with the
   outward normal at its projection onto the surface. A singular projection

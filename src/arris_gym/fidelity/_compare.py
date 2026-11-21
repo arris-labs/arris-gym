@@ -221,11 +221,18 @@ def _oracle_failed(status: Status) -> _Ruling:
             assert_never(unreachable)
 
 
-def _oracle_broke(status: Status, same: Status) -> _Ruling:
-    """The oracle crashed or built an invalid shape; `same` is arris's like failure."""
+def _oracle_broke(status: Status, same: Status, oracle: OracleStatus) -> _Ruling:
+    """The oracle crashed or built an invalid shape; `same` is arris's like failure.
+
+    An `unsupported_api` against an `invalid` shape is `cq_bug` (ADR-0006,
+    amended 2026-11-21): it declares that `cq` does not run the form, so it
+    makes no claim about the program, as against `ok`.
+    """
     match status:
         case Status.CHECKER_FAIL | Status.CRASH:
             return _Rule.AGREE if status is same else DisagreementClass.ARRIS_BUG
+        case Status.UNSUPPORTED_API if oracle is OracleStatus.INVALID:
+            return DisagreementClass.CQ_BUG
         case (
             Status.OK
             | Status.SYNTAX
@@ -248,9 +255,9 @@ def _rule(status: Status, oracle: OracleStatus) -> _Ruling:
         case OracleStatus.SYNTAX | OracleStatus.RUNTIME | OracleStatus.NO_RESULT:
             return _oracle_failed(status)
         case OracleStatus.INVALID:
-            return _oracle_broke(status, Status.CHECKER_FAIL)
+            return _oracle_broke(status, Status.CHECKER_FAIL, oracle)
         case OracleStatus.CRASH:
-            return _oracle_broke(status, Status.CRASH)
+            return _oracle_broke(status, Status.CRASH, oracle)
         case _ as unreachable:
             assert_never(unreachable)
 
@@ -293,7 +300,9 @@ def compare(
     solids as the result has shells (ADR-0016), and every judged measure is
     inside the agreement tolerance (ADR-0005), and are `unclassified`
     otherwise, as are a timeout on either side and the oracle failing
-    alone. A `verdict` classes such a row, or replaces the rule's class.
+    alone. An `unsupported_api` against an oracle `invalid` shape is
+    `cq_bug`, as against `ok`: the subset declared it does not run the form.
+    A `verdict` classes such a row, or replaces the rule's class.
 
     Never raises without a verdict. Raises `ValueError`, a caller's
     mistake, for a verdict on a row that agrees, a verdict of any class but

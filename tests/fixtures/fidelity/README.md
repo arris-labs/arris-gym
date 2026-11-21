@@ -37,11 +37,12 @@ in the commit.
 (`program.py`), a planted `oracle.json` written by hand (what the oracle would
 report, its `program_sha256` that of `program.py`; never recorded), a
 `verdict.json` where the rule needs one, and `expected.json`, the row ADR-0006's
-table gives. `tests/test_fidelity_compare.py` runs the program and compares.
+table gives (an optional `"dialect"` names the dialect the program runs in). `tests/test_fidelity_compare.py` runs the program and compares.
 
 | Fixture | arris | Oracle (planted) | Row |
 |---|---|---|---|
 | `class-cq-bug` | `runtime` (`AttributeError`) | `ok` | `cq_bug` |
+| `class-cq-bug-oracle-invalid` | `unsupported_api` (`cq.Wire.makeHelix`, run as `"dialect": "cq"` in `expected.json`) | `invalid` | `cq_bug` |
 | `class-arris-refusal` | `arris_refusal` (`OpDegenerateError`, a fillet of 10 on a 3-high box) | `ok` | `arris_refusal` |
 | `class-arris-bug` | `crash` (`os._exit(3)`) | `ok` | `arris_bug` |
 | `class-occt-wrong` | `ok`, the 2 x 3 x 4 box | `ok`, volume 25 | `occt_wrong` by its closed form, 24 |
@@ -52,8 +53,8 @@ table gives. `tests/test_fidelity_compare.py` runs the program and compares.
 
 `table-expected.json`, `arris-report-expected.json` and `arris-report-expected.md`
 are the `FidelityTable` counts and the arris report that all of the above make
-(the 19 `agree-*` pairs plus the 8 `class-*`), worked out by counting the two
-tables here: 27 programs, 20 agree, 5 disagree (one per class), 2 unclassified.
+(the 19 `agree-*` pairs plus the 9 `class-*`), worked out by counting the two
+tables here: 28 programs, 20 agree, 6 disagree (two `cq_bug`, one of each other class), 2 unclassified.
 `tests/test_fidelity_table.py` holds the table and `arris_rows` to them. The
 refusal's words are the kernel's, as `class-arris-refusal` draws them. Every
 entry's source is `arris-gym tests/fixtures/fidelity` and its licence this

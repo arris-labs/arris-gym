@@ -53,7 +53,12 @@ def entries() -> list[TableEntry]:
             if verdict_file.is_file()
             else None
         )
-        result = arris_gym.run((d / "program.py").read_text())
+        dialect = (
+            json.loads((d / "expected.json").read_text()).get("dialect", "arris")
+            if (d / "expected.json").is_file()
+            else "arris"
+        )
+        result = arris_gym.run((d / "program.py").read_text(), dialect=dialect)
         row = compare(result, report, verdict)
         rows.append(TableEntry(name=d.name, source=SOURCE, licence=LICENCE, row=row))
     return rows

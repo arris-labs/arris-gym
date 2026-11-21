@@ -1,0 +1,7 @@
+{
+  "dialect": "cq",
+  "outcome": "disagree",
+  "disagreement": "cq_bug",
+  "status": "unsupported_api",
+  "oracle_status": "invalid"
+}

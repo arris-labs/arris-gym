@@ -55,7 +55,7 @@ def load(d: pathlib.Path) -> tuple[OracleReport, Verdict | None, dict[str, Any]]
 @pytest.mark.parametrize("d", DIRECTORIES, ids=lambda d: d.name)
 def test_each_planted_fixture_comes_back_in_its_class(d: pathlib.Path) -> None:
     report, verdict, want = load(d)
-    result = arris_gym.run((d / "program.py").read_text())
+    result = arris_gym.run((d / "program.py").read_text(), dialect=want.get("dialect", "arris"))
     row = compare(result, report, verdict)
     assert row.status.value == want["status"], result.message
     assert row.oracle_status.value == want["oracle_status"]
@@ -159,7 +159,7 @@ RULE = {
     "ok": (A, U, U, U, U, U, U),
     "syntax": (U, A, A, A, U, U, U),
     "runtime": (CQ, A, A, A, U, U, U),
-    "unsupported_api": (CQ, A, A, A, U, U, U),
+    "unsupported_api": (CQ, A, A, A, CQ, U, U),
     "arris_refusal": (REF, A, A, A, U, U, U),
     "checker_fail": (BUG, BUG, BUG, BUG, A, U, BUG),
     "timeout": (U, U, U, U, U, U, U),

@@ -75,7 +75,7 @@ numeric, geometric or semantic case to get right within a given design;
   in the ADR-0013 amendment. Set `ORACLE_TIMEOUT` to the next multiple of
   30 s above 4 × the slowest, and pin it in `tests/test_cq_corpus.py`. If
   any stem still times out or crashes at 300 s, stop: see Q1.
-- [ ] Step 2 **[2]**: write the ADR-0006 amendment and make the rule change.
+- [x] Step 2 **[2]**: write the ADR-0006 amendment and make the rule change.
   Add the `class-cq-bug-oracle-invalid` fixture. Change the `unsupported_api`
   row of the `RULE` table in `tests/test_fidelity_compare.py` to `(CQ, A, A,
   A, CQ, U, U)`. Re-count `table-expected.json` and the arris report.
