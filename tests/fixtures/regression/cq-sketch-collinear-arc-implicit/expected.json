@@ -1,0 +1,6 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: GC_MakeArcOfCircle::Value() - no result",
+  "note": "The preceding segment ends at (0, 0), so the implicit start and both arguments lie on y = x. Three distinct points on a line cannot define a circular arc."
+}

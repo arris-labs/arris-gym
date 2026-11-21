@@ -276,7 +276,8 @@ class Sketch:
         """Draw a circular arc through the given plane-local points.
 
         With two points, use the last free edge's end as the start. An
-        implicit start without a preceding edge raises `ValueError`.
+        implicit start without a preceding edge or a collinear triple
+        raises `ValueError`.
 
         >>> from arris_gym.cq import Workplane
         >>> s = Workplane("XY").sketch()
@@ -285,10 +286,14 @@ class Sketch:
         """
         first, second = _edge_point(p1, "arc"), _edge_point(p2, "arc")
         if p3 is None:
-            edge = _Edge(self._last_end(), second, first)
+            start, via, end = self._last_end(), first, second
         else:
-            edge = _Edge(first, _edge_point(p3, "arc"), second)
-        self._edges.append(edge)
+            start, via, end = first, second, _edge_point(p3, "arc")
+        via_x, via_y = via[0] - start[0], via[1] - start[1]
+        end_x, end_y = end[0] - start[0], end[1] - start[1]
+        if via_x * end_y == via_y * end_x:
+            raise ValueError("GC_MakeArcOfCircle::Value() - no result")
+        self._edges.append(_Edge(start, end, via))
         return self
 
     @census_form("Sketch.close")

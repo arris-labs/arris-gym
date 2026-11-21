@@ -1,0 +1,14 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "Sketch.assemble compares endpoints for exact equality and rejects a loop CadQuery closes across a 1e-8 gap",
+  "measures": {
+    "volume": 0.5,
+    "area": 4.414213562373095,
+    "centroid": [0.3333333333333333, 0.3333333333333333, 0.5],
+    "bounds": [[0, 0, 0], [1, 1, 1]],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "The intended loop is the unit right triangle, with one corner drawn with a 1e-8 gap. The prism is 1 high, so volume is 1/2, surface area is 1 + 2 + sqrt(2), and the centroid is (1/3, 1/3, 1/2). The closed-form measures use the joined corner at (1, 0), and the fixture tolerance covers the gap."
+}

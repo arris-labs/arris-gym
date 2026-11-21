@@ -17,7 +17,8 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - In the CadQuery dialect, draw sketch outlines with `segment` and `arc`.
   Use `close` to draw a closing line and `assemble` to add the region
   at the sketch's selected points. Assembly returns `runtime` when
-  the edges fail to form one closed loop.
+  the edges fail to form one closed loop. A collinear arc returns
+  `runtime` at the drawing call.
 
 - The census counts calls after `Workplane.sketch()` through `finalize()`
   under `Sketch.*`. Calls after `finalize()` return to the workplane

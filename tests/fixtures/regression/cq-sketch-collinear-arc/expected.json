@@ -1,0 +1,6 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: GC_MakeArcOfCircle::Value() - no result",
+  "note": "The three distinct points lie on one line, which cannot intersect a circle in three points. Drawing the arc must fail even though extrusion uses only the rectangle."
+}
