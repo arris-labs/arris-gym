@@ -136,11 +136,14 @@ Only the comparer's `_oracle_broke` changes; no public type or signature does.
 
 Consequences:
 
-- BenchCAD's 168 `unsupported_api` rows against an `invalid` shape are `cq_bug`
-  rather than unclassified. They stay outside the subset: reach and the
-  in-subset class counts do not move.
+- BenchCAD's 168 `unsupported_api` rows against an `invalid` shape (57
+  `worm_screw`, 6 `bolt` and 105 of other families) are `cq_bug` rather than
+  unclassified. They stay outside the subset: reach and the in-subset class
+  counts do not move.
 - `unsupported_api` against `crash`, and `runtime` or `arris_refusal` against
   `crash` or `invalid`, stay unclassified.
-- An `ok` against `invalid` row stays unclassified until a verdict. BenchCAD's
-  136 out-of-subset rows of that pair belong to bundle 5's plan, which classes
+- An `ok` against `invalid` row stays unclassified until a verdict. No
+  BenchCAD row pairs them today. Of bundle 5's 136 out-of-subset rows, 105 are
+  the `unsupported_api` rows above; the other 31 are sprockets whose oracle
+  now ends `ok` (also `cq_bug`, ADR-0013's amendment). Bundle 5's plan classes
   them once the subset reaches each program.

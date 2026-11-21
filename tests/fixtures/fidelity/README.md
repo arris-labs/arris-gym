@@ -42,7 +42,7 @@ table gives (an optional `"dialect"` names the dialect the program runs in). `te
 | Fixture | arris | Oracle (planted) | Row |
 |---|---|---|---|
 | `class-cq-bug` | `runtime` (`AttributeError`) | `ok` | `cq_bug` |
-| `class-cq-bug-oracle-invalid` | `unsupported_api` (`cq.Wire.makeHelix`, run as `"dialect": "cq"` in `expected.json`) | `invalid` | `cq_bug` |
+| `class-cq-bug-oracle-invalid` | `unsupported_api` (`cq.Wire`, run as `"dialect": "cq"` in `expected.json`) | `invalid` | `cq_bug` |
 | `class-arris-refusal` | `arris_refusal` (`OpDegenerateError`, a fillet of 10 on a 3-high box) | `ok` | `arris_refusal` |
 | `class-arris-bug` | `crash` (`os._exit(3)`) | `ok` | `arris_bug` |
 | `class-occt-wrong` | `ok`, the 2 x 3 x 4 box | `ok`, volume 25 | `occt_wrong` by its closed form, 24 |
@@ -50,6 +50,16 @@ table gives (an optional `"dialect"` names the dialect the program runs in). `te
 | `class-both-fail-agree` | `syntax` | `syntax` | agree |
 | `class-unclassified-gap` | `ok`, the box | `ok`, volume 24.5, no verdict | unclassified |
 | `class-timeout` | `ok` | `timeout` | unclassified, timed out |
+
+`class-cq-bug-oracle-invalid`'s planted measures are by-construction
+approximations of its program, not oracle output: a radius-0.5 circle swept
+along a radius-3 helix of pitch 2 and height 10 (5 turns). Helix length
+L = 5 * sqrt((2 pi 3)^2 + 2^2) = 94.8; volume pi 0.5^2 L = 74.5; area
+2 pi 0.5 L + 2 pi 0.5^2 = 299.4 (lateral plus two caps, hence 3 faces);
+bounds x, y within 3 + 0.5 = 3.5 and z within 0 to 10 widened by the 0.5
+radius; centroid on the axis at z = 5. The message is the worker's own for an
+invalid shape. Only the `invalid` status and the unsupported form matter to
+the row.
 
 `table-expected.json`, `arris-report-expected.json` and `arris-report-expected.md`
 are the `FidelityTable` counts and the arris report that all of the above make

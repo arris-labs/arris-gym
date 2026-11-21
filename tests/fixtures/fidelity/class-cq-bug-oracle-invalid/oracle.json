@@ -1,9 +1,9 @@
 {
   "status": "invalid",
-  "message": "the shape fails CadQuery's isValid check",
+  "message": "BRepCheck_Analyzer: shape is not valid",
   "measures": {
-    "volume": 1.0,
-    "area": 8.0,
+    "volume": 74.5,
+    "area": 299.4,
     "centroid": [
       0.0,
       0.0,
@@ -11,17 +11,17 @@
     ],
     "bounds": [
       [
-        -2.5,
-        -2.5,
-        0.0
+        -3.5,
+        -3.5,
+        -0.5
       ],
       [
-        2.5,
-        2.5,
-        10.0
+        3.5,
+        3.5,
+        10.5
       ]
     ],
-    "faces": 4,
+    "faces": 3,
     "solids": 1
   },
   "step_sha256": null,
