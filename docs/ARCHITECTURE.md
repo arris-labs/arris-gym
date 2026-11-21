@@ -178,7 +178,8 @@ none of them (ADR-0003).
   1,871/17,900; seven forms reach 4,523, the first selector (`>Z`) comes
   fifteenth, and twenty-four items pass half (9,061); all 17,900 after 57. On
   CAD-Recode the C1 curve's end form `r = …` comes first: 37/968 after
-  three items, 104 after four, 697 after 17 and all 968 after 20. Input order cannot move the curve's canonical-JSON digest.
+  three items, 104 after four, 697 after 17 and all 968 after 20.
+  Input order cannot move the curve's canonical-JSON digest.
 - **The command.** `arris-gym census --corpus benchcad|cadrecode [--out DIR]`
   writes `census.json`, `programs.jsonl.gz` and `reach.json` (`slice.txt` for
   BenchCAD only), and prints totals and the census digest. Per-program rows
@@ -329,8 +330,9 @@ the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Its
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
 axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `edges` and `edges(sel)` with the same six and `|X |Y |Z` and `'>Z or <Z'` (a stack of edges, ranked by their centre of mass, ADR-0020; `faces` refuses the last four), `fillet` (a radius; a blend of the stacked edges, or of every edge of the stacked faces or solid, in one call, seams passed over, ADR-0020), `chamfer` (a length; the same blend, bevelled), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending circles cut blind in one call, ADR-0019), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
-`threePointArc`, `polyline`, `close`, `revolve` and
-`sketch().push(...).rect(...).finalize().extrude(...)` (ADR-0023).
+`threePointArc`, `polyline`, `close`, `revolve` and `Workplane.sketch()`.
+The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
+`arc`, `close`, `assemble` and `finalize` (ADR-0023).
 STEP export waits for its bundle in C2's order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
@@ -349,8 +351,8 @@ exists. A call outside the subset raises `UnsupportedApi` naming it as the
 census writes it (`cq.Sketch`, `Workplane.text`, `cq.occ_impl` for
 `import cadquery.occ_impl`), via `__getattr__`, never `AttributeError`; a
 name with a leading underscore is Python's and stays `AttributeError`
-(ADR-0007). A `Workplane` is a frozen value: its plane, its **stack** of
-objects and its parent; every call returns a new one.
+(ADR-0007). A `Workplane` is a frozen value holding its plane, its
+**stack** of objects and its parent.
 The `YZ` plane maps local x, y and normal to world +y, +z and +x, the `XZ`
 plane to world +x, +z and -y, the `ZX` plane to world +z, +x and +y;
 offsets, sketches and extrusion use that directed frame, as CadQuery does.
@@ -463,10 +465,11 @@ and `reset` clears it. Each `circle` or `rect` places a region at each
 selected point, or at the origin for an empty selection. `segment` and
 `arc` draw free edges in plane coordinates. An implicit start continues
 from the last end, and `close` draws a line back to the first start.
+`arc` with collinear points ends `runtime` at the drawing call.
 `assemble` orders and reverses the edges as needed to form one closed
-loop. It retains those edges and adds a copy of the region at every
-selected point, or at the origin when the selection is empty. Assembly
-requires one closed loop and otherwise ends `runtime`. `face(tool)` places
+loop using exact endpoint equality. It retains those edges and places
+the region at every selected point, or at the origin for an empty selection.
+Assembly requires one closed loop and otherwise ends `runtime`. `face(tool)` places
 a snapshot of another sketch's section in plane-local coordinates, including
 its holes. Its workplane frame and later edits have no effect. An empty
 tool ends `runtime` and an argument other than a sketch ends
@@ -476,7 +479,9 @@ union of that call's placements. `finalize()` returns the workplane with
 the live sketch on its stack. `extrude(d)` combines the prisms in drawing
 order along the signed normal and fuses the result with the chain's solid
 when present. Subtraction and intersection require a section at the drawing
-call. An empty section ends `runtime` at extrusion. The `both=`
+call. Their tools extend beyond both caps, and each intersection placement
+acts on the section as it was before the call. An empty section ends
+`runtime` at extrusion. The `both=`
 keyword, `cutBlind`, `revolve` and bores on a sketch end `unsupported_api`
 (ADR-0023).
 
@@ -740,7 +745,9 @@ tolerance when the oracle holds one solid, or as many solids as arris's body
 has shells (a compound, ADR-0016). A measure gap, the oracle failing alone and a timeout on either
 side are `unclassified` until a **verdict** (a class and its evidence: a
 closed form, which `compare` checks, a second oracle's record, a doc anchor
-for `by_design`, or a regression fixture) classes them. A verdict may also
+for `by_design`, or a regression fixture) classes them. For the GProp
+discrepancies in ADR-0023, the `ClosedForm` evidence carries independently
+integrated measures of the oracle's boundary (ADR-0006). A verdict may also
 replace the rule's class, except the `arris_bug` of an arris crash or checker
 failure. An unclassified row makes a cycle red. The arris
 rows leave as a consumer report (arris ADR-0020).
@@ -945,6 +952,8 @@ run's oracle deadline is now 240 s, the next multiple of 30 s above four times
 the slowest program measured (57.3 s; ADR-0013's amendment of 2026-11-21), so
 all 31 ran to an oracle `ok` and class `cq_bug` too. BenchCAD's table digest is
 `45ee27a1…af7a` and its oracle rows differ from before in those 31 rows alone.
+With the sketch forms admitted, the BenchCAD table and reach report
+reproduce byte for byte at reach 9,998/17,900.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
@@ -963,9 +972,9 @@ The sketch lift (ADR-0023) reaches all 968 CAD-Recode programs. Of these,
 timed-out rows. The checker failure is a post whose footprint touches a
 cap edge (`regression/cq-sketch-post-tangent-to-cap`). A boundary integral
 of the planar and cylindrical faces resolves 18 measurement gaps in the
-oracle's default GProp integration. The earlier crossing-cylinder verdict
-continues to use its closed form. The table reuses the committed oracle
-rows byte for byte. CAD-Recode meets its fidelity target (ADR-0014).
+oracle's default GProp integration (ADR-0006's amendment). The earlier
+crossing-cylinder verdict uses its closed form. The table's oracle rows
+match the committed bytes. CAD-Recode meets its fidelity target (ADR-0014).
 
 With the corpus deadline of 240 s, well above the slowest program, load no
 longer moves a BenchCAD status. The oracle's bytes are not repeatable run to

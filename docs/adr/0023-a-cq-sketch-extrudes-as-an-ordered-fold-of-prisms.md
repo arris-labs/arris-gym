@@ -156,3 +156,14 @@ interior hole would exclude that contact. The checker failure is a fuse
 of a post to a cap with its footprint tangent to an edge
 (`regression/cq-sketch-post-tangent-to-cap`). The direct prism fold
 keeps the same operation order for both ordinary and contact cases.
+
+## Amendment (2026-11-21): free-edge validation
+
+`arc` rejects collinear points with `ValueError` at the drawing call, for
+both explicit and implicit starts. CadQuery rejects those constructions
+even if the program never assembles the edge. The collinear-arc regression
+fixtures hold both forms.
+
+`assemble` uses exact endpoint equality. CadQuery joins the 1e-8 gap in
+`regression/cq-sketch-assemble-near-endpoints`. That construction remains
+a strict expected failure pending a decision on join tolerance.

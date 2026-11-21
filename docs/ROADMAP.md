@@ -121,16 +121,15 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status: face selectors reach zero in-subset `cq_bug` and unclassified
-rows on both corpora (2026-11-21, ADR-0022), and BenchCAD has none outside
-the subset either: 168 `unsupported_api` rows against an invalid oracle shape
-are `cq_bug` by ADR-0006's amendment, and the 31 oracle timeouts ran to `ok`
-under a corpus deadline measured from them (ADR-0013). Both corpora hold zero
-unclassified rows and zero timeouts. CAD-Recode's sketch lift in bundle 4
-(ADR-0023) meets its fidelity target with reach 968/968. BenchCAD's
-committed reach is 9,998/17,900. Bundle 4's BenchCAD re-run is pending,
-followed by the head (bundle 5) and the tail (`shell` and the rest),
-riskiest first (ADR-0014).
+**Status (2026-11-21).** Bundle 4 is complete. The sketch subset meets
+CAD-Recode's fidelity target with reach 968/968 (ADR-0014, ADR-0023).
+BenchCAD's table and census reproduce byte for byte, with reach
+9,998/17,900 against its 85% target. Both corpora have zero unclassified
+rows, zero timeouts and zero in-subset `cq_bug` rows. ADR-0006 classes BenchCAD's
+168 `unsupported_api` rows against an invalid oracle shape as `cq_bug`.
+The measured corpus deadline in ADR-0013 resolves the 31 oracle timeouts.
+The head (bundle 5) comes next, then the tail (`shell` and the rest) and
+the cross-architecture digest check.
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified

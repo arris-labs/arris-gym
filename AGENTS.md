@@ -36,11 +36,11 @@ unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
 (ADR-0008 to ADR-0010); `arris-gym rescore benchcad` re-scores the slice
 against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **0.1.0 published** (2026-11-10).
-**C2:** CAD-Recode meets its fidelity target with reach 968/968
-(ADR-0014, ADR-0023). BenchCAD's committed reach is 9,998/17,900 against
-its 85% target. Both tables have zero in-subset `cq_bug` and zero
-unclassified rows. The kernel pin is `arris` 0.11.1.
-**Next:** Bundle 4's BenchCAD re-run (`docs/ROADMAP.md`).
+**C2:** Bundle 4 meets CAD-Recode's fidelity target at 968/968 and reproduces
+BenchCAD's table at 9,998/17,900, with zero in-subset `cq_bug` and zero
+unclassified rows on both corpora (ADR-0014, ADR-0023). The kernel pin is
+`arris` 0.11.1.
+**Next:** BenchCAD's head, bundle 5 (`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code
 
