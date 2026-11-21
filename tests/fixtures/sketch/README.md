@@ -33,3 +33,20 @@ A run with four zygotes and a run with one produced identical bytes.
 `tests/test_sketch_probe.py` checks the recorded call order, closed forms
 for the bounded sections and valid prisms, and the exact statuses and
 messages on failures. The test reads the records offline.
+
+## Sketch extrusion fixtures
+
+The fixture directories hold sketch programs and closed-form measures or
+expected statuses. `tests/test_cq_sketch.py` checks each program against
+either the matching trace above or the fixture's own `oracle.json`. It
+checks negative extrusion on a shifted YZ plane, placement selection,
+grouped intersections, mutation after `finalize()` and fusion with a
+solid earlier in the chain. The cases that use sketch forms outside the
+subset record how CadQuery handles those programs. `Sketch.clean` has a
+refusal fixture for the unsupported method.
+
+The prism fold's known kernel limits have strict fixtures under
+`regression/`. `cq-sketch-corner-contact` expects two solids that touch
+along a vertical edge. `cq-sketch-common-after-contact` expects an empty
+intersection after a fuse. `cq-sketch-fuse-nested-prisms` expects the
+outermost of three nested prisms.

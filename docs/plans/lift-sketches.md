@@ -92,7 +92,7 @@ Grades are tiers (`.agents/tiers.md`):
   manifest. Checks BenchCAD's census is byte-equal (**[conductor-run]** past
   110 s). Amends ADR-0014 for the renamed CAD-Recode items and the 725.
   CHANGELOG bullet.
-- [ ] Step 4 **[3]** — `cq` core in `cq/_sketch.py`: `Workplane.sketch()`,
+- [x] Step 4 **[3]** — `cq` core in `cq/_sketch.py`: `Workplane.sketch()`,
   `Sketch.finalize`, `push`, `reset`, `circle` and `rect` with and without
   `mode=`, and `extrude(num)` of a sketch (delta B). Keep the frozen C1
   subset in `tests/fixture_cases.py` free of the bundle's declarations.
@@ -122,7 +122,7 @@ Grades are tiers (`.agents/tiers.md`):
   to a fixture and fixed (the commit carries its step's suffix), a
   closed-form verdict (`tools/cq_closed_forms.py`), or an arris refusal or bug
   filed in `../arris/docs/ideas/`. Commits the table, reports and README
-  figures.
+  figures. Checks the committed reach report against the current subset again.
 - [ ] Step 8 **[1, conductor-run]** — re-run BenchCAD. The table digest
   (`45ee27a1…`) and the reach report are byte-equal; the README names the
   re-run.
@@ -143,7 +143,7 @@ Grades are tiers (`.agents/tiers.md`):
 - `docs/ROADMAP.md` §C2 status: bundle 4 done, CAD-Recode's target met, bundle 5 next.
 - `AGENTS.md` current state.
 - `GLOSSARY.md`: **Sketch** (step 2), **Receiver** (step 3).
-- `CHANGELOG.md` bullets come from steps 3 and 6; no reward moves.
+- `CHANGELOG.md` bullets come from steps 3, 4 and 6; no reward moves.
 
 ## Open questions
 - *Settled* (step 3, ADR-0014 amendment). The receiver change exposes
@@ -157,7 +157,17 @@ Grades are tiers (`.agents/tiers.md`):
   edges to form one closed loop, as the shuffled triangle requires. An open
   chain ends `runtime` at `assemble` because it cannot bound a valid section.
   The oracle's invalid extrusion stays in the fixture.
+- *Settled* (step 4). When a cut or common precedes another cut or common,
+  evaluate the prefix as unit prisms in a separate model. This lets the
+  program catch a null-section error at the drawing call. Final extrusion
+  still folds at the requested signed depth in the program's model. The
+  partial lift reaches 193 of 968 CAD-Recode programs. The committed table
+  is checked against its pre-sketch subset until the step 7 re-run.
 - ⚠ OPEN: arris may refuse prism folds that Open CASCADE builds. Those rows
   are `arris_refusal` and do not block the target. At step 7 the agent decides
   whether to build a profile with holes for cuts that lie strictly inside, and
-  records the choice in ADR-0023 by amendment.
+  records the choice in ADR-0023 by amendment. Step 4's strict regression
+  fixtures also hold corner contact, common after a fused contact, and
+  the second fuse of three nested prisms. The coordinate-compression
+  property generates rectangle pairs with distinct sides and checks a
+  mixed three-call fold explicitly.

@@ -195,6 +195,8 @@ VALUES = {
 def declared_programs(draw: st.DrawFn) -> tuple[CorpusProgram, cq.CensusForm]:
     chosen = draw(st.lists(st.sampled_from(SUBSET.forms), min_size=1, max_size=12))
     lines = ["import cadquery as cq", "dimension = 2", "wp = cq.Workplane('XY')"]
+    if any(form.name.startswith("Sketch.") for form in chosen):
+        lines.append("sk = wp.sketch()")
     for declaration in chosen:
         # A selector is a literal for the census; a name or expression is no selector.
         dynamic = (
@@ -209,7 +211,7 @@ def declared_programs(draw: st.DrawFn) -> tuple[CorpusProgram, cq.CensusForm]:
             for key, kinds in declaration.keywords
             if draw(st.booleans())
         ]
-        callee = declaration.name.replace("Workplane.", "wp.")
+        callee = declaration.name.replace("Workplane.", "wp.").replace("Sketch.", "sk.")
         lines.append(f"{callee}({', '.join(args)})")
     lines.append("result = wp")
     return program("\n".join(lines)), draw(st.sampled_from(chosen))

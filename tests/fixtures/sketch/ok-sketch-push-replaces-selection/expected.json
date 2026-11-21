@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 16,
+    "area": 48,
+    "centroid": [
+      2.5,
+      0.5,
+      1
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        0
+      ],
+      [
+        6,
+        2,
+        2
+      ]
+    ],
+    "shells": 2,
+    "genus": 0,
+    "faces": 12,
+    "face_kinds": [
+      [
+        "plane",
+        12
+      ]
+    ]
+  },
+  "note": "Replacing the selection uses (5, 1) only. Pushing the empty list places the second square at the origin."
+}

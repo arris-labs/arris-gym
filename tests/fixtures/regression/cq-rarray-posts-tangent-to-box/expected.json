@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "arris 0.11.1 returns an invalid top face when fusing the second rim-tangent post to a box",
+  "measures": {
+    "volume": 67.1415926535898,
+    "area": 108.56637061435917,
+    "centroid": [
+      0,
+      0,
+      0.1403716770526365
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -2
+      ],
+      [
+        2,
+        2,
+        4
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "The box is a 4-cube and each post has radius 0.5 and height 2. The posts touch the box only at the top face, with their footprints tangent to opposite edges. The two footprints cancel the post caps in the area sum. The posts have total volume pi at mean height 3."
+}

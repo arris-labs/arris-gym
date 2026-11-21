@@ -1,0 +1,12 @@
+{
+  "status": "runtime",
+  "message": "ValueError: Needs a face or a vertex or point on a work plane",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "ca2dff8469072c4e8ac4f68a4d4a819ae74c4224736c674d12056c3c92532bf9",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

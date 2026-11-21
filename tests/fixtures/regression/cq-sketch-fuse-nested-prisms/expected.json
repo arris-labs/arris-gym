@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 100,
+    "area": 130,
+    "centroid": [
+      0,
+      0,
+      -2
+    ],
+    "bounds": [
+      [
+        -2.5,
+        -2.5,
+        -4
+      ],
+      [
+        2.5,
+        2.5,
+        0
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "arris 0.11.1 refuses the second fuse of three nested coplanar prisms",
+  "note": "The 5 by 5 by 4 outer prism contains the other two."
+}

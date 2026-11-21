@@ -324,12 +324,13 @@ counts programs actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Today it is the census's 30 API forms:
+the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Its forms include
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
 axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `edges` and `edges(sel)` with the same six and `|X |Y |Z` and `'>Z or <Z'` (a stack of edges, ranked by their centre of mass, ADR-0020; `faces` refuses the last four), `fillet` (a radius; a blend of the stacked edges, or of every edge of the stacked faces or solid, in one call, seams passed over, ADR-0020), `chamfer` (a length; the same blend, bevelled), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending circles cut blind in one call, ADR-0019), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
-`threePointArc`, `polyline`, `close` and `revolve`;
+`threePointArc`, `polyline`, `close`, `revolve` and
+`sketch().push(...).rect(...).finalize().extrude(...)` (ADR-0023).
 STEP export waits for its bundle in C2's order.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
@@ -455,6 +456,20 @@ plain `extrude`. A zero distance, `both` or not, ends `runtime`
 a stack with no pending sketch is `No pending wires present` on both sides.
 `extrude`'s other keywords and `extrude(d, True)` (CadQuery's second positional
 argument is `combine`) stay `unsupported_api`.
+
+`sketch()` on an empty stack returns a mutable sketch attached to a new
+workplane on the same plane. `push` replaces its plane-local selection
+and `reset` clears it. Each `circle` or `rect` places a region at each
+selected point, or at the origin for an empty selection. The mode adds
+(`a`), subtracts (`s`) or intersects (`i`) the current section with the
+union of that call's placements. `finalize()` returns the workplane with
+the live sketch on its stack. `extrude(d)` combines the prisms in drawing
+order along the signed normal and fuses the result with the chain's solid
+when present. Subtraction and intersection require a section at the drawing
+call. An empty section ends `runtime` at extrusion. The `both=`
+keyword, `cutBlind`, `revolve` and bores on a sketch end `unsupported_api`
+(ADR-0023).
+
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
 A `polyline` after a lone `moveTo` point is `polyline` alone: it starts at its

@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 62.575222039230624,
+    "area": 120.56637061435916,
+    "centroid": [
+      5.5,
+      1,
+      7
+    ],
+    "bounds": [
+      [
+        4,
+        -2,
+        5
+      ],
+      [
+        7,
+        4,
+        9
+      ]
+    ],
+    "shells": 1,
+    "genus": 1,
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "A 6 by 4 plate in YZ with a radius-one through-hole. The pushed centre is (7, 1, 7) in world coordinates. Sweeping toward -X covers x=4..7."
+}

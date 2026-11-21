@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 32,
+    "area": 64,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        0
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0,
+    "faces": 14,
+    "face_kinds": [
+      [
+        "plane",
+        14
+      ]
+    ]
+  },
+  "note": "Each tool crosses one side of the 4 by 4 base. Their clipped union is the base. The tool endpoints split the caps and two opposing sides into three strips each."
+}

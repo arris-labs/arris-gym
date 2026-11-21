@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 16,
+    "area": 40,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -2,
+        -1,
+        0
+      ],
+      [
+        2,
+        1,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0,
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "Taking the magnitude of the negative dimension gives a 4 by 2 by 2 box."
+}

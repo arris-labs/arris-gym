@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 24,
+    "area": 64,
+    "centroid": [
+      3.3333333333333335,
+      0.6666666666666666,
+      1
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        0
+      ],
+      [
+        7,
+        2,
+        2
+      ]
+    ],
+    "shells": 2,
+    "genus": 0,
+    "faces": 12,
+    "face_kinds": [
+      [
+        "plane",
+        12
+      ]
+    ]
+  },
+  "note": "Disjoint 2 by 2 and 4 by 2 boxes, centred at (0, 0) and (5, 1), each with six faces."
+}

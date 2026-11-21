@@ -1,0 +1,12 @@
+{
+  "status": "no_result",
+  "message": "no shape result: Sketch",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "65e18630ec7b9a68466c998081c1d8c57bf76bd29fc2dd474559e14128733318",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

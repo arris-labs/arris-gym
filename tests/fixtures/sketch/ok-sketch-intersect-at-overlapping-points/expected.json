@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 24,
+    "area": 56,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -3,
+        -1,
+        0
+      ],
+      [
+        3,
+        1,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 0,
+    "faces": 14,
+    "face_kinds": [
+      [
+        "plane",
+        14
+      ]
+    ]
+  },
+  "note": "The union of the two tools is a 6 by 2 rectangle wholly inside the base. Three strips split each cap and the two long sides, with one face at each end."
+}

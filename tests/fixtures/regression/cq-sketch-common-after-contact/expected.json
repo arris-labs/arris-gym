@@ -1,0 +1,7 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: No pending wires present",
+  "xfail": "arris 0.11.1 refuses interference at a shared boundary of a fused body",
+  "note": "The intersection touches the preceding union at y=1/2 and has no area."
+}

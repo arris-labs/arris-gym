@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "RuntimeError: Cannot convert object type '<class 'cadquery.sketch.Sketch'>' to vector"
+}

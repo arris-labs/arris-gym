@@ -52,7 +52,7 @@ def c1_subset() -> cq.Subset:
     `Workplane.cskHole`; plans/lift-arrays-and-blind-cuts' forms:
     `Workplane.rarray`, `Workplane.polarArray`, `Workplane.cutBlind`;
     plans/lift-edges-and-blends' forms: `Workplane.edges`, `Workplane.fillet`,
-    `Workplane.chamfer`.
+    `Workplane.chamfer`, and `Workplane.sketch` and `Sketch.*` (ADR-0023).
 
     A frozen record, never widened to admit a lifted form: `reach.json` is the
     C1 curve and `test_committed_benchcad_curve_repeats_offline` holds it.
@@ -68,8 +68,10 @@ def c1_subset() -> cq.Subset:
             if form.name == "Workplane.extrude"
             else form
             for form in cq.subset().forms
-            if form.name
+            if not form.name.startswith("Sketch.")
+            and form.name
             not in (
+                "Workplane.sketch",
                 "Workplane.faces",
                 "Workplane.hole",
                 "Workplane.pushPoints",

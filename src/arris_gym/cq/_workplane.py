@@ -6,10 +6,11 @@ Private: `arris_gym.cq` exports `Workplane`.
 
 from __future__ import annotations
 
+import functools
 import math
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import NoReturn
+from typing import Concatenate, NoReturn
 
 import arris
 import arris.build
@@ -30,6 +31,7 @@ from arris_gym.cq._selector import (
     select_edges,
     select_faces,
 )
+from arris_gym.cq._sketch import Sketch
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
 from arris_gym.cq._vector import Vector
 
@@ -88,6 +90,7 @@ _BOUNDS_PAD = 2e-7
 # many degrees of a multiple of 360 (its `TOL`, `cq.py`, read in ADR-0019).
 _FULL_TURN_TOLERANCE = 1e-6
 _ZERO = Vector(0, 0, 0)
+_SKETCH_TO_VECTOR = "Cannot convert object type '<class 'cadquery.sketch.Sketch'>' to vector"
 
 
 @dataclass(frozen=True)
@@ -205,6 +208,20 @@ def _axis_point(point: object) -> tuple[float, ...]:
         of = f"tuple of {shape}" if shape.endswith(" numbers") else shape
         raise UnsupportedApi(f"Workplane.revolve(num, {of})")
     return numbers
+
+
+def _one_sided_sketch_extrusion[**P](
+    method: Callable[Concatenate[Workplane, P], Workplane],
+) -> Callable[Concatenate[Workplane, P], Workplane]:
+    """Keep the existing `both` keyword on pending wires only."""
+
+    @functools.wraps(method)
+    def checked(self: Workplane, /, *args: P.args, **kwargs: P.kwargs) -> Workplane:
+        if "both" in kwargs:
+            self._refuse_sketch("Workplane.extrude(both=bool)")
+        return method(self, *args, **kwargs)
+
+    return checked
 
 
 class Workplane:
@@ -328,6 +345,7 @@ class Workplane:
         selected faces, a stack of points and circles at points, and
         `ValueError` (CadQuery's words, `runtime`) for any other stack.
         """
+        self._refuse_sketch(form)
         self._refuse_selected(form)
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi(f"{form} on a stack of points")
@@ -356,8 +374,17 @@ class Workplane:
             raise UnsupportedApi("Workplane.lineTo on circles at points")
         if isinstance(last, _Path):
             return last
+        if isinstance(last, Sketch):
+            raise RuntimeError(_SKETCH_TO_VECTOR)
         kind = "Sketch" if isinstance(last, arris.build.Sketch) else type(last).__name__
         raise RuntimeError(f"Cannot convert object type '{kind}' to vector")
+
+    def _has_sketch(self) -> bool:
+        return len(self._stack) == 1 and isinstance(self._stack[0], Sketch)
+
+    def _refuse_sketch(self, form: str) -> None:
+        if self._has_sketch():
+            raise UnsupportedApi(f"{form} on a sketch")
 
     def _refuse_selected(self, form: str) -> None:
         """Raise `UnsupportedApi` naming `form` when the stack holds selected faces or edges."""
@@ -464,6 +491,8 @@ class Workplane:
         >>> wp._plane.origin
         (0.0, 0.0, 3.0)
         """
+        if self._has_sketch():
+            raise ValueError("Needs a face or a vertex or point on a work plane")
         kept = [o for o in self._stack if isinstance(o, Faces)]
         if kept:
             (selected,) = kept
@@ -588,10 +617,11 @@ class Workplane:
             (solid,) = solids
             kept = select_edges(solid, edges_of_solid(solid), selector, self._seams)
             return self._derive(Edges(solid, kept))
-        if not self._stack and selector is not None:
+        if selector is not None and (not self._stack or self._has_sketch()):
             # No object on the stack has an edge: CadQuery's selector is handed
             # an empty list, even where the chain holds a solid further up.
             raise ValueError(NO_FACES)
+        self._refuse_sketch("Workplane.edges")
         raise UnsupportedApi(
             "Workplane.edges on "
             + ("an empty stack" if not self._stack else "a stack that holds no solid")
@@ -963,6 +993,7 @@ class Workplane:
         `ValueError` (`runtime`, CadQuery's words) for a chain with no solid and
         `UnsupportedApi` naming `form` for a stack the subset does not bore on.
         """
+        self._refuse_sketch(form)
         base = self._base_solid()
         if base is None:
             raise ValueError("Cannot find a solid on the stack or in the parent chain")
@@ -1325,7 +1356,24 @@ class Workplane:
             raise ValueError(f"{named}: a zero diameter (CadQuery's StdFail_NotDone)")
         return self._derive(self._plane.polygon(vertices))
 
+    @census_form("Workplane.sketch")
+    def sketch(self) -> Sketch:
+        """Start a mutable sketch on this plane. A nonempty stack is outside the subset.
+
+        The original workplane stays empty. The sketch's `finalize()`
+        returns the workplane holding the sketch for extrusion.
+
+        >>> import arris_gym.cq as cq
+        >>> s = cq.Workplane("XY").sketch().circle(1)
+        >>> round(s.finalize().extrude(2)._solids()[0].measure().volume, 6)
+        6.283185
+        """
+        if self._stack:
+            raise UnsupportedApi("Workplane.sketch on a non-empty stack")
+        return Sketch(self)
+
     @census_form("Workplane.extrude", [("num",)], keywords={"both": ("bool",)})
+    @_one_sided_sketch_extrusion
     def extrude(self, distance: float, both: bool = False) -> Workplane:
         """The pending sketch extruded `distance` along the plane's normal.
 
@@ -1341,6 +1389,8 @@ class Workplane:
         (`runtime`) when the stack holds no pending sketch, and for a zero
         `distance` with or without `both` (CadQuery's
         `Standard_ConstructionError` from the zero-length sweep).
+        A finalized `sketch()` is extruded as one section (ADR-0023).
+        The `both` keyword on that stack raises `UnsupportedApi`.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").circle(1).extrude(2)
@@ -1350,6 +1400,8 @@ class Workplane:
         >>> round(wp._solids()[0].measure().centroid[2], 9)
         0.0
         """
+        if len(self._stack) == 1 and isinstance(self._stack[0], Sketch):
+            return self._combined(self._stack[0]._extrusion(distance))._with_seams(None)
         discs = [o for o in self._stack if isinstance(o, _Discs)]
         sketches: Sequence[arris.build.Sketch]
         if discs and len(self._stack) == 1:
@@ -1523,6 +1575,8 @@ class Workplane:
         ()
         """
         last = self._stack[-1] if self._stack else None
+        if isinstance(last, Sketch):
+            raise RuntimeError(_SKETCH_TO_VECTOR)
         if not isinstance(last, _Path) or not last.segments:
             raise ValueError("No start point specified - cannot close")
         segments = last.segments

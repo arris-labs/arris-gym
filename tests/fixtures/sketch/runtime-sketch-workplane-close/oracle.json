@@ -1,0 +1,12 @@
+{
+  "status": "runtime",
+  "message": "RuntimeError: Cannot convert object type '<class 'cadquery.sketch.Sketch'>' to vector ",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "f1cb3df13382f69a9c13c9d2b06a6cbffa402041b5008a57a977e0c4fbbe9194",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

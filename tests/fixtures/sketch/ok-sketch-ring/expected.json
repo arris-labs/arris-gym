@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 18.84955592153876,
+    "area": 56.548667764616276,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        0
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1,
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  },
+  "note": "Radii 2 and 1 and height 2. Two caps and two cylinder faces."
+}

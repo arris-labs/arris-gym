@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- The CadQuery dialect supports `Workplane.sketch()` on an empty stack.
+  Draw circles and rectangles at selected points, add, subtract or intersect
+  them, then use `finalize().extrude(distance)` to build the solid.
+  A section with no material returns `runtime` at extrusion.
+
 - The census counts calls after `Workplane.sketch()` through `finalize()`
   under `Sketch.*`. Calls after `finalize()` return to the workplane
   receiver. CAD-Recode's census and reach curve digests change.

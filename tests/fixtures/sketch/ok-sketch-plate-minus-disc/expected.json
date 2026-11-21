@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 41.716814692820414,
+    "area": 94.2831853071796,
+    "centroid": [
+      0,
+      0,
+      1
+    ],
+    "bounds": [
+      [
+        -3,
+        -2,
+        0
+      ],
+      [
+        3,
+        2,
+        2
+      ]
+    ],
+    "shells": 1,
+    "genus": 1,
+    "faces": 7,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "note": "A 6 by 4 plate with a radius-one through-hole. Two annular-section caps, four outer sides and the bore."
+}

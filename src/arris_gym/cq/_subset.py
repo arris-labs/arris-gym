@@ -137,14 +137,15 @@ def subset() -> Subset:
 
     >>> from arris_gym.cq import subset
     >>> len(subset().forms), subset().selectors
-    (30, ('<X', '<Y', '<Z', '>X', '>Y', '>Z', '>Z or <Z', '|X', '|Y', '|Z'))
+    (36, ('<X', '<Y', '<Z', '>X', '>Y', '>Z', '>Z or <Z', '|X', '|Y', '|Z'))
     """
     from arris_gym.cq._selector import SELECTORS
+    from arris_gym.cq._sketch import Sketch
     from arris_gym.cq._vector import Vector
     from arris_gym.cq._workplane import Workplane
 
     forms = []
-    for cls in (Vector, Workplane):
+    for cls in (Vector, Workplane, Sketch):
         for method in vars(cls).values():
             declared = getattr(method, "__census_form__", None)
             if isinstance(declared, CensusForm):

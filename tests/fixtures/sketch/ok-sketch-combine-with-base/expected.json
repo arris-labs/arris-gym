@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 72,
+    "area": 112,
+    "centroid": [
+      0,
+      0,
+      0.3333333333333333
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        -2
+      ],
+      [
+        2,
+        2,
+        4
+      ]
+    ],
+    "shells": 1,
+    "genus": 0,
+    "faces": 11,
+    "face_kinds": [
+      [
+        "plane",
+        11
+      ]
+    ]
+  },
+  "note": "A 4-cube and a 2-cube meeting at the upper face. Total volume 64 + 8 and exposed area 96 + 24 - 2*4. The smaller cube is centred at z=3."
+}

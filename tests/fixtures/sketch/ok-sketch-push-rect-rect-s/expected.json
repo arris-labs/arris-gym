@@ -1,0 +1,35 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48,
+    "area": 144,
+    "centroid": [
+      -0.5,
+      1,
+      1
+    ],
+    "bounds": [
+      [
+        -6,
+        -1,
+        0
+      ],
+      [
+        5,
+        3,
+        2
+      ]
+    ],
+    "shells": 2,
+    "genus": 2,
+    "faces": 20,
+    "face_kinds": [
+      [
+        "plane",
+        20
+      ]
+    ]
+  },
+  "note": "Two 4 by 4 squares with 2 by 2 square holes, centred at (-4, 1) and (3, 1). Each prism has two caps and eight sides."
+}
