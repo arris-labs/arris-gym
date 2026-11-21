@@ -62,13 +62,21 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
 - `Workplane.faces`, `_selectObjects`, `StringSyntaxSelector` and
   `DirectionMinMaxSelector` (`cadquery/cq.py`, `cadquery/selectors.py`),
   `Workplane.workplane` with `centerOption="ProjectedOrigin"`, `_computeXdir`
-  and `_isCoPlanar` (`cadquery/cq.py`), `Face.Center` and `Face.normalAt`
-  (`cadquery/occ_impl/shapes.py`): `>X <X >Y <Y >Z <Z` rank a solid's faces by
+  and `_isCoPlanar` (`cadquery/cq.py`), `Shape.clean`, `Shape.CombinedCenter`,
+  `Face.Center` and `Face.normalAt` (`cadquery/occ_impl/shapes.py`), and
+  `Plane._calcTransforms` (`cadquery/occ_impl/geom.py`):
+  `>X <X >Y <Y >Z <Z` rank a solid's faces by
   centre of mass along the axis, cluster keys within 1e-4 of the cluster's first
-  and keep the last (`>`) or first (`<`); `workplane()` on one planar face
-  places a plane through the face with its outward normal, x `(0, 0, 1)` crossed
-  with it (+x when shorter than 1e-4) and the parent's origin projected onto it.
-  Read in cadquery 2.3.0 and confirmed on the oracle: ADR-0017,
+  and keep the last (`>`) or first (`<`). `Shape.clean` uses Open CASCADE's
+  same-domain unification. `workplane()` on one face uses its centre of mass
+  and the outward normal at the centre's projection onto the surface.
+  For multiple planar faces, CadQuery tests the normals and signed centre
+  separations against the first face and uses their area-weighted centre.
+  The plane's x follows `(0, 0, 1)` crossed with the normal, with global +x
+  as the reference direction when the cross product is shorter than 1e-4.
+  The frame squares x to the normal. The origin is the parent's origin
+  projected onto the plane.
+  Read in CadQuery 2.3.0 and confirmed on the oracle in ADR-0017 and ADR-0022,
   `tests/fixtures/selectors/` for the 950 BenchCAD programs and the
   constructions, `tests/fixtures/cq/ok-faces-*` for the planes.
 - `Workplane.hole`, `cutEach` and `eachpoint` (`cadquery/cq.py`): `hole(d)` bores
