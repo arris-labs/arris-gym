@@ -222,3 +222,15 @@ revolution and fusion exceeds the ADR-0005 agreement tolerance for
 volume and area, so the subset refuses that context
 (`unsupported-slot-revolve-with-stock`). Other refused combinations are
 recorded in `tests/fixtures/profiles/slot-contexts.json`.
+
+## Amendment, 2026-11-23: carried wires and later drawing
+
+Section C's mixed-wire support applies to disjoint circles across a
+`center` shift. A carried wire keeps its own plane and can be consumed
+without drawing a new wire. When a later drawing adds wires, every pair
+spanning the shift must be disjoint circles for extrusion or cutting.
+Other mixed sets end `unsupported_api`
+(`unsupported-center-between-rects`, `unsupported-center-nested-circles`).
+A revolution of multiple carried wires also ends `unsupported_api`
+(`unsupported-center-revolve-multiple`). The BenchCAD table contains no
+in-subset `cq_bug` from these contexts.
