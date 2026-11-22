@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: CadQuery's StdFail_NotDone: BRep_API: command not done"
+}

@@ -93,7 +93,7 @@ Grades are tiers (`.agents/tiers.md`):
   workplane, centre after a point or point stack, and pending wires
   consumed directly or after drawing a second wire. `agree-revolve-torus`
   moves to `None`. CHANGELOG bullet.
-- [ ] Step 5 **[2]**: `rect(xLen, yLen)` on every stack D names. `_Discs`
+- [x] Step 5 **[2]**: `rect(xLen, yLen)` on every stack D names. `_Discs`
   becomes placed profiles. Fixtures: `extrude`, `cutBlind` and `cutThruAll`
   of a rect, rects at points including rotated polar points, contact and
   overlap, both orders of the nestings in ADR-0024, and size refusals.
@@ -165,3 +165,13 @@ Grades are tiers (`.agents/tiers.md`):
   `center`. The subset refuses these contexts
   (`unsupported-center-nested-circles`, `unsupported-center-revolve-multiple`,
   `unsupported-center-sketch`). Step 7 checks them against corpus reach.
+- *Settled* in step 5. The six concentric nests with rectangles return
+  `StdFail_NotDone` on through-cut in the pinned oracle. Blind cuts and
+  revolutions match the closed forms. Extrusion fuses rectangular arrays as
+  a group so a later rectangle can bridge an initial corner contact.
+  Step 5 raises the measured static BenchCAD reach to 13,527/17,900.
+- ⚠ OPEN: three-way rectangular overlap can fail in both engines
+  (`regression/rects-three-way-overlap`). Arris refuses the union and the
+  oracle returns an invalid part. Step 7 checks whether this occurs in
+  BenchCAD. The rectangle context records also cover unsupported consumers,
+  rotated nests and separate rectangles drawn across a centre shift.

@@ -329,7 +329,7 @@ the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Its
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
-axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `edges` and `edges(sel)` with the same six and `|X |Y |Z` and `'>Z or <Z'` (a stack of edges, ranked by their centre of mass, ADR-0020; `faces` refuses the last four), `fillet` (a radius; a blend of the stacked edges, or of every edge of the stacked faces or solid, in one call, seams passed over, ADR-0020), `chamfer` (a length; the same blend, bevelled), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending circles cut blind in one call, ADR-0019), `cutThruAll`, `center`, `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `edges` and `edges(sel)` with the same six and `|X |Y |Z` and `'>Z or <Z'` (a stack of edges, ranked by their centre of mass, ADR-0020; `faces` refuses the last four), `fillet` (a radius; a blend of the stacked edges, or of every edge of the stacked faces or solid, in one call, seams passed over, ADR-0020), `chamfer` (a length; the same blend, bevelled), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending profiles cut blind in one call, ADR-0019), `cutThruAll`, `center`, `box`, `cylinder`, `sphere`, `circle`, `rect`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close`, `revolve` and `Workplane.sketch()`.
 The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
 `arc`, `close`, `assemble` and `finalize` (ADR-0023).
@@ -491,12 +491,20 @@ their placements. Later drawing and drilling use the shifted coordinates
 (ADR-0024 §C).
 
 `cutThruAll()` looks up the chain's nearest solid, including a compound,
-and cuts the pending circle, circles at points, polygon or closed path
-along each profile plane's normal. The sweeps extend past the projected
-stock bounds at both ends, even from planes outside the stock. All tools
-are cut in one call. A missing solid, missing wires or a concentric ring
-ends `runtime`. A finalized sketch or a keyword form ends
+and cuts pending circles, rectangles, polygons or closed paths along each
+profile plane's normal. Circles and rectangles can be placed at points.
+Sweeps extend past the projected stock bounds at both ends, including
+from planes outside the stock. All tools are cut in one call. A missing solid, missing wires or a concentric ring
+ends `runtime`. A nested section with a rectangle also ends `runtime`.
+A finalized sketch or a keyword form ends
 `unsupported_api` (ADR-0024 §A).
+
+A `rect(xLen, yLen)` draws a centred rectangle using absolute dimensions.
+It uses the origin, a `moveTo` or `center` point, or each in-plane point
+of an array. At a polar point it uses that point's rotation. Extruding an
+array fuses its sweeps as a group. A strictly nested concentric pair with
+at least one rectangle forms a section with a hole for extrusion,
+revolution and blind cutting (ADR-0024 §B and §D).
 
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.

@@ -82,6 +82,7 @@ def c1_subset() -> cq.Subset:
                 "Workplane.cutBlind",
                 "Workplane.cutThruAll",
                 "Workplane.center",
+                "Workplane.rect",
                 "Workplane.edges",
                 "Workplane.fillet",
                 "Workplane.chamfer",

@@ -1,0 +1,2417 @@
+[
+  {
+    "name": "one-box",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).box(1, 1, 1)\nshow_object(result)\n",
+    "message": "Workplane.box on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.49999999999983,
+        "area": 306.0,
+        "centroid": [
+          4.735984528797838e-21,
+          3.8818835474900676e-17,
+          0.0035101404056161155
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "7d0a0623e652b18dad4dc5cc1104a0bd5c817596a326075b210529d219d0e52a",
+      "program_sha256": "e0e37952222ba63f87252c8574968ef2b43cd24e0d5b3dca534709b510d489ef",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-cylinder",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).cylinder(1, 0.5)\nshow_object(result)\n",
+    "message": "Workplane.cylinder on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.3926990816987,
+        "area": 305.5707963267949,
+        "centroid": [
+          1.7342757128446394e-16,
+          9.020797024171728e-18,
+          0.0027577811116002303
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "f39cbfd4beba4c90a113cbe3ae8b2bf9488f0c8772c819735ecb2b234bcbfae7",
+      "program_sha256": "2a7c367162075024548a07e6ddc6d8c8e24996b5c84c6b683c403efdedfc414b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-sphere",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).sphere(0.5)\nshow_object(result)\n",
+    "message": "Workplane.sphere on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.26179938779904,
+        "area": 304.7853981633974,
+        "centroid": [
+          9.026729626329215e-18,
+          3.574526833965993e-17,
+          0.0017881813001279874
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": "f2307fcf98e37102e7582f8d91eab3d69ff4d08b2d791052bb96f8095b3156e7",
+      "program_sha256": "b15620dd79fb77e3e552c0dc029adfc14b65df8f795500b6b7a528127957fb36",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-hole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).hole(0.5)\nshow_object(result)\n",
+    "message": "Workplane.hole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 319.2146018366025,
+        "area": 309.8904862254808,
+        "centroid": [
+          1.8506538846791348e-16,
+          5.4650050239265384e-18,
+          -3.895884626745084e-17
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": "8334bb1e1c7d24e6e1b41cb930880942ee2b04296091601ebc6b5aaf65d15108",
+      "program_sha256": "33197ac1cf572f70858cfa1c5fdf54bc3457a541022fbe5c8ffd80c0a274358b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-cboreHole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).cboreHole(0.5, 1, 0.5)\nshow_object(result)\n",
+    "message": "Workplane.cboreHole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 318.92007752532845,
+        "area": 310.6758843888783,
+        "centroid": [
+          1.4075994982712427e-16,
+          2.387940626661914e-17,
+          -0.0016161338876152821
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 9,
+        "solids": 1
+      },
+      "step_sha256": "3a21e3f2332d02f387ec6222a9e24414ac0dee6ea90b09fc9b17d8f8cea37777",
+      "program_sha256": "d92a4698cbb662e31c2ac506564c518a5aa6e3d0f79ba8169458a7f91b00ea63",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-cskHole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).cskHole(0.5, 1, 90)\nshow_object(result)\n",
+    "message": "Workplane.cskHole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 319.14915198965275,
+        "area": 309.7417790721387,
+        "centroid": [
+          1.7834298357189548e-16,
+          1.0466916531429217e-16,
+          -0.0003941305305761709
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "406c7d35619fd59a57723863e575aa19539e5f5eb1dee4f076eb8291d12bb1c4",
+      "program_sha256": "d24dcd35bf14c23f71d38d54d6f954dda691c9d1a44b2e7f54f42bbed3d9719c",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-polygon",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).polygon(4, 1).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polygon on a non-empty stack",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 334.99999999999994,
+        "area": 333.6568542494924,
+        "centroid": [
+          3.728360903591944e-19,
+          6.213934839319907e-19,
+          0.134328358208955
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "9a6e6ff1d411c7dbf234150c598b88557dbe7eb0f51a9bf689942b440e67a836",
+      "program_sha256": "340eae3a47f42b07d4dff7b517a04883e9543cf7f84576c26c0ab9fa336041af",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-polyline",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).polyline([(0, 0), (1, 1), (2, 0)]).close().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polyline on a pending wire",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 334.00000000000006,
+        "area": 337.6568542494924,
+        "centroid": [
+          -0.005988023952095813,
+          -0.0019960079840319004,
+          0.1257485029940118
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 15,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "90f16f8c5a15f06448df0739fe8fe3b5b0115d283f1d896fc4a3acf65f7f4a34",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-moveTo",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).moveTo(0, 3).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.moveTo on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 336.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          -8.465037533367775e-17,
+          2.1415574340332722e-17,
+          0.14285714285714282
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "a833e309e71c2b03f63f535ae8d75e712047860fe9b07cee568fa9af0f63d519",
+      "program_sha256": "916555b080ce2ebf7cc515467a2484ad326f5f385cc649810b0bffa8a7739c12",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-workplane",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).workplane().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.workplane on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 336.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          -8.465037533367775e-17,
+          2.1415574340332722e-17,
+          0.14285714285714282
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "a833e309e71c2b03f63f535ae8d75e712047860fe9b07cee568fa9af0f63d519",
+      "program_sha256": "7cc7e3e0d54499978939111d4d70a4da406d0f528166913714f0fc27e33cbe62",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-transformed",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).transformed(offset=cq.Vector(0, 0, 1)).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.transformed on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 336.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          -8.465037533367775e-17,
+          2.1415574340332722e-17,
+          0.14285714285714282
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "a833e309e71c2b03f63f535ae8d75e712047860fe9b07cee568fa9af0f63d519",
+      "program_sha256": "928ff9a127bf4425a3037f6aa4f9944a5316cce1fcd1783ef44ec3cf75d24e0b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-pushPoints",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).pushPoints([(0, 3)]).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.pushPoints on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 336.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          -8.465037533367775e-17,
+          2.1415574340332722e-17,
+          0.14285714285714282
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "a833e309e71c2b03f63f535ae8d75e712047860fe9b07cee568fa9af0f63d519",
+      "program_sha256": "9f5bcc311d6fc0997a5447b72b6354fd94e9b9a1b4ddf7e7437a168aa4914a15",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-rarray",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rarray(1, 1, 2, 2).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.rarray on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 336.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          -8.465037533367775e-17,
+          2.1415574340332722e-17,
+          0.14285714285714282
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "a833e309e71c2b03f63f535ae8d75e712047860fe9b07cee568fa9af0f63d519",
+      "program_sha256": "08abf1bbe32510b42c78bb6e3185cf61026688f5e9e07a53b00cb09cdcdcf223",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-polarArray",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).polarArray(3, 0, 360, 4).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polarArray on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 336.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          -8.465037533367775e-17,
+          2.1415574340332722e-17,
+          0.14285714285714282
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "a833e309e71c2b03f63f535ae8d75e712047860fe9b07cee568fa9af0f63d519",
+      "program_sha256": "b697cf59d36f4481fe0bb124e5279465f43ed40325f34ac2587f4ed68f8ce114",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-sketch",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).sketch().rect(1, 1).finalize().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.sketch on a non-empty stack",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 321.9999999999999,
+        "area": 312.0,
+        "centroid": [
+          -2.0202524953146053e-21,
+          2.2011324353951066e-17,
+          0.018633540372670815
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "12ca07752d1c4b0ff910fe4ac1cf09a7f5ae5348c0e97612986abbb40a240d5e",
+      "program_sha256": "3fde6b419eb598b39d08421837f4b5609d0e28daadc21537ba02a23f45435f84",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-edges",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).edges()\nshow_object(result)\n",
+    "message": "Workplane.edges on a stack that holds no solid",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 0.0,
+        "area": 0.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            -1.0,
+            2.0
+          ],
+          [
+            2.0,
+            1.0,
+            2.0
+          ]
+        ],
+        "faces": 0,
+        "solids": 0
+      },
+      "step_sha256": "96b763737c05ef301dfffe99bbb99927aab976df3680bc828423032df409b6c6",
+      "program_sha256": "f5b1513a88675e07c1f908a7593966457e6e30f6e8cc011466c9a323803c589e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-fillet",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).fillet(0.1)\nshow_object(result)\n",
+    "message": "Workplane.fillet on a pending wire",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_Failure: There are no suitable edges for chamfer or fillet",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "966c067b70213789c1fe355523ead3141686b6649f70b7e35ed8938d0eaa543e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-chamfer",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).chamfer(0.1)\nshow_object(result)\n",
+    "message": "Workplane.chamfer on a pending wire",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_NoSuchObject: NCollection_IndexedDataMap::FindFromKey",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "aa20162235ab7b290f14aa1c5e2d718359128258da99610fc064c657f92f4843",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-union",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).union(cq.Workplane(\"XY\").box(1, 1, 1))\nshow_object(result)\n",
+    "message": "Workplane.union on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 319.99999999999994,
+        "area": 304.0,
+        "centroid": [
+          0.0,
+          8.326672684688675e-18,
+          6.59194920871187e-18
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "7053ff1a6f0358e2bae94976558b80306bfdef94ab343e88ce213f1953ebcbd1",
+      "program_sha256": "f33236783f15211fb87fd3415efcad71dbf00399134e3025de4cc177a759f5fd",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "one-cut",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).cut(cq.Workplane(\"XY\").box(1, 1, 1))\nshow_object(result)\n",
+    "message": "Workplane.cut on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 318.99999999999983,
+        "area": 310.0,
+        "centroid": [
+          -2.1752018507546182e-20,
+          8.337820594173798e-18,
+          6.6078553722455135e-18
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 1
+      },
+      "step_sha256": "f872df328fa89ca519792651d03aae85a02bb80487d2b8a216a470adef03ac01",
+      "program_sha256": "6ccac96d35c39ac70d83d02919640aa4c63cb543d651c2946f9c258c355e5cde",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-box",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).box(1, 1, 1)\nshow_object(result)\n",
+    "message": "Workplane.box on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.9999999999998,
+        "area": 308.0,
+        "centroid": [
+          8.854115087353279e-17,
+          2.2135287718383198e-17,
+          0.007009345794392526
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "1f202e5c43883853cd41cd2d5e4a8b67ed10022357a4a85f456a0e3982fab80c",
+      "program_sha256": "989989f6a022501b2cfc93423436497a9fc96fa6af72c7bb1719612d3be6224a",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-cylinder",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).cylinder(1, 0.5)\nshow_object(result)\n",
+    "message": "Workplane.cylinder on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.7853981633974,
+        "area": 307.14159265358984,
+        "centroid": [
+          -1.183645753814514e-16,
+          1.7211441663052487e-17,
+          0.005508810182014978
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 10,
+        "solids": 1
+      },
+      "step_sha256": "4271b865c52092de47c2aaa7891a9992c43cd76a27f2992294e7fa338a88217a",
+      "program_sha256": "4b468e229f07121a9f25072c4004098cd50750b792f6d5bf5cff27a147810de8",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-sphere",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).sphere(0.5)\nshow_object(result)\n",
+    "message": "Workplane.sphere on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.5235987755982,
+        "area": 305.5707963267949,
+        "centroid": [
+          3.0411982747745754e-16,
+          -1.1082111749135642e-17,
+          0.00357344147512575
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "08d00fa6e06d209e11e50d5a1bf95e558c6fbc7cc4ad5af8feb71e88b60357b5",
+      "program_sha256": "c58b87f9f0cbc84a3893d8fc7c02b24292c07a62c9c7782c05a296e25a69f27b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-hole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).hole(0.5)\nshow_object(result)\n",
+    "message": "Workplane.hole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 318.42920367320505,
+        "area": 315.7809724509616,
+        "centroid": [
+          -2.76135676426689e-16,
+          -9.142458190820731e-17,
+          1.0628565039229605e-17
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "e9b453d4b0ed7b1f0257d618d2b06656e87711557108acaf46279468e31e9db8",
+      "program_sha256": "18b59b6343fe4bbab111158a5630db137ab19e42d064ebbe74691f57be25dff9",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-cboreHole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).cboreHole(0.5, 1, 0.5)\nshow_object(result)\n",
+    "message": "Workplane.cboreHole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 317.84015505065696,
+        "area": 317.3517687777566,
+        "centroid": [
+          -1.6941162354309265e-17,
+          -2.0597011371461515e-17,
+          -0.0032432500207370974
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 1
+      },
+      "step_sha256": "84244e86243a476a96266fbf7c447cd38d983fcf03a2c2ae46feee3634a57f41",
+      "program_sha256": "bc7b482fae3ad518d1fd40006c6855609570b87517e922f66246c5a1759e7f7c",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-cskHole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).cskHole(0.5, 1, 90)\nshow_object(result)\n",
+    "message": "Workplane.cskHole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 318.2983039793055,
+        "area": 315.4835581442774,
+        "centroid": [
+          -1.981181395261498e-16,
+          1.4533836938186977e-17,
+          -0.0007903681737168094
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 10,
+        "solids": 1
+      },
+      "step_sha256": "b309ae01f2b7ea1da2a66f77087840f66f32b846106f015d68038500cb0fad92",
+      "program_sha256": "0808465ba06ec1b017b0e727cc42929f506b31f546cbf6d7f0a4f162c4a02749",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-polygon",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).polygon(4, 1).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polygon on a non-empty stack",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 326.0,
+        "area": 339.31370849898485,
+        "centroid": [
+          1.362236840030867e-18,
+          2.77711609294758e-17,
+          0.055214723926379945
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 26,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "346fc8f5a3795eda9d565e7caf88b8de5669d8209d6dea3fa5eace21732ffece",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-circle",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).circle(0.3).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.circle on a non-empty stack",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 326.86902664470756,
+        "area": 335.53982236861555,
+        "centroid": [
+          4.352875552637543e-17,
+          3.258104083992986e-17,
+          0.06304384403029412
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 20,
+        "solids": 1
+      },
+      "step_sha256": "08290f136daf8e62a11285161f1c475f7b8da2377ca71597c0d36ae4c3f8f233",
+      "program_sha256": "65e5d96ecb81e47397aae834f1ed8bf3163d1720384ace9180bb5dc52d86c7e5",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-rect",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).rect(1, 0.5).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.rect on a non-empty stack",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 326.0,
+        "area": 340.0,
+        "centroid": [
+          2.5541940750578754e-18,
+          2.7187533495811354e-17,
+          0.05521472392637993
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 26,
+        "solids": 1
+      },
+      "step_sha256": "fd1dc3ab45bfc04f834454357499423df9d29de05943b6f9c30d385ff68a9271",
+      "program_sha256": "4e45d66a2e15fbac187b99b0f0d78aee281c1b3882bd2f2dbe76b5534ed20929",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-lineTo",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).lineTo(1, 1).lineTo(2, 0).close().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.lineTo on rectangles at points",
+    "oracle": {
+      "status": "runtime",
+      "message": "RuntimeError: Cannot convert object type '<class 'cadquery.occ_impl.shapes.Wire'>' to vector ",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "061ec611af5862127bda187cfc67ca90faa03d72e051856c1e2a9472bc20ef9c",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-threePointArc",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).threePointArc((1, 1), (2, 0)).close().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.lineTo on rectangles at points",
+    "oracle": {
+      "status": "runtime",
+      "message": "RuntimeError: Cannot convert object type '<class 'cadquery.occ_impl.shapes.Wire'>' to vector ",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "966304820fdcf6a966030f5f93acc439a1fdde0b2333fb872a81a5ce6d45d1a7",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-polyline",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).polyline([(0, 0), (1, 1), (2, 0)]).close().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polyline on a pending wire",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 330.00000000000006,
+        "area": 337.6568542494924,
+        "centroid": [
+          0.00606060606060614,
+          0.0020202020202022457,
+          0.09090909090909129
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 20,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "ca4be3dca29af56f347ad35765a2dfa102e97453c72e89f139d194fe7ed83072",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-moveTo",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).moveTo(0, 3).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.moveTo on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 328.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          0.0,
+          1.8510768798533e-19,
+          0.07317073170731686
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "5a5236b165d14b8d021a93d6a673f909463ea71a070cb759e4d4bec1739241f7",
+      "program_sha256": "236226e17c5e1e8d8f3a74f62d60c0b6b497239ab2afd44ad41712ed1ddba6fb",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-workplane",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).workplane().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.workplane on a pending wire",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: If multiple objects selected, they all must be planar faces.",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "8c951d3feab4c2db7e5678a2a2fbcdd16fa6a9ef9e9cb58e010c4dbb592f8207",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-transformed",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).transformed(offset=cq.Vector(0, 0, 1)).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.transformed on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 328.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          0.0,
+          1.8510768798533e-19,
+          0.07317073170731686
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "5a5236b165d14b8d021a93d6a673f909463ea71a070cb759e4d4bec1739241f7",
+      "program_sha256": "56fd7d1a6dfe265d6195996f37fb2b3a60bd9d21f3b4e7cc80df0749699cae57",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-pushPoints",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).pushPoints([(0, 3)]).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.pushPoints on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 328.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          0.0,
+          1.8510768798533e-19,
+          0.07317073170731686
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "5a5236b165d14b8d021a93d6a673f909463ea71a070cb759e4d4bec1739241f7",
+      "program_sha256": "3c2b1859fb7a80059e871faf4ca4676e6c8b65d3d3a339190c0d22d9fc7a0abe",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-rarray",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).rarray(1, 1, 2, 2).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.rarray on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 328.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          0.0,
+          1.8510768798533e-19,
+          0.07317073170731686
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "5a5236b165d14b8d021a93d6a673f909463ea71a070cb759e4d4bec1739241f7",
+      "program_sha256": "054081adc57763f7295a1430a4fc71d5bdf4d1ec47b279aed5b4496e1142d26b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-polarArray",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).polarArray(3, 0, 360, 4).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polarArray on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 328.00000000000006,
+        "area": 328.0,
+        "centroid": [
+          0.0,
+          1.8510768798533e-19,
+          0.07317073170731686
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "5a5236b165d14b8d021a93d6a673f909463ea71a070cb759e4d4bec1739241f7",
+      "program_sha256": "5b39b808fdf3472f39b71c30c1883f6495df13901159a902b0a2a0d3fe52a0c7",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-revolve",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).revolve(360, (-6, 0), (-6, 1))\nshow_object(result)\n",
+    "message": "Workplane.revolve on rectangles at points",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 455.12180236729876,
+        "area": 700.9913533541672,
+        "centroid": [
+          -1.9782916912440869,
+          3.707884326025622e-17,
+          0.6587334407523285
+        ],
+        "bounds": [
+          [
+            -16.0,
+            -4.0,
+            -8.0
+          ],
+          [
+            5.0,
+            4.0,
+            12.0
+          ]
+        ],
+        "faces": 14,
+        "solids": 1
+      },
+      "step_sha256": "89404243814a7c36e23c91d0f28f43678933f5c3487faf270458f9ab078be5aa",
+      "program_sha256": "37611279db23cc766820d86a025a81537c2d9bdfb23a0e75f4c40643b7940e13",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-sketch",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).sketch().rect(1, 1).finalize().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.sketch on a non-empty stack",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 323.99999999999983,
+        "area": 320.0,
+        "centroid": [
+          0.0,
+          -7.228014483236702e-20,
+          0.03703703703703687
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "ed6cb0f0d17e0d907e5c3eb16720bce6ae1ea91d0cb22ad5a86ca9e3e80be4d9",
+      "program_sha256": "17c250175d2073c68b5ea961db816232b2c62a7720f5ae3455902d86f223e2c1",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-edges",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).edges()\nshow_object(result)\n",
+    "message": "Workplane.edges on a stack that holds no solid",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 0.0,
+        "area": 0.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -0.5,
+            2.0
+          ],
+          [
+            4.0,
+            0.5,
+            2.0
+          ]
+        ],
+        "faces": 0,
+        "solids": 0
+      },
+      "step_sha256": "b99df452b8333fdc790621fb44569712889783f5829d4c477ad6d7dc3135106c",
+      "program_sha256": "05921bf6739695f0689434cdf1e702f1f270989d052a23453837da4968012dd3",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-fillet",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).fillet(0.1)\nshow_object(result)\n",
+    "message": "Workplane.fillet on a pending wire",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_Failure: There are no suitable edges for chamfer or fillet",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "24b13f8ede54c08e0df5a01169ffeb6daca8b5411ad8aad7ba2be6da573441e0",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-chamfer",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).chamfer(0.1)\nshow_object(result)\n",
+    "message": "Workplane.chamfer on a pending wire",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_NoSuchObject: NCollection_IndexedDataMap::FindFromKey",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "01563eb6810710a200f9e8b614e81e3b95753f581c7c828edf002f97eedeb783",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-union",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).union(cq.Workplane(\"XY\").box(1, 1, 1))\nshow_object(result)\n",
+    "message": "Workplane.union on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 319.99999999999994,
+        "area": 304.0,
+        "centroid": [
+          0.0,
+          8.326672684688675e-18,
+          6.59194920871187e-18
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "7053ff1a6f0358e2bae94976558b80306bfdef94ab343e88ce213f1953ebcbd1",
+      "program_sha256": "498e1e538ceb71dda2c4d1bf45858937bf0cf95bb6fd8d55c47e89403a0925f2",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "many-cut",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().pushPoints([(-3, 0), (3, 0)]).rect(2, 1).cut(cq.Workplane(\"XY\").box(1, 1, 1))\nshow_object(result)\n",
+    "message": "Workplane.cut on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 318.99999999999983,
+        "area": 310.0,
+        "centroid": [
+          -2.1752018507546182e-20,
+          8.337820594173798e-18,
+          6.6078553722455135e-18
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 1
+      },
+      "step_sha256": "f872df328fa89ca519792651d03aae85a02bb80487d2b8a216a470adef03ac01",
+      "program_sha256": "61ed3224d3654a11f0e807d5695c9ba3be75ca95d73a1848e34acc0b491c494d",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-box",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).box(1, 1, 1)\nshow_object(result)\n",
+    "message": "Workplane.box on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.49999999999983,
+        "area": 306.0,
+        "centroid": [
+          4.735984528797838e-21,
+          3.8818835474900676e-17,
+          0.0035101404056161155
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "7d0a0623e652b18dad4dc5cc1104a0bd5c817596a326075b210529d219d0e52a",
+      "program_sha256": "43a0b66a4c06e58e1278ade30a923840264292ec02a8ecbd66029a60ff9e7d5b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-cylinder",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).cylinder(1, 0.5)\nshow_object(result)\n",
+    "message": "Workplane.cylinder on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.3926990816987,
+        "area": 305.5707963267949,
+        "centroid": [
+          1.7342757128446394e-16,
+          9.020797024171728e-18,
+          0.0027577811116002303
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "f39cbfd4beba4c90a113cbe3ae8b2bf9488f0c8772c819735ecb2b234bcbfae7",
+      "program_sha256": "7fa8159a7f085f6a1bd7c77475f52deb32a8e7f321ea3f4b868e5fc9753b332a",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-sphere",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).sphere(0.5)\nshow_object(result)\n",
+    "message": "Workplane.sphere on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 320.26179938779904,
+        "area": 304.7853981633974,
+        "centroid": [
+          9.026729626329215e-18,
+          3.574526833965993e-17,
+          0.0017881813001279874
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.5
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": "f2307fcf98e37102e7582f8d91eab3d69ff4d08b2d791052bb96f8095b3156e7",
+      "program_sha256": "1620f327c1d00acd2c2e8b4e4b42f0849861342487199e6b3cbbc489074c5007",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-hole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).hole(0.5)\nshow_object(result)\n",
+    "message": "Workplane.hole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 319.2146018366025,
+        "area": 309.8904862254808,
+        "centroid": [
+          1.8506538846791348e-16,
+          5.4650050239265384e-18,
+          -3.895884626745084e-17
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": "8334bb1e1c7d24e6e1b41cb930880942ee2b04296091601ebc6b5aaf65d15108",
+      "program_sha256": "dc656026c23e19b91948d88a8de2f0065e0bc0298e595cbd234925657a65997e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-cboreHole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).cboreHole(0.5, 1, 0.5)\nshow_object(result)\n",
+    "message": "Workplane.cboreHole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 318.92007752532845,
+        "area": 310.6758843888783,
+        "centroid": [
+          1.4075994982712427e-16,
+          2.387940626661914e-17,
+          -0.0016161338876152821
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 9,
+        "solids": 1
+      },
+      "step_sha256": "3a21e3f2332d02f387ec6222a9e24414ac0dee6ea90b09fc9b17d8f8cea37777",
+      "program_sha256": "435aa1384f0013ebdaf8fe118100b9a35f270b39eed5de6f50ba6c1432a1a0d0",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-cskHole",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).cskHole(0.5, 1, 90)\nshow_object(result)\n",
+    "message": "Workplane.cskHole on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 319.14915198965275,
+        "area": 309.7417790721387,
+        "centroid": [
+          1.7834298357189548e-16,
+          1.0466916531429217e-16,
+          -0.0003941305305761709
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "406c7d35619fd59a57723863e575aa19539e5f5eb1dee4f076eb8291d12bb1c4",
+      "program_sha256": "d0fc2b61c7fe0fb9b56970dd892966ce10a0a23a6618b46c62464f399bb25733",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-polygon",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).polygon(4, 1).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polygon on a non-empty stack",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 330.9999999999999,
+        "area": 356.6568542494924,
+        "centroid": [
+          -3.1187361755738618e-19,
+          3.066157227038376e-17,
+          0.09969788519637479
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 23,
+        "solids": 2
+      },
+      "step_sha256": null,
+      "program_sha256": "3a628fccd0546021305cab8776348366543835d293a307957d7594911b801c4c",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-circle",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).circle(0.3).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.circle on a non-empty stack",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 331.4345133223538,
+        "area": 355.2044245066616,
+        "centroid": [
+          -3.0210564986029805e-16,
+          1.0621445589334758e-17,
+          0.10350020468054846
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 20,
+        "solids": 2
+      },
+      "step_sha256": null,
+      "program_sha256": "fc82eca23fe8be72083616aefccc0aa0312984787b8bea33862a819133063d8e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-rect",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).rect(1, 0.5).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.rect on a non-empty stack",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 330.9999999999999,
+        "area": 357.0,
+        "centroid": [
+          -2.771102833603435e-19,
+          3.08123051242799e-17,
+          0.09969788519637479
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 23,
+        "solids": 2
+      },
+      "step_sha256": null,
+      "program_sha256": "5368bd2b7018526bf4fefdf26669956bd1018b8ae8a556a31f66e11a69121616",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-polyline",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).polyline([(0, 0), (1, 1), (2, 0)]).close().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polyline on a pending wire",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 329.99999999999994,
+        "area": 349.6568542494924,
+        "centroid": [
+          -0.006060606060606051,
+          -0.002020202020201842,
+          0.09090909090909127
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 20,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "0496ce05951467c3bb28c96267e5210c0ed2427de47a1816ed33dbf6b5754f8b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-moveTo",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).moveTo(0, 3).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.moveTo on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 331.99999999999994,
+        "area": 340.0,
+        "centroid": [
+          6.322335560035954e-19,
+          1.6720226274475252e-19,
+          0.1084337349397588
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "065f0e6d23693f4ac032c3c33a86cd87b1ba7611458e84f84f300100da05421d",
+      "program_sha256": "9eed68e064272c7b402adbf16116a51aff76d7f367c4db55e3c609afeecd5038",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-workplane",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).workplane().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.workplane on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 331.99999999999994,
+        "area": 340.0,
+        "centroid": [
+          6.322335560035954e-19,
+          1.6720226274475252e-19,
+          0.1084337349397588
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "065f0e6d23693f4ac032c3c33a86cd87b1ba7611458e84f84f300100da05421d",
+      "program_sha256": "374b17ad12ee7714e80068077372f5ee29220662a74f6f963881612debf010b5",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-transformed",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).transformed(offset=cq.Vector(0, 0, 1)).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.transformed on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 331.99999999999994,
+        "area": 340.0,
+        "centroid": [
+          6.322335560035954e-19,
+          1.6720226274475252e-19,
+          0.1084337349397588
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "065f0e6d23693f4ac032c3c33a86cd87b1ba7611458e84f84f300100da05421d",
+      "program_sha256": "8180e7e5aebcdaf38371ffdd3a539086780299abb704865da2aaaa4e17d6c245",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-pushPoints",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).pushPoints([(0, 3)]).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.pushPoints on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 331.99999999999994,
+        "area": 340.0,
+        "centroid": [
+          6.322335560035954e-19,
+          1.6720226274475252e-19,
+          0.1084337349397588
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "065f0e6d23693f4ac032c3c33a86cd87b1ba7611458e84f84f300100da05421d",
+      "program_sha256": "fa31fa1456b9b933ca22caff6697836deea7f58c64dc26afd521796c178ab208",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-rarray",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).rarray(1, 1, 2, 2).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.rarray on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 331.99999999999994,
+        "area": 340.0,
+        "centroid": [
+          6.322335560035954e-19,
+          1.6720226274475252e-19,
+          0.1084337349397588
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "065f0e6d23693f4ac032c3c33a86cd87b1ba7611458e84f84f300100da05421d",
+      "program_sha256": "f95c7eba4f78caa0fd31730614bd1d2610b314a9700ff830372a5ee187c45352",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-polarArray",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).polarArray(3, 0, 360, 4).extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.polarArray on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 331.99999999999994,
+        "area": 340.0,
+        "centroid": [
+          6.322335560035954e-19,
+          1.6720226274475252e-19,
+          0.1084337349397588
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 1
+      },
+      "step_sha256": "065f0e6d23693f4ac032c3c33a86cd87b1ba7611458e84f84f300100da05421d",
+      "program_sha256": "92b13ef851f735f7ae7487d4e9948db9350789c78d4371d86805daf4f64fb8b9",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-sketch",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).sketch().rect(1, 1).finalize().extrude(2)\nshow_object(result)\n",
+    "message": "Workplane.sketch on a non-empty stack",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 321.9999999999999,
+        "area": 312.0,
+        "centroid": [
+          -2.0202524953146053e-21,
+          2.2011324353951066e-17,
+          0.018633540372670815
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            4.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "12ca07752d1c4b0ff910fe4ac1cf09a7f5ae5348c0e97612986abbb40a240d5e",
+      "program_sha256": "e61a3e9adc69132855b1fd5052b2ee06df1afc4a61ce9c777b8b3329322128f2",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-edges",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).edges()\nshow_object(result)\n",
+    "message": "Workplane.edges on a stack that holds no solid",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 0.0,
+        "area": 0.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            -1.0,
+            -0.5,
+            2.0
+          ],
+          [
+            1.0,
+            0.5,
+            2.0
+          ]
+        ],
+        "faces": 0,
+        "solids": 0
+      },
+      "step_sha256": "993df255e24fbc3deeb162877560b4474b79cd1930b6ae0805349d7a20d30ce2",
+      "program_sha256": "4e8c408db8ba10c52f2f5021de27dd09750c327e1cbc912ba505291629e8e48a",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-fillet",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).fillet(0.1)\nshow_object(result)\n",
+    "message": "Workplane.fillet on a pending wire",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_Failure: There are no suitable edges for chamfer or fillet",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "950f48d8c068195ab28d31d586aa89169de1d9ddc4eb28e4e4d95793641e6d49",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-chamfer",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).chamfer(0.1)\nshow_object(result)\n",
+    "message": "Workplane.chamfer on a pending wire",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_NoSuchObject: NCollection_IndexedDataMap::FindFromKey",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "cd33832e45c2a6b668f17be5fd3b1f1f04294c9b33baefa80eb3c66eb0de599c",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-union",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).union(cq.Workplane(\"XY\").box(1, 1, 1))\nshow_object(result)\n",
+    "message": "Workplane.union on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 319.99999999999994,
+        "area": 304.0,
+        "centroid": [
+          0.0,
+          8.326672684688675e-18,
+          6.59194920871187e-18
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "7053ff1a6f0358e2bae94976558b80306bfdef94ab343e88ce213f1953ebcbd1",
+      "program_sha256": "cd0ca366ab88ec26d078c301598a6a90e389f4d74c4f75c5a4a2c3058bdacc2e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  {
+    "name": "nested-cut",
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(10, 8, 4).faces(\">Z\").workplane().rect(4, 2).rect(2, 1).cut(cq.Workplane(\"XY\").box(1, 1, 1))\nshow_object(result)\n",
+    "message": "Workplane.cut on a pending wire",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 318.99999999999983,
+        "area": 310.0,
+        "centroid": [
+          -2.1752018507546182e-20,
+          8.337820594173798e-18,
+          6.6078553722455135e-18
+        ],
+        "bounds": [
+          [
+            -5.0,
+            -4.0,
+            -2.0
+          ],
+          [
+            5.0,
+            4.0,
+            2.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 1
+      },
+      "step_sha256": "f872df328fa89ca519792651d03aae85a02bb80487d2b8a216a470adef03ac01",
+      "program_sha256": "98423e875b141dbbc929175b69b26d154c22fc5b867b17102689e3ee9c3ebfad",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "step_sha256": null,
+  "measures": null,
+  "message": "OCP.OCP.StdFail.StdFail_NotDone: BRep_API: command not done",
+  "program_sha256": "9fd7870edcc505b0335d4945046fb3819c3f286f15fea5278ed5173da7eb41d0",
+  "status": "runtime",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

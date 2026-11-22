@@ -1,0 +1,28 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 288,
+    "area": 352,
+    "centroid": [
+      -0.1111111111111111,
+      -0.1111111111111111,
+      0.0
+    ],
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -2.0
+      ],
+      [
+        5.0,
+        4.0,
+        2.0
+      ]
+    ],
+    "genus": 2,
+    "shells": 1
+  },
+  "xfail": "arris 0.11.1 refuses shells that touch along an edge"
+}

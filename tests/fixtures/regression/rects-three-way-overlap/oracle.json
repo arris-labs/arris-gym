@@ -1,0 +1,34 @@
+{
+  "status": "invalid",
+  "message": "BRepCheck_Analyzer: shape is not valid",
+  "measures": {
+    "volume": 4.0,
+    "area": 32.0,
+    "centroid": [
+      1.0,
+      -1.0,
+      0.5
+    ],
+    "bounds": [
+      [
+        -1.0,
+        -1.0,
+        0.0
+      ],
+      [
+        2.0,
+        2.0,
+        1.0
+      ]
+    ],
+    "faces": 14,
+    "solids": 1
+  },
+  "step_sha256": null,
+  "program_sha256": "d21ff95f6888f0a5d42f3e4cc8de886f77a21dec70f46faac7a8234fb91fc5f9",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

@@ -133,6 +133,54 @@ class _Disc(arris.build.Sketch):
 
 
 @dataclass(frozen=True)
+class _Rect(arris.build.Sketch):
+    """One rectangle and the dimensions needed to test a concentric wire."""
+
+    center: tuple[float, float] = (0.0, 0.0)
+    width: float = 0.0
+    height: float = 0.0
+
+    @classmethod
+    def draw(
+        cls,
+        plane: arris.build.Workplane,
+        width: float,
+        height: float,
+        centre: tuple[float, float],
+    ) -> _Rect:
+        """Draw a rectangle and retain its placement for later consumers."""
+        sketch = plane.rect(width, height, center=centre)
+        return cls(sketch.plane, sketch.outer, sketch.holes, centre, width, height)
+
+
+def _strictly_contains(outer: _Disc | _Rect, inner: _Disc | _Rect) -> bool:
+    """Containment for positive, concentric profiles in the same plane frame."""
+    if isinstance(inner, _Disc):
+        return isinstance(outer, _Rect) and 0 < inner.radius < min(outer.width, outer.height) / 2
+    if min(inner.width, inner.height) <= 0:
+        return False
+    if isinstance(outer, _Disc):
+        return math.hypot(inner.width / 2, inner.height / 2) < outer.radius
+    return inner.width < outer.width and inner.height < outer.height
+
+
+def _nested_section(first: _Disc | _Rect, second: _Disc | _Rect) -> arris.build.Sketch:
+    """Make the inner profile a hole in the outer, regardless of drawing order."""
+    if _strictly_contains(first, second):
+        outer, inner = first, second
+    elif _strictly_contains(second, first):
+        outer, inner = second, first
+    else:
+        raise UnsupportedApi("Workplane profiles without strict containment")
+    return _NestedRect(outer.plane, outer.outer, (inner.outer,))
+
+
+@dataclass(frozen=True)
+class _NestedRect(arris.build.Sketch):
+    """Nested profiles with at least one rectangle (ADR-0024)."""
+
+
+@dataclass(frozen=True)
 class _Points:
     """A stack of points `pushPoints`, `rarray` or `polarArray` put on the plane.
 
@@ -145,19 +193,15 @@ class _Points:
     """
 
     points: tuple[tuple[float, float, float], ...]
+    angles: tuple[float, ...] = ()  # Radians, empty for unrotated points.
 
 
 @dataclass(frozen=True)
-class _Discs:
-    """The circles `circle` drew on a stack of points, one at each, all of one radius.
+class _PlacedProfiles:
+    """Ordered profiles drawn at a stack of points for extrusion or cutting."""
 
-    They wait for `extrude`, which builds each and fuses it with the chain's
-    solid (ADR-0018 rule 5), or for `cutBlind`, which cuts them all from it in
-    one call (ADR-0019 rule 3). No two overlap or touch: `circle` refuses a stack
-    where they would, as CadQuery's wires then nest or merge.
-    """
-
-    sketches: tuple[_Disc, ...]
+    sketches: tuple[arris.build.Sketch, ...]
+    kind: str
 
 
 @dataclass(frozen=True)
@@ -360,8 +404,9 @@ class Workplane:
         self._refuse_selected(form)
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi(f"{form} on a stack of points")
-        if any(isinstance(o, _Discs) for o in self._stack):
-            raise UnsupportedApi(f"{form} on circles at points")
+        for obj in self._stack:
+            if isinstance(obj, _PlacedProfiles):
+                raise UnsupportedApi(f"{form} on {obj.kind} at points")
         sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
         if len(sketches) != 1 or len(self._stack) != 1:
             raise ValueError(_NO_WIRES)
@@ -370,7 +415,7 @@ class Workplane:
     def _visible_wires(self) -> tuple[arris.build.Sketch, ...]:
         """The closed profiles on the visible stack in drawing order."""
         profile = self._stack[0] if len(self._stack) == 1 else None
-        if isinstance(profile, _Discs):
+        if isinstance(profile, _PlacedProfiles):
             return profile.sketches
         if isinstance(profile, arris.build.Sketch):
             return (profile,)
@@ -411,8 +456,8 @@ class Workplane:
             raise UnsupportedApi(f"Workplane.lineTo on selected {_what(last)}")
         if isinstance(last, _Points):
             raise UnsupportedApi("Workplane.lineTo on a stack of points")
-        if isinstance(last, _Discs):
-            raise UnsupportedApi("Workplane.lineTo on circles at points")
+        if isinstance(last, _PlacedProfiles):
+            raise UnsupportedApi(f"Workplane.lineTo on {last.kind} at points")
         if isinstance(last, _Path):
             return last
         if isinstance(last, Sketch):
@@ -446,7 +491,8 @@ class Workplane:
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi(f"{form} on a stack of points")
         if any(
-            isinstance(o, (_Path, _Discs, arris.build.Sketch)) and not isinstance(o, _CenterPoint)
+            isinstance(o, (_Path, _PlacedProfiles, arris.build.Sketch))
+            and not isinstance(o, _CenterPoint)
             for o in self._stack
         ):
             raise UnsupportedApi(f"{form} on a pending wire")
@@ -842,8 +888,8 @@ class Workplane:
         1)`; point `i` is at `phi = math.radians(startAngle + step * i)`,
         `(radius * cos(phi), radius * sin(phi))`, in the plane's own axes. So
         a partial turn has both its ends, one point sits at `startAngle`, and
-        a negative radius puts each point across the centre. CadQuery's turn
-        of each point is dropped: a bore and a circle are round. The stack
+        a negative radius puts each point across the centre. The array angle
+        rotates each rectangular profile about its own point. The stack
         acts as `pushPoints`' (`hole` at each point, `circle` at each, and
         the contexts `rarray` refuses). A `count` under 1 raises `ValueError`
         (`runtime`) with the count verbatim, as in CadQuery; one that is not an
@@ -863,13 +909,10 @@ class Workplane:
             step = angle / count
         else:
             step = angle / (count - 1) if count > 1 else 0.0
-        points = []
-        for i in range(count):
-            phi = math.radians(startAngle + step * i)
-            points.append((float(radius * math.cos(phi)), float(radius * math.sin(phi)), 0.0))
-        # CadQuery turns each point's axes by its angle, and with them where a bore's or
-        # a circle's seam lies; `cq` drops the turn, so no seam of the chain is placed.
-        return self._derive(_Points(tuple(points)))._with_seams(None)
+        angles = tuple(math.radians(startAngle + step * i) for i in range(count))
+        points = tuple((radius * math.cos(phi), radius * math.sin(phi), 0.0) for phi in angles)
+        # The orientation of a circular seam from a polar point is still unknown.
+        return self._derive(_Points(points, angles))._with_seams(None)
 
     @census_form("Workplane.hole", [("num",)], keywords={"depth": ("num",)})
     def hole(self, diameter: float, depth: float | None = None) -> Workplane:
@@ -1301,6 +1344,9 @@ class Workplane:
         """
         if len(self._stack) == 1 and isinstance(self._stack[0], _Disc):
             return self._derive(self._ring(self._stack[0], radius))
+        if len(self._stack) == 1 and isinstance(self._stack[0], _Rect):
+            first = self._stack[0]
+            return self._derive(_nested_section(first, self._disc(radius, first.center)))
         if len(self._stack) == 1 and isinstance(self._stack[0], _Points):
             return self._derive(self._discs(self._stack[0], radius))
         centre = (0.0, 0.0)
@@ -1311,7 +1357,7 @@ class Workplane:
             centre = point.start
         return self._derive(self._disc(radius, centre))
 
-    def _discs(self, stacked: _Points, radius: float) -> _Discs:
+    def _discs(self, stacked: _Points, radius: float) -> _PlacedProfiles:
         """One circle of `radius` at each point of `stacked`, as CadQuery's `eachpoint` draws them.
 
         Refuses, as `UnsupportedApi`, a point with an offset along the normal
@@ -1325,7 +1371,9 @@ class Workplane:
             for u2, v2, _ in stacked.points[i + 1 :]:
                 if math.hypot(u - u2, v - v2) <= 2 * abs(radius):
                     raise UnsupportedApi("Workplane.circle on points no further apart than 2 radii")
-        return _Discs(tuple(self._disc(radius, (u, v)) for u, v, _ in stacked.points))
+        return _PlacedProfiles(
+            tuple(self._disc(radius, (u, v)) for u, v, _ in stacked.points), "circles"
+        )
 
     def _disc(self, radius: float, centre: tuple[float, float]) -> _Disc:
         """The pending circle of `radius` about `centre`, in the plane's own axes."""
@@ -1347,6 +1395,58 @@ class Workplane:
         outer, inner = (first, second) if radius < first.radius else (second, first)
         # `Sketch.cut` of a `_Disc` is a `_Disc` still: a plain sketch ends the chain of circles.
         return arris.build.Sketch(outer.plane, outer.outer, (inner.outer,))
+
+    @census_form("Workplane.rect", [("num",)] * 2)
+    def rect(self, xLen: float, yLen: float) -> Workplane:
+        """Draw a centred rectangle at the origin, pen point or each point of an array.
+
+        Dimensions are absolute. A zero dimension is refused by the kernel
+        when consumed (see `rect-zero-x` and `rect-zero-y`). A second
+        concentric rectangle or circle forms a hole if one strictly contains
+        the other (ADR-0024, `ok-rect-on-rect`, `ok-rect-on-circle`, `ok-circle-on-rect`).
+        Other pending profiles and points off the plane raise `UnsupportedApi`
+        (see `unsupported-rect-after-polygon` and `unsupported-rect-offset-point`).
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").moveTo(2, 1).rect(4, 2).extrude(3)
+        >>> round(wp._solids()[0].measure().volume, 9)
+        24.0
+        """
+        width, height = abs(xLen), abs(yLen)
+        point = self._stack[0] if len(self._stack) == 1 else None
+        if isinstance(point, _Points):
+            return self._derive(
+                _PlacedProfiles(
+                    tuple(
+                        _Rect.draw(plane, width, height, (0.0, 0.0))
+                        for plane in self._profile_planes(point, "Workplane.rect")
+                    ),
+                    "rectangles",
+                )
+            )
+        if isinstance(point, (_Rect, _Disc)):
+            centre = point.center
+        elif isinstance(point, _Path) and not point.segments:
+            centre = point.start
+        elif not self._stack:
+            centre = (0.0, 0.0)
+        else:
+            raise UnsupportedApi("Workplane.rect on a non-empty stack")
+        rect = _Rect.draw(self._plane, width, height, centre)
+        return self._derive(
+            _nested_section(point, rect) if isinstance(point, (_Rect, _Disc)) else rect
+        )
+
+    def _profile_planes(self, stacked: _Points, form: str) -> tuple[arris.build.Workplane, ...]:
+        """The in-plane frames of ordered points, with their individual rotations."""
+        if any(w != 0.0 for _, _, w in stacked.points):
+            raise UnsupportedApi(f"{form} on a point with an offset")
+        plane = self._plane
+        frames = []
+        for index, (u, v, _) in enumerate(stacked.points):
+            frame = arris.build.Workplane(plane.point(u, v), plane.x, plane.y, plane.z)
+            frames.append(frame.rotated(stacked.angles[index]) if stacked.angles else frame)
+        return tuple(frames)
 
     @census_form("Workplane.polygon", [("num",)] * 2)
     def polygon(self, nSides: int, diameter: float) -> Workplane:
@@ -1432,8 +1532,8 @@ class Workplane:
         """The pending sketch extruded `distance` along the plane's normal.
 
         The solid grows from the plane, not about it, and is fused with the
-        chain's solid if there is one (CadQuery's `combine=True`); on circles
-        drawn at a stack of points (`circle`) it builds a post at each. With
+        chain's solid if there is one (CadQuery's `combine=True`). Profiles
+        drawn at points produce a union of their sweeps. With
         `both`, it grows `distance` to each side of the plane: CadQuery fuses
         the two sweeps and cleans away the seam, which is the one prism of
         height `2|distance|` that arris sweeps in one go: the same volume,
@@ -1463,6 +1563,13 @@ class Workplane:
                 f"Workplane.extrude({distance}, both={both}): a zero distance "
                 "(CadQuery's Standard_ConstructionError)"
             )
+        if len(sketches) > 1 and all(isinstance(sketch, _Rect) for sketch in sketches):
+            # Fuse the whole array: a third prism can join two that touch
+            # only along an edge, which would fail if fused first as a pair.
+            tools = [sketch.extrude(distance, both=both) for sketch in sketches]
+            base = self._base_solid()
+            solids = tools if base is None else [base, *tools]
+            return self._derive(solids[0].fuse(*solids[1:]))._consume_wires()
         result = self
         for sketch in sketches:
             tool = sketch.extrude(distance, both=both)
@@ -1471,7 +1578,7 @@ class Workplane:
 
     @census_form("Workplane.cutBlind", [("num",)])
     def cutBlind(self, until: float) -> Workplane:
-        """The pending circle, ring or circles at points extruded `until` and cut from the solid.
+        """The pending profiles extruded `until` and cut from the solid.
 
         Each pending sketch is swept `until` along the plane's normal, against
         it when negative, and all the sweeps are cut from the chain's solid in
@@ -1511,10 +1618,12 @@ class Workplane:
 
         Each profile cuts along its plane's normal in both directions,
         including from outside the stock or through a compound. A miss
-        leaves the stock intact. Circles, circles at points, polygons and
-        closed paths are supported. Raises `ValueError` for a missing solid
+        leaves the stock intact. Circles and rectangles (including at points),
+        polygons and closed paths are supported. Raises `ValueError` for a missing solid
         before checking for pending wires, and for missing wires or a ring
-        (CadQuery's Standard_OutOfRange). A finalized sketch and keyword
+        (CadQuery's Standard_OutOfRange for circular rings and StdFail_NotDone
+        for nests with a rectangle, as in `runtime-through-rect-on-rect`).
+        A finalized sketch and keyword
         forms raise `UnsupportedApi` (ADR-0024 §A).
 
         See `ok-cut-thru-all-far`, `runtime-cut-thru-all-no-solid`,
@@ -1534,6 +1643,8 @@ class Workplane:
         sketches = self._wires("Workplane.cutThruAll")
         if not sketches:
             raise ValueError(_NO_WIRES)
+        if any(isinstance(sketch, _NestedRect) for sketch in sketches):
+            raise ValueError("CadQuery's StdFail_NotDone: BRep_API: command not done")
         if any(sketch.holes for sketch in sketches):
             raise ValueError("CadQuery's Standard_OutOfRange: NCollection_Sequence::Value")
         box = self._bore_bounds(base)

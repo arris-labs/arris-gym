@@ -88,3 +88,9 @@ At length = diameter the straight edges shrink to points and
 semicircles cross. Each cap's signed integral is 4π − 8 and the four
 wall lengths sum to 4π + 4. The oracle reports these measures for one
 solid whose checker status is `invalid`.
+
+`rect-contexts.json` records the calls refused on a single rectangle, a
+rectangular array or a nested section, alongside their pinned oracle
+reports. The programs start on the top workplane of the same stock.
+`test_cq_rect.py` binds every report to its program and checks the
+subset's refusal.

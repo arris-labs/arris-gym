@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, draw centred rectangles with `rect(xLen, yLen)`
+  at the workplane origin, a moved point or each point of an array. Extrude
+  them or cut them with `cutBlind` or `cutThruAll`. Nested rectangles and
+  circles can form holes in extrusions and blind cuts.
+
 - In the CadQuery dialect, use `center(x, y)` to shift the workplane origin
   before drawing or drilling. Pending closed wires keep their original positions.
 

@@ -50,6 +50,7 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `center(num, num)` (a moved origin) rides with bundle 5's `rect`: 1,593 BenchCAD programs write it, none of them unlocked by it alone (plans/lift-arrays-and-blind-cuts, non-goals)
 - `pushPoints` of `Vector` or `Location`, `cboreHole` and `cskHole` with `depth=` or `clean=`, `hole` with a positional depth, `rarray(center=)`, `polarArray(fill=, rotate=)`, `cutBlind(clean=, both=, taper=)` and `cutBlind` up to a face: lifted when a corpus program writes them
 - File the two arris refusals of `regression/cq-cut-blind-after-a-filled-pocket` and `regression/cq-cut-blind-across-a-split-end-face` (a tool flush with a face split by an edge it crosses, `OpDegenerateError`) in `../arris/docs/ideas/`: both READMEs say "not yet reported"
+- Investigate the three-way rectangular overlap in `regression/rects-three-way-overlap`. Check BenchCAD for the same refusal in step 7 of `lift-rects-and-through-cuts`.
 
 ## Findings
 

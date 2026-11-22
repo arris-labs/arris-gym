@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpProfileError"
+  },
+  "message": "the profile is not valid: loop 0, segment 0 is shorter than the tolerance"
+}

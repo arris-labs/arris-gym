@@ -174,3 +174,22 @@ step 7 must class it with evidence under ADR-0006.
 - **Let the new point replace pending wires in `center`.** A subsequent
   extrusion would lose geometry present in `center-on-pending` and
   `center-between-profiles`.
+
+## Amendment, 2026-11-22
+
+The six concentric nests with a rectangle raise `StdFail_NotDone` in
+`cutThruAll` on the pinned oracle (`runtime-through-rect-on-rect` and its
+five variants). Blind cuts and revolutions of the same sections match
+their closed forms in `ok-*-cutblind` and `ok-*-revolve`.
+
+Fuse a rectangular array's prisms together in one call. In
+`ok-rects-edge-bridge`, the first two prisms touch at a corner and the
+third joins both along a full side. Fusing the first pair alone would
+refuse this valid union. The separate three-way overlap in
+`regression/rects-three-way-overlap` remains open. The pinned wheel
+refuses it and the oracle builds an invalid part.
+
+Successive drawings on profiles drawn at an array remain outside the
+subset. The one-point polar probes include a rotated rectangle followed
+by a rectangle or a circle, and a circle followed by a rectangle. Each
+continues to return `unsupported_api` in the subset.
