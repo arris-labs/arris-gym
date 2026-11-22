@@ -416,6 +416,14 @@ def test_signed_solids_must_also_hold_for_arris() -> None:
         )
 
 
+def test_signed_solids_with_an_overflowing_sum_are_refused() -> None:
+    arris = result(Status.OK, BOX.model_copy(update={"shells": 2}))
+    oracle = report(OracleStatus.INVALID, INVERTED.model_copy(update={"solids": 3}))
+    verdict = signed_verdict(1.7e308, 1.7e308, -1.7e308)
+    with pytest.raises(ValueError, match="sum is not finite"):
+        compare(arris, oracle, verdict)
+
+
 def test_signed_solids_are_evidence_for_occt_wrong_alone() -> None:
     evidence = SignedSolids(volumes=(25.0, -1.0), note="flux")
     for cls in DisagreementClass:

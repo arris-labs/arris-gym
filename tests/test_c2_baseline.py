@@ -25,6 +25,7 @@ from arris_gym import Status, cq
 from arris_gym.census import ProgramCensus, Unparsable, reach
 from arris_gym.fidelity import (
     DisagreementClass,
+    DocAnchor,
     FidelityOutcome,
     FidelityTable,
     OracleReport,
@@ -147,6 +148,18 @@ def test_the_published_figures_are_the_committed_tables(corpus: str) -> None:
     assert table.outcomes["unclassified"] == figures["unclassified"]
     assert report.in_subset_outcomes["unclassified"] == 0
     assert table.oracle_statuses["ok"] == figures["oracle_ok"]
+
+
+def test_benchcad_by_design_rows_use_only_the_vertex_blend_exception() -> None:
+    anchor = "docs/adr/0025-a-vertex-blends-corner-patch-is-each-kernels-own.md#decision"
+    names = []
+    for entry in table_of("benchcad").entries:
+        if entry.row.disagreement is not DisagreementClass.BY_DESIGN:
+            continue
+        assert entry.row.verdict is not None
+        assert entry.row.verdict.evidence == DocAnchor(anchor=anchor)
+        names.append(entry.name)
+    assert names == ["locator_block_001595_s20260505", "locator_block_008469_s20260505"]
 
 
 def test_benchcads_arris_bugs_are_verdict_families_and_checker_fail_caps() -> None:

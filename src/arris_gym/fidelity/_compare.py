@@ -9,6 +9,7 @@ class. Every `match` over a status is exhaustive and closed by `assert_never`.
 from __future__ import annotations
 
 import enum
+import math
 import re
 from typing import Annotated, Literal, Self, assert_never
 
@@ -322,6 +323,8 @@ def _check_signed_solids(form: SignedSolids, result: ExecResult, report: OracleR
     total = 0.0
     for v in volumes:  # a fixed summation order: the sum reaches a verdict
         total += v
+    if not math.isfinite(total):
+        raise ValueError("signed solids whose sum is not finite")
     for measured in (report.measures.volume, result.measures.volume):
         scale = max(abs(total), abs(measured))
         if scale and abs(total - measured) > VOLUME_REL * scale:

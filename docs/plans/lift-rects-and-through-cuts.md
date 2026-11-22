@@ -8,8 +8,8 @@
 `cq` runs CadQuery 2.3.0's `cutThruAll()`, `rect(num, num)`, `center(num, num)`
 and `slot2D(num, num, num)` on the stacks BenchCAD writes them on. BenchCAD's
 reach goes from 9,998 to 14,150 of 17,900 (79.1%), with zero in-subset
-`cq_bug`, zero `by_design` and zero unclassified rows. CAD-Recode stays at
-968/968 and its table stays byte-equal.
+`cq_bug`, two `by_design` rows on ADR-0025's anchor and zero unclassified
+rows. CAD-Recode stays at 968/968 and its table stays byte-equal.
 
 ## Non-goals
 - Plan 2 of bundle 5, `lift-lofts-and-tapers`: `loft(combine=)`, `extrude(taper=)`, `mirrorY()`
@@ -58,6 +58,9 @@ raise `UnsupportedApi` (ADR-0024 §E and its slot amendment).
 43 → 47). The four methods add to the existing public API. `cq` imports
 only `arris`. The frozen C1 subset in `tests/fixture_cases.py` retains its
 original declarations.
+`fidelity.SignedSolids` extends the public `Verdict.evidence` union for
+`occt_wrong` verdicts on valid arris builds against an invalid oracle
+shape (ADR-0006's amendment of 2026-11-23).
 
 **Unsupported-example hits.** `tests/test_cq_calibration.py:52` holds
 `agree-revolve-torus` to `unsupported_api` `"Workplane.center"`. Step 4

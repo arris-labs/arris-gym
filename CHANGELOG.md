@@ -324,6 +324,15 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   program, unparsable programs included. It accepts source records or saved
   census outcomes. Static membership does not promise execution success.
 
+### Breaking
+
+- `fidelity.Verdict.evidence` can now contain `fidelity.SignedSolids`.
+  Add a `signed_solids` case to exhaustive evidence handlers.
+- `cq.subset()` declares `Workplane.cutThruAll()`, `Workplane.center(x, y)`,
+  `Workplane.rect(xLen, yLen)` and `Workplane.slot2D(length, diameter, angle)`.
+  Regenerate saved subset snapshots and handle execution results for these
+  forms where a caller previously expected `unsupported_api`.
+
 ## 0.1.0 — 2026-11-10
 
 - `arris-gym rescore benchcad` (needs the `[corpus]` extra) runs the 300 slice
