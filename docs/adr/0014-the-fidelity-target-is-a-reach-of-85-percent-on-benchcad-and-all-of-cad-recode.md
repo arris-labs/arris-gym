@@ -183,3 +183,18 @@ sketch lift would admit 725 additional BenchCAD programs that use the
 workplane method. Declaring `Sketch.rect(num, num)` keeps those programs
 outside the subset. No BenchCAD program writes `sketch()`, and the full
 census rerun reproduces the committed bytes.
+
+## Amendment (2026-11-22): two plans for BenchCAD bundle 5
+
+Bundle 5 has two plans and a corpus re-run after each. The first,
+`lift-rects-and-through-cuts`, groups `cutThruAll()`, `rect(num, num)`,
+`center(num, num)` and `slot2D(num, num, num)` around pending profiles and
+cuts (ADR-0024). `center` is part of the first plan because BenchCAD places
+rectangles and slots with it. The second, `lift-lofts-and-tapers`, lifts
+`loft(combine=)`, `extrude(taper=)` and `mirrorY()`.
+
+The first plan tests Open CASCADE's local through-cut operation and gives
+the larger gain on the committed census, from 9,998 to a projected 14,150
+of 17,900. The second tests loft section correspondence and is projected
+to reach 15,718, above the target of 15,215. The figures are reach
+projections. The corpus re-runs decide fidelity.

@@ -1,7 +1,7 @@
 # Plan: lift-rects-and-through-cuts
 
 - Started: 2026-11-21
-- Milestone: C2, bundle 5, first of two plans (docs/ROADMAP.md §C2; ADR-0014's amendment of 2026-11-14)
+- Milestone: C2, bundle 5, first of two plans (docs/ROADMAP.md §C2; ADR-0014's amendment of 2026-11-22)
 - Idea: none; verbatim from the human: "/plan BenchCAD bundle 5"
 
 ## Goal
@@ -25,38 +25,32 @@ from 9,998 to 14,150; dropping any one loses 623 (`slot2D`) to 2,881
 `rarray | pushPoints → rect → extrude | cutBlind | cutThruAll`, and
 `circle | close | slot2D → cutThruAll`.
 
-**A. `cutThruAll()`** (ADR-0024, step 2). CadQuery 2.3.0 calls
-`findSolid()` before `_getFaces()`, then
-`dprism(None, faces, thruAll=True, additive=False)`. That is a BRepFeat
-local operation, not a plain boolean, and its docstring says "both normal
-directions". Step 1's records decide five cases: whether it cuts one side
-or both, a plane that sits mid-part or off the part, a profile that misses
-the part or overhangs it, a compound, and the error order. The expected
-reading is every pending profile swept both ways past the part's bounds
-(`_bore_length`) and cut in one call, the pattern of ADR-0019 rule 3.
+**A. `cutThruAll()`** finds the chain's solid first, then sweeps each
+profile past the stock's projected bounds and cuts once (ADR-0024 §A).
+It cuts from inside or outside the stock, handles a miss, overhang or
+compound, and reports `runtime` for a circular ring as the oracle does.
 
-**B. Profiles at points** (ADR-0024, which amends ADR-0018 rule 5).
-`_Discs` becomes a stack of placed profiles: circles, rects or slots, one
-at each point of a stack of points. Pairs that overlap or touch are refused
-by an exact test for each shape pair, never by a bounding box, because an
-over-wide refusal of a part the oracle builds is an in-subset `cq_bug`.
-Step 1 records a `rect` on a pending `rect` or circle, and a circle on a
-`rect`, and ADR-0024 says whether each nests as `_ring` does or is refused.
+**B. Profiles at points** (ADR-0024 §B, amending ADR-0018 rule 5).
+`_Discs` becomes an ordered collection of placed circles, rects or slots.
+Rectangles and slots take their polar points' rotations. Strictly nested
+rects or a centred rect and circle form one section with a hole, in either
+order. Test containment from the section shapes. Edge-sharing and
+overlapping rectangles fuse or cut as a union. Corner-only contact can
+give an arris refusal.
 
-**C. `center(x, y)`** moves the plane's origin to `(x, y)` in plane
-coordinates, keeps the axes and the chain's solid, and leaves the new origin
-as the stack's one point (CadQuery's `newObject([new_origin])`); calls add
-up. On a pending profile (recorded in step 1) it is expected `UnsupportedApi`.
+**C. `center(x, y)`** moves the plane's origin in its current axes, keeps
+the chain's solid and gives the stack one point at the new origin. Offsets
+accumulate. Carry pending wires in their original placements (ADR-0024 §C).
 
-**D. `rect(xLen, yLen)`** builds `arris.build.Workplane.rect` at each
-point: the origin, a `moveTo` or `center` point, or each point of a stack
-of points. Step 1 records the negative and zero sizes.
+**D. `rect(xLen, yLen)`** places a rectangle at the origin, a `moveTo` or
+`center` point, or each point on a point stack. Use absolute dimensions.
+The pinned kernel refuses a zero dimension when consuming the wire
+(ADR-0024 §D).
 
-**E. `slot2D(length, diameter, angle)`** builds
-`arris.build.Workplane.slot(length, diameter, center=…,
-angle=radians(angle))` on the same stacks as D. arris refuses
-`length <= width` (`SketchError`). Step 1 records CadQuery on those cases,
-and ADR-0024 says whether they are `runtime` or a refusal.
+**E. `slot2D(length, diameter, angle)`** uses the same placement as D,
+with its angle in degrees. For positive sizes, equal length and diameter
+give `runtime`. A shorter length gives the kernel's `SketchError`
+(`arris_refusal`) (ADR-0024 §E).
 
 **F. Public surface.** `cq.subset()` gains the four declarations (doctest
 43 → 47). No public type or signature changes; `cq` imports only `arris`;
@@ -84,26 +78,29 @@ Grades are tiers (`.agents/tiers.md`):
   and touching or overlapping rects; delta C's cases; delta D's and E's sizes,
   `slot2D` at 0, 45 and 90 degrees. `tests/test_profile_probe.py` holds each
   report to its closed form.
-- [ ] Step 2 **[3]**: ADR-0024 settles deltas A to E from step 1's records,
-  closing the first and second `⚠ OPEN` below. It amends ADR-0018 rule 5,
-  amends ADR-0014 to name the split of bundle 5, and sharpens **Stack**.
-  Doc only.
+- [x] Step 2 **[3]**: ADR-0024 settles deltas A to E from step 1's records.
+  It amends ADR-0018 rule 5, amends ADR-0014 to name the split of bundle 5,
+  and sharpens **Stack**. Doc only.
 - [ ] Step 3 **[2]**: `cutThruAll()` on today's profiles: circle, ring,
   circles at points, polygon and closed path (delta A). Each `ok`,
-  `runtime` and `unsupported` case in ADR-0024 gets a fixture in
-  `tests/fixtures/cq/`. Property (`hypothesis`): a circular window cut
-  through a W×H×T box at a random centre inside it removes πr²T.
-  CHANGELOG bullet.
+  `runtime` and `unsupported_api` case for these profiles gets a fixture
+  in `tests/fixtures/cq/`. Include a plane farther from the stock than its
+  box diagonal and hold the side bore to its closed form. Property
+  (`hypothesis`): a circular window cut through a W×H×T box at a random
+  centre inside it removes πr²T. CHANGELOG bullet.
 - [ ] Step 4 **[1]**: `center(x, y)` (delta C). Fixtures: a centred circle
   extruded, centre twice, centre then `rarray` bored, centre on a face
-  workplane, and the pending-profile case. `agree-revolve-torus` moves to
-  `None`. CHANGELOG bullet.
+  workplane, centre after a point or point stack, and pending wires
+  consumed directly or after drawing a second wire. `agree-revolve-torus`
+  moves to `None`. CHANGELOG bullet.
 - [ ] Step 5 **[2]**: `rect(xLen, yLen)` on every stack D names. `_Discs`
-  becomes placed profiles with delta B's exact pair tests. Fixtures:
-  `extrude`, `cutBlind` and `cutThruAll` of a rect, rects at points, the
-  nestings ADR-0024 admits, and size refusals. Property: axis-aligned
-  rects on an integer grid of points, extruded, have volume n·|w·h·d|,
-  or are refused where two touch. CHANGELOG bullet.
+  becomes placed profiles. Fixtures: `extrude`, `cutBlind` and `cutThruAll`
+  of a rect, rects at points including rotated polar points, contact and
+  overlap, both orders of the nestings in ADR-0024, and size refusals.
+  Record through-cut outcomes for the new nests. Property: axis-aligned
+  rects on an integer grid extrude to exact union area times |d|, including
+  n·|w·h·d| for disjoint rects. Two rects meeting only at a corner exercise
+  the kernel's typed refusal. CHANGELOG bullet.
 - [ ] Step 6 **[2]**: `slot2D(length, diameter, angle)` (delta E) on the
   same stacks. Fixtures: angles 0, 45 and 90; at points; through-cut; and
   `length <= diameter`. Property: volume ((L−D)·D + πD²/4)·|d| for any
@@ -139,27 +136,18 @@ Grades are tiers (`.agents/tiers.md`):
 - `CHANGELOG.md`: bullets from steps 3 to 6. No reward moves.
 
 ## Open questions
-- ⚠ OPEN: does `cutThruAll` cut both sides of the plane, and what does it
-  do on an off-part plane or a profile that misses the part? The agent
-  decides from step 1's records, in ADR-0024 (step 2).
-- ⚠ OPEN: which pending-profile nestings are admitted (`rect` on a `rect`
-  or circle, a circle on a `rect`), and is `slot2D` with
-  `length <= diameter` `runtime` or a refusal? The agent decides in
-  ADR-0024 (step 2). A refusal must not hit a corpus program the oracle builds.
-- Step 1 evidence for ADR-0024 is in `tests/fixtures/profiles/README.md`.
-  The oracle fuses edge-touching and overlapping rectangles, preserves
-  corner-touching rectangles as two solids, retains a pending wire across
-  `center`, and reports zero-volume solids for one zero rectangle dimension.
-  Step 2 needs to reconcile the touching-rectangle property in step 5
-  with those reports and the plan's fidelity target.
+- *Settled* in ADR-0024 from `tests/fixtures/profiles/README.md` and
+  `constructed.json`. Through cuts span the stock in both directions.
+  Nested wires make holes, and the equal and short slot sizes have
+  different typed outcomes. `center` preserves pending wires.
+- *Settled* in ADR-0024 §B. The rectangle property asserts union volume
+  for shared edges and overlaps because both engines build those unions.
+  The corner-only case asserts the pinned kernel's actual refusal.
 - ⚠ OPEN: the oracle's side bore exceeds the agreement tolerance
-  (`regression/oracle-cut-thru-all-side`, strict `xfail`). Step 2 records
-  the evidence, and step 7 checks whether a corpus row needs a closed-form
-  verdict for this measure error.
-- *Decided by the agent*: bundle 5 is two plans. Its seven items (ADR-0014's
-  six, plus `center` with `rect`, per the backlog) exceed a bundle's three or
-  four; the split follows shared semantics, the largest unlock and the
-  BRepFeat through-cut first. ADR-0014 is amended in step 2. The human may
-  override the split before `/work`.
+  (`regression/oracle-cut-thru-all-side`, strict `xfail`). ADR-0024 §A
+  records the evidence. Step 7 checks whether a corpus row needs a
+  closed-form verdict for this measure error.
+- *Settled* in ADR-0014's amendment of 2026-11-22. Bundle 5 is two plans,
+  with the BRepFeat through cut and the larger projected reach gain first.
 - Step 7, by the agent: a `cq` fault needing a semantic ADR-0024 lacks
   becomes a new step here; never a left `cq_bug`, never a narrowed subset.

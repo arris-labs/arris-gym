@@ -166,3 +166,10 @@ both that refusal, `tests/test_hole_probe.py` holding each to CadQuery's words;
 and `cq/unsupported-csk-angle-above-360` and `-below-minus-180` record the
 cones of 40 and 160 degrees the oracle builds at 400 and −200. The rest of
 rule 4 is unchanged.
+
+## Amendment (2026-11-22): profiles at points
+
+Rule 5's point stack places one profile per point for `circle`, `rect` and
+`slot2D`. `polarArray` supplies a rotation for rectangles and slots.
+[ADR-0024](0024-a-cq-through-cut-sweeps-placed-profiles-past-the-stock.md)
+sets how the pending profiles nest, fuse when extruded and cut the stock.

@@ -148,6 +148,14 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   plane's own axes (the subset admits one `moveTo` point); `extrude` grows the pending wire from the plane
   along its normal by `distance` (not about it) and fuses the result with
   the solid in the chain (`combine=True`).
+- `Workplane.cutThruAll`, `_getFaces`, `center`, `rect`, `slot2D` and
+  `eachpoint` (`cadquery/cq.py`), with `dprism`
+  (`cadquery/occ_impl/shapes.py`): a through cut finds the solid before
+  reading the pending profiles, then runs a local through cut for each
+  face. `center` moves the plane origin, replaces the stack with that
+  point and retains pending wires. `rect` and `slot2D` place wires at the
+  stack's points with their local rotations. ADR-0024 cites the oracle
+  constructions in `tests/fixtures/profiles/`.
 - `Workplane.moveTo`, `lineTo`, `polyline`, `close`, `_findFromPoint` and
   `_addPendingEdge` (`cadquery/cq.py`): `moveTo` puts a point in plane
   coordinates on the stack; `lineTo` goes on from the last object only (an

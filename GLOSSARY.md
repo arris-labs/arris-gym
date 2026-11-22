@@ -232,13 +232,14 @@ argument, and its optional keywords. The same frozen record supplies the
 runtime decorator and static form matching (ADR-0012).
 
 **Stack**:
-A `cq` `Workplane`'s objects, the ones its call made, newest last; its
-result is the one solid on it (ADR-0007), never more than one. `pushPoints`
-puts a **stack of points** on it, in the plane's local coordinates, which a
-bore (`hole`, `cboreHole`, `cskHole`) cuts at each of and `circle` draws a
-circle at each of (ADR-0018); `rarray` puts one too, a grid about the plane's
-origin, and `polarArray` one on a circle about it (ADR-0019). `circle` at those points
-draws circles that `extrude` builds posts from and `cutBlind` cuts pockets with.
+A `cq` `Workplane`'s objects, the ones its call made, newest last. Its
+result is the one solid on it (ADR-0007). `pushPoints` puts a **stack of
+points** on it in the plane's local coordinates. `rarray` places a grid
+about the plane's origin and `polarArray` places points on a circle about
+it (ADR-0019). A bore (`hole`, `cboreHole`, `cskHole`) cuts at each point
+(ADR-0018). `circle`, `rect` and `slot2D` draw a profile at each point for
+`extrude`, `cutBlind` or `cutThruAll`. `center` leaves one point at the new
+origin and preserves the placement of pending wires (ADR-0024).
 `edges` puts a **stack of edges** on it, the solid's, the stacked faces' or
 the stacked edges' own, which `fillet` and `chamfer` blend (ADR-0020).
 
