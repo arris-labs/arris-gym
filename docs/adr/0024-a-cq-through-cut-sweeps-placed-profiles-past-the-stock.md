@@ -193,3 +193,32 @@ Successive drawings on profiles drawn at an array remain outside the
 subset. The one-point polar probes include a rotated rectangle followed
 by a rectangle or a circle, and a circle followed by a rectangle. Each
 continues to return `unsupported_api` in the subset.
+
+## Slot amendment, 2026-11-22
+
+At points, the slots must be disjoint. The centreline segment joins the
+centres of the two semicircular ends. Two slots touch when the shortest
+distance between their centreline segments is at most their common
+diameter. CadQuery reports overlapping parallel slots as invalid,
+builds the tip-touching slots as two solids and builds a union of
+crossing polar slots. Arris unions the parallel slots and refuses the
+two other cases. The subset returns `unsupported_api` for all three
+(`unsupported-slots-overlap`, `unsupported-slots-touch`,
+`unsupported-slots-rotated-overlap`). Diagonal slots with overlapping
+bounding boxes remain supported when their sections are disjoint
+(`ok-slot-diagonal-disjoint`).
+
+Zero diameter with positive length raises `ValueError` with the oracle's
+`StdFail_NotDone` and `GC_MakeArcOfCircle::Value() - no result`.
+Two zero dimensions use the same exception and message as positive
+equal dimensions.
+Zero length with a positive diameter leaves the kernel's `SketchError`
+intact. Negative dimensions stay outside the subset. The oracle builds
+valid sections with a different straight length for the recorded
+negative dimensions.
+
+A slot can be revolved on a chain without stock. With stock, the tested
+revolution and fusion exceeds the ADR-0005 agreement tolerance for
+volume and area, so the subset refuses that context
+(`unsupported-slot-revolve-with-stock`). Other refused combinations are
+recorded in `tests/fixtures/profiles/slot-contexts.json`.

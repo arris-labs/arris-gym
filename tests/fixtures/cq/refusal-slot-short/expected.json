@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "SketchError"
+  },
+  "message": "slot: length 2 must exceed width 4, both positive"
+}

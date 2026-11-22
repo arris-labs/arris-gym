@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "OCP.OCP.StdFail.StdFail_NotDone: GC_MakeArcOfCircle::Value() - no result",
+  "program_sha256": "5bfbc9da406d2dc1330666174f571aec27398d5b4ae05240e91e04e427e4befa",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

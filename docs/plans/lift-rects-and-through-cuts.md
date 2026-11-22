@@ -50,11 +50,14 @@ The pinned kernel refuses a zero dimension when consuming the wire
 **E. `slot2D(length, diameter, angle)`** uses the same placement as D,
 with its angle in degrees. For positive sizes, equal length and diameter
 give `runtime`. A shorter length gives the kernel's `SketchError`
-(`arris_refusal`) (ADR-0024 §E).
+(`arris_refusal`). Point arrays admit disjoint slots. Zero diameter gives
+`runtime`, while negative dimensions and revolutions with existing stock
+raise `UnsupportedApi` (ADR-0024 §E and its slot amendment).
 
 **F. Public surface.** `cq.subset()` gains the four declarations (doctest
-43 → 47). No public type or signature changes; `cq` imports only `arris`;
-the frozen C1 subset in `tests/fixture_cases.py` stays without them.
+43 → 47). The four methods add to the existing public API. `cq` imports
+only `arris`. The frozen C1 subset in `tests/fixture_cases.py` retains its
+original declarations.
 
 **Unsupported-example hits.** `tests/test_cq_calibration.py:52` holds
 `agree-revolve-torus` to `unsupported_api` `"Workplane.center"`. Step 4
@@ -101,7 +104,7 @@ Grades are tiers (`.agents/tiers.md`):
   rects on an integer grid extrude to exact union area times |d|, including
   n·|w·h·d| for disjoint rects. Two rects meeting only at a corner exercise
   the kernel's typed refusal. CHANGELOG bullet.
-- [ ] Step 6 **[2]**: `slot2D(length, diameter, angle)` (delta E) on the
+- [x] Step 6 **[2]**: `slot2D(length, diameter, angle)` (delta E) on the
   same stacks. Fixtures: angles 0, 45 and 90; at points; through-cut; and
   `length <= diameter`. Property: volume ((L−D)·D + πD²/4)·|d| for any
   angle. An offline reach test over the committed census rows gives
@@ -175,3 +178,9 @@ Grades are tiers (`.agents/tiers.md`):
   oracle returns an invalid part. Step 7 checks whether this occurs in
   BenchCAD. The rectangle context records also cover unsupported consumers,
   rotated nests and separate rectangles drawn across a centre shift.
+- *Settled* in step 6. Disjoint slots use the rectangle point placements.
+  Touching or overlapping arrays are refused because the two engines
+  disagree. Zero diameter returns the oracle's runtime error. Negative
+  dimensions and revolutions into existing stock remain outside the
+  subset. ADR-0024's slot amendment and the slot fixtures record the
+  evidence. Step 7 checks corpus execution against those boundaries.

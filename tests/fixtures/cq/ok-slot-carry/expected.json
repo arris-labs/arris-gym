@@ -1,0 +1,38 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 22.283185307179586,
+    "area": 50.84955592153876,
+    "centroid": [
+      0,
+      0,
+      1.0
+    ],
+    "bounds": [
+      [
+        -3,
+        -1,
+        0
+      ],
+      [
+        3,
+        1,
+        2
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        4
+      ]
+    ],
+    "genus": 0,
+    "shells": 1
+  }
+}

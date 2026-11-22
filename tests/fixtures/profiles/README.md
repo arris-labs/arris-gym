@@ -94,3 +94,18 @@ rectangular array or a nested section, alongside their pinned oracle
 reports. The programs start on the top workplane of the same stock.
 `test_cq_rect.py` binds every report to its program and checks the
 subset's refusal.
+
+The slot fixtures under `cq/` use the same section area and perimeter.
+Each polar slot is centred at (0, ±4), with its own axis at 120° or 300°.
+Its X span is 4 and its Y half-span is 1 + √3. The diagonal slots at
+(0, 0) and (−2, 2) have overlapping bounding boxes and a perpendicular
+centreline separation of 2√2, greater than their diameter. The blind
+slot is centred on the top face and cuts two units deep. The through-cut
+array removes two full slots at (±2, 0). The slot revolved about Y starts
+at X = 3 and spans X from 2 to 4. Pappus's theorem gives its volume and
+area by multiplying the section area and perimeter by 6π.
+
+`slot-contexts.json` records calls refused on a single slot or a slot array,
+plus unsupported stacks and argument forms for `slot2D`. Its oracle reports
+include an overlapping-slot blind cut that crashed. `test_cq_slot.py` binds
+the reports to their exact programs and checks the subset's refusals.

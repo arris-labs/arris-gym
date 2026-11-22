@@ -10,6 +10,7 @@ import functools
 import math
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from itertools import combinations
 from typing import Concatenate, NoReturn
 
 import arris
@@ -95,6 +96,7 @@ _SKETCH_TO_VECTOR = "Cannot convert object type '<class 'cadquery.sketch.Sketch'
 _NO_SOLID = "Cannot find a solid on the stack or in the parent chain"
 _NO_WIRES = "No pending wires present"
 _Bounds = tuple[tuple[float, float, float], tuple[float, float, float]]
+_UV = tuple[float, float]
 
 
 @dataclass(frozen=True)
@@ -178,6 +180,63 @@ def _nested_section(first: _Disc | _Rect, second: _Disc | _Rect) -> arris.build.
 @dataclass(frozen=True)
 class _NestedRect(arris.build.Sketch):
     """Nested profiles with at least one rectangle (ADR-0024)."""
+
+
+@dataclass(frozen=True)
+class _Slot(arris.build.Sketch):
+    """A slot wire whose revolution with existing stock is outside the subset."""
+
+    @classmethod
+    def draw(
+        cls,
+        plane: arris.build.Workplane,
+        length: float,
+        diameter: float,
+        angle: float,
+        centre: _UV = (0.0, 0.0),
+    ) -> _Slot:
+        sketch = plane.slot(length, diameter, center=centre, angle=angle)
+        return cls(sketch.plane, sketch.outer, sketch.holes)
+
+
+def _slot_centerline(u: float, v: float, aim: float, half_run: float) -> tuple[_UV, _UV]:
+    du, dv = half_run * math.cos(aim), half_run * math.sin(aim)
+    return (u - du, v - dv), (u + du, v + dv)
+
+
+def _side(a: _UV, b: _UV, p: _UV) -> float:
+    """The signed determinant of p relative to the directed line from a to b."""
+    return (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])
+
+
+def _within_segment_distance(p: _UV, a: _UV, b: _UV, distance: float) -> bool:
+    """Whether p is within distance of the finite segment from a to b."""
+    du, dv = b[0] - a[0], b[1] - a[1]
+    span = math.hypot(du, dv)
+    if span == 0:
+        return math.dist(p, a) <= distance
+    ux, uy = du / span, dv / span
+    along = (p[0] - a[0]) * ux + (p[1] - a[1]) * uy
+    if along <= 0:
+        return math.dist(p, a) <= distance
+    if along >= span:
+        return math.dist(p, b) <= distance
+    return abs((p[1] - a[1]) * ux - (p[0] - a[0]) * uy) <= distance
+
+
+def _slots_touch(first: tuple[_UV, _UV], second: tuple[_UV, _UV], diameter: float) -> bool:
+    """Equal-width slots touch when their centerlines approach within one diameter."""
+    a, b = first
+    c, d = second
+    # A closest pair includes an endpoint unless the segments cross.
+    c_side, d_side = sorted((_side(a, b, c), _side(a, b, d)))
+    a_side, b_side = sorted((_side(c, d, a), _side(c, d, b)))
+    if c_side < 0 < d_side and a_side < 0 < b_side:
+        return True
+    return any(
+        _within_segment_distance(p, start, end, diameter)
+        for p, start, end in ((a, c, d), (b, c, d), (c, a, b), (d, a, b))
+    )
 
 
 @dataclass(frozen=True)
@@ -889,7 +948,7 @@ class Workplane:
         `(radius * cos(phi), radius * sin(phi))`, in the plane's own axes. So
         a partial turn has both its ends, one point sits at `startAngle`, and
         a negative radius puts each point across the centre. The array angle
-        rotates each rectangular profile about its own point. The stack
+        rotates each rectangle or slot about its own point. The stack
         acts as `pushPoints`' (`hole` at each point, `circle` at each, and
         the contexts `rarray` refuses). A `count` under 1 raises `ValueError`
         (`runtime`) with the count verbatim, as in CadQuery; one that is not an
@@ -1437,6 +1496,56 @@ class Workplane:
             _nested_section(point, rect) if isinstance(point, (_Rect, _Disc)) else rect
         )
 
+    @census_form("Workplane.slot2D", [("num",)] * 3)
+    def slot2D(self, length: float, diameter: float, angle: float) -> Workplane:
+        """Draw a centred slot, with its angle in degrees from the local x axis.
+
+        Draws at the plane origin, a `moveTo` or `center` point, or each point
+        of an array. At a polar point the two rotations add. Touching or
+        overlapping slots at points raise `UnsupportedApi` (see
+        `unsupported-slots-touch` and `unsupported-slots-overlap`). Pending wires,
+        other stack objects and points off the plane raise `UnsupportedApi` (see
+        `unsupported-slot-on-circle` and `unsupported-slot-offset-point`).
+        Negative dimensions raise `UnsupportedApi` (`unsupported-slot-negative-length`).
+        Equal dimensions or a zero diameter raise `ValueError`
+        (`runtime-slot-equal`, `runtime-slot-zero-diameter`).
+        The kernel refuses a nonnegative length shorter than a positive diameter
+        (`refusal-slot-short`).
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").slot2D(6, 2, 90).extrude(2)
+        >>> round(wp._solids()[0].measure().volume, 9)
+        22.283185307
+        """
+        form = "Workplane.slot2D"
+        point = self._stack[0] if len(self._stack) == 1 else None
+        if self._stack and not (
+            isinstance(point, _Points) or (isinstance(point, _Path) and not point.segments)
+        ):
+            raise UnsupportedApi(f"{form} on a non-empty stack")
+        if length < 0 or diameter < 0:
+            raise UnsupportedApi(f"{form} with a negative dimension")
+        if length == diameter:
+            raise ValueError("CadQuery's StdFail_NotDone: BRep_API: command not done")
+        if diameter == 0:
+            raise ValueError("CadQuery's StdFail_NotDone: GC_MakeArcOfCircle::Value() - no result")
+        radians = math.radians(angle)
+        if isinstance(point, _Points):
+            sketches = tuple(
+                _Slot.draw(plane, length, diameter, radians)
+                for plane in self._profile_planes(point, form)
+            )
+            rotations = point.angles or (0.0,) * len(point.points)
+            lines = [
+                _slot_centerline(u, v, radians + rotation, (length - diameter) / 2)
+                for (u, v, _), rotation in zip(point.points, rotations, strict=True)
+            ]
+            if any(_slots_touch(a, b, diameter) for a, b in combinations(lines, 2)):
+                raise UnsupportedApi(f"{form} on points with touching or overlapping slots")
+            return self._derive(_PlacedProfiles(sketches, "slots"))
+        centre = point.start if isinstance(point, _Path) else (0.0, 0.0)
+        return self._derive(_Slot.draw(self._plane, length, diameter, radians, centre))
+
     def _profile_planes(self, stacked: _Points, form: str) -> tuple[arris.build.Workplane, ...]:
         """The in-plane frames of ordered points, with their individual rotations."""
         if any(w != 0.0 for _, _, w in stacked.points):
@@ -1618,8 +1727,8 @@ class Workplane:
 
         Each profile cuts along its plane's normal in both directions,
         including from outside the stock or through a compound. A miss
-        leaves the stock intact. Circles and rectangles (including at points),
-        polygons and closed paths are supported. Raises `ValueError` for a missing solid
+        leaves the stock intact. Circles, rectangles and slots (including at
+        points), polygons and closed paths are supported. Raises `ValueError` for a missing solid
         before checking for pending wires, and for missing wires or a ring
         (CadQuery's Standard_OutOfRange for circular rings and StdFail_NotDone
         for nests with a rectangle, as in `runtime-through-rect-on-rect`).
@@ -1838,6 +1947,8 @@ class Workplane:
         multiple of 360 is a full turn, as in CadQuery. The solid is fused
         with the chain's solid if there is one (`combine=True`). Raises
         `ValueError` (`runtime`) when the stack holds no pending sketch.
+        Revolving a slot on a chain with existing stock raises
+        `UnsupportedApi` (see `unsupported-slot-revolve-with-stock`).
 
         >>> import math
         >>> import arris_gym.cq as cq
@@ -1855,6 +1966,8 @@ class Workplane:
             sketch = wires[0]
         else:
             sketch = self._pending_sketch(form)
+        if isinstance(sketch, _Slot) and self._base_solid() is not None:
+            raise UnsupportedApi(f"{form} of a slot with existing stock")
         start_at, end_at = _axis_point(axisStart), _axis_point(axisEnd)
         degrees = angleDegrees % 360.0
         if degrees == 0:
