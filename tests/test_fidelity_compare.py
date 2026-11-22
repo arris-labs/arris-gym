@@ -32,6 +32,7 @@ from arris_gym.fidelity import (
     OracleVersions,
     RegressionFixture,
     SecondOracle,
+    SignedSolids,
     Verdict,
     compare,
 )
@@ -40,6 +41,32 @@ from arris_gym.sandbox import ArrisRefusal, BodyRef, Dialect, ExecResult, Measur
 REPO = pathlib.Path(__file__).resolve().parent.parent
 ROOT = REPO / "tests" / "fixtures" / "fidelity"
 DIRECTORIES = sorted(ROOT.glob("class-*"))
+
+
+@pytest.mark.xfail(
+    reason="The oracle's negatively oriented extra solid needs independent validity evidence",
+    raises=AssertionError,
+    strict=True,
+)
+def test_oracle_waffle_plate_remains_one_valid_solid() -> None:
+    fixture = ROOT.parent / "regression" / "oracle-waffle-fillet-negative-solid"
+    report = OracleReport.model_validate_json((fixture / "oracle.json").read_text())
+    expected = json.loads((fixture / "expected.json").read_text())
+    assert report.status is OracleStatus(expected["status"])
+    assert report.measures is not None
+    assert report.measures.solids == expected["solids"]
+
+
+def test_the_waffle_plates_inverted_solid_is_open_cascades_error() -> None:
+    fixture = ROOT.parent / "regression" / "oracle-waffle-fillet-negative-solid"
+    report = OracleReport.model_validate_json((fixture / "oracle.json").read_text())
+    verdict = Verdict.model_validate_json((fixture / "verdict.json").read_text())
+    result = arris_gym.run((fixture / "oracle.py").read_text(), dialect="cq")
+    assert result.program_sha256 == report.program_sha256
+    row = compare(result, report, verdict)
+    assert row.status is Status.OK
+    assert row.oracle_status is OracleStatus.INVALID
+    assert row.disagreement is DisagreementClass.OCCT_WRONG
 
 
 def load(d: pathlib.Path) -> tuple[OracleReport, Verdict | None, dict[str, Any]]:
@@ -331,6 +358,74 @@ def test_a_verdicts_evidence_must_fit_its_class() -> None:
         DocAnchor(anchor="docs/ARCHITECTURE.md")
 
 
+# --- Signed solids (ADR-0006, amended 2026-11-23). -------------------------------------------
+
+INVERTED = OracleMeasures(
+    volume=24.0,
+    area=60.0,
+    centroid=(1.0, 1.5, 2.0),
+    bounds=((0.0, 0.0, 0.0), (2.0, 3.0, 4.0)),
+    faces=10,
+    solids=2,
+)
+
+
+def signed_verdict(*volumes: float) -> Verdict:
+    return Verdict(
+        disagreement=DisagreementClass.OCCT_WRONG,
+        evidence=SignedSolids(volumes=volumes, note="flux"),
+    )
+
+
+def test_an_oracle_solid_turned_inside_out_is_open_cascades_error() -> None:
+    row = compare(
+        result(Status.OK), report(OracleStatus.INVALID, INVERTED), signed_verdict(25.0, -1.0)
+    )
+    assert row.outcome is FidelityOutcome.DISAGREE
+    assert row.disagreement is DisagreementClass.OCCT_WRONG
+    assert row.deltas is not None
+
+
+@pytest.mark.parametrize(
+    ("oracle", "volumes", "match"),
+    [
+        (report(OracleStatus.OK, INVERTED), (25.0, -1.0), "not arris ok against an invalid"),
+        (report(OracleStatus.INVALID, INVERTED), (24.0,), "one per solid"),
+        (report(OracleStatus.INVALID, INVERTED), (12.0, 12.0), "no solid turned inside out"),
+        (report(OracleStatus.INVALID, INVERTED), (26.0, -1.0), "sum is not the measured volume"),
+        (
+            report(OracleStatus.INVALID, INVERTED.model_copy(update={"solids": 3})),
+            (13.0, 12.0, -1.0),
+            "positive solids are not arris's shells",
+        ),
+    ],
+    ids=["oracle-ok", "count", "no-negative", "sum", "shells"],
+)
+def test_signed_solids_that_do_not_hold_are_refused(
+    oracle: OracleReport, volumes: tuple[float, ...], match: str
+) -> None:
+    with pytest.raises(ValueError, match=match):
+        compare(result(Status.OK), oracle, signed_verdict(*volumes))
+
+
+def test_signed_solids_must_also_hold_for_arris() -> None:
+    wide = BOX.model_copy(update={"volume": 23.0})
+    with pytest.raises(ValueError, match="sum is not the measured volume"):
+        compare(
+            result(Status.OK, wide), report(OracleStatus.INVALID, INVERTED), signed_verdict(25, -1)
+        )
+
+
+def test_signed_solids_are_evidence_for_occt_wrong_alone() -> None:
+    evidence = SignedSolids(volumes=(25.0, -1.0), note="flux")
+    for cls in DisagreementClass:
+        if cls is DisagreementClass.OCCT_WRONG:
+            assert Verdict(disagreement=cls, evidence=evidence)
+            continue
+        with pytest.raises(pydantic.ValidationError):
+            Verdict(disagreement=cls, evidence=evidence)
+
+
 def test_a_row_refuses_fields_its_outcome_contradicts() -> None:
     row = compare(result(Status.ARRIS_REFUSAL), report(OracleStatus.OK))
     fields = row.model_dump()
@@ -378,8 +473,14 @@ closed_forms = st.builds(
     bounds=st.tuples(finite_point, finite_point),
     note=st.just("drawn"),
 )
+signed = st.builds(
+    SignedSolids,
+    volumes=st.lists(finite, min_size=1, max_size=4).map(tuple),
+    note=st.just("drawn"),
+)
 evidence = st.one_of(
     closed_forms,
+    signed,
     st.just(FIXTURE),
     st.just(SecondOracle(oracle="Parasolid", version="36.1", record="r")),
     st.just(DocAnchor(anchor="docs/ARCHITECTURE.md#outcomes")),

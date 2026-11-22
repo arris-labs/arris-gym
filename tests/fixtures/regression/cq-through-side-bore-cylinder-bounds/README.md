@@ -1,0 +1,5 @@
+# Tight bounds after a transverse through cut
+
+This reduces `piston_000251_s20260505` from [BenchCAD](https://huggingface.co/datasets/BenchCAD/BenchCAD) `code_gen` revision `5919f578ab09ec283603a082fab07c7639ab56eb` ([CC-BY-4.0](https://creativecommons.org/licenses/by/4.0)). The reduced cylinder has radius 6 and height 12 along Y, with a perpendicular radius-2 bore at Y = 5.
+
+The bore leaves material at each extreme of the original cylinder, so the bounds remain `[-6, 0, -6]` to `[6, 12, 6]`. The removed volume is the intersection of the two cylinders. The volume, area and centroid in the fixture come from integrating the exposed planar and cylindrical patches with `part_measures` in `tools/cq_closed_forms.py`, using a radius-6 rod on axis 1 from 0 to 12 and subtracting a radius-2 rod on axis 2 through Y = 5. The pinned wheel's volume, area and centroid match the integral. Its Z bounds extend about 0.001614 beyond the cylinder on both sides. The recorded oracle's volume and area differ from the integral, but its bounds match the untouched extrema within ADR-0005.

@@ -198,3 +198,12 @@ the larger gain on the committed census, from 9,998 to a projected 14,150
 of 17,900. The second tests loft section correspondence and is projected
 to reach 15,718, above the target of 15,215. The figures are reach
 projections. The corpus re-runs decide fidelity.
+
+## Amendment (2026-11-23): corner patches are by design
+
+ADR-0025 amends the Decision's "none `by_design`" for its anchor alone: a
+difference confined to the patch that closes a vertex where three blends
+meet is each kernel's own, and such an in-subset row is `by_design`,
+counted in `in_subset_by_design` and named in the corpus's README. Every
+other in-subset `by_design` row still fails the target. BenchCAD has two
+(plans/lift-rects-and-through-cuts step 7).

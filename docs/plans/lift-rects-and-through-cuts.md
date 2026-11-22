@@ -109,7 +109,7 @@ Grades are tiers (`.agents/tiers.md`):
   `length <= diameter`. Property: volume ((L−D)·D + πD²/4)·|d| for any
   angle. An offline reach test over the committed census rows gives
   14,150/17,900 for BenchCAD and 968/968 for CAD-Recode. CHANGELOG bullet.
-- [ ] Step 7 **[3, conductor-run]**: re-run BenchCAD under `cq` against the
+- [x] Step 7 **[3, conductor-run]**: re-run BenchCAD under `cq` against the
   committed oracle rows (`tools/cq_corpus.py --corpus benchcad`, a fresh
   `--work-dir`). Class every new in-subset disagreement. A `cq` fault is
   shrunk to a fixture and fixed, and its commit carries the suffix of the
@@ -125,7 +125,8 @@ Grades are tiers (`.agents/tiers.md`):
 - `tests/fixtures/profiles/constructed.json`, the new `tests/fixtures/cq/`
   fixtures and the properties of steps 3, 5 and 6 pass under the gate.
 - BenchCAD, each figure over all 17,900 programs: reach 14,150; in-subset
-  `cq_bug` 0, `by_design` 0, unclassified 0 (in and out of the subset),
+  `cq_bug` 0, `by_design` 2 on ADR-0025's anchor alone, unclassified 0 (in
+  and out of the subset),
   timeouts 0. Agreement is reported, not targeted. The census digest
   (`043db6d9…`) is unchanged.
 - CAD-Recode: reach 968/968 and table digest `fe2861b7…`, both unchanged.
@@ -146,14 +147,8 @@ Grades are tiers (`.agents/tiers.md`):
 - *Settled* in ADR-0024 §B. The rectangle property asserts union volume
   for shared edges and overlaps because both engines build those unions.
   The corner-only case asserts the pinned kernel's actual refusal.
-- ⚠ OPEN: the oracle's side bore exceeds the agreement tolerance
-  (`regression/oracle-cut-thru-all-side`, strict `xfail`). ADR-0024 §A
-  records the evidence. Step 7 checks whether a corpus row needs a
-  closed-form verdict for this measure error.
-- ⚠ OPEN: CadQuery leaves the stock uncut with the profile 40 units above
-  its face (`regression/oracle-cut-thru-all-far`, strict `xfail`). Arris
-  matches the full-sweep closed form. Step 7 checks the corpus for this
-  discrepancy as well as the side bore's measure error.
+- *Settled* in step 7. No row rests on `regression/oracle-cut-thru-all-side`
+  or `-far`; both stay strict `xfail` records of the oracle.
 - *Settled* in step 3. The report check uses the bundle 4 subset that
   produced the committed reports until step 7 replaces them. The live
   subset's reach is checked separately (10,878 BenchCAD rows after step 3).
@@ -163,11 +158,10 @@ Grades are tiers (`.agents/tiers.md`):
   with the BRepFeat through cut and the larger projected reach gain first.
 - Step 7, by the agent: a `cq` fault needing a semantic ADR-0024 lacks
   becomes a new step here; never a left `cq_bug`, never a narrowed subset.
-- ⚠ OPEN: the oracle builds nested circles across a centre shift, revolves
-  multiple wires across a shift, and starts a sketch on the point left by
-  `center`. The subset refuses these contexts
-  (`unsupported-center-nested-circles`, `unsupported-center-revolve-multiple`,
-  `unsupported-center-sketch`). Step 7 checks them against corpus reach.
+- *Settled* in step 7. The `center` contexts the subset refuses
+  (`unsupported-center-*`) and three-way rectangle overlap
+  (`regression/rects-three-way-overlap`) leave no in-subset `cq_bug` or
+  unclassified BenchCAD row.
 - *Settled* in step 5. The six concentric nests with rectangles return
   `StdFail_NotDone` on through-cut in the pinned oracle. Blind cuts and
   revolutions match the closed forms. Extrusion fuses rectangular arrays as
@@ -184,3 +178,25 @@ Grades are tiers (`.agents/tiers.md`):
   dimensions and revolutions into existing stock remain outside the
   subset. ADR-0024's slot amendment and the slot fixtures record the
   evidence. Step 7 checks corpus execution against those boundaries.
+- *Settled* in step 7 (table digest `cc8eb417…`, oracle rows byte-equal):
+  reach 14,150/17,900, 10,730 agree, timeouts 0, in-subset `cq_bug` 0,
+  unclassified 0. The 579 new rows are 404 `occt_wrong`, 71 `arris_refusal`,
+  102 `arris_bug` and 2 `by_design`. Closed forms from construction class
+  all but 8 `occt_wrong` rows: `Round`s in `part_measures`, `gear_measures`,
+  `flanged_gear_closed_form`, `_rim_prism` and the cam's bore into its boss.
+  Four rows use the blended boundary integral and four waffle plates use
+  signed solids (ADR-0006's amendment of 2026-11-23, by the human's choice).
+  The two vertex-blend locators are `by_design` (ADR-0025, the human's
+  choice; it amends ADR-0014's "none `by_design`"). Every verdict is
+  rebuilt byte for byte by `tools/cq_closed_forms.py
+  @tests/fixtures/c2/benchcad/verdicts.args`.
+- ⚠ OPEN: `double_simplex_sprocket_009154_s20260505` takes 29.6 s of the
+  30 s sandbox deadline alone. The final run had no timeout, but load can
+  cause one. The arris report
+  (`../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`)
+  asks for a profile. It also records
+  `regression/cq-keyway-tangent-to-bore-chamfer-rim`, an internal error
+  found while testing the flanged gear form.
+- ⚠ OPEN: the slotted ring's converged oracle trim integral still differs
+  from construction (`regression/oracle-slotted-ring-boundary`, strict
+  `xfail`). No verdict rests on it.

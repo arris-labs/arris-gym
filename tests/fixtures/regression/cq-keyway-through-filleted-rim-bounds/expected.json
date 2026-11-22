@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 7120.5442467244075,
+    "area": 2508.241933232571,
+    "centroid": [
+      0.0,
+      -8.655268681527781,
+      -0.029839477066241613
+    ],
+    "bounds": [
+      [
+        -12.0,
+        -17.28,
+        -12.0
+      ],
+      [
+        12.0,
+        0.0,
+        12.0
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "xfail": "the keyway across the inner rim fillet boxes part of the trim above its original end plane",
+  "note": "Integrate the annular slices with the rectangle outside the bore removed. The fillet changes the two radii by 0.8 times (1 - cos(theta)); use the exposed bore arc and planar keyway walls for area. No cut or fillet can add material above Y = 0 and the upper end face survives."
+}

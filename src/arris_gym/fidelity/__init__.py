@@ -18,6 +18,7 @@ from arris_gym.fidelity._compare import (
     FidelityRow,
     RegressionFixture,
     SecondOracle,
+    SignedSolids,
     Verdict,
     compare,
 )
@@ -65,6 +66,7 @@ __all__ = [
     "ReachReport",
     "RegressionFixture",
     "SecondOracle",
+    "SignedSolids",
     "TableEntry",
     "Verdict",
     "arris_rows",

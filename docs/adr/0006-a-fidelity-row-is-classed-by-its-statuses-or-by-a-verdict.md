@@ -164,3 +164,42 @@ identified in its note. `compare` applies the same checks as for a measure
 derived from construction. This evidence settles the measurement discrepancy
 for the supplied boundary. A disagreement about the constructed geometry
 still requires measures derived from construction or a second kernel.
+
+## Amendment (2026-11-23): BenchCAD's boundary integrals and signed solids
+
+**Independent boundary integration reaches BenchCAD.** The 2026-11-21
+amendment's integral (Green's theorem along the oracle's trims, the
+divergence theorem for the fluxes, two resolutions that agree inside
+ADR-0005's tolerance) also settles a BenchCAD row whose part has planar,
+cylindrical, conical or toroidal faces only. On a cone or a torus, the flux
+primitive across the face from a fixed parameter to the trim is itself a
+Gauss-Legendre quadrature. The same conditions hold: both builds succeed,
+arris agrees with the integral, the committed oracle measures differ from
+it, and the verdict is a `ClosedForm` whose note names the method. It
+settles a mass-property error of Open CASCADE's on the boundary it built,
+never a difference in what was built; `tools/cq_closed_forms.py
+--blended-boundary STEM` writes it. A row a closed form from construction
+reads takes that instead.
+
+**Signed solids are evidence for `occt_wrong`.** On a row where arris
+built a valid shape (`ok`) and the oracle's checker rejected its own
+(`invalid`), the measures can agree while the oracle's shape holds a solid
+turned inside out: its signed volume negative, its faces' normals pointing
+in. GProp sums the signed volumes, so the aggregate matches arris, and a
+`ClosedForm` has nothing to hold the oracle to. `SignedSolids` (a public
+type of `fidelity`) carries each solid's signed volume of the oracle's
+shape, from the boundary flux above, never from a kernel's mass
+properties. `compare` raises `ValueError` unless the row is arris `ok`
+against an oracle `invalid`, there is one volume per solid of the oracle's
+shape, at least one is negative, their sum lies inside `VOLUME_REL` of the
+oracle's volume and of arris's, and arris has one shell per positive solid.
+`Verdict` admits it for `occt_wrong` alone; `tools/cq_closed_forms.py
+--signed-solids STEM` writes it.
+
+Consequences:
+
+- BenchCAD's four `waffle_plate` rows that pair `ok` with `invalid` are
+  `occt_wrong` by signed solids. Their reduced case is
+  `regression/oracle-waffle-fillet-negative-solid`.
+- A difference in what the kernels built still needs a closed form from
+  construction or a second kernel.

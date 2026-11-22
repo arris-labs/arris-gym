@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpDegenerateError"
+  },
+  "note": "The rim has existing radius-1.31 blends, with three rectangular through cuts and four bores in the plate. The 1.42 chamfer asks arris to blend into those existing rounded corners. Arris refuses the corner arrangement."
+}

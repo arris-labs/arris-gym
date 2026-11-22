@@ -1,0 +1,23 @@
+import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .box(65.8, 123.66, 33.21)
+    .edges(">Z")
+    .chamfer(1.1)
+    .faces(">Z").workplane()
+    .rarray(30.33, 36.96, 2, 3)
+    .rect(14.73, 27.05)
+    .cutBlind(-19.43)
+    .faces("<Z").workplane()
+    .rarray(30.33, 36.96, 2, 3)
+    .circle(6.265)
+    .cutBlind(-11.78)
+    .faces(">Z").workplane()
+    .hole(23.6)
+    .faces(">Z").workplane()
+    .pushPoints([(25.9, 54.83), (25.9, -54.83), (-25.9, 54.83), (-25.9, -54.83)])
+    .hole(3.24)
+    .edges("|Z")
+    .fillet(1.67)
+)

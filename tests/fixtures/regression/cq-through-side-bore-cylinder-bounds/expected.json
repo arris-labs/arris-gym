@@ -1,0 +1,13 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 1208.4961250948534,
+    "area": 799.6028445265863,
+    "centroid": [0, 6.123022240757512, 0],
+    "bounds": [[-6, 0, -6], [6, 12, 6]],
+    "shells": 1,
+    "genus": 1
+  },
+  "xfail": "The bounding box extends beyond the untouched extrema of the outer cylinder after a transverse through cut."
+}

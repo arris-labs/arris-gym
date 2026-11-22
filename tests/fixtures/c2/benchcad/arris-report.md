@@ -1,15 +1,45 @@
 # arris report
 
-Over 17900 programs: 1457 arris refusals, 289 arris bugs.
+Over 17900 programs: 1778 arris refusals, 391 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.11.1" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 
-### ` "OpDegenerateError" ` (933)
+### ` "OpDegenerateError" ` (1210)
 
 - 281x ` "degenerate result: an arc's circle crosses the revolve axis: a spindle torus" `
+- 5x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e15, +f41)" `
+- 2x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e15, +f51)" `
+- 1x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e15, +f61)" `
+- 1x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e15, +f71)" `
+- 2x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e15, +f81)" `
+- 2x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e22, +f40)" `
+- 2x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e22, +f60)" `
+- 1x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e22, +f70)" `
+- 2x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e22, +f80)" `
+- 3x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e24, +e12)" `
+- 9x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e53, +e58)" `
+- 6x ` "degenerate result: the blend leaves its face through an edge that is not the corner's own (+e53, +e60)" `
+- 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e120, +e135, +v80)" `
+- 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e18, +e50, +v12)" `
+- 5x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e22, +e27, +v16)" `
+- 11x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e22, +e28, +v16)" `
+- 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e22, +e30, +v16)" `
+- 17x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e22, +e34, +v16)" `
+- 4x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e26, +e18, +v12)" `
+- 14x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e28, +e18, +v12)" `
+- 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e31, +e18, +v12)" `
+- 4x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e33, +e18, +v12)" `
+- 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e34, +e18, +v12)" `
+- 71x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e47, +e79, +e48, +v33)" `
+- 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e50, +e22, +v16)" `
+- 30x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e76, +e39, +e40, +v25)" `
+- 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e96, +e78, +v48)" `
+- 61x ` "degenerate result: the edge's faces meet at a tangent dihedral, which has no corner to blend (+e15, +f20, +f21)" `
+- 2x ` "degenerate result: the edge's faces meet at a tangent dihedral, which has no corner to blend (+e204, +f127, +f128)" `
+- 3x ` "degenerate result: the edge's faces meet at a tangent dihedral, which has no corner to blend (+e375, +f223, +f224)" `
 - 9x ` "degenerate result: the edge's faces meet at a tangent dihedral, which has no corner to blend (+e45, +f21, +f22)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f81, +f82)" `
 - 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f100, +f83, +f84)" `
@@ -51,7 +81,7 @@ arris ` "0.11.1" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f254, +f250, +f253)" `
 - 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f26, +f17, +f24)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f268, +f266, +f267)" `
-- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f27, +f21, +f22)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f27, +f21, +f22)" `
 - 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f28, +f19, +f26)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f296, +f293, +f294)" `
 - 32x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f18)" `
@@ -61,10 +91,12 @@ arris ` "0.11.1" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 61x ` "degenerate result: the faces touch along a curve interior to both result faces (+f3, +f8)" `
 - 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f30, +f21, +f28)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f310, +f308, +f309)" `
-- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f32, +f26, +f27)" `
+- 4x ` "degenerate result: the faces touch along a curve interior to both result faces (+f32, +f26, +f27)" `
+- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f35, +f29, +f30)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f37, +f31, +f32)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f380, +f378, +f379)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f394, +f392, +f393)" `
-- 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f40, +f34, +f35)" `
+- 2x ` "degenerate result: the faces touch along a curve interior to both result faces (+f40, +f34, +f35)" `
 - 1x ` "degenerate result: the faces touch along a curve interior to both result faces (+f408, +f404, +f407)" `
 - 11x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f27)" `
 - 5x ` "degenerate result: the faces touch along a curve interior to both result faces (+f43, +f26, +f36)" `
@@ -98,24 +130,58 @@ arris ` "0.11.1" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 2x ` "degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold (+e8, +e9, +e10, +e11)" `
 - 3x ` "degenerate result: the result's shells would touch along an edge or at a vertex, which a solid does not hold (+v1)" `
 
-### ` "OpInternalError" ` (211)
+### ` "OpInternalError" ` (216)
 
 - 1x ` "kernel bug: the contacts on the shared face through one point was not found" `
-- 2x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f16's arrangement does not turn once" `
-- 1x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f21's arrangement does not turn once" `
+- 3x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f16's arrangement does not turn once" `
+- 4x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f21's arrangement does not turn once" `
 - 176x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f8's arrangement does not turn once" `
+- 1x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f95's arrangement does not turn once" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a hole of f9 lies inside no region" `
 - 25x ` "kernel bug: the face arrangement is not a subdivision: a section edge of f0 ends at a node nothing else reaches" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a section edge of f38 ends at a node nothing else reaches" `
 
-### ` "OpUnsupportedError" ` (313)
+### ` "OpUnsupportedError" ` (330)
 
 - 53x ` "no closed form for +f1 (plane surface) against +f3 (sphere surface)" `
 - 51x ` "no closed form for +f1 (plane surface) against +v2 (point)" `
+- 2x ` "no closed form for +f11 (cylinder surface) against +f14 (cylinder surface)" `
+- 4x ` "no closed form for +f11 (cylinder surface) against +f28 (cylinder surface)" `
+- 1x ` "no closed form for +f197 (plane surface) against +e226 (line curve)" `
 - 66x ` "no closed form for +f2 (plane surface) against +f0 (sphere surface)" `
 - 61x ` "no closed form for +f2 (plane surface) against +v0 (point)" `
 - 2x ` "no closed form for +f22 (plane surface) against +e64 (circle curve)" `
+- 1x ` "no closed form for +f237 (plane surface) against +e258 (line curve)" `
+- 1x ` "no closed form for +f240 (plane surface) against +e250 (line curve)" `
+- 3x ` "no closed form for +f25 (cylinder surface) against +f14 (cylinder surface)" `
+- 3x ` "no closed form for +f26 (cylinder surface) against +f12 (cylinder surface)" `
+- 1x ` "no closed form for +f316 (plane surface) against +e386 (line curve)" `
+- 1x ` "no closed form for +f375 (plane surface) against +e450 (line curve)" `
 - 80x ` "no closed form for +f6 (plane surface) against +v0 (point)" `
+
+### ` "SketchError" ` (22)
+
+- 1x ` "slot: length 19.2 must exceed width 22.56, both positive" `
+- 1x ` "slot: length 19.64 must exceed width 22, both positive" `
+- 1x ` "slot: length 20.63 must exceed width 22, both positive" `
+- 1x ` "slot: length 20.8 must exceed width 22, both positive" `
+- 1x ` "slot: length 21.79 must exceed width 22, both positive" `
+- 1x ` "slot: length 22.11 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 22.46 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 22.49 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 22.53 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 22.77 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 23.83 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 23.9 must exceed width 34.12, both positive" `
+- 1x ` "slot: length 23.97 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 25.38 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 25.87 must exceed width 27.5, both positive" `
+- 2x ` "slot: length 26.05 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 27.48 must exceed width 27.5, both positive" `
+- 1x ` "slot: length 29.5 must exceed width 29.72, both positive" `
+- 1x ` "slot: length 35.4 must exceed width 51.64, both positive" `
+- 1x ` "slot: length 47.8 must exceed width 61.26, both positive" `
+- 1x ` "slot: length 63.9 must exceed width 68.08, both positive" `
 
 ## Bugs
 
@@ -156,6 +222,13 @@ arris ` "0.11.1" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "bearing_retainer_cap_018080_s20260505" ` (34fdb21ef008b22ff2a3aa0d4d4b4c1617e03ca90e1d452c45d66201cdcf3e4f): arris checker_fail, oracle ok, fixture none
 - ` "bearing_retainer_cap_019123_s20260505" ` (40b77b636ee98e8ed862cd21f765be0088fc55495f54d9a3b85983e5283fbf1e): arris checker_fail, oracle ok, fixture none
 - ` "bearing_retainer_cap_019836_s20260505" ` (f365fab1e1361a778b55790ece3ae74a69d235322eabb787b944ba59bda97460): arris checker_fail, oracle ok, fixture none
+- ` "cam_000896_s20260505" ` (0c2db522b3e03ce595f421d471b9dfa93e7422c2770fa440463589555168b44f): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers" `
+- ` "cam_001007_s20260505" ` (6e19f6f8112ace5710b4c57dce677a6540ea2b3904a19ce82714ed4558704dad): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-keyway-through-filleted-rim-bounds" `
+- ` "cam_001249_s20260505" ` (e4e2f2c6316c111324fc7170297eaf5d7eebdf76146bc226f0b2cd74b8843b10): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers" `
+- ` "cam_004951_s20260505" ` (adbe10b742a091b5ca10a05efd7d75c24016e0cd66bde09c588afc140adba45e): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers" `
+- ` "cam_007606_s20260505" ` (5bf8307d21a15cb5af02109af48b78387a32911e0688754c65fe4145703fe8f1): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers" `
+- ` "cam_011690_s20260505" ` (beb9b6ee97531b4ceb3126ad19e9bbdc0c1bb36b0eaee9a62ca8cd031318ac31): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers" `
+- ` "cam_015660_s20260505" ` (2eca512287505bc660643cc114ea408a154809651e0cfdf208aa09674f47b01b): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers" `
 - ` "clevis_pin_000209_s20260507" ` (bdcb1f751246b206dbc1a46ddd68bfacb084b6fb655032711a9acda7f8dfad34): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "clevis_pin_000237_s20260505" ` (aa11948ee6f64c73aeabf256accaa62c55d706054873d2822b2275956cd0dc76): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "clevis_pin_000273_s20260507" ` (afaa44b0006094365493c1db006daabc4f534515d3e304d2aa276a5c3ef11ed1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
@@ -382,29 +455,124 @@ arris ` "0.11.1" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "lobed_knob_011510_s20260505" ` (47a1fcfa7a9a947f011410da25bdfd76337c0b300b2bd05ab7e9e804a37f7e7a): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
 - ` "lobed_knob_011521_s20260505" ` (e6c9b3feb787a54242f7f1a1ea726963a7deb44f0c310e57eb3f02cd17606162): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
 - ` "lobed_knob_011564_s20260505" ` (4bf823261f1290b94b3cf85040986429cfe2d162f00b679817a430116078c1e4): arris arris_refusal, oracle ok, fixture ` "tests/fixtures/regression/cq-union-three-coplanar-cylinders" `
+- ` "piston_000251_s20260505" ` (e1c11c68c85cccc865b2d7b71c6eefd2652a35f228a19816568f3759ea1e5bf1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_000267_s20260505" ` (b851675078ef3a9a33c94baa63eeee791cafc7138458a587b2cced206b84ce83): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_000326_s20260507" ` (65ae4ec8653e7109299df06b1701fec265eecddc872d2da3f43461d0a89647d0): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_001312_s20260505" ` (ef1172edfee1bd966d5dcc5920bd8d483cc80ec801543b1fa1a7774798a467a8): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_001603_s20260505" ` (5c5c2a932f764c7b02f12717f9b1745429db544befd4f24f68b293189bd6701a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_001671_s20260505" ` (b08a9aaa66eadf7659ec941bce0ff413679824b7e92ccb42a0f0d14e5727fe55): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_001786_s20260505" ` (cc0f8c4cda349a55e38c10ca52d0c680c30ebcf0479921bcfac2e23ce73b499c): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_002104_s20260505" ` (092bbfaf8fce59c29d64084a2d3e2950a94db794c7d3cb5a194578c7ff3cbcfa): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_002107_s20260505" ` (96997bed81955585e83e5ae17824d73c76ea260a52690a326444f5312b879ee5): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_002343_s20260505" ` (3c906c6a3df1c4e0c7cadffcc3b9437f4461097f1914a918f4e4b4dc9f47d5f4): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_002469_s20260505" ` (401f6c8f293763d0a184b3a510688a44874922ff4045de12d798a0f4e96f3231): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_002572_s20260505" ` (9d6217670bc54f812c10b6bf2702831cfc7fc5de041ee258d4e16534ead72f01): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_002697_s20260505" ` (f4baadfc814a981d64db0990d5ed801631d5b363bc7cc42ed5976f4719c7fb89): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_002794_s20260505" ` (925294d9099a93f42d96b50e7ca040b3c02ed0e420e123c1bb68cc37c70e4135): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_003524_s20260505" ` (fba95c183ae1cece92be8a5d37bfa831ebed0252a3cfc02b288166e929c891de): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_003613_s20260505" ` (63379f0586ecfa472ca17a386e957930970d18572ad2670d83e1a273e957da6d): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_004049_s20260505" ` (cf539c9a6cba5c88e50de65703a452c85d44e27168b582a0866aaf335a279b78): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_004066_s20260505" ` (82af9160dbb011206a5d164f337ded307b51c6abce8efa07589d116fb458de96): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_004677_s20260505" ` (2f7341f6d4540741e14c689256462447158119e2058697dc002a5835cfe047ab): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_004937_s20260505" ` (b45fe64433febd7115e5172b244cf44aaf505ae14765d56b9348d3c61af7e888): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_005026_s20260505" ` (528471aa12790a813265b103b2d8dad42450866f55a7d29ec34122727577616c): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_005585_s20260505" ` (d85216e307b2f63fcc37771a9b994aee98b5c8a2f3d92daae97468b345959d49): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_006171_s20260505" ` (0b750ed6a62e2800e05d9d958cc1593fe5802f9e4e903c0727d0cd4bfda20aa6): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_006296_s20260505" ` (4c473c87cf43002be5c88703d8f0cb6a84e8af6b66a7cd969c32f06185dd2254): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_006429_s20260505" ` (de2d297da30b0ea9fb83750e9279a1652f3fc72de826adfdd6aa3f8cfdf1bddf): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_006481_s20260505" ` (8d9681ad008ea00aadf35a1d70c5d99776ff995674de417f05790400d282ef97): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_006643_s20260505" ` (9048eab8ac7dba2e8ae5915a0e2143c5b683f3e34549d4e8eb31475c28b28636): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_007217_s20260505" ` (fa7cf2dba574ee31f159efc9eed4a86e4788c0c0d3512f74ead343f167414652): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_007440_s20260505" ` (c941fdb4551c6d11993f0e0e75566dab7171f6050ae8931ef41add370ad5f638): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_008743_s20260505" ` (9bd0623661a5cd42e36cd893fa2c06f692e60f83792f2e36ed52150aba87f102): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_008980_s20260505" ` (4ffe311ca968e8b19da5d9d7ecd1f801e68c724d02ba60fcc97e3d3e39911c20): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_009379_s20260505" ` (5f0a1e1c177c60074bba28306550bd60b3d6f6062252074d3c90f8cc2ed4d70b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_009492_s20260505" ` (44101e016b207ac573598208ca5a3e678452ed9b2e94b1a632bf292b73b75ad0): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_009683_s20260505" ` (c36377d41f6fd02792eb7303e8b7810a70271e4b025f7603aaef97c8ada15fe6): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_009781_s20260505" ` (de215f6cbb797414efb709df3de6a74dd516f0318aef1edeabae96e1dac2ca23): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_010198_s20260505" ` (b42c5b3316c1c80c6cdead08d2d698f9288b2093f1eeb06585b39ac789190dc6): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_010478_s20260505" ` (ec3ca25e444594b1da1e31ba79946cf0bd9a06f2c0295945fc76e4f663035723): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_012382_s20260505" ` (bf307a27aafbdf9b764224e70256ac1c390215b771fae8c23382809fc46b51e4): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_013243_s20260505" ` (3a646db21b5c4cde07959589302fa0fb7ca2b0d041a715fd7b845c243884ce3b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_013568_s20260505" ` (e5470864ee7165892ddce77504db6444452999e5098f2907651890631878e44f): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_013598_s20260505" ` (05cad856513991683edaa5d5b53841f3ff83b67a9b7c68c32dfecc9be88c510c): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_013806_s20260505" ` (6ca74b0315e6cae2a1d5d197eed59f399a71d92003ddca5eddbe90516e4d720c): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_013841_s20260505" ` (09cc35006cb6dc34e67030c4319a3d274ddbc9e11e3b44f50f70ab22129b462b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_014183_s20260505" ` (9e56ce60f14a62ae7402855c52a99e1af7f5faa4b4edab9d491e965a181ee6e1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_015191_s20260505" ` (3d7a56e3e373c74ed7f17beb01b0ca06cd49e2eaab55de11ce1e60b44944cdbf): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_015217_s20260505" ` (45060274833d0035874e84769827f6b78c2a3a9c72b6a8fa39e6789728f5303e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_015262_s20260505" ` (6cdc1de5f74c1a7a07addf2f5fe80ef11adfa90ca636e2ad858cd653579a5346): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_015426_s20260505" ` (456727f57e1a04b8d9adfb56d9d5b0343abc8eb9ad07f047ce5ddc3aa3e2aec7): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_015622_s20260505" ` (5770a864eb186ea8bddcc0a54a38285d7c21f6f8257567dddb4532bc4f98281b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_015943_s20260505" ` (d29e3997c3d9f649367593c7014195694635b9ddbbb1117edd576b6e650a5323): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_017065_s20260505" ` (ab124ac5712a22197a48487c09eab474b46c03d87c6bbe85d647ade3f81c3047): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_017915_s20260505" ` (4ff18ecf235d19830bbf1923eeeecb5f6003c97899dc14c3d7964ffdcba4971a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_018658_s20260505" ` (3463427e070e79fb9a799df508a7046abaca670b9801b280ca2e26ffd2fea5ee): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_018928_s20260505" ` (afcba857e77df5572fb03e74efedff511d55a149a902958114d0e67dde80a682): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_019012_s20260505" ` (f9b5cd6899a216d7bef54251de47112381da9d5bce7bb5861c4bb966ec142643): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "piston_019707_s20260505" ` (9b27277ab83d94cedca23b6fffbb6cf5ce562df3f6313cfa9735ddb770ed0f27): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "shaft_collar_000067_s20260507" ` (ed1e4b4337aa6b15d14813a3ec99f25dc4fa3e306346a952a50fcbebcc4e0023): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_000245_s20260507" ` (a27731729582c45ccd4c8dbc0ea4794477424fc645a4e8fbbecbee3e593d7431): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_000485_s20260505" ` (fa6950af2d3503d4b7265ea55c7caf91ceefab2a7007c0c07a2bbcad7d920b58): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_000553_s20260505" ` (f4a10aa10ba6d07b0941542e05e91e9e13b0dbc457b66c4971fb6e73b565b02c): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_000562_s20260505" ` (24f08493060e1ee0449f0ab50e35d948b154bac1b5a7aca17c7984f3557822f8): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_000692_s20260505" ` (0ba26a9916f291295e25e2ef7d0bc55bcc2d4230daed328d8860f877cda80ef6): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_000946_s20260505" ` (07dae15950be28bb36b9775489486bf26efdbaf59f368a9cb8e4a7142bebb69c): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_000958_s20260505" ` (788f47d74b4e561d022530c2ba1684f34f80d1704458b1cea428cb52a971116b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_001545_s20260505" ` (d5f9deae6f61ef0597232f99c169cfd2465626ca41914c9b45f4b6cf0660c42e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_001788_s20260505" ` (2979feeafb33b42a8067a61721e9170a92569803af84337492876423b343bd33): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_002066_s20260505" ` (4a72cf3cab5439f4f1b26a9190f9ec0b72f65db073c08661ea7e28abd5c4fef0): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_003177_s20260505" ` (5d98a020936fbcda78e79532c2ded5e7d5f7696c505bbff356a05a5cb675ff22): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_004211_s20260505" ` (e9bb5462cfde8560583ea701d365c9df2927e3ecc9b9a7449485ee8119d29500): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_004399_s20260505" ` (37d28b9220fbbdd7be73b45c3504546c803aa94e356c5bf900f5d0107676cb3a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_004549_s20260505" ` (0881e244292508082a30f497e504bc621e5b1697d2a3ab5b07808d10cd6e5cce): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_004903_s20260505" ` (97e4bace0234e6c67316fa1aa641db261b471e5902a76ec42451a698cc1c4b37): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_005222_s20260505" ` (2de38a513698d060fdb8c5f028118c2851aa06171f2468e61789a16b8de26ef1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_005240_s20260505" ` (d5a9ff05f83d9e34c5f9e8a4f4910d1268868cbd9b8bc616b1a7104243406322): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_005870_s20260505" ` (1ad9907feacbed6942929ed4d3f441c121f9e95bc8012add0964a9e0da233a63): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_005937_s20260505" ` (eb99d2c98709ad61a9d0cb29407bd386d2e97152c28747fa1a9bb8eaf79b49f5): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_006352_s20260505" ` (24e771f1a21fa48286f486d36f266673bab0c0a5ef1b76bb63da75de3f6216f7): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_006514_s20260505" ` (4c2785006c8ddd71ce328014bb707426a77a0cd1f0ddf484e1db6cf58c04d538): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_006823_s20260505" ` (6f9e50ed8de1972a7ae252d2bdf6def60e7fb3358f97be7fa52e22c5e5d93c2b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_007178_s20260505" ` (98afac8e4d889218f2787b77848cce77a66ee39603034e6f7414de1cf936cd05): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_007404_s20260505" ` (bcc03ec8c5653b9ad6269e36f22deec42340d5ff06f6a29ea77c66fa9d489f04): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_007521_s20260505" ` (24def1f179bff529c68754cc398dd712a4fb96ef8f023f5eb388de02c186a5fd): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_007583_s20260505" ` (3fef34e70c2eb8bb88e5567cba99588f79dd7da4b6a6c23d2e592f77b991969d): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_007960_s20260505" ` (4f1938f031ac8811ad09730c6d0758f3cfb402004b0c0ba334d389fee8fb2506): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_009094_s20260505" ` (fb87a547b793d17a3c430da7535312c122cd5a6768cecafef89cd4d0d0c8b164): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_009336_s20260505" ` (118dccc93617a2df85c4f58c16ea09b2899f27e2162d02beea078b8b94ed3d00): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_009682_s20260505" ` (feac73df45168179ff0b735bbc8d026cef38311bc2b4dcaa0ca65cf3bac52659): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_009826_s20260505" ` (7409f3a6d441e7294ab0a08dd4fa4bf0e0337cd6b0418cb311c5ce1c326892a0): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_009931_s20260505" ` (d555f631942f40bd190546e407f9889c0724ac8d1fafbc14656be395f50ab5c0): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_010491_s20260505" ` (425dce309ec9140908acc73ac8be4ffc293a58a0b24baf3bef69913c67359a9f): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_010861_s20260505" ` (a72d35c5813f8190d60a79881f97c3c025a4316d22baa6877c46466de55c21dd): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_011055_s20260505" ` (81ff30b832093aaf5142d83adb78ac888e811377c82e4e75812167a7b802f9af): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_011457_s20260505" ` (75ba951239e30f5f749c722a0be2753106403b15ff027467bac113e2a36f92d7): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_011746_s20260505" ` (53a8c5a0adb8b885d3e62f56a1a80074dbe6ef1eb5ea058a83351cb4b82385d3): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_011811_s20260505" ` (75f60d6413a1c94681a3a9c923fad088783032c78b5ecc8e3b9f35d3ebabf1a1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_012079_s20260505" ` (c312bf5da7be54367c4b5896a43f6d3179cf0fcda688465404aeab765aef278f): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_012114_s20260505" ` (927fa29dbd8c5960cf86e09435dcca1831028b9190f171c7ad84029d471c0489): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_012293_s20260505" ` (6151aff49480fba5251830d43b40b8970837b9bc7eaf3bc89cc914a01277d67a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_012846_s20260505" ` (23254a075730fe7413b54a37fa4a8974d5fbb59d39a49e72e515286ea9c9a129): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_013246_s20260505" ` (7f2c1be6c1bedacb87688e8f792db4fd8f91b0ba8f81ce0cd4b811223aee7017): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_013412_s20260505" ` (8c8ffafd68a312e1d5600f33f9d429144e4d7dcadc2ac61d19770c4f9f966b0d): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_013475_s20260505" ` (d9a75c0052270faba75da7a2e761d0fe1b1a7d70e58a85b8147cccbc2ba6cf44): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_013634_s20260505" ` (a9bdc9e29c0424b6caf0afa0b0a0ef5465e50740c9b1f7ebcb0965fe73995bef): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_014211_s20260505" ` (d48e57e0a68c3271760ee4f2fc914de78e49303debcf0c3972c57bac8809bb3e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_014554_s20260505" ` (ae215a346d869291dc7eabaff11d264ffa2e12fc549641a46cf95961a6ff85f6): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_014810_s20260505" ` (24340b9820c31ea35106e51fdf11cf0f9c550802a9ee1344d317dc5f2bbc5e54): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_014949_s20260505" ` (b01a4ab45699813d3068a74cc52d5983e403f14555ee6f7a51176e88e3fe1577): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_015684_s20260505" ` (61551f3ccb768b96f30205e648aa2dd095c3f1884b4344ad8d9843b9dc756b55): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_016155_s20260505" ` (458ba061b5e3f1c47be5cf92cd594b15741320e7a2e3141e1fa01e1c248b8e77): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-chamfers-overlap-on-a-face" `
+- ` "shaft_collar_017136_s20260505" ` (f59673b5232eae2679afc924f7b95f67d63385be185f84b1ff68713637fa5e9e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_017295_s20260505" ` (1a7b9fc88de6a8ae15bc85f281dc8d5c6581d21874fe977f9dcc1bdef71f659a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_017310_s20260505" ` (846c82692ecfa40ae6b6bfba75a60d8cf9f5246ee27ae8f09e67531d07145bb2): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_017314_s20260505" ` (23fae5aa2be83cad85ef025748ff3539d07cf6926e18e7d7701e28a6fe13ea55): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-chamfers-overlap-on-a-face" `
 - ` "shaft_collar_017335_s20260505" ` (1be979cbcdd097953f3fba37a9764f6d202a15dceab56ffe6f5ae7f62cff4c15): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_017997_s20260505" ` (8d490a591ea6f317ae58b5b3fdc1f41c271ea7de045a70ea11ac751a4a017f6e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_018630_s20260505" ` (0a50ff25e5c8667b613c2beeeef835d066f88a37314b30f51e8af9af6b7130af): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_018712_s20260505" ` (8d85ef93908ec10649bed8efbab2c7779cc8bd2c7e4489a055388a4c80998675): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_018986_s20260505" ` (877864780beb334959c3973700500dff7df40b5c4ed10e84af0c83366c68dfd3): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "shaft_collar_019663_s20260505" ` (2cb656f3385df34d348eab331335b6c002dd30baeaa49cab1a9003bfdddf8f39): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "spacer_ring_002522_s20260505" ` (36934565be5dd19f52902aa9400dc24c0b294f5cdbc3fdf91dec49998e47e58e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-slot-into-rounded-rim-bounds" `
 - ` "spacer_ring_008375_s20260505" ` (79b37131fd10903ea3a2d766382a1f23c806c96b390cc7c71c3ef420edb41dc9): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-chamfer-slot-bounds" `

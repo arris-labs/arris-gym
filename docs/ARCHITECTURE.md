@@ -773,10 +773,16 @@ declared it does not run the form). Two ordinary failures agree. Two `ok` sides 
 tolerance when the oracle holds one solid, or as many solids as arris's body
 has shells (a compound, ADR-0016). A measure gap, the oracle failing alone and a timeout on either
 side are `unclassified` until a **verdict** (a class and its evidence: a
-closed form, which `compare` checks, a second oracle's record, a doc anchor
-for `by_design`, or a regression fixture) classes them. For the GProp
-discrepancies in ADR-0023, the `ClosedForm` evidence carries independently
-integrated measures of the oracle's boundary (ADR-0006). A verdict may also
+closed form, which `compare` checks, a second oracle's record, **signed
+solids**, a doc anchor for `by_design`, or a regression fixture) classes
+them. For the GProp discrepancies in ADR-0023, and BenchCAD parts of planar,
+cylindrical, conical and toroidal faces, the `ClosedForm` evidence carries
+independently integrated measures of the oracle's boundary (ADR-0006).
+`SignedSolids`, for `occt_wrong` alone, carries each solid's signed volume of
+an `invalid` oracle shape where arris built an `ok` one: a solid turned
+inside out is negative, and `compare` holds the volumes to both sides
+(ADR-0006, amended 2026-11-23). A vertex blend's corner patch is each
+kernel's own (ADR-0025), so a difference confined to it is `by_design`. A verdict may also
 replace the rule's class, except the `arris_bug` of an arris crash or checker
 failure. An unclassified row makes a cycle red. The arris
 rows leave as a consumer report (arris ADR-0020).

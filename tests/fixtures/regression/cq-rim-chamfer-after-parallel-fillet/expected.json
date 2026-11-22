@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpDegenerateError"
+  },
+  "note": "The vertical edge fillets leave quarter cylinders of radius 0.5 on the upper rim. The 1.0 chamfer extends beyond those fillets. Arris refuses when the chamfer crosses a neighbouring edge."
+}

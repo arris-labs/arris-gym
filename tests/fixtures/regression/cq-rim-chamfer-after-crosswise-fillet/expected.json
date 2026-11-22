@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpDegenerateError"
+  },
+  "note": "The horizontal edge fillets leave radius-0.5 quarter cylinders where the upper rim ends. The 1.0 chamfer consumes more than that rounded corner. Arris refuses this corner arrangement."
+}

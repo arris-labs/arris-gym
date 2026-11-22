@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from pathlib import Path
 
 import pytest
@@ -26,7 +27,9 @@ from arris_gym.fidelity import (
     VOLUME_REL,
     ClosedForm,
     DisagreementClass,
+    DocAnchor,
     RegressionFixture,
+    SignedSolids,
     Verdict,
 )
 from arris_gym.sandbox.outcome import ArrisRefusal
@@ -409,12 +412,60 @@ def test_a_slotted_ring_is_what_arris_builds(
     assert _agrees(ag.run(text, dialect="cq"), cf.slotted_ring_closed_form(text)) == []
 
 
+@pytest.mark.oracle
+@pytest.mark.parametrize(
+    ("expression", "volume", "area", "centroid", "bounds"),
+    [
+        ("makeTorus(5, 1)", 10 * math.pi**2, 20 * math.pi**2, (0, 0, 0), ((-6, -6, -1), (6, 6, 1))),
+        (
+            "makeCone(3, 1, 2)",
+            26 * math.pi / 3,
+            math.pi * (10 + 4 * math.sqrt(8)),
+            (0, 0, 9 / 13),
+            ((-3, -3, 0), (3, 3, 2)),
+        ),
+    ],
+)
+def test_boundary_integrates_analytic_blend_surfaces(
+    expression: str,
+    volume: float,
+    area: float,
+    centroid: tuple[float, float, float],
+    bounds: tuple[tuple[float, float, float], tuple[float, float, float]],
+) -> None:
+    from arris_gym.fidelity._agreement import figures_agree
+
+    text = f'import cadquery as cq\nr = cq.Workplane("XY").newObject([cq.Solid.{expression}])\n'
+    expected = ClosedForm(
+        volume=volume, area=area, centroid=centroid, bounds=bounds, note="Analytic solid."
+    )
+    (measured,) = cf.sketch_boundary_forms([text], blends=True, subdivisions=(24, 48), workers=1)
+    assert figures_agree(expected, ClosedForm.model_validate(measured))
+
+
+@pytest.mark.oracle
+@pytest.mark.xfail(
+    reason="The converged oracle trim integral still differs from the annular closed form",
+    raises=AssertionError,
+    strict=True,
+)
+def test_boundary_integral_with_toroidal_rim_fillets() -> None:
+    from arris_gym.fidelity._agreement import figures_agree
+
+    fixture = REGRESSION / "oracle-slotted-ring-boundary"
+    text = (fixture / "oracle.py").read_text()
+    expected = ClosedForm.model_validate_json((fixture / "expected.json").read_text())
+    (measured,) = cf.sketch_boundary_forms(
+        [text + "\nr = result\n"], blends=True, subdivisions=(24, 48), workers=1
+    )
+    assert figures_agree(expected, ClosedForm.model_validate(measured))
+
+
 @pytest.mark.parametrize(
     ("change", "match"),
     [
         (("YZ", "XZ"), "not a filleted ring"),
         ((".fillet(0.14)", ".chamfer(0.14)"), "not a filleted ring"),
-        (("1.47)\n    )", "0.3)\n    )"), "outside the arrangement"),  # a floor in the fillet
         (("9.4, 2.1", "4.0, 2.1"), "outside the arrangement"),  # the slot stops inside the wall
     ],
 )
@@ -422,6 +473,29 @@ def test_a_ring_this_tool_does_not_read_is_refused(change: tuple[str, str], matc
     text = RING.format(**CORPUS_RINGS["spacer_ring_012675_s20260505"]).replace(*change)
     with pytest.raises(ValueError, match=match):
         cf.slotted_ring_closed_form(text)
+
+
+def test_a_slot_that_stops_in_the_lower_rim_fillet_is_refused() -> None:
+    text = RING.format(**{**CORPUS_RINGS["spacer_ring_016757_s20260505"], "thick": "0.3"})
+    with pytest.raises(ValueError, match="outside the arrangement"):
+        cf.slotted_ring_closed_form(text)
+
+
+def test_a_slot_that_stops_in_the_upper_rim_fillet_changes_the_box() -> None:
+    from arris_gym.fidelity import OracleReport
+
+    fixture = REGRESSION / "cq-slot-into-rounded-rim-bounds"
+    text = (fixture / "program.py").read_text()
+    report = OracleReport.model_validate_json((fixture / "oracle.json").read_text())
+    result = ag.run(text, dialect="cq")
+    expected = cf.slotted_ring_closed_form(text)
+    closed = ClosedForm.model_validate(expected)
+    assert result.program_sha256 == report.program_sha256
+    assert closed.bounds[1][1] == math.sqrt(52.41**2 - 1.25**2)
+    differences = _agrees(result, expected)
+    assert len(differences) == 1
+    assert differences[0].startswith("bounds ")
+    cf.check_bug_cause(result, report, str(fixture))
 
 
 SPROCKET = """import cadquery as cq
@@ -489,6 +563,18 @@ def test_a_sprocket_is_what_arris_builds(plane: str, c: str, length: str) -> Non
     # the axis, against arris's own boolean and chamfer.
     # `XZ` extrudes toward -y; a hub ending 0.01 inside the second plate is that plate's solid.
     text = sprocket_text(plane, c, length=length)
+    assert _agrees(ag.run(text, dialect="cq"), cf.sprocket_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(("plane", "axis"), [("YZ", "X"), ("XY", "Z"), ("XZ", "Y")])
+def test_a_sprocket_keyway_removes_only_the_rectangle_outside_the_bore(
+    plane: str, axis: str
+) -> None:
+    text = sprocket_text(plane).replace(
+        "    .hole(4.4)\n",
+        f'    .hole(4.4)\n    .faces(">{axis}").workplane()\n'
+        "    .center(0, 2)\n    .rect(2, 4)\n    .cutThruAll()\n",
+    )
     assert _agrees(ag.run(text, dialect="cq"), cf.sprocket_closed_form(text)) == []
 
 
@@ -728,6 +814,51 @@ def test_a_part_of_boxes_and_cylinders_meets_its_textbook_figures() -> None:
     assert got[3] == want[3]
 
 
+def test_part_closed_form_for_an_edge_touching_through_rectangle() -> None:
+    text = """import cadquery as cq
+
+result = (
+    cq.Workplane("YZ")
+    .box(8, 6, 10)
+    .faces(">X").workplane()
+    .center(1, 1)
+    .rect(6, 4)
+    .cutThruAll()
+)
+"""
+    # Removing the upper-right 6 x 4 corner leaves an L of area 24,
+    # perimeter 28 and centroid opposite the removed rectangle's centre.
+    closed = cf.part_closed_form(text)
+    assert closed["volume"] == pytest.approx(240)
+    assert closed["area"] == pytest.approx(328)
+    assert closed["centroid"] == pytest.approx([0, -1, -1])
+    assert closed["bounds"] == [[-5, -4, -3], [5, 4, 3]]
+    assert _agrees(ag.run(text, dialect="cq"), closed) == []
+
+
+def test_a_rounded_l_section_matches_the_closed_form_with_a_bore() -> None:
+    text = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .box(12, 12, 8)
+    .faces(">Z").workplane()
+    .center(2, 2)
+    .rect(8, 8)
+    .cutThruAll()
+    .edges("|Z")
+    .fillet(0.5)
+    .faces(">Z").workplane()
+    .pushPoints([(-5.0, 2.0)])
+    .hole(1.0)
+)
+"""
+    result = ag.run(text, dialect="cq")
+    closed = cf.closed_form_for("mounting_angle_example", text, result.program_sha256)
+    assert closed is not None
+    assert _agrees(result, closed) == []
+
+
 MANIFOLD = """import cadquery as cq
 
 result = (
@@ -858,13 +989,17 @@ def test_a_chamfered_manifold_block_is_what_arris_builds(plane: str, faces: str,
 @pytest.mark.parametrize(
     ("change", "match"),
     [
-        ((".chamfer(1.3)\n", ".chamfer(1.3)\n    .fillet(1.0)\n"), "does not read: fillet"),
-        (('.faces(">Y")\n', '.faces("<Y")\n'), "selector this tool does not read"),
+        (
+            (".chamfer(1.3)\n", ".chamfer(1.3)\n    .fillet(1.0)\n"),
+            "fillet this tool does not read",
+        ),
+        (('.faces(">Y")\n', '.faces("%PLANE")\n'), "selector this tool does not read"),
+        (('.faces(">Y")\n', '.faces("<Y")\n'), "faces of another direction"),
         ((".box(83.17, 41.3, 31.06)\n", ".box(83.17, 41.3, 31.06)\n    .box(1, 1, 1)\n"), "second"),
         (("chamfer(1.3)", "chamfer(21.0)"), "meets another face"),  # past half the width
         (("chamfer(1.3)", "chamfer(1.3, 0.5)"), "chamfer this tool does not read"),
         (("chamfer(1.3)", "fillet(1.3)"), "does not blend"),
-        (('edges(">Z")', 'edges("|Z")'), "edges this tool does not read"),
+        (('edges(">Z")', 'edges("|Z")'), "edges this tool does not round"),
     ],
 )
 def test_a_part_this_tool_does_not_read_is_refused(change: tuple[str, str], match: str) -> None:
@@ -889,7 +1024,12 @@ def test_each_committed_verdict_rests_on_evidence_that_exists(corpus: str) -> No
     for stem, value in raw.items():
         verdict = Verdict.model_validate(value)
         if verdict.disagreement is DisagreementClass.OCCT_WRONG:
-            assert isinstance(verdict.evidence, ClosedForm), stem
+            assert isinstance(verdict.evidence, ClosedForm | SignedSolids), stem
+        elif verdict.disagreement is DisagreementClass.BY_DESIGN:
+            assert isinstance(verdict.evidence, DocAnchor), stem
+            path, slug = verdict.evidence.anchor.split("#")
+            text = (Path(__file__).parent.parent / path).read_text(encoding="utf-8")
+            assert f"## {slug.capitalize()}" in text, stem  # an ADR's own heading
         else:
             assert verdict.disagreement in (
                 DisagreementClass.ARRIS_REFUSAL,
@@ -898,7 +1038,12 @@ def test_each_committed_verdict_rests_on_evidence_that_exists(corpus: str) -> No
             assert isinstance(verdict.evidence, RegressionFixture), stem
             fixture = REGRESSION / Path(verdict.evidence.path).name
             expected = json.loads((fixture / "expected.json").read_text(encoding="utf-8"))
-            assert "xfail" in expected, stem  # a regression fixture still failing, strict xfail
+            # An arris bug's fixture still fails (strict xfail); a refusal's may instead pin
+            # the kernel's typed refusal, the capability arris is asked for.
+            pinned = verdict.disagreement is DisagreementClass.ARRIS_REFUSAL and (
+                expected["status"] == "arris_refusal"
+            )
+            assert pinned or "xfail" in expected, stem
 
 
 def test_a_stem_two_verdict_files_class_is_an_error(tmp_path: Path) -> None:
@@ -931,6 +1076,37 @@ def test_a_row_refused_for_another_reason_is_not_classed_by_the_tangent_fixture(
         cf.check_refusal_cause(same, "tests/fixtures/regression/other")
 
 
+@pytest.mark.parametrize(
+    "slug",
+    [
+        "cq-locator-block-intersecting-bores-fillet",
+        "cq-short-slot-flat-link",
+        "cq-rim-chamfer-after-crosswise-fillet",
+        "cq-rim-chamfer-after-parallel-fillet",
+        "cq-slotted-plate-chamfer-after-fillet",
+        "cq-vertical-fillet-after-rim-chamfer",
+        "cq-waffle-plate-tangent-fillet",
+    ],
+)
+def test_a_refusal_fixture_identifies_the_corpus_failure(slug: str) -> None:
+    from arris_gym.fidelity import OracleReport, OracleStatus
+
+    fixture = REGRESSION / slug
+    result = ag.run((fixture / "program.py").read_text(), dialect="cq")
+    report = OracleReport.model_validate_json((fixture / "oracle.json").read_text())
+    assert result.program_sha256 == report.program_sha256
+    assert report.status is OracleStatus.INVALID
+    assert result.status is ag.Status.ARRIS_REFUSAL
+    assert result.refusal is not None
+    path = f"tests/fixtures/regression/{slug}"
+    cf.check_refusal_cause(result.refusal, path)
+    other = result.refusal.message.replace("cylinder surface", "cone surface")
+    if other == result.refusal.message:
+        other = "another cause"
+    with pytest.raises(ValueError, match="another reason"):
+        cf.check_refusal_cause(result.refusal.model_copy(update={"message": other}), path)
+
+
 def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> None:
     """`--refusal` and `--arris-bug` rebuild the committed fixture verdicts from the committed
     table (run with `--verdicts`), and leave a row arris ended `unsupported_api` unclassed."""
@@ -943,25 +1119,39 @@ def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> Non
     )
     committed = json.loads((C2 / "benchcad" / "verdicts.json").read_text(encoding="utf-8"))
     collars = [e for e in table.entries if e.name.startswith("shaft_collar_")]
-    outside = [e for e in collars if e.row.status is ag.Status.UNSUPPORTED_API]
+    # Rows outside the subset, of a family flagged below: no fixture classes them.
+    outside = [e for e in table.entries if e.row.status is ag.Status.UNSUPPORTED_API][:3]
     pins = [e for e in table.entries if e.name.startswith("cotter_pin_") and e.row.verdict][:3]
     knob = next(e for e in table.entries if e.name.startswith("lobed_knob_") and e.row.verdict)
     assert outside
     assert any(e.row.outcome.value == "agree" for e in collars)  # rows no verdict touches
-    picked = [*collars, *pins, knob]
+    picked = [*collars, *pins, knob, *outside]
     path = tmp_path / "fidelity.json.gz"
     path.write_bytes(gzip.compress(fidelity_table(picked).to_json().encode()))
     texts = {e.name: "" for e in picked}
-    refusals = {"cotter_pin": "tests/fixtures/regression/cq-tangent-cylinders"}
+    tangent = "tests/fixtures/regression/cq-tangent-cylinders"
+    refusals = {
+        "cotter_pin": tangent,
+        **{re.sub(r"_\d+_s\d+$", "", e.name): tangent for e in outside},
+    }
+    overlap = "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
     bugs = {
         "shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds",
-        "shaft_collar_016155_s20260505": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face",
+        "shaft_collar_016155_s20260505": overlap,
+        "shaft_collar_017314_s20260505": overlap,
     }
-    got = cf.verdicts_for(path, texts, refusals, bugs)
+    # The collars classed by their boundary integral (`--blended-boundary`), each by its stem.
+    integrated = frozenset(
+        k
+        for k, v in committed.items()
+        if k.startswith("shaft_collar_") and "Green's theorem" in str(v["evidence"])
+    )
+    assert len(integrated) == 3
+    got = cf.verdicts_for(path, texts, refusals, bugs, integrated)
     want = {k: v for k, v in committed.items() if k.startswith(("shaft_collar_", "cotter_pin_"))}
-    want = {k: v for k, v in want.items() if k in texts}
+    want = {k: v for k, v in want.items() if k in texts and k not in integrated}
     assert got == want
-    assert len([k for k in got if k.startswith("shaft_collar_")]) == 26
+    assert len([k for k in got if k.startswith("shaft_collar_")]) == 64
     assert not {e.name for e in outside} & set(got)
     own = {e.name for e in collars if e.row.program_sha256 in cf.COLLARS}  # its closed form
     assert len(own) == 1
@@ -987,7 +1177,7 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
         and e.row.verdict
         and e.row.program_sha256 not in cf.COLLARS  # its own closed form, not a fixture's row
     ]
-    assert len(collars) == 25
+    assert len(collars) == 66
     path = tmp_path / "fidelity.json.gz"
     path.write_bytes(gzip.compress(fidelity_table(collars).to_json().encode()))
     texts = {e.name: "" for e in collars}
@@ -997,7 +1187,7 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
     paths = {name: v["evidence"]["path"] for name, v in got.items()}  # type: ignore[index]
     assert paths.pop(collars[0].name) == one
     assert set(paths.values()) == {family}
-    assert len(paths) == 24
+    assert len(paths) == 65
 
 
 def test_a_row_whose_program_no_closed_form_reads_stays_unclassified(
@@ -1022,7 +1212,7 @@ def test_a_row_whose_program_no_closed_form_reads_stays_unclassified(
 
 def plate_text(plane: str, hub: bool = False, c: str = "0.6") -> str:
     """A `sprocket_*` program of the corpus's shape on the constructed 7-lobe outline: a plate
-    4 thick bored 8.8 across, and on `XY` optionally a hub of radius 9 and height 5 below it."""
+    4 thick bored 8.8 across, with an optional hub of radius 9 and height 5 below it."""
     points = []
     for k in range(28):
         angle = 2 * math.pi * k / 28
@@ -1054,6 +1244,60 @@ def test_a_sprocket_plate_is_what_arris_builds(plane: str, c: str) -> None:
 def test_a_sprocket_plate_with_a_hub_is_what_arris_builds() -> None:
     text = plate_text("XY", hub=True)
     assert _agrees(ag.run(text, dialect="cq"), cf.plate_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(("plane", "axis"), [("XY", "Z"), ("YZ", "X"), ("XZ", "Y")])
+@pytest.mark.parametrize("hub", [False, True])
+def test_a_keyway_through_a_sprocket_plate(plane: str, axis: str, hub: bool) -> None:
+    text = plate_text(plane, hub=hub).replace(
+        "\n)\n\n# Export",
+        f'\n    .faces(">{axis}").workplane()\n    .center(0, 3)\n    .rect(2, 6)\n'
+        "    .cutThruAll()\n)\n\n# Export",
+    )
+    assert _agrees(ag.run(text, dialect="cq"), cf.plate_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(("plane", "axis"), [("XY", "Z"), ("YZ", "X"), ("XZ", "Y")])
+def test_a_cam_closed_form_includes_both_rims_and_the_keyway(plane: str, axis: str) -> None:
+    text = f"""import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .polyline([(-10, -10), (10, -10), (10, 10), (-10, 10)])
+    .close()
+    .extrude(5)
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0, 0, 7), rotate=cq.Vector(0, 0, 0))
+            .cylinder(4, 5)
+    )
+    .faces(">{axis}").workplane()
+    .hole(4)
+    .faces("<{axis}")
+    .edges()
+    .fillet(0.4)
+    .faces(">{axis}")
+    .edges()
+    .chamfer(0.6)
+    .faces(">{axis}").workplane()
+    .pushPoints([(0.0, 2.0)])
+    .rect(1, 2)
+    .cutThruAll()
+    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(7, 0.0, 2.5), rotate=cq.Vector(0, 0, 0))
+            .cylinder(10, 0.75)
+    )
+)
+
+# Export
+show_object(result)
+"""
+    assert _agrees(ag.run(text, dialect="cq"), cf.cam_closed_form(text)) == []
+    with pytest.raises(ValueError, match="exceeds its section"):
+        cf.cam_closed_form(
+            text.replace(".rect(1, 2)", ".rect(1, 8)").replace("(0.0, 2.0)", "(0.0, 5.0)")
+        )
 
 
 @pytest.mark.parametrize(
@@ -1199,6 +1443,42 @@ def test_a_family_arris_bug_row_is_classed_only_when_the_bounds_fixture_is_its_c
         cf.check_bounds_cause(result, report, "tests/fixtures/regression/other")  # type: ignore[arg-type]
 
 
+def test_side_bore_evidence_requires_both_z_bounds_to_be_loose() -> None:
+    from arris_gym.fidelity import OracleReport
+
+    fixture = Path("tests/fixtures/regression/cq-through-side-bore-cylinder-bounds")
+    result = ag.run((fixture / "program.py").read_text(), dialect="cq")
+    report = OracleReport.model_validate_json((fixture / "oracle.json").read_text())
+    cf.check_bounds_cause(result, report, str(fixture))
+
+    assert result.measures is not None
+    assert report.measures is not None
+    lo, hi = result.measures.bounds
+    tightened = result.measures.model_copy(
+        update={"bounds": (lo, (hi[0], hi[1], report.measures.bounds[1][2]))}
+    )
+    with pytest.raises(ValueError, match="both loose Z bounds"):
+        cf.check_bounds_cause(
+            result.model_copy(update={"measures": tightened}), report, str(fixture)
+        )
+
+
+def test_keyway_bound_evidence_requires_material_above_the_original_end_plane() -> None:
+    from arris_gym.fidelity import OracleReport
+
+    fixture = REGRESSION / "cq-keyway-through-filleted-rim-bounds"
+    result = ag.run((fixture / "program.py").read_text(), dialect="cq")
+    report = OracleReport.model_validate_json((fixture / "oracle.json").read_text())
+    path = "tests/fixtures/regression/cq-keyway-through-filleted-rim-bounds"
+    assert result.program_sha256 == report.program_sha256
+    cf.check_bug_cause(result, report, path)
+    assert result.measures is not None
+    lo, hi = result.measures.bounds
+    tightened = result.measures.model_copy(update={"bounds": (lo, (hi[0], 0.0, hi[2]))})
+    with pytest.raises(ValueError, match="loose upper Y bound"):
+        cf.check_bug_cause(result.model_copy(update={"measures": tightened}), report, path)
+
+
 def test_the_chamfered_collar_is_what_arris_builds_and_what_the_family_flag_never_takes(
     tmp_path: Path,
 ) -> None:
@@ -1275,3 +1555,426 @@ def test_an_arris_bug_row_is_classed_by_the_overlap_fixture_only_on_its_internal
     ):
         with pytest.raises(ValueError, match=r"not invalid|internal error"):
             cf.check_bug_cause(bad, report, fixture)
+
+
+# --- Rounds: `edges("|A").fillet(r)` and `faces(">A").fillet(r)` as solids (step 7) ---------
+
+LOCATOR = """import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .box(40.0, 60.0, 30.0)
+    .faces(">{axis}")
+{top}    .faces(">{axis}").workplane()
+    .center(0.0, 0.0)
+    .rect(50.0, 30.0)
+    .cutBlind(-12.0)
+    .faces("<{axis}").workplane()
+    .pushPoints([(12.0, 24.0), (-12.0, 24.0), (12.0, -24.0), (-12.0, -24.0)])
+    .hole(3.0)
+    .faces("<{axis}").workplane()
+    .circle(5.0)
+    .cutBlind(-4.0)
+{edges})
+
+# Export
+show_object(result)
+"""
+NORMALS = [("XY", "Z"), ("XZ", "Y"), ("YZ", "X")]
+
+
+def test_a_round_takes_the_square_less_its_quarter_disc() -> None:
+    r, h = 1.0, 10.0
+    ops: list[cf.Op] = [
+        ("+", cf.Cuboid((0.0, 0.0, 0.0), (4.0, 5.0, h))),
+        ("-", cf.Round(2, (4.0, 5.0), (-1, -1), r, 0.0, h)),
+        ("-", cf.Round(2, (0.0, 0.0), (1, 1), r, 0.0, h)),
+    ]
+    volume, area, _, _ = cf.part_measures(ops)
+    taken = r * r * (1 - math.pi / 4)
+    assert volume == pytest.approx(4 * 5 * h - 2 * taken * h, rel=1e-14)
+    want = 2 * (20 - 2 * taken) + (18 - 4 * r) * h + 2 * (math.pi / 2) * r * h
+    assert area == pytest.approx(want, rel=1e-14)
+
+
+@pytest.mark.parametrize(("plane", "axis"), NORMALS)
+@pytest.mark.parametrize(
+    ("top", "edges"),
+    [
+        ("    .chamfer(1.5)\n", '    .edges("|{axis}")\n    .fillet(1.1)\n'),
+        ("    .fillet(1.2)\n", ""),
+    ],
+    ids=["chamfered-top-filleted-edges", "filleted-top"],
+)
+def test_a_locator_block_is_what_arris_builds(plane: str, axis: str, top: str, edges: str) -> None:
+    text = LOCATOR.format(plane=plane, axis=axis, top=top, edges=edges.format(axis=axis))
+    assert _agrees(ag.run(text, dialect="cq"), cf.part_closed_form(text)) == []
+
+
+def test_a_bore_into_a_concave_round_is_what_arris_builds() -> None:
+    text = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .box(60.0, 60.0, 40.0)
+    .faces(">Z").workplane()
+    .center(3.0, 3.0)
+    .rect(54.0, 54.0)
+    .cutThruAll()
+    .edges("|Z")
+    .fillet(2.0)
+    .faces(">Z").workplane()
+    .pushPoints([(-24.5, -27.0), (21.0, -27.0)])
+    .hole(5.0)
+)
+
+# Export
+show_object(result)
+"""
+    ops = cf.part_ops(text)
+    assert [kind for kind, solid in ops if isinstance(solid, cf.Round)] == ["-"] * 5 + ["+"]
+    assert _agrees(ag.run(text, dialect="cq"), cf.part_closed_form(text)) == []
+
+
+def test_a_stadium_cut_and_a_turned_cylinder_are_what_arris_builds() -> None:
+    text = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .transformed(offset=cq.Vector(0, 0, 10.0), rotate=cq.Vector(0, 0, 0))
+    .box(120.0, 40.0, 20.0)
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 30.0), rotate=cq.Vector(90, 0, 0))
+            .cylinder(40.0, 18.0)
+    )
+    .cut(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 30.0), rotate=cq.Vector(90, 0, 0))
+            .cylinder(44.0, 12.0)
+    )
+    .cut(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(-45.0, 0, 10.0), rotate=cq.Vector(0, 0, 0))
+            .slot2D(16.0, 8.0, 0)
+            .extrude(30.0, both=True)
+    )
+    .cut(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 20.0), rotate=cq.Vector(0, 0, 0))
+            .cylinder(30.0, 2.5)
+    )
+)
+
+# Export
+show_object(result)
+"""
+    assert _agrees(ag.run(text, dialect="cq"), cf.part_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        # a bore inside a round's square: a fillet this tool does not model
+        (
+            ("(12.0, 24.0), (-12.0, 24.0)", "(19.3, 29.3), (-12.0, 24.0)"),
+            "meets another feature",
+        ),
+        # a bore through the faces the edge joins: straight edges this tool does not read
+        (("(12.0, 24.0), (-12.0, 24.0)", "(19.0, 29.0), (-12.0, 24.0)"), "crossed by a face"),
+        # two rounds of the top face's edges are only read on the stock
+        (("    .circle(5.0)\n    .cutBlind(-4.0)\n", ""), None),
+    ],
+)
+def test_a_round_this_tool_does_not_model_is_refused(
+    change: tuple[str, str], match: str | None
+) -> None:
+    text = LOCATOR.format(
+        plane="XY",
+        axis="Z",
+        top="    .chamfer(1.5)\n",
+        edges='    .edges("|Z")\n    .fillet(1.1)\n',
+    ).replace(*change)
+    if "19.3" in change[1]:
+        text = text.replace(".hole(3.0)", ".hole(0.6)")
+    if match is None:
+        cf.part_closed_form(text)
+        return
+    with pytest.raises(ValueError, match=match):
+        cf.part_closed_form(text)
+
+
+def _teeth(n: int, root: float, tip: float) -> str:
+    """A toothed outline of n trapezoid teeth, as `polyline` points."""
+    points = []
+    for i in range(n):
+        centre = 2 * math.pi * i / n
+        for radius, half in ((root, 0.42), (tip, 0.22), (tip, -0.22), (root, -0.42)):
+            angle = centre - half * 2 * math.pi / n
+            points.append(f"({radius * math.cos(angle):.6f}, {radius * math.sin(angle):.6f})")
+    return "[" + ", ".join(points) + "]"
+
+
+def gear_text(plane: str, axis: str, ring: float, big: float) -> str:
+    """A spur gear `gear_closed_form` reads: four holes on a circle of `ring`, a recess to `big`."""
+    holes = "".join(
+        f"""    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector({x}, {y}, 4.0), rotate=cq.Vector(0, 0, 0))
+            .cylinder(16.0, 1.8)
+    )
+"""
+        for x, y in ((ring, 0.0), (0.0, ring), (-ring, 0.0), (-0.0, -ring))
+    )
+    return f"""import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .polyline({_teeth(16, 19.0, 21.5)})
+    .close()
+    .extrude(8.0)
+    .faces(">{axis}").workplane()
+    .hole(6.0)
+{holes}    .edges(">{axis}")
+    .chamfer(0.4)
+    .faces("<{axis}").workplane()
+    .circle({big})
+    .circle(3.0)
+    .cutBlind(-1.5)
+    .faces(">{axis}").workplane()
+    .circle({big})
+    .circle(3.0)
+    .cutBlind(-1.5)
+    .faces(">{axis}").workplane()
+    .center(0.0, 2.0)
+    .rect(1.6, 4.0)
+    .cutThruAll()
+)
+
+# Export
+show_object(result)
+"""
+
+
+@pytest.mark.parametrize(("plane", "axis"), NORMALS)
+@pytest.mark.parametrize(("ring", "big"), [(12.0, 9.0), (11.0, 11.5)], ids=["apart", "recessed"])
+def test_a_spur_gear_is_what_arris_builds(plane: str, axis: str, ring: float, big: float) -> None:
+    text = gear_text(plane, axis, ring, big)
+    assert _agrees(ag.run(text, dialect="cq"), cf.gear_closed_form(text)) == []
+
+
+def test_a_recess_lens_is_two_circular_segments() -> None:
+    area, moment, arc_big, arc_hole = cf._lens(1.0, 1.0, 1.0)
+    assert area == pytest.approx(2 * math.pi / 3 - math.sqrt(3) / 2, rel=1e-15)
+    assert moment == pytest.approx(area / 2, rel=1e-14)  # symmetric about the chord's midpoint
+    assert arc_big == pytest.approx(2 * math.pi / 3, rel=1e-15)
+    assert arc_hole == pytest.approx(2 * math.pi / 3, rel=1e-15)
+    assert cf._lens(1.0, 0.25, 0.5)[0] == pytest.approx(math.pi / 16, rel=1e-15)
+    assert cf._lens(1.0, 0.25, 2.0) == (0.0, 0.0, 0.0, 0.0)
+
+
+def test_a_gear_whose_holes_meet_the_keyway_is_refused() -> None:
+    text = gear_text("XY", "Z", 12.0, 9.0).replace(".rect(1.6, 4.0)", ".rect(1.6, 20.0)")
+    with pytest.raises(ValueError, match="outside the arrangement"):
+        cf.gear_closed_form(text)
+
+
+@pytest.mark.parametrize(("plane", "axis"), NORMALS)
+def test_a_cam_bore_into_its_boss_is_what_arris_builds(plane: str, axis: str) -> None:
+    text = f"""import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .polyline([(-10, -10), (10, -10), (10, 10), (-10, 10)])
+    .close()
+    .extrude(5)
+    .union(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0, 0, 7), rotate=cq.Vector(0, 0, 0))
+            .cylinder(4, 5)
+    )
+    .faces(">{axis}").workplane()
+    .hole(4)
+    .faces(">{axis}")
+    .edges()
+    .chamfer(0.8)
+    .faces("<{axis}")
+    .edges()
+    .chamfer(0.6)
+    .faces(">{axis}").workplane()
+    .pushPoints([(0.0, 2.0)])
+    .rect(1, 2)
+    .cutThruAll()
+    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(5.2, 0.0, 2.5), rotate=cq.Vector(0, 0, 0))
+            .cylinder({{depth}}, 0.75)
+    )
+)
+
+# Export
+show_object(result)
+"""
+    for depth in ("10", "12"):  # ends in the boss's straight side, and in its top chamfer
+        program = text.replace("{depth}", depth)
+        assert _agrees(ag.run(program, dialect="cq"), cf.cam_closed_form(program)) == []
+
+
+FRAME = """import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .rect(80.0, 30.0)
+    .extrude(3.0)
+    .faces(">{axis}").workplane()
+    .rect(60.0, 14.0)
+    .cutThruAll()
+    .faces(">{axis}").workplane()
+    .pushPoints([(34.0, 11.0), (-34.0, 11.0), (34.0, -11.0), (-34.0, -11.0)])
+    .circle(1.5)
+    .cutThruAll()
+{notches}    .faces(">{axis}")
+    .edges()
+    .fillet(0.7)
+    .faces("<{axis}")
+    .edges()
+    .fillet(0.6)
+)
+
+# Export
+show_object(result)
+"""
+NOTCH = """    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0.0, {v}, 0.0), rotate=cq.Vector(0, 0, 0))
+            .box(20.0, 2.0, {depth})
+    )
+"""
+
+
+@pytest.mark.parametrize(("plane", "axis"), NORMALS)
+@pytest.mark.parametrize("depth", [None, "4.0", "7.0"], ids=["plain", "notched", "through"])
+def test_a_rect_frame_is_what_arris_builds(plane: str, axis: str, depth: str | None) -> None:
+    notches = (
+        ""
+        if depth is None
+        else "".join(NOTCH.format(plane=plane, v=v, depth=depth) for v in ("15.0", "-15.0"))
+    )
+    text = FRAME.format(plane=plane, axis=axis, notches=notches)
+    assert _agrees(ag.run(text, dialect="cq"), cf.frame_closed_form(text)) == []
+
+
+@pytest.mark.parametrize("outline", ["moveTo", "polygon"])
+def test_a_hex_nut_is_what_arris_builds(outline: str) -> None:
+    shape = (
+        "    .polygon(6, 12.0)\n"
+        if outline == "polygon"
+        else "    .moveTo(6.0, 0.0)\n"
+        + "".join(
+            f"    .lineTo({6 * math.cos(k * math.pi / 3):.4f}, "
+            f"{6 * math.sin(k * math.pi / 3):.4f})\n"
+            for k in range(1, 6)
+        )
+        + "    .close()\n"
+    )
+    text = f"""import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+{shape}    .extrude(5.0)
+    .faces(">Z").workplane()
+    .circle(3.0)
+    .cutThruAll()
+    .faces("<Z")
+    .edges()
+    .fillet(0.6)
+)
+
+# Export
+show_object(result)
+"""
+    assert _agrees(ag.run(text, dialect="cq"), cf.nut_closed_form(text)) == []
+
+
+@pytest.mark.parametrize(("plane", "axis"), NORMALS)
+def test_a_flanged_spur_gear_is_what_arris_builds(plane: str, axis: str) -> None:
+    def ring(kind: str, height: float, radius: float) -> str:
+        return f"""    .{kind}(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector(0, 0, 10.6), rotate=cq.Vector(0, 0, 0))
+            .cylinder({height}, {radius})
+    )
+"""
+
+    text = f"""import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .polyline({_teeth(16, 19.0, 21.5)})
+    .close()
+    .extrude(10.0)
+    .faces(">{axis}").workplane()
+    .hole(4.0)
+    .edges(">{axis}")
+    .chamfer(0.5)
+    .faces(">{axis}").workplane()
+    .center(0.0, 1.5)
+    .rect(1.0, 3.0)
+    .cutThruAll()
+{ring("union", 1.9, 23.0)}{ring("cut", 3.8, 15.0)}{ring("union", 1.9, 4.0)}{ring("cut", 3.8, 2.0)})
+
+# Export
+show_object(result)
+"""
+    assert _agrees(ag.run(text, dialect="cq"), cf.flanged_gear_closed_form(text)) == []
+
+
+def test_a_corner_patch_is_by_design_only_where_both_kernels_built_one_part() -> None:
+    from arris_gym.fidelity import OracleMeasures, OracleReport, OracleStatus, OracleVersions
+    from arris_gym.sandbox import BodyRef, Dialect, Measures, Status, Versions
+
+    measures = Measures(
+        volume=1000.0,
+        area=600.0,
+        centroid=(0.0, 0.0, 5.0),
+        bounds=((-5.0, -5.0, 0.0), (5.0, 5.0, 10.0)),
+        faces=30,
+        shells=1,
+        genus=0,
+        face_kinds=(("plane", 30),),
+    )
+
+    def oracle(area: float, solids: int = 1) -> OracleReport:
+        return OracleReport(
+            status=OracleStatus.OK,
+            message="",
+            measures=OracleMeasures(
+                volume=1000.0,
+                area=area,
+                centroid=(0.0, 0.0, 5.0),
+                bounds=((-5.0, -5.0, 0.0), (5.0, 5.0, 10.0)),
+                faces=29,
+                solids=solids,
+            ),
+            step_sha256="5" * 64,
+            program_sha256="0" * 64,
+            versions=OracleVersions(cadquery="2.3.0", ocp="7.9.3.0", python="3.12.3"),
+        )
+
+    result = ag.ExecResult(
+        status=Status.OK,
+        message="",
+        refusal=None,
+        body=BodyRef.of(b"body"),
+        measures=measures,
+        violations=(),
+        program_sha256="0" * 64,
+        dialect=Dialect.CQ,
+        versions=Versions(arris="0", numpy="0", arris_gym="0"),
+        seconds=0.0,
+    )
+    cf.check_by_design_cause(result, oracle(600.0005))  # 8.3e-7 apart, as a patch moves it
+    with pytest.raises(ValueError, match="further apart"):
+        cf.check_by_design_cause(result, oracle(601.0))
+    with pytest.raises(ValueError, match="several solids"):
+        cf.check_by_design_cause(result, oracle(600.0005, solids=2))

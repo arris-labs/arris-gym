@@ -5,6 +5,13 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- `fidelity.SignedSolids` is new verdict evidence for `occt_wrong`. It holds
+  each solid's signed volume, from an independent boundary flux, of an
+  `invalid` oracle shape where arris built the part. `compare` accepts it
+  only on an arris `ok` against an oracle `invalid` row, with one volume per
+  oracle solid, at least one negative, a sum equal to both sides' volume,
+  and one arris shell per positive solid.
+
 - In the CadQuery dialect, draw slots with `slot2D(length, diameter, angle)`
   at the workplane origin, a moved point or each point of an array. The angle
   is in degrees. Extrude the slots or cut them with `cutBlind` or

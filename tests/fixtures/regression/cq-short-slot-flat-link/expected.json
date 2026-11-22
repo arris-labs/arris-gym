@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "SketchError"
+  },
+  "note": "The semicircle centres reverse order when the overall slot length is less than its diameter. The intended slot cannot be formed."
+}

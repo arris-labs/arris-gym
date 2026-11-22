@@ -1,0 +1,23 @@
+{
+  "kind": "closed_form",
+  "volume": 93.06351805605348,
+  "area": 214.88939734564633,
+  "centroid": [
+    1.0,
+    -0.26768357410044974,
+    0.0
+  ],
+  "bounds": [
+    [
+      0.0,
+      -6.0,
+      -6.0
+    ],
+    [
+      2.0,
+      5.946427498927402,
+      6.0
+    ]
+  ],
+  "note": "a ring, bored and filleted at its four rim circles, cut across its wall by a box (the strip |z| < w, radially through, axially from the bottom face to the box's top): each measure is a one-dimensional integral over the radius of the column the cut takes (g(rho) over the strip's arc 2 rho asin(w / rho)), its walls and its floor (tools/cq_closed_forms.py, slotted_ring_measures): SlottedRing(big=6.0, small=4.5, h=2.0, f=0.2, bottom=0.0, w=0.8, hi=2.5, y0=1.0, y1=7.0)"
+}

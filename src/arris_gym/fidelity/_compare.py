@@ -16,6 +16,7 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, FiniteFloat, model_validator
 
 from arris_gym.fidelity._agreement import (
+    VOLUME_REL,
     MeasureDeltas,
     figures_agree,
     measure_deltas,
@@ -85,6 +86,25 @@ class SecondOracle(BaseModel):
     record: str = pydantic.Field(min_length=1)
 
 
+class SignedSolids(BaseModel):
+    """The signed volume of each solid of the oracle's shape, from a boundary flux independent
+    of Open CASCADE's mass properties, with the method in `note` (ADR-0006, amended 2026-11-22).
+
+    A solid whose signed volume is negative is turned inside out: no valid part has one. It is
+    evidence for `occt_wrong` alone, on a row where arris built a shape and the oracle's checker
+    rejected its own; `compare` holds it to both sides (`_check_signed_solids`).
+
+    >>> SignedSolids(volumes=(10.0, -1.0), note="flux").kind
+    'signed_solids'
+    """
+
+    model_config = _CONFIG
+
+    kind: Literal["signed_solids"] = "signed_solids"
+    volumes: tuple[FiniteFloat, ...] = pydantic.Field(min_length=1)
+    note: str = pydantic.Field(min_length=1)
+
+
 class DocAnchor(BaseModel):
     """The doc or ADR heading that makes a difference intended: `path.md#slug`."""
 
@@ -104,7 +124,7 @@ class RegressionFixture(BaseModel):
 
 
 Evidence = Annotated[
-    ClosedForm | SecondOracle | DocAnchor | RegressionFixture,
+    ClosedForm | SecondOracle | SignedSolids | DocAnchor | RegressionFixture,
     pydantic.Field(discriminator="kind"),
 ]
 
@@ -114,7 +134,8 @@ class Verdict(BaseModel):
 
     Refuses on construction: `BY_DESIGN` without a `DocAnchor` or a
     `DocAnchor` for any other class; `OCCT_WRONG` resting on anything but a
-    `ClosedForm` or a `SecondOracle`.
+    `ClosedForm`, a `SecondOracle` or `SignedSolids`; `SignedSolids` for any
+    class but `OCCT_WRONG`.
 
     >>> Verdict(disagreement=DisagreementClass.BY_DESIGN,
     ...     evidence=DocAnchor(anchor="docs/ARCHITECTURE.md#outcomes")).disagreement.value
@@ -131,10 +152,11 @@ class Verdict(BaseModel):
         is_doc = isinstance(self.evidence, DocAnchor)
         if is_doc != (self.disagreement is DisagreementClass.BY_DESIGN):
             raise ValueError("by_design rests on a doc anchor, and a doc anchor on by_design alone")
-        if self.disagreement is DisagreementClass.OCCT_WRONG and not isinstance(
-            self.evidence, ClosedForm | SecondOracle
-        ):
-            raise ValueError("occt_wrong rests on a closed form or a second oracle")
+        is_occt = self.disagreement is DisagreementClass.OCCT_WRONG
+        if is_occt and not isinstance(self.evidence, ClosedForm | SecondOracle | SignedSolids):
+            raise ValueError("occt_wrong rests on a closed form, a second oracle or signed solids")
+        if isinstance(self.evidence, SignedSolids) and not is_occt:
+            raise ValueError("signed solids are evidence for occt_wrong alone")
         return self
 
 
@@ -281,6 +303,33 @@ def _check_closed_form(
         raise ValueError("the verdict's closed form contradicts the measures")
 
 
+def _check_signed_solids(form: SignedSolids, result: ExecResult, report: OracleReport) -> None:
+    """Hold signed solids to both sides (ADR-0006, amended 2026-11-22).
+
+    The row is arris `ok` against an oracle `invalid`; the volumes are one per solid of the
+    oracle's shape, one at least negative; their sum is the oracle's signed volume and
+    arris's, each inside `VOLUME_REL`; and arris has a shell for each positive solid.
+    """
+    if result.status is not Status.OK or report.status is not OracleStatus.INVALID:
+        raise ValueError("signed solids on a row that is not arris ok against an invalid oracle")
+    assert result.measures is not None  # both statuses carry measures
+    assert report.measures is not None
+    volumes = form.volumes
+    if len(volumes) != report.measures.solids:
+        raise ValueError("signed solids that are not one per solid of the oracle's shape")
+    if not any(v < 0.0 for v in volumes):
+        raise ValueError("signed solids with no solid turned inside out")
+    total = 0.0
+    for v in volumes:  # a fixed summation order: the sum reaches a verdict
+        total += v
+    for measured in (report.measures.volume, result.measures.volume):
+        scale = max(abs(total), abs(measured))
+        if scale and abs(total - measured) > VOLUME_REL * scale:
+            raise ValueError("signed solids whose sum is not the measured volume")
+    if sum(1 for v in volumes if v > 0.0) != result.measures.shells:
+        raise ValueError("signed solids whose positive solids are not arris's shells")
+
+
 def _pieces_agree(result: ExecResult, report: OracleReport) -> bool:
     """Whether the oracle's solids are one, or as many as the result's shells.
 
@@ -311,8 +360,9 @@ def compare(
     Never raises without a verdict. Raises `ValueError`, a caller's
     mistake, for a verdict on a row that agrees, a verdict of any class but
     `ARRIS_BUG` on an arris `crash` or `checker_fail` the rule classes
-    `ARRIS_BUG`, an `ARRIS_REFUSAL` verdict on a result with no refusal, or
-    a closed form the measures contradict or that neither side measured.
+    `ARRIS_BUG`, an `ARRIS_REFUSAL` verdict on a result with no refusal,
+    a closed form the measures contradict or that neither side measured, or
+    signed solids that do not hold for both sides (`_check_signed_solids`).
 
     >>> from arris_gym.sandbox import Dialect, Versions
     >>> sha = "0" * 64
@@ -348,6 +398,8 @@ def compare(
         raise ValueError("an arris_refusal verdict on a result with no refusal")
     if verdict is not None and isinstance(verdict.evidence, ClosedForm):
         _check_closed_form(verdict.evidence, verdict, result, report)
+    if verdict is not None and isinstance(verdict.evidence, SignedSolids):
+        _check_signed_solids(verdict.evidence, result, report)
     if disagreement is not None:
         outcome = FidelityOutcome.DISAGREE
     elif ruling is _Rule.AGREE:

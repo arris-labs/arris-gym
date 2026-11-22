@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 4800.181744016352,
+    "area": 6952.748328475249,
+    "centroid": [
+      0.7859732708001721,
+      -0.3290675564901109,
+      0.0
+    ],
+    "bounds": [
+      [
+        0.0,
+        -52.41,
+        -52.41
+      ],
+      [
+        1.57,
+        52.39509137314296,
+        52.41
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  },
+  "xfail": "the box keeps the full cylindrical radius where the slot reaches the far rim fillets",
+  "note": "a ring, bored and filleted at its four rim circles, cut across its wall by a box (the strip |z| < w, radially through, axially from the bottom face to the box's top): each measure is a one-dimensional integral over the radius of the column the cut takes (g(rho) over the strip's arc 2 rho asin(w / rho)), its walls and its floor (tools/cq_closed_forms.py, slotted_ring_measures): SlottedRing(big=52.41, small=41.925, h=1.57, f=0.42, bottom=0.0, w=1.25, hi=1.285, y0=36.182, y1=58.152)"
+}

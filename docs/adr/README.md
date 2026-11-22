@@ -41,3 +41,4 @@ training cycle starts from.
 | [0022](0022-a-cq-face-key-is-arriss-centre-of-mass-and-faces-of-one-surface-that-share-an-edge-are-one-face.md) | A `cq` face key is arris's centre of mass, and faces of one surface that share an edge are one face | accepted |
 | [0023](0023-a-cq-sketch-extrudes-as-an-ordered-fold-of-prisms.md) | A `cq` sketch extrudes as an ordered fold of prisms | accepted |
 | [0024](0024-a-cq-through-cut-sweeps-placed-profiles-past-the-stock.md) | A `cq` through cut sweeps placed profiles past the stock | accepted |
+| [0025](0025-a-vertex-blends-corner-patch-is-each-kernels-own.md) | A vertex blend's corner patch is each kernel's own | accepted |

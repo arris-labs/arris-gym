@@ -1,0 +1,9 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpDegenerateError"
+  },
+  "xfail": "arris 0.11.1 reports OpInternalError: the face arrangement is not a subdivision",
+  "note": "The keyway's far edge is tangent to the bore chamfer's rim circle at the top face. A tangent contact is a typed degenerate refusal, never the kernel's internal error."
+}

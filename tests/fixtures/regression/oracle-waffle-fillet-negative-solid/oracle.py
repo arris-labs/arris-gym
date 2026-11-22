@@ -1,0 +1,21 @@
+import cadquery as cq
+
+result = (
+    cq.Workplane("YZ")
+    .box(87.48, 89.66, 30.68)
+    .faces(">X")
+    .workplane()
+    .rarray(17.71, 39.6, 4, 2)
+    .rect(9.78, 26.0)
+    .cutBlind(-12.69)
+    .faces("<X")
+    .workplane()
+    .rarray(17.71, 39.6, 4, 2)
+    .circle(3.535)
+    .cutBlind(-15.99)
+    .faces(">X")
+    .workplane()
+    .hole(17.16)
+    .edges("|X")
+    .fillet(0.83)
+)

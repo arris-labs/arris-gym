@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpDegenerateError"
+  },
+  "note": "The top chamfer cuts across the ends of the vertical edges. Rounding an edge by 1.71 reaches across the 0.43 chamfer. Arris refuses when the blend crosses a neighbouring edge."
+}

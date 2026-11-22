@@ -1,0 +1,11 @@
+{
+  "disagreement": "occt_wrong",
+  "evidence": {
+    "kind": "signed_solids",
+    "volumes": [
+      205928.446963,
+      -3219.30888194
+    ],
+    "note": "Each solid's signed volume, the flux of x / 3 through its faces by Green's theorem along planar, cylindrical, conical and toroidal trims at two resolutions that agree (tools/cq_closed_forms.py, signed_solid_forms)."
+  }
+}

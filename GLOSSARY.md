@@ -323,10 +323,18 @@ _Avoid_: category, bucket
 
 **Verdict**:
 A disagreement class and its one piece of evidence: a closed form, a second
-oracle's record, a doc or ADR anchor (for `by_design` alone), or a
-regression fixture. `compare` checks a closed form against the measures
-(ADR-0006).
+oracle's record, signed solids (for `occt_wrong` alone), a doc or ADR anchor
+(for `by_design` alone), or a regression fixture. `compare` checks a closed
+form and signed solids against the measures (ADR-0006).
 _Avoid_: ruling, judgement
+
+**Signed solids**:
+The signed volume of each solid of an `invalid` oracle shape, from a
+boundary flux independent of Open CASCADE's mass properties
+(`SignedSolids`). A negative one is a solid turned inside out: evidence that
+Open CASCADE is wrong where arris built the part (ADR-0006, amended
+2026-11-23).
+_Avoid_: orientation evidence, inverted volumes
 
 **Fidelity row**:
 One program's comparison of arris with the oracle (`FidelityRow`): `agree`,

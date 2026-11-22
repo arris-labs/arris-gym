@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "arris_refusal",
+  "refusal": {
+    "kind": "OpUnsupportedError"
+  },
+  "note": "The pocket, corner bores and side bore leave cylinder surfaces that meet the final vertical fillet. Arris refuses that cylinder-cylinder arrangement."
+}

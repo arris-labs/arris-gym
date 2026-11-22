@@ -16,7 +16,6 @@ import gzip
 import hashlib
 import json
 from collections import Counter
-from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -39,17 +38,17 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 9_998,
-        "agree": 7_415,
+        "in_subset": 14_150,
+        "agree": 10_730,
         "in_subset_cq_bug": 0,
-        "in_subset_by_design": 0,
+        "in_subset_by_design": 2,  # ADR-0025's corner patches
         "timed_out": 0,
         "classes": {
-            "arris_bug": 289,
-            "arris_refusal": 1_457,
-            "by_design": 0,
-            "cq_bug": 7_894,
-            "occt_wrong": 845,
+            "arris_bug": 391,
+            "arris_refusal": 1_778,
+            "by_design": 2,
+            "cq_bug": 3_750,
+            "occt_wrong": 1_249,
         },
         "unclassified": 0,
         "oracle_ok": 17_568,
@@ -99,13 +98,6 @@ def reach_stems(corpus: str) -> list[str]:
     return sorted(reach(census_rows(corpus), cq.subset()).stems)
 
 
-def bundle_4_subset() -> cq.Subset:
-    """The subset used to generate the committed bundle 4 reports."""
-    subset = cq.subset()
-    bundle_5 = ("Workplane.cutThruAll", "Workplane.center", "Workplane.rect", "Workplane.slot2D")
-    return replace(subset, forms=tuple(form for form in subset.forms if form.name not in bundle_5))
-
-
 def table_of(corpus: str) -> FidelityTable:
     return FidelityTable.from_json(
         gzip.decompress((C2 / corpus / "fidelity.json.gz").read_bytes()).decode("utf-8")
@@ -135,7 +127,7 @@ def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
     rows = census_rows(corpus)
-    assert reach_report(table, rows, bundle_4_subset()) == committed
+    assert reach_report(table, rows, cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, rows, fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]
@@ -161,20 +153,17 @@ def test_benchcads_arris_bugs_are_verdict_families_and_checker_fail_caps() -> No
     entries = table_of("benchcad").entries
     bugs = [e for e in entries if e.row.disagreement is DisagreementClass.ARRIS_BUG]
     families = {e.name.rsplit("_", 2)[0] for e in bugs}
-    assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == {
+    want = {
         "lobed_knob": 100,
-        "shaft_collar": 25,
+        "shaft_collar": 63,
         "bearing_retainer_cap": 37,
         "clevis_pin": 126,
-        "spacer_ring": 1,
+        "piston": 56,
+        "cam": 7,
+        "spacer_ring": 2,
     }
-    assert families == {
-        "lobed_knob",
-        "shaft_collar",
-        "bearing_retainer_cap",
-        "clevis_pin",
-        "spacer_ring",
-    }
+    assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == want
+    assert families == set(want)
     # The other rows are ok/ok with a verdict; the 37
     # bearing_retainer_cap rows are checker_fail rows the rule classes, with none.
     for e in bugs:
@@ -227,12 +216,12 @@ def test_benchcads_committed_oracle_rows_are_the_pinned_file() -> None:
     sprockets = [
         e
         for e in table_of("benchcad").entries
-        if e.row.oracle_status is OracleStatus.OK
-        and e.row.status is Status.UNSUPPORTED_API
-        and e.name.startswith("double_simplex_sprocket")
+        if e.row.oracle_status is OracleStatus.OK and e.name.startswith("double_simplex_sprocket")
     ]
+    # Inside the subset since the profiles lift (keyways by `rect`), none is a `cq_bug`.
     assert len(sprockets) >= SPROCKETS_ONCE_TIMED_OUT
-    assert all(e.row.disagreement is DisagreementClass.CQ_BUG for e in sprockets)
+    assert not any(e.row.timed_out for e in sprockets)
+    assert all(e.row.disagreement is not DisagreementClass.CQ_BUG for e in sprockets)
 
 
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
