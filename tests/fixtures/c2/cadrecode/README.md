@@ -87,6 +87,10 @@ The previous table (reach 104) had digest
 The oracle file is byte-equal to the committed input. Its uncompressed
 SHA-256 is `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
 
+The rerun following the workplane profile and through-cut lift (ADR-0024)
+covered all 968 programs. The table and reach report were byte-identical
+to the committed files, with reach still 968/968 and the same table digest.
+
 ## Verdicts
 
 Stem `550` still uses the closed form for two crossing cylinders. Another

@@ -117,7 +117,7 @@ Grades are tiers (`.agents/tiers.md`):
   (`tools/cq_closed_forms.py`), or file an arris refusal or bug in
   `../arris/docs/ideas/`. Commit the table, the reports, `reach-report.json`
   and the README figures.
-- [ ] Step 8 **[1, conductor-run]**: re-run CAD-Recode. Its table digest
+- [x] Step 8 **[1, conductor-run]**: re-run CAD-Recode. Its table digest
   (`fe2861b7…`) and reach report must be byte-equal, and the README names the
   re-run.
 
