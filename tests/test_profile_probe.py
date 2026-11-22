@@ -10,6 +10,7 @@ from typing import TypedDict
 
 import pytest
 
+import arris_gym as ag
 import cq_profile_probe as probe
 from arris_gym.fidelity import OracleMeasures, OracleStatus, OracleVersions, program_sha256
 from arris_gym.fidelity._agreement import figures_agree
@@ -267,3 +268,36 @@ def test_side_cut_matches_the_closed_form() -> None:
     got = OracleMeasures.model_validate(_REPORTS["through-side"]["report"]["measures"])
     want = OracleMeasures.model_validate_json(_SIDE_EXPECTED.read_text(encoding="utf-8"))
     assert figures_agree(got, want), (got, want)
+
+
+@pytest.mark.parametrize("name", [name for name in _PARTS if name.startswith("center-")])
+def test_center_preserves_world_placement(name: str) -> None:
+    result = ag.run(_REPORTS[name]["program"], dialect="cq")
+    assert result.status is ag.Status.OK, result.message
+    assert result.measures is not None
+    assert figures_agree(result.measures, _PARTS[name])
+
+
+def test_workplane_after_center_offsets_from_the_new_point() -> None:
+    result = ag.run(
+        "import cadquery as cq\n"
+        'result = cq.Workplane("XY").center(1, 2).workplane(offset=1).circle(1).extrude(2)\n'
+        "show_object(result)\n",
+        dialect="cq",
+    )
+    assert result.status is ag.Status.OK, result.message
+    assert result.measures is not None
+    assert figures_agree(result.measures, _prism(_disc(1), (1, 2, 2), (2, 2, 2)))
+
+
+@pytest.mark.parametrize("cut", ["cutBlind(-1)", "cutThruAll()"])
+def test_a_cut_consumes_the_carried_circular_wire(cut: str) -> None:
+    result = ag.run(
+        "import cadquery as cq\n"
+        'wp = cq.Workplane("XY").box(10, 8, 4).faces(">Z").workplane()\n'
+        f"result = wp.circle(1).center(2, 1).{cut}.cutThruAll()\n"
+        "show_object(result)\n",
+        dialect="cq",
+    )
+    assert result.status is ag.Status.RUNTIME
+    assert "No pending wires present" in result.message

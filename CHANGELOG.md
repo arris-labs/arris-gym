@@ -5,6 +5,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, use `center(x, y)` to shift the workplane origin
+  before drawing or drilling. Pending closed wires keep their original positions.
+
 - In the CadQuery dialect, use `cutThruAll()` to cut circles, circles at
   points, polygons and closed paths through the entire stock, even from a
   workplane outside it. Concentric circular rings return `runtime`.

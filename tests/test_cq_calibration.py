@@ -12,8 +12,8 @@ which would otherwise match, are open for the conductor (plans/m3-cq-subset).
 The `XZ` revolves run since `cq.Workplane('XZ')` was lifted
 (plans/in-subset-cq-bugs step 4): the frustum and the washer match their
 closed forms, and the sphere has matched its own since `threePointArc` was
-lifted (plans/lift-three-point-arc step 1); the torus names its next call
-outside.
+lifted (plans/lift-three-point-arc step 1). The torus matches its closed
+form after shifting the origin.
 """
 
 from __future__ import annotations
@@ -49,7 +49,7 @@ FIRST_OUTSIDE: dict[str, str | None] = {
     "agree-l-prism-fuse": "cq.Workplane()",
     "agree-revolve-frustum": None,
     "agree-revolve-sphere": None,
-    "agree-revolve-torus": "Workplane.center",
+    "agree-revolve-torus": None,
     "agree-revolve-washer": None,
     "agree-tube": "cq.Workplane()",
 }

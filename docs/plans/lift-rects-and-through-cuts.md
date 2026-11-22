@@ -88,7 +88,7 @@ Grades are tiers (`.agents/tiers.md`):
   box diagonal and hold the side bore to its closed form. Property
   (`hypothesis`): a circular window cut through a W×H×T box at a random
   centre inside it removes πr²T. CHANGELOG bullet.
-- [ ] Step 4 **[1]**: `center(x, y)` (delta C). Fixtures: a centred circle
+- [x] Step 4 **[1]**: `center(x, y)` (delta C). Fixtures: a centred circle
   extruded, centre twice, centre then `rarray` bored, centre on a face
   workplane, centre after a point or point stack, and pending wires
   consumed directly or after drawing a second wire. `agree-revolve-torus`
@@ -160,3 +160,8 @@ Grades are tiers (`.agents/tiers.md`):
   with the BRepFeat through cut and the larger projected reach gain first.
 - Step 7, by the agent: a `cq` fault needing a semantic ADR-0024 lacks
   becomes a new step here; never a left `cq_bug`, never a narrowed subset.
+- ⚠ OPEN: the oracle builds nested circles across a centre shift, revolves
+  multiple wires across a shift, and starts a sketch on the point left by
+  `center`. The subset refuses these contexts
+  (`unsupported-center-nested-circles`, `unsupported-center-revolve-multiple`,
+  `unsupported-center-sketch`). Step 7 checks them against corpus reach.

@@ -186,6 +186,10 @@ class _Path:
         return _Path(self.start, (*self.segments, _Segment(to, via)))
 
 
+class _CenterPoint(_Path):
+    """The origin point left by center, with no pending path."""
+
+
 def _what(selected: Faces | Edges) -> str:
     """`faces` or `edges`: what a stack of selected objects holds, for a message."""
     return "faces" if isinstance(selected, Faces) else "edges"
@@ -253,11 +257,12 @@ class Workplane:
     Workplane.text
     """
 
-    __slots__ = ("_parent", "_plane", "_seams", "_stack")
+    __slots__ = ("_carried", "_parent", "_plane", "_seams", "_stack")
 
     _plane: arris.build.Workplane
     _stack: tuple[object, ...]
     _parent: Workplane | None
+    _carried: tuple[arris.build.Sketch, ...]
     # Where Open CASCADE puts the seam of each cylinder this chain built, or
     # one of its operands did; `None` once a call made a seam no record places
     # (ADR-0020 rule 2, amended). `edges` reads it.
@@ -278,6 +283,7 @@ class Workplane:
         object.__setattr__(self, "_plane", plane)
         object.__setattr__(self, "_stack", ())
         object.__setattr__(self, "_parent", None)
+        object.__setattr__(self, "_carried", ())
         object.__setattr__(self, "_seams", ())
 
     def _derive(self, *objects: object) -> Workplane:
@@ -286,6 +292,7 @@ class Workplane:
         object.__setattr__(child, "_plane", self._plane)
         object.__setattr__(child, "_stack", objects)
         object.__setattr__(child, "_parent", self)
+        object.__setattr__(child, "_carried", self._carried)
         object.__setattr__(child, "_seams", self._seams)
         return child
 
@@ -360,6 +367,36 @@ class Workplane:
             raise ValueError(_NO_WIRES)
         return sketches[0]
 
+    def _visible_wires(self) -> tuple[arris.build.Sketch, ...]:
+        """The closed profiles on the visible stack in drawing order."""
+        profile = self._stack[0] if len(self._stack) == 1 else None
+        if isinstance(profile, _Discs):
+            return profile.sketches
+        if isinstance(profile, arris.build.Sketch):
+            return (profile,)
+        return ()
+
+    def _wires(self, form: str) -> tuple[arris.build.Sketch, ...]:
+        """Keep carried profiles first. Mixed sets currently support disjoint discs.
+
+        See `unsupported-center-nested-circles` for a section that needs nesting.
+        """
+        visible = self._visible_wires()
+        for first in self._carried:
+            for second in visible:
+                if isinstance(first, _Disc) and isinstance(second, _Disc):
+                    a = first.plane.point(*first.center)
+                    b = second.plane.point(*second.center)
+                    if math.dist(a, b) > abs(first.radius) + abs(second.radius):
+                        continue
+                raise UnsupportedApi(f"{form} on multiple wires carried across center")
+        return self._carried + visible
+
+    def _consume_wires(self) -> Workplane:
+        """Clear consumed wires on a newly derived result."""
+        object.__setattr__(self, "_carried", ())
+        return self
+
     def _pen(self) -> _Path:
         """The path a `lineTo` or a `threePointArc` goes on from: the last object, or the origin.
 
@@ -408,7 +445,10 @@ class Workplane:
         self._refuse_selected(form)
         if any(isinstance(o, _Points) for o in self._stack):
             raise UnsupportedApi(f"{form} on a stack of points")
-        if any(isinstance(o, (_Path, _Discs, arris.build.Sketch)) for o in self._stack):
+        if any(
+            isinstance(o, (_Path, _Discs, arris.build.Sketch)) and not isinstance(o, _CenterPoint)
+            for o in self._stack
+        ):
             raise UnsupportedApi(f"{form} on a pending wire")
 
     def _operand(self, other: object, form: str) -> tuple[arris.build.Solid, ...]:
@@ -515,7 +555,7 @@ class Workplane:
         self._refuse_pending("Workplane.workplane")
         plane = self._plane
         o, n = plane.origin, plane.z
-        if not self._stack:
+        if not self._stack or isinstance(self._stack[0], _CenterPoint):
             center = o
         else:
             # Past `_refuse_pending`, a stack that is not empty holds one solid.
@@ -624,7 +664,9 @@ class Workplane:
             (solid,) = solids
             kept = select_edges(solid, edges_of_solid(solid), selector, self._seams)
             return self._derive(Edges(solid, kept))
-        if selector is not None and (not self._stack or self._has_sketch()):
+        if selector is not None and (
+            not self._stack or self._has_sketch() or isinstance(self._stack[0], _CenterPoint)
+        ):
             # No object on the stack has an edge: CadQuery's selector is handed
             # an empty list, even where the chain holds a solid further up.
             raise ValueError(NO_FACES)
@@ -1414,12 +1456,8 @@ class Workplane:
         """
         if len(self._stack) == 1 and isinstance(self._stack[0], Sketch):
             return self._combined(self._stack[0]._extrusion(distance))._with_seams(None)
-        discs = [o for o in self._stack if isinstance(o, _Discs)]
-        sketches: Sequence[arris.build.Sketch]
-        if discs and len(self._stack) == 1:
-            sketches = discs[0].sketches
-        else:
-            sketches = (self._pending_sketch("Workplane.extrude"),)
+        form = "Workplane.extrude"
+        sketches = self._wires(form) or (self._pending_sketch(form),)
         if distance == 0:
             raise ValueError(
                 f"Workplane.extrude({distance}, both={both}): a zero distance "
@@ -1429,7 +1467,7 @@ class Workplane:
         for sketch in sketches:
             tool = sketch.extrude(distance, both=both)
             result = result._combined(tool)._with_seams(seams_of(tool, sketch.plane.x))
-        return result
+        return result._consume_wires()
 
     @census_form("Workplane.cutBlind", [("num",)])
     def cutBlind(self, until: float) -> Workplane:
@@ -1455,12 +1493,9 @@ class Workplane:
         >>> round(wp.circle(0.5).cutBlind(-1)._solids()[0].measure().volume, 9)
         7.214601837
         """
-        discs = [o for o in self._stack if isinstance(o, _Discs)]
-        sketches: Sequence[arris.build.Sketch]
-        if discs and len(self._stack) == 1:
-            sketches = discs[0].sketches
-        else:
-            sketches = (self._pending_sketch("Workplane.cutBlind"),)
+        form = "Workplane.cutBlind"
+        self._refuse_sketch(form)
+        sketches = self._wires(form) or (self._pending_sketch(form),)
         if until == 0:
             raise ValueError(
                 f"Workplane.cutBlind({until}): a zero depth (CadQuery's Standard_ConstructionError)"
@@ -1496,16 +1531,11 @@ class Workplane:
         if base is None:
             raise ValueError(_NO_SOLID)
         self._refuse_sketch("Workplane.cutThruAll")
-        profile = self._stack[0] if len(self._stack) == 1 else None
-        sketches: Sequence[arris.build.Sketch]
-        if isinstance(profile, _Discs):
-            sketches = profile.sketches
-        elif isinstance(profile, arris.build.Sketch):
-            if profile.holes:
-                raise ValueError("CadQuery's Standard_OutOfRange: NCollection_Sequence::Value")
-            sketches = (profile,)
-        else:
+        sketches = self._wires("Workplane.cutThruAll")
+        if not sketches:
             raise ValueError(_NO_WIRES)
+        if any(sketch.holes for sketch in sketches):
+            raise ValueError("CadQuery's Standard_OutOfRange: NCollection_Sequence::Value")
         box = self._bore_bounds(base)
         clearance = self._bore_length(box)
         return self._cut_sketches(
@@ -1537,7 +1567,24 @@ class Workplane:
         for (sketch, _), tool in zip(sweeps, tools, strict=True):
             placed = seams_of(tool, sketch.plane.x)
             seams = None if seams is None or placed is None else seams + placed
-        return self._derive(base.cut(*tools))._with_seams(seams)
+        return self._derive(base.cut(*tools))._with_seams(seams)._consume_wires()
+
+    @census_form("Workplane.center", [("num",)] * 2)
+    def center(self, x: float, y: float) -> Workplane:
+        """Move the origin in the current axes and leave one point there.
+
+        The chain's solid and pending closed wires keep their placements.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").center(2, -1).circle(1).extrude(2)
+        >>> [round(c, 9) for c in wp._solids()[0].measure().centroid]
+        [2.0, -1.0, 1.0]
+        """
+        plane = self._plane
+        shifted = arris.build.Workplane(plane.point(x, y), plane.x, plane.y, plane.z)
+        child = self._derive_on(shifted, _CenterPoint((0.0, 0.0)))
+        object.__setattr__(child, "_carried", self._wires("Workplane.center"))
+        return child
 
     @census_form("Workplane.moveTo", [("num",)] * 2)
     def moveTo(self, x: float = 0, y: float = 0) -> Workplane:
@@ -1688,7 +1735,15 @@ class Workplane:
         >>> round(solid.measure().volume / math.pi, 9)
         3.0
         """
-        sketch = self._pending_sketch("Workplane.revolve")
+        form = "Workplane.revolve"
+        if self._carried:
+            wires = self._wires(form)
+            if len(wires) != 1:
+                # See `unsupported-center-revolve-multiple`.
+                raise UnsupportedApi(f"{form} on multiple wires carried across center")
+            sketch = wires[0]
+        else:
+            sketch = self._pending_sketch(form)
         start_at, end_at = _axis_point(axisStart), _axis_point(axisEnd)
         degrees = angleDegrees % 360.0
         if degrees == 0:
@@ -1700,7 +1755,7 @@ class Workplane:
             sketch.profile(), start, direction, degrees * _REVOLVE_RADIANS_PER_DEGREE
         )
         # Where Open CASCADE starts a turned face is not modelled: no seam is placed.
-        return self._combined(arris.build.Solid.of(made))._with_seams(None)
+        return self._combined(arris.build.Solid.of(made))._with_seams(None)._consume_wires()
 
     @census_form("Workplane.union", [None])
     def union(self, toUnion: Workplane) -> Workplane:
