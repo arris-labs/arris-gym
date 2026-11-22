@@ -367,9 +367,8 @@ def before_subset() -> Subset:
     they admitted, which is what this subtracts to read them again.
     """
     today = subset()
-    # Forms plans/lift-holes-and-points, plans/lift-arrays-and-blind-cuts and
-    # plans/lift-edges-and-blends added later (with that plan's four selectors): they admit
-    # programs the 950 do not include.
+    # Forms added in later bundles admit programs outside the original 950.
+    # Remove them from both sides of the historical reach comparison.
     later = {
         "Workplane.pushPoints",
         "Workplane.cboreHole",
@@ -380,6 +379,10 @@ def before_subset() -> Subset:
         "Workplane.edges",
         "Workplane.fillet",
         "Workplane.chamfer",
+        "Workplane.cutThruAll",
+        "Workplane.center",
+        "Workplane.rect",
+        "Workplane.slot2D",
     }
     named = {form.name for form in BUNDLE} | later
     return Subset(

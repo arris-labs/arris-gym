@@ -16,6 +16,7 @@ import gzip
 import hashlib
 import json
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -98,13 +99,20 @@ def reach_stems(corpus: str) -> list[str]:
     return sorted(reach(census_rows(corpus), cq.subset()).stems)
 
 
+def bundle_4_subset() -> cq.Subset:
+    """The subset used to generate the committed bundle 4 reports."""
+    subset = cq.subset()
+    bundle_5 = ("Workplane.cutThruAll", "Workplane.center", "Workplane.rect", "Workplane.slot2D")
+    return replace(subset, forms=tuple(form for form in subset.forms if form.name not in bundle_5))
+
+
 def table_of(corpus: str) -> FidelityTable:
     return FidelityTable.from_json(
         gzip.decompress((C2 / corpus / "fidelity.json.gz").read_bytes()).decode("utf-8")
     )
 
 
-@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 9_998)])
+@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 10_878)])
 def test_current_subset_reach_over_the_committed_census(corpus: str, expected: int) -> None:
     measured = reach(census_rows(corpus), cq.subset())
     assert measured.programs == CORPORA[corpus][1]
@@ -127,7 +135,7 @@ def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
     rows = census_rows(corpus)
-    assert reach_report(table, rows, cq.subset()) == committed
+    assert reach_report(table, rows, bundle_4_subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, rows, fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]

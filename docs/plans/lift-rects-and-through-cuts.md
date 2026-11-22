@@ -81,7 +81,7 @@ Grades are tiers (`.agents/tiers.md`):
 - [x] Step 2 **[3]**: ADR-0024 settles deltas A to E from step 1's records.
   It amends ADR-0018 rule 5, amends ADR-0014 to name the split of bundle 5,
   and sharpens **Stack**. Doc only.
-- [ ] Step 3 **[2]**: `cutThruAll()` on today's profiles: circle, ring,
+- [x] Step 3 **[2]**: `cutThruAll()` on today's profiles: circle, ring,
   circles at points, polygon and closed path (delta A). Each `ok`,
   `runtime` and `unsupported_api` case for these profiles gets a fixture
   in `tests/fixtures/cq/`. Include a plane farther from the stock than its
@@ -147,6 +147,15 @@ Grades are tiers (`.agents/tiers.md`):
   (`regression/oracle-cut-thru-all-side`, strict `xfail`). ADR-0024 §A
   records the evidence. Step 7 checks whether a corpus row needs a
   closed-form verdict for this measure error.
+- ⚠ OPEN: CadQuery leaves the stock uncut with the profile 40 units above
+  its face (`regression/oracle-cut-thru-all-far`, strict `xfail`). Arris
+  matches the full-sweep closed form. Step 7 checks the corpus for this
+  discrepancy as well as the side bore's measure error.
+- *Settled* in step 3. The report check uses the bundle 4 subset that
+  produced the committed reports until step 7 replaces them. The live
+  subset's reach is checked separately (10,878 BenchCAD rows after step 3).
+  The historical selector probe also excludes the new forms so it still
+  reproduces its original 950 rows.
 - *Settled* in ADR-0014's amendment of 2026-11-22. Bundle 5 is two plans,
   with the BRepFeat through cut and the larger projected reach gain first.
 - Step 7, by the agent: a `cq` fault needing a semantic ADR-0024 lacks

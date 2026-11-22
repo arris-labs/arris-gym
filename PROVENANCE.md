@@ -220,6 +220,10 @@ none of their code is carried over, and the module cites each step.
   refusals (no pending wire, zero depth, no solid). Confirmed on the oracle by
   `tests/fixtures/arrays/` and `tests/fixtures/cq/ok-rarray-*`,
   `ok-polar-array-*` and `ok-cut-blind-*`; ADR-0019.
+- `Workplane.cutThruAll` (`cadquery/cq.py`, `occ_impl/shapes.py`): the
+  solid lookup precedes wire lookup, and `dprism` cuts along the profile
+  normal through the whole stock. The oracle's ring refusal is recorded in
+  `tests/fixtures/profiles/` (ADR-0024 §A).
 - `Workplane.edges`, `Workplane.fillet`, `Workplane.chamfer`, `ParallelDirSelector` and `SumSelector`
   (`cadquery/cq.py`, `selectors.py`, `occ_impl/shapes.py`: `_collectProperty`,
   `findSolid`, `DirectionMinMaxSelector`, `Mixin1D.Center`, `Mixin3D.fillet`,

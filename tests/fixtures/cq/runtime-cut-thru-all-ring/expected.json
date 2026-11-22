@@ -1,0 +1,5 @@
+{
+  "dialect": "cq",
+  "status": "runtime",
+  "message": "ValueError: CadQuery's Standard_OutOfRange: NCollection_Sequence::Value"
+}

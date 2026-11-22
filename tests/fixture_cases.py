@@ -80,6 +80,7 @@ def c1_subset() -> cq.Subset:
                 "Workplane.rarray",
                 "Workplane.polarArray",
                 "Workplane.cutBlind",
+                "Workplane.cutThruAll",
                 "Workplane.edges",
                 "Workplane.fillet",
                 "Workplane.chamfer",

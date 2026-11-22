@@ -633,3 +633,21 @@ than the mitre does (its volume 0.1% over the closed form), so the row is `occt_
 closed form. arris carries one face more than the oracle (the plate's bottom flat and the hub's
 coplanar bottom disc stay two), ADR-0005's convention.
 
+
+The `cut-thru-all` fixtures follow ADR-0024 §A. On a 10 × 8 × 4 stock,
+a radius-1 bore removes 4π from the top face, inside, above or below.
+`ok-cut-thru-all-far` places the profile 40 units above the top face,
+past the stock's diagonal. The oracle leaves that box uncut
+(`regression/oracle-cut-thru-all-far`). The compound has a bore through each of two
+separate boxes. The point stack cuts two radius-½ bores. A missed bore
+leaves volume 320. The centred polygon removes a diamond of area 8.
+Centred on the +X boundary, the same diamond removes half that area and
+opens a notch through the side. The closed triangular path removes a
+section of area 3. The recorded oracle rows agree in
+`tests/test_cq_cut_thru_all.py`, which also checks the missing-solid,
+missing-wire and ring refusals.
+
+The side bore has volume 320 − 10π and area 304 + 18π. The arris cut
+matches the closed form at the agreement tolerance. The corresponding
+oracle measurement discrepancy is recorded in
+`regression/oracle-cut-thru-all-side`.

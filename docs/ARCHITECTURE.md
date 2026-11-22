@@ -329,7 +329,7 @@ the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Its
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
-axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `edges` and `edges(sel)` with the same six and `|X |Y |Z` and `'>Z or <Z'` (a stack of edges, ranked by their centre of mass, ADR-0020; `faces` refuses the last four), `fillet` (a radius; a blend of the stacked edges, or of every edge of the stacked faces or solid, in one call, seams passed over, ADR-0020), `chamfer` (a length; the same blend, bevelled), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending circles cut blind in one call, ADR-0019), `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
+axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `edges` and `edges(sel)` with the same six and `|X |Y |Z` and `'>Z or <Z'` (a stack of edges, ranked by their centre of mass, ADR-0020; `faces` refuses the last four), `fillet` (a radius; a blend of the stacked edges, or of every edge of the stacked faces or solid, in one call, seams passed over, ADR-0020), `chamfer` (a length; the same blend, bevelled), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending circles cut blind in one call, ADR-0019), `cutThruAll`, `box`, `cylinder`, `sphere`, `circle`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
 `threePointArc`, `polyline`, `close`, `revolve` and `Workplane.sketch()`.
 The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
 `arc`, `close`, `assemble` and `finalize` (ADR-0023).
@@ -484,6 +484,14 @@ acts on the section as it was before the call. An empty section ends
 `runtime` at extrusion. The `both=`
 keyword, `cutBlind`, `revolve` and bores on a sketch end `unsupported_api`
 (ADR-0023).
+
+`cutThruAll()` looks up the chain's nearest solid, including a compound,
+and cuts the pending circle, circles at points, polygon or closed path
+along each profile plane's normal. The sweeps extend past the projected
+stock bounds at both ends, even from planes outside the stock. All tools
+are cut in one call. A missing solid, missing wires or a concentric ring
+ends `runtime`. A finalized sketch or a keyword form ends
+`unsupported_api` (ADR-0024 §A).
 
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.

@@ -92,6 +92,10 @@ _FULL_TURN_TOLERANCE = 1e-6
 _ZERO = Vector(0, 0, 0)
 _SKETCH_TO_VECTOR = "Cannot convert object type '<class 'cadquery.sketch.Sketch'>' to vector"
 
+_NO_SOLID = "Cannot find a solid on the stack or in the parent chain"
+_NO_WIRES = "No pending wires present"
+_Bounds = tuple[tuple[float, float, float], tuple[float, float, float]]
+
 
 @dataclass(frozen=True)
 class _Segment:
@@ -353,7 +357,7 @@ class Workplane:
             raise UnsupportedApi(f"{form} on circles at points")
         sketches = [o for o in self._stack if isinstance(o, arris.build.Sketch)]
         if len(sketches) != 1 or len(self._stack) != 1:
-            raise ValueError("No pending wires present")
+            raise ValueError(_NO_WIRES)
         return sketches[0]
 
     def _pen(self) -> _Path:
@@ -647,7 +651,7 @@ class Workplane:
         """
         base = self._base_solid()
         if base is None:
-            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+            raise ValueError(_NO_SOLID)
         candidates: tuple[arris.Edge, ...] = ()
         for o in self._stack:
             if isinstance(o, Edges):
@@ -877,7 +881,7 @@ class Workplane:
         if diameter == 0:
             return self._derive(base)
         if depth is None:
-            depth = self._bore_length(base)
+            depth = self._bore_length(self._bore_bounds(base))
         return self._cut_bores(base, centres, [(diameter / 2.0, depth)])
 
     @census_form("Workplane.cboreHole", [("num",)] * 3)
@@ -924,7 +928,10 @@ class Workplane:
             raise ValueError(
                 f"{named}: a negative counterbore depth (CadQuery's Null TopoDS_Shape object)"
             )
-        pieces = [(diameter / 2.0, self._bore_length(base)), (cboreDiameter / 2.0, cboreDepth)]
+        pieces = [
+            (diameter / 2.0, self._bore_length(self._bore_bounds(base))),
+            (cboreDiameter / 2.0, cboreDepth),
+        ]
         if all(radius == 0 for radius, _ in pieces):
             raise ValueError(f"{named}: no bore and no counterbore (CadQuery's Null TopoDS_Shape)")
         return self._cut_bores(base, centres, pieces)
@@ -983,7 +990,7 @@ class Workplane:
         return self._cut_bores(
             base,
             centres,
-            [(diameter / 2.0, self._bore_length(base))],
+            [(diameter / 2.0, self._bore_length(self._bore_bounds(base)))],
             [(radius, height)],
         )
 
@@ -999,7 +1006,7 @@ class Workplane:
         self._refuse_sketch(form)
         base = self._base_solid()
         if base is None:
-            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+            raise ValueError(_NO_SOLID)
         plane = self._plane
         if not self._stack:
             return base, [plane.origin]
@@ -1014,14 +1021,16 @@ class Workplane:
         raise UnsupportedApi(f"{form} on a stack holding objects")
 
     @staticmethod
-    def _bore_length(base: arris.build.Solid) -> float:
-        """CadQuery's `largestDimension()`: the diagonal of the solid's tight box.
-
-        `arris`'s box is padded by `_BOUNDS_PAD` on every side; that goes first.
-        """
+    def _bore_bounds(base: arris.build.Solid) -> _Bounds:
+        """The kernel's conservative box of the stock."""
         box = base.model.bounds(base.body)
         if box is None:
             raise UnsupportedApi("a bore on a solid without a box")
+        return box
+
+    @staticmethod
+    def _bore_length(box: _Bounds) -> float:
+        """CadQuery's `largestDimension()`: the diagonal with the kernel's padding removed."""
         return math.sqrt(sum((box[1][k] - box[0][k] - 2 * _BOUNDS_PAD) ** 2 for k in range(3)))
 
     def _cut_bores(
@@ -1458,10 +1467,74 @@ class Workplane:
             )
         base = self._base_solid()
         if base is None:
-            raise ValueError("Cannot find a solid on the stack or in the parent chain")
-        tools = [s.extrude(until, model=base.model) for s in sketches]
+            raise ValueError(_NO_SOLID)
+        return self._cut_sketches(base, [(s, until) for s in sketches])
+
+    @census_form("Workplane.cutThruAll")
+    def cutThruAll(self) -> Workplane:
+        """Cut the chain's solid with the pending profiles through its full thickness.
+
+        Each profile cuts along its plane's normal in both directions,
+        including from outside the stock or through a compound. A miss
+        leaves the stock intact. Circles, circles at points, polygons and
+        closed paths are supported. Raises `ValueError` for a missing solid
+        before checking for pending wires, and for missing wires or a ring
+        (CadQuery's Standard_OutOfRange). A finalized sketch and keyword
+        forms raise `UnsupportedApi` (ADR-0024 §A).
+
+        See `ok-cut-thru-all-far`, `runtime-cut-thru-all-no-solid`,
+        `runtime-cut-thru-all-no-wires`, `runtime-cut-thru-all-ring`,
+        `unsupported-cut-thru-all-finalized-sketch`,
+        `unsupported-cut-thru-all-clean` and `unsupported-cut-thru-all-taper`.
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane(offset=10)
+        >>> round(wp.circle(0.5).cutThruAll()._solids()[0].measure().volume, 9)
+        6.429203673
+        """
+        base = self._base_solid()
+        if base is None:
+            raise ValueError(_NO_SOLID)
+        self._refuse_sketch("Workplane.cutThruAll")
+        profile = self._stack[0] if len(self._stack) == 1 else None
+        sketches: Sequence[arris.build.Sketch]
+        if isinstance(profile, _Discs):
+            sketches = profile.sketches
+        elif isinstance(profile, arris.build.Sketch):
+            if profile.holes:
+                raise ValueError("CadQuery's Standard_OutOfRange: NCollection_Sequence::Value")
+            sketches = (profile,)
+        else:
+            raise ValueError(_NO_WIRES)
+        box = self._bore_bounds(base)
+        clearance = self._bore_length(box)
+        return self._cut_sketches(
+            base, [self._through_sweep(sketch, box, clearance) for sketch in sketches]
+        )
+
+    @staticmethod
+    def _through_sweep(
+        sketch: arris.build.Sketch, box: _Bounds, clearance: float
+    ) -> tuple[arris.build.Sketch, float]:
+        """A sweep from before the projected stock bounds to past their far end."""
+        plane = sketch.plane
+        lo, hi = box
+        # Each axis contributes its own interval to the projection.
+        projected = [
+            sorted(((a - origin) * normal, (b - origin) * normal))
+            for a, b, origin, normal in zip(lo, hi, plane.origin, plane.z, strict=True)
+        ]
+        start = sum(near for near, _ in projected) - clearance
+        end = sum(far for _, far in projected) + clearance
+        return sketch.moved_to(plane.offset(start)), end - start
+
+    def _cut_sketches(
+        self, base: arris.build.Solid, sweeps: Sequence[tuple[arris.build.Sketch, float]]
+    ) -> Workplane:
+        """Cut all swept profiles in order in one call and retain their seam directions."""
+        tools = [sketch.extrude(distance, model=base.model) for sketch, distance in sweeps]
         seams: tuple[Seam, ...] | None = ()
-        for sketch, tool in zip(sketches, tools, strict=True):
+        for (sketch, _), tool in zip(sweeps, tools, strict=True):
             placed = seams_of(tool, sketch.plane.x)
             seams = None if seams is None or placed is None else seams + placed
         return self._derive(base.cut(*tools))._with_seams(seams)
@@ -1674,7 +1747,7 @@ class Workplane:
         tools = self._operand(toCut, "Workplane.cut(Workplane)")
         base = self._base_solid()
         if base is None:
-            raise ValueError("Cannot find a solid on the stack or in the parent chain")
+            raise ValueError(_NO_SOLID)
         # A cut that splits its base is CadQuery's compound: one solid with a
         # shell per piece (ADR-0016).
         return self._derive(base.cut(*tools))._with_seams(toCut._seams)

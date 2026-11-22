@@ -1,0 +1,12 @@
+{
+  "measures": null,
+  "message": "OCP.OCP.Standard.Standard_OutOfRange: NCollection_Sequence::Value",
+  "program_sha256": "e279e697727ad58bd57562d471679d749de8f2d584c43a28ef80630b0655149e",
+  "status": "runtime",
+  "step_sha256": null,
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}
