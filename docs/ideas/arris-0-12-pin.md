@@ -1,6 +1,6 @@
 # Idea: arris-0-12-pin
 
-- Status: Open
+- Status: Accepted (A) → plans/bump-arris-0-12
 - Raised: 2026-11-24
 - Prompt (verbatim from the human): "arris just released v0.12.0 - should we migrate to it?"
 
@@ -76,3 +76,5 @@ The impact on the corpus and rewards remains unmeasured.
 ADR-0021 already covers the versioning decision. No new ADR is proposed.
 
 ## Decision
+
+Q1: "yes, lets upfrade to v12" (A, 2026-11-24).
