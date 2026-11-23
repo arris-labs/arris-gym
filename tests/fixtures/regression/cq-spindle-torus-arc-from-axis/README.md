@@ -10,9 +10,9 @@ closed form of `expected.json`'s `note` to 1e-12, area to 1e-12). In the corpus
 the axis, from its rounded points). It is the check behind `cq-horn-torus`
 (a circle that touches the axis), here for a circle that crosses it.
 
-Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict
-`xfail` until an arris release builds a revolve whose arc stays on one side of
-the axis it crosses. Reported to arris in
+Desired: `ok`, the closed form of `expected.json`'s `note`. Reported to arris in
 `../arris/docs/ideas/spindle-torus-revolve.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 builds the expected geometry.

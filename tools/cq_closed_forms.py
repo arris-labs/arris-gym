@@ -165,6 +165,11 @@ PLACEMENT_TOL = 1e-9
 # lies in [-1, 1], so a step this small is below the last bits a double keeps there.
 NEWTON_STEP_TOL = 1e-16
 
+_BLEND_DOES_NOT_FIT = (
+    "degenerate result: the blend does not fit its faces: it leaves its face through an "
+    "edge that is not the corner's own, or two blends' contacts on one face cross or swap order"
+)
+
 # What a `--refusal` fixture stands for: the kernel's refusal that a row must show on its
 # re-run, (exception class, message prefix, number of entities), so a row refused for another
 # reason is never classed by that fixture's name.
@@ -178,7 +183,7 @@ REFUSAL_CAUSES: dict[str, tuple[str, str, int]] = {
     ),
     "cq-rim-chamfer-after-parallel-fillet": (
         "OpDegenerateError",
-        "degenerate result: the blend leaves its face through an edge that is not the corner's own",
+        _BLEND_DOES_NOT_FIT,
         2,
     ),
     "cq-short-slot-flat-link": ("SketchError", "slot: length ", 0),
@@ -195,7 +200,7 @@ REFUSAL_CAUSES: dict[str, tuple[str, str, int]] = {
     ),
     "cq-vertical-fillet-after-rim-chamfer": (
         "OpDegenerateError",
-        "degenerate result: the blend leaves its face through an edge that is not the corner's own",
+        _BLEND_DOES_NOT_FIT,
         2,
     ),
     "cq-waffle-plate-tangent-fillet": (

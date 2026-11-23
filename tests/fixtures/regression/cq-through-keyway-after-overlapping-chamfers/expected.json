@@ -4,6 +4,8 @@
   "refusal": {
     "kind": "OpDegenerateError"
   },
-  "xfail": "arris 0.11.1 builds intersecting chamfer faces and reports OpInternalError on the through cut",
-  "note": "Two 1.51 chamfers at the ends of a 2.205-wide annular face meet before reaching the face, so the blend should refuse before the through cut."
+  "note": "Two 1.51 chamfers at the ends of a 2.205-wide annular face meet before reaching the face, so the blend should refuse before the through cut.",
+  "historical_xfail": {
+    "0.11.1": "arris 0.11.1 builds intersecting chamfer faces and reports OpInternalError on the through cut"
+  }
 }

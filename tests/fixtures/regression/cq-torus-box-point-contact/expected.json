@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 (as 0.10.0) refuses the union, OpUnsupportedError \"no closed form for +f6 (plane surface) against +v0 (point)\", of a torus and a box whose face touches the torus at one point; CadQuery 2.3.0 builds a compound of the two solids",
   "measures": {
     "volume": 67.21762640653614,
     "area": 142.43525281307228,

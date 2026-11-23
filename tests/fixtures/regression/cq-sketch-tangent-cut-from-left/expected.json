@@ -1,7 +1,7 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 finds a one-coedge edge",
+  "xfail": "arris 0.12.0 refuses with OpDegenerateError: degenerate result: two faces of one lump of the result meet at a tangent contact (+f5, +f8)",
   "measures": {
     "volume": 337.1681469282041,
     "area": 377.6991118430775,

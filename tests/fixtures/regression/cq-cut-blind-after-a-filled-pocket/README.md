@@ -20,7 +20,9 @@ union leaves on the end face. It looks like `cq-union-three-coplanar-cylinders` 
 The oracle builds this part (volume 766.2344, area 637.7433, one solid) and holds the closed form of
 `expected.json`'s `note`.
 
-Desired: `ok`, the measures of the closed form. Marked strict `xfail` until an arris release cuts it.
+Desired: `ok`, the measures of the closed form.
 Not yet reported to arris; a candidate for `../arris/docs/ideas/union-coplanar-third-operand.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 builds the expected geometry.

@@ -16,3 +16,5 @@ Adapted from CAD-Recode validation by Danila Rukhovich, Elona Dupont,
 Dimitrios Mallis, Kseniya Cherenkova, Anis Kacem and Djamila Aouada.
 Revision `17d554bbc50a23de6cf6a742a3e0ed867f000153`.
 [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+
+arris 0.12.0 builds the expected geometry.

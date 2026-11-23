@@ -19,5 +19,7 @@ The oracle builds this part (volume 788.5398, area 860.7964, one solid), the clo
 `expected.json`'s `note`. It looks like `cq-cut-blind-after-a-filled-pocket` (a face split by a
 union's circles), `cq-union-three-coplanar-cylinders` and `arris-cut-fused-bore-tool-flush`.
 
-Desired: `ok`, the measures of the closed form. Marked strict `xfail` until an arris release cuts it.
+Desired: `ok`, the measures of the closed form.
 Not yet reported to arris; a candidate for `../arris/docs/ideas/union-coplanar-third-operand.md`.
+
+arris 0.12.0 builds the expected geometry.

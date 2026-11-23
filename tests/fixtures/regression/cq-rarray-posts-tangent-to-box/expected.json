@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 returns an invalid top face when fusing the second rim-tangent post to a box",
   "measures": {
     "volume": 67.1415926535898,
     "area": 108.56637061435917,

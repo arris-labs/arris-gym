@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 (as 0.10.0) refuses the third cut, OpDegenerateError \"degenerate result: the faces touch along a curve interior to both result faces\", of three slots 60 degrees apart that cross on the cylinder's axis; CadQuery 2.3.0 builds it (two slots build)",
   "measures": {
     "volume": 374.61916569093717,
     "area": 581.8298273092935,

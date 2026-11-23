@@ -1020,6 +1020,7 @@ def test_a_cut_that_takes_away_an_extreme_is_refused() -> None:
 @pytest.mark.parametrize("corpus", ["benchcad", "cadrecode"])
 def test_each_committed_verdict_rests_on_evidence_that_exists(corpus: str) -> None:
     raw = json.loads((C2 / corpus / "verdicts.json").read_text(encoding="utf-8"))
+    report = json.loads((C2 / corpus / "arris-report.json").read_text(encoding="utf-8"))
     assert raw, corpus
     for stem, value in raw.items():
         verdict = Verdict.model_validate(value)
@@ -1043,7 +1044,12 @@ def test_each_committed_verdict_rests_on_evidence_that_exists(corpus: str) -> No
             pinned = verdict.disagreement is DisagreementClass.ARRIS_REFUSAL and (
                 expected["status"] == "arris_refusal"
             )
-            assert pinned or "xfail" in expected, stem
+            historical = expected.get("historical_xfail", {})
+            recorded_versions = report["arris_versions"]
+            was_failing = bool(recorded_versions) and all(
+                historical.get(version) for version in recorded_versions
+            )
+            assert pinned or "xfail" in expected or was_failing, stem
 
 
 def test_a_stem_two_verdict_files_class_is_an_error(tmp_path: Path) -> None:

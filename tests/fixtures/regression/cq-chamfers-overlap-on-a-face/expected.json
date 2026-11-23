@@ -1,9 +1,11 @@
 {
   "dialect": "cq",
   "status": "arris_refusal",
-  "xfail": "arris 0.11.1 (as 0.10.0) ends `arris_refusal` with OpInternalError \"kernel bug: the face arrangement is not a subdivision: a hole of f9 lies inside no region\" (and `checker_fail` without the cross cut) on a ring whose two rim chamfers, 2.5 each, are wider together than the 4-wide face they bevel; it should refuse as it does for one chamfer past its faces, with OpDegenerateError",
   "refusal": {
     "kind": "OpDegenerateError"
   },
-  "note": "A ring (outer radius 10, bore radius 6, 8 high) whose top face is 4 wide, both rims chamfered by 2.5: the two bevels (5 across) meet before the face's width is used up, so no solid has that shape. Open CASCADE builds a shape its own checker rejects (`oracle.json`, status `invalid`); the desired result is a refusal of kind OpDegenerateError, no wording fixed (the check compares the keys a fixture gives)."
+  "note": "A ring (outer radius 10, bore radius 6, 8 high) whose top face is 4 wide, both rims chamfered by 2.5: the two bevels (5 across) meet before the face's width is used up, so no solid has that shape. Open CASCADE builds a shape its own checker rejects (`oracle.json`, status `invalid`); the desired result is a refusal of kind OpDegenerateError, no wording fixed (the check compares the keys a fixture gives).",
+  "historical_xfail": {
+    "0.11.1": "arris 0.11.1 (as 0.10.0) ends `arris_refusal` with OpInternalError \"kernel bug: the face arrangement is not a subdivision: a hole of f9 lies inside no region\" (and `checker_fail` without the cross cut) on a ring whose two rim chamfers, 2.5 each, are wider together than the 4-wide face they bevel; it should refuse as it does for one chamfer past its faces, with OpDegenerateError"
+  }
 }

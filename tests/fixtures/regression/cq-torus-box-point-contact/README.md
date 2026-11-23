@@ -7,8 +7,9 @@ point. arris 0.10.0 refuses with `OpUnsupportedError` "no closed form for
 +f6 (plane surface) against +v0 (point)"; CadQuery 2.3.0 builds the compound of
 two solids (volume 6 pi^2 + 8).
 
-Desired: `ok`, the closed form of `expected.json`'s `note` (ADR-0016). Marked
-strict `xfail` until an arris release fuses a point contact. Reported to arris
+Desired: `ok`, the closed form of `expected.json`'s `note` (ADR-0016). Reported to arris
 in `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 builds the expected geometry.

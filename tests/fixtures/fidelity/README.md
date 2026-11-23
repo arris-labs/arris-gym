@@ -69,7 +69,7 @@ tables here: 28 programs, 20 agree, 6 disagree (two `cq_bug`, one of each other 
 refusal's words are the kernel's, as `class-arris-refusal` draws them. Every
 entry's source is `arris-gym tests/fixtures/fidelity` and its licence this
 repository's, `MIT OR Apache-2.0`. The report's versions are the pins: arris
-0.11.1 and numpy 2.3.4 (`uv.lock`), and the oracle's cadquery 2.3.0, OCP
+0.12.0 and numpy 2.3.4 (`uv.lock`), and the oracle's cadquery 2.3.0, OCP
 7.9.3.0 on Python 3.12.3, as every `oracle.json` here records them
 (`class-timeout`'s oracle never answered and records none). An arris or
 numpy bump changes `arris-report-expected.*` in its own plan.

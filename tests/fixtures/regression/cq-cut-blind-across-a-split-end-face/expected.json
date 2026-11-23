@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 (as 0.10.0) refuses the cut, OpDegenerateError (\"degenerate result: the faces touch along a curve interior to both result faces\"): the revolved cylinder's end face is split into a disc and an annulus by a profile vertex on its edge, and the tool lies flush with it across that circle; a tool inside one of the two faces is cut; CadQuery 2.3.0 builds the closed form",
   "measures": {
     "volume": 788.5397560510381,
     "area": 860.7963870836033,

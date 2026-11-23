@@ -24,6 +24,5 @@
     "shells": 2,
     "genus": 0
   },
-  "xfail": "arris 0.11.1 refuses to fuse shells meeting along an edge",
   "note": "Two 1 by 1 by 2 prisms touching only along the common vertical edge."
 }

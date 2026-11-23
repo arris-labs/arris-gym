@@ -5,6 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- Upgrade the geometry kernel to arris 0.12.0. Chained fuses of cylinders
+  on a shared end plane now build, as do several point- and edge-touching
+  unions and horn and spindle torus revolves. Some overlapping blends
+  now return `arris_refusal` with `OpDegenerateError`. Outcomes and scores
+  can change with the recorded kernel version.
+
 - `fidelity.SignedSolids` is new verdict evidence for `occt_wrong`. It holds
   each solid's signed volume, from an independent boundary flux, of an
   `invalid` oracle shape where arris built the part. `compare` accepts it

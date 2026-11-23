@@ -23,6 +23,5 @@
     ],
     "shells": 1,
     "genus": 0
-  },
-  "xfail": "arris 0.11.1 refuses a three-way rectangular overlap"
+  }
 }

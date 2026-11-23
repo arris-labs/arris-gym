@@ -657,14 +657,16 @@ REFUSED: dict[str, tuple[Build, Pick, str, float, str]] = {
         _vertical,
         "fillet",
         4.5,
-        "the blend leaves its face through an edge that is not the corner's own",
+        "the blend does not fit its faces: it leaves its face through an edge that is not the "
+        "corner's own, or two blends' contacts on one face cross or swap order",
     ),
     "fillet-box>Z-past": (
         _box,
         _at(2.0),
         "fillet",
         4.5,
-        "the blend leaves its face through an edge that is not the corner's own",
+        "the blend does not fit its faces: it leaves its face through an edge that is not the "
+        "corner's own, or two blends' contacts on one face cross or swap order",
     ),
     "chamfer-box|Z-zero": (_box, _vertical, "chamfer", 0.0, "distance must be positive, not 0"),
     "chamfer-box|Z-negative": (
@@ -679,7 +681,8 @@ REFUSED: dict[str, tuple[Build, Pick, str, float, str]] = {
         _vertical,
         "chamfer",
         4.5,
-        "the blend leaves its face through an edge that is not the corner's own",
+        "the blend does not fit its faces: it leaves its face through an edge that is not the "
+        "corner's own, or two blends' contacts on one face cross or swap order",
     ),
 }
 

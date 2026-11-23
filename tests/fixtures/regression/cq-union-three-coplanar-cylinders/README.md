@@ -20,7 +20,9 @@ refused the same way, in every order.
 
 Desired: `ok`, the measures of the closed form in `expected.json`'s `note`
 (shells and genus from the construction; face counts are carried, never
-judged, ADR-0005). Marked strict `xfail` until an arris release fuses it.
+judged, ADR-0005).
 Reported to arris in `../arris/docs/ideas/union-coplanar-third-operand.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 builds the expected geometry.

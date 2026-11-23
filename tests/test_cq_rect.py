@@ -60,10 +60,9 @@ def test_through_cut_of_a_rectangular_nest_matches_the_oracle_error(
     assert compare(result, oracle).outcome is FidelityOutcome.AGREE
 
 
-@pytest.mark.parametrize("slug", sorted(_CORNER))
-def test_corner_contact_returns_the_typed_kernel_refusal(slug: str) -> None:
-    case = _CORNER[slug]
-    result = fixture_cases.run(case)
+@pytest.mark.parametrize("slug", ["rects-corner-cutblind", "rects-corner-cutthruall"])
+def test_corner_contact_cut_returns_the_typed_kernel_refusal(slug: str) -> None:
+    result = fixture_cases.run(_CORNER[slug])
     assert result.status is ag.Status.ARRIS_REFUSAL
     assert result.refusal is not None
     assert result.refusal.kind == "OpDegenerateError"
@@ -123,14 +122,11 @@ def test_rectangle_extrusions_have_the_integer_grid_union_volume(
         f".rect({2 * half_width}, {2 * half_height}).extrude({distance})\n",
         dialect="cq",
     )
+    assert result.status is ag.Status.OK, result.message
+    assert result.measures is not None
+    assert math.isclose(result.measures.volume, len(cells) * depth, rel_tol=VOLUME_REL)
     if corner:
-        assert result.status is ag.Status.ARRIS_REFUSAL, result.message
-        assert result.refusal is not None
-        assert result.refusal.kind == "OpDegenerateError"
-    else:
-        assert result.status is ag.Status.OK, result.message
-        assert result.measures is not None
-        assert math.isclose(result.measures.volume, len(cells) * depth, rel_tol=VOLUME_REL)
+        assert result.measures.shells == 2
 
 
 @settings(max_examples=30, deadline=None)

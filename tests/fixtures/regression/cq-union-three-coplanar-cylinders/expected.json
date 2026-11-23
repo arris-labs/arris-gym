@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 (as 0.10.0) refuses the second union, OpDegenerateError (TangentContact: \"the faces touch along a curve interior to both result faces\"), though no faces touch tangentially and its own n-ary fuse of the three builds the part",
   "measures": {
     "volume": 6.444439787953566,
     "area": 22.313657536676512,

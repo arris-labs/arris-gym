@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 (as 0.10.0) refuses the cut, OpInternalError \"kernel bug: the face arrangement is not a subdivision: a section edge of f9 ends at a node nothing else reaches\", of a box that holds a bore of diameter 1 by a 1 x 1 column tangent to the bore along four lines; CadQuery 2.3.0 builds the box less the column",
   "measures": {
     "volume": 184,
     "area": 238,

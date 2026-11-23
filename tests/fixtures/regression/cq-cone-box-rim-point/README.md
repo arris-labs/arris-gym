@@ -11,8 +11,9 @@ The same part on a cylinder (a revolved rectangle) is refused the same way,
 and its mirror image, with the lug at -x, builds: the refusal depends on which
 side of the revolve's seam the contact is (see `cq-cone-box-rim-point-far-side`).
 
-Desired: `ok`, that closed form (ADR-0016). Marked strict `xfail` until an arris
-release fuses a point contact. Reported to arris in
+Desired: `ok`, that closed form (ADR-0016). Reported to arris in
 `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 builds the expected geometry.

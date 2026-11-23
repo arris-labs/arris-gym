@@ -15,3 +15,5 @@ Desired: `ok`, that closed form. Marked strict `xfail` until an arris release
 fuses it. Reported to arris in `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 still refuses with `OpUnsupportedError`, "no closed form for +f4 (plane surface) against +e1 (circle curve)".

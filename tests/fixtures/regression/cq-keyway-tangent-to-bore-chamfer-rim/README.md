@@ -4,4 +4,6 @@ Found while testing `flanged_gear_closed_form` (plans/lift-rects-and-through-cut
 
 Arris 0.11.1 ends with `OpInternalError` ("kernel bug: the face arrangement is not a subdivision: a section edge of f12 ends at a node nothing else reaches"). Moving the keyway's end to 3.0 builds `ok`. The pinned oracle builds the part `ok`, and its report is in `oracle.json`.
 
-The desired result asserted here is arris's typed `OpDegenerateError` for the tangent contact, as for tangent cylinders (`cq-tangent-cylinders`). A correct build would also do, and this fixture would then change to its closed form. Reported to arris in `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
+Reported to arris in `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
+
+arris 0.12.0 builds the expected geometry.

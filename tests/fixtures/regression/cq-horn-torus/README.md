@@ -8,8 +8,9 @@ the half horn torus (volume pi^2 r^2 R exactly, the oracle's 631.65 for
 R = r = 4). The 159 `cotter_pin` rows are refused earlier, at the tangent
 cylinders (`cq-tangent-cylinders`); this is the cause behind that one.
 
-Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict
-`xfail` until an arris release builds a revolve whose circle touches its axis.
+Desired: `ok`, the closed form of `expected.json`'s `note`.
 Reported to arris in `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 builds the expected geometry.

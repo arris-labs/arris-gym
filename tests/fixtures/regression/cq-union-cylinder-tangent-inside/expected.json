@@ -1,7 +1,6 @@
 {
   "dialect": "cq",
   "status": "ok",
-  "xfail": "arris 0.11.1 (as 0.10.0) unites them into a body its checker refuses, \"L5 f5: loops 0 and 1 intersect\" and \"L5 f6: loops 0 and 1 intersect\" (checker_fail), of a unit cylinder and a cylinder of radius 2 that holds it, tangent to it along one line; CadQuery 2.3.0 builds the closed form",
   "measures": {
     "volume": 15.707963267948966,
     "area": 43.982297150257104,

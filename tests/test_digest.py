@@ -34,7 +34,7 @@ def refusal_result(message: str | None = None) -> ag.ExecResult:
         violations=(),
         program_sha256=hashlib.sha256(CASES["arris-refusal-fillet"].program.encode()).hexdigest(),
         dialect=ag.Dialect.ARRIS,
-        versions=ag.Versions(arris="0.10.0", numpy="2.3.4", arris_gym="0.1.0"),
+        versions=ag.Versions(arris="0.12.0", numpy="2.3.4", arris_gym="0.1.0"),
         seconds=0.123,
     )
 

@@ -30,6 +30,5 @@
     ],
     "genus": 0,
     "shells": 2
-  },
-  "xfail": "arris 0.11.1 refuses shells that touch along an edge"
+  }
 }

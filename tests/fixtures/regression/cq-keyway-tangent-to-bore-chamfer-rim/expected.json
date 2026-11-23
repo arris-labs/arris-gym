@@ -1,9 +1,28 @@
 {
   "dialect": "cq",
-  "status": "arris_refusal",
-  "refusal": {
-    "kind": "OpDegenerateError"
-  },
-  "xfail": "arris 0.11.1 reports OpInternalError: the face arrangement is not a subdivision",
-  "note": "The keyway's far edge is tangent to the bore chamfer's rim circle at the top face. A tangent contact is a typed degenerate refusal, never the kernel's internal error."
+  "status": "ok",
+  "note": "The far edge of the through keyway touches the chamfer rim at one point. Measures are from the recorded oracle; the single through bore and keyway form one opening through a single shell.",
+  "measures": {
+    "volume": 3857.7170803639747,
+    "area": 1683.4903881398077,
+    "centroid": [
+      4.052121983307115e-17,
+      -0.002954035533438913,
+      -0.014293802721573804
+    ],
+    "bounds": [
+      [
+        -10.0,
+        -10.0,
+        -5.0
+      ],
+      [
+        10.0,
+        10.0,
+        5.000000000000001
+      ]
+    ],
+    "shells": 1,
+    "genus": 1
+  }
 }

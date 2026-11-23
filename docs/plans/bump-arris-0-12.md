@@ -32,7 +32,7 @@ verification, **[3]** unproven design. Grades map to tiers.
 **[conductor-run]** means the conductor starts long runs in the background.
 **[CI]** means verification requires a CI run.
 
-- [ ] Step 1 **[2]**. Try the published wheel on
+- [x] Step 1 **[2]**. Try the published wheel on
   `regression/cq-union-three-coplanar-cylinders` before finalizing the pin.
   Verify any strict xfail that now passes with `inspect`, then lift it.
   Refresh the pin, lock and API reference, reconcile fixture expectations
@@ -76,4 +76,8 @@ ADR-0021 covers versioning.
 
 ## Open questions
 
+- Settled in step 1. The published wheel builds the coplanar cylinder
+  fixture to its existing closed form. Fixed regression fixtures still
+  support the recorded 0.11.1 C2 verdicts through their versioned failure
+  reasons until step 3 checks the actual corpus rows on 0.12.0.
 - ⚠ OPEN (human, step 5) — push the plan branch for the CI check.

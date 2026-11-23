@@ -10,8 +10,8 @@ subdivision: a section edge of f9 ends at a node nothing else reaches"
 solid), as its recorded run of the same program shows. With a bore of diameter
 0.9 or 1.1 the cut builds. Not a corpus shape: no BenchCAD program does this.
 
-Desired: `ok`, the closed form of `expected.json`'s `note`. Marked strict `xfail`
-until an arris release handles a cylinder tangent to a planar cut tool along
-lines. Reported to arris in `../arris/docs/ideas/hole-tangent-column.md`.
+Desired: `ok`, the closed form of `expected.json`'s `note`. Reported to arris in `../arris/docs/ideas/hole-tangent-column.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
+
+arris 0.12.0 builds the expected geometry.
