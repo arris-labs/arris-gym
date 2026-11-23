@@ -121,15 +121,14 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status (2026-11-21).** Bundle 4 is complete. The sketch subset meets
-CAD-Recode's fidelity target with reach 968/968 (ADR-0014, ADR-0023).
-BenchCAD's table and census reproduce byte for byte, with reach
-9,998/17,900 against its 85% target. Both corpora have zero unclassified
-rows, zero timeouts and zero in-subset `cq_bug` rows. ADR-0006 classes BenchCAD's
-168 `unsupported_api` rows against an invalid oracle shape as `cq_bug`.
-The measured corpus deadline in ADR-0013 resolves the 31 oracle timeouts.
-The head (bundle 5) comes next, then the tail (`shell` and the rest) and
-the cross-architecture digest check.
+**Status (2026-11-24).** Bundle 5's first plan is complete. The profile and
+through-cut subset reaches 14,150/17,900 BenchCAD programs (79.1% against
+the 85% target), with 10,730 agreements and two `by_design` rows under
+ADR-0025. CAD-Recode stays at its target of 968/968 with the same table
+digest (ADR-0014, ADR-0023). Both corpora have zero unclassified rows,
+timeouts and in-subset `cq_bug` rows. `lift-lofts-and-tapers` completes
+bundle 5 next, followed by the tail (`shell` and the rest) and the
+cross-architecture digest check.
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified

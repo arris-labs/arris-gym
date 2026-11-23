@@ -203,3 +203,6 @@ Consequences:
   `regression/oracle-waffle-fillet-negative-solid`.
 - A difference in what the kernels built still needs a closed form from
   construction or a second kernel.
+- The Decision's evidence table also admits `SignedSolids` for `occt_wrong`
+  alone. Its `ValueError` list includes signed solids that fail the checks
+  above. The fixed-order volume sum must be finite.

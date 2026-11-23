@@ -47,10 +47,11 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - Three BenchCAD programs outside the subset (`bearing_retainer_cap_014254`, `_015325`, `_016792`) end `OpInternalError` "a section edge of f38 ends at a node nothing else reaches"; shrink each to a `regression/` fixture and report it to arris
 - `cq`'s `polygon(2, d)` ends `runtime` where CadQuery 2.3.0 builds a zero-volume solid its checker passes (`ok`): an in-subset `cq_bug` (ADR-0012), held by `regression/cq-polygon-two-sides` (strict `xfail`); the census cannot see a literal, so the form cannot leave the subset for it alone: build the out-and-back prism in `cq`, and ask arris (`../arris/docs/ideas/`) if the kernel refuses a zero-volume solid (plans/lift-polygon step 2)
 - `faces` with a plane name (`"XY"`, `"YZ"`, `"XZ"`): 332 BenchCAD programs (`circlip` 182, `snap_clip` 150) all unlocked by it; CadQuery's `DirectionSelector` on a diagonal, not one of the knee's 35 items (plans/lift-edges-and-blends, non-goals)
-- `center(num, num)` (a moved origin) rides with bundle 5's `rect`: 1,593 BenchCAD programs write it, none of them unlocked by it alone (plans/lift-arrays-and-blind-cuts, non-goals)
 - `pushPoints` of `Vector` or `Location`, `cboreHole` and `cskHole` with `depth=` or `clean=`, `hole` with a positional depth, `rarray(center=)`, `polarArray(fill=, rotate=)`, `cutBlind(clean=, both=, taper=)` and `cutBlind` up to a face: lifted when a corpus program writes them
 - File the two arris refusals of `regression/cq-cut-blind-after-a-filled-pocket` and `regression/cq-cut-blind-across-a-split-end-face` (a tool flush with a face split by an edge it crosses, `OpDegenerateError`) in `../arris/docs/ideas/`: both READMEs say "not yet reported"
-- Investigate the three-way rectangular overlap in `regression/rects-three-way-overlap`. Check BenchCAD for the same refusal in step 7 of `lift-rects-and-through-cuts`.
+- Investigate the three-way rectangular overlap in `regression/rects-three-way-overlap`, where arris refuses the union and the oracle builds an invalid part. No in-subset BenchCAD row shows it. The consumer report is `../arris/docs/ideas/fuse-three-overlapping-boxes.md`.
+- Profile `double_simplex_sprocket_009154_s20260505`, which takes 29.6 s of the 30 s sandbox deadline when run alone. The consumer report is `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
+- Investigate the converged oracle trim integral of `regression/oracle-slotted-ring-boundary`, which differs from its construction by 2.36e-8 relative in volume. The fixture is strict `xfail` and no verdict relies on it.
 
 ## Findings
 

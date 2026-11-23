@@ -329,8 +329,17 @@ the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Its
 `Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
-axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces the first kept), `edges` and `edges(sel)` with the same six and `|X |Y |Z` and `'>Z or <Z'` (a stack of edges, ranked by their centre of mass, ADR-0020; `faces` refuses the last four), `fillet` (a radius; a blend of the stacked edges, or of every edge of the stacked faces or solid, in one call, seams passed over, ADR-0020), `chamfer` (a length; the same blend, bevelled), `pushPoints`, `rarray` and `polarArray` (a stack of points), `hole` (a diameter, with `depth=`), `cboreHole`, `cskHole`, `cutBlind` (the pending profiles cut blind in one call, ADR-0019), `cutThruAll`, `center`, `box`, `cylinder`, `sphere`, `circle`, `rect`, `slot2D`, `polygon`, `extrude`, `union`, `cut`, `moveTo`, `lineTo`,
-`threePointArc`, `polyline`, `close`, `revolve` and `Workplane.sketch()`.
+axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces
+the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `pushPoints`,
+`rarray`, `polarArray`, `hole` (a diameter, with `depth=`), `cboreHole`,
+`cskHole`, `cutBlind`, `cutThruAll`, `center`, `box`, `cylinder`, `sphere`,
+`circle`, `rect`, `slot2D`, `polygon`, `extrude`, `union`, `cut`, `moveTo`,
+`lineTo`, `threePointArc`, `polyline`, `close`, `revolve` and
+`Workplane.sketch()`. The edge selectors include the six axis selectors,
+`|X |Y |Z` and `'>Z or <Z'`. Edge selections rank by centre of mass.
+`fillet` and `chamfer` blend selected edges, or every edge of the stacked
+faces or solid, in one call that skips seams (ADR-0020). `cutBlind` cuts
+pending profiles in one call (ADR-0019).
 The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
 `arc`, `close`, `assemble` and `finalize` (ADR-0023).
 STEP export waits for its bundle in C2's order.
@@ -488,31 +497,40 @@ keyword, `cutBlind`, `revolve` and bores on a sketch end `unsupported_api`
 `center(x, y)` moves the workplane origin in its own axes and leaves one
 point at that origin. The chain's solid and pending closed profiles keep
 their placements. Later drawing and drilling use the shifted coordinates
-(ADR-0024 §C).
+(ADR-0024 §C). Extrusion and cutting can consume carried profiles directly.
+Drawing after a centre shift allows disjoint circles across the shift.
+Other mixed sets and revolutions of multiple carried wires end
+`unsupported_api`.
 
 `cutThruAll()` looks up the chain's nearest solid, including a compound,
 and cuts pending circles, rectangles, slots, polygons or closed paths along each
 profile plane's normal. Circles, rectangles and slots can be placed at points.
 Sweeps extend past the projected stock bounds at both ends, including
-from planes outside the stock. All tools are cut in one call. A missing solid, missing wires or a concentric ring
-ends `runtime`. A nested section with a rectangle also ends `runtime`.
-A finalized sketch or a keyword form ends
-`unsupported_api` (ADR-0024 §A).
+from planes outside the stock. A through cut preserves its profile's
+alignment across a distant normal offset and measures the sweep's span
+from the stock when projected bounds lose precision. A miss leaves the
+stock intact. An overhanging tool removes only its intersection with the
+stock. All tools are cut in one call. Missing stock, missing wires,
+concentric circular rings and nested sections with rectangles end
+`runtime`. A finalized sketch or a keyword form ends `unsupported_api`
+(ADR-0024 §A).
 
 A `rect(xLen, yLen)` draws a centred rectangle using absolute dimensions.
 It uses the origin, a `moveTo` or `center` point, or each in-plane point
 of an array. At a polar point it uses that point's rotation. Extruding an
 array fuses its sweeps as a group. A strictly nested concentric pair with
 at least one rectangle forms a section with a hole for extrusion,
-revolution and blind cutting (ADR-0024 §B and §D).
+revolution and blind cutting. A zero dimension leaves a wire the kernel
+refuses when consumed (ADR-0024 §B and §D).
 
 `slot2D(length, diameter, angle)` uses the same point placements. Its angle
 in degrees adds to the rotation of a polar point. Each slot is swept on its
 own for extrusion, blind cutting or through-cutting. Touching or overlapping
-slots at points and slots drawn on pending wires end `unsupported_api`.
-Equal positive dimensions and zero diameter end `runtime`. The kernel refuses
-a nonnegative length shorter than a positive diameter (ADR-0024 §E and its
-slot amendment).
+slots at points, slots drawn on pending wires, negative dimensions and
+slot revolutions with stock end `unsupported_api`. With nonnegative
+dimensions, equal dimensions or zero diameter end `runtime`. The kernel
+refuses a nonnegative length shorter than a positive diameter (ADR-0024 §E
+and its slot amendment).
 
 A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
 leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
@@ -547,13 +565,14 @@ the solid's centroid (a compound's: all its pieces'), then moved `d`
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted
-selectors (none yet), and end forms (`r = …`, `result = …` and
+selectors, and end forms (`r = …`, `result = …` and
 `show_object(…)`, the latter also admitting a named argument). `Subset.admits(form)` matches
 counts, keyword names and literal kinds. A `name`, `expr` or `call` may
 supply any runtime kind; starred arguments are outside. Values and stack
 context are unproved: static membership does not predict successful
 execution. An in-subset context limitation is a `cq_bug` until fixed or its
-whole form leaves the subset, never an in-subset `by_design` row. These
+whole form leaves the subset. ADR-0025 permits `by_design` for differences
+confined to vertex-blend corner patches. These
 metadata exports belong to the caller's `arris_gym.cq`; the program-facing
 module keeps `UnsupportedApi`, `Vector` and `Workplane`. The metadata uses
 frozen standard-library dataclasses to keep `cq`'s import boundary.
@@ -779,9 +798,10 @@ them. For the GProp discrepancies in ADR-0023, and BenchCAD parts of planar,
 cylindrical, conical and toroidal faces, the `ClosedForm` evidence carries
 independently integrated measures of the oracle's boundary (ADR-0006).
 `SignedSolids`, for `occt_wrong` alone, carries each solid's signed volume of
-an `invalid` oracle shape where arris built an `ok` one: a solid turned
-inside out is negative, and `compare` holds the volumes to both sides
-(ADR-0006, amended 2026-11-23). A vertex blend's corner patch is each
+an `invalid` oracle shape where arris built an `ok` one. A solid turned
+inside out has negative volume. `compare` checks the finite sum against
+both measured volumes and requires one arris shell per positive oracle
+solid (ADR-0006, amended 2026-11-23). A vertex blend's corner patch is each
 kernel's own (ADR-0025), so a difference confined to it is `by_design`. A verdict may also
 replace the rule's class, except the `arris_bug` of an arris crash or checker
 failure. An unclassified row makes a cycle red. The arris
@@ -821,14 +841,14 @@ the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 9,998 (55.9%) | 1,871 | 104 (10.7%) | 0 |
-| agree (all programs) | 7,415 (41.4%) | 980 | 103 (10.6%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 7,894 / 1,457 / 289 | 16,383 / 174 / 0 | 864 / 0 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 845 | 0 | 1 | 0 |
+| reach | 14,150 (79.1%) | 1,871 | 968 (100%) | 0 |
+| agree (all programs) | 10,730 (59.9%) | 980 | 873 (90.2%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 3,750 / 1,778 / 391 | 16,383 / 174 / 0 | 0 / 75 / 1 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 1,249 | 0 | 19 | 0 |
 | unclassified (all outside the subset) | 0 | 363 | 0 | 0 |
 | timeouts | 0 | 31 | 0 | 0 |
 | in-subset `cq_bug` | 0 | 717 | 0 | 0 |
-| in-subset `by_design` | 0 | 0 | 0 | 0 |
+| in-subset `by_design` | 2 | 0 | 0 | 0 |
 
 The baseline's 717 in-subset `cq_bug` rows were all `unsupported_api` where the
 oracle builds the part. Rerunning them under `cq` (`tools/cq_diagnose.py`, no
@@ -990,6 +1010,16 @@ all 31 ran to an oracle `ok` and class `cq_bug` too. BenchCAD's table digest is
 With the sketch forms admitted, the BenchCAD table and reach report
 reproduce byte for byte at reach 9,998/17,900.
 
+`cutThruAll`, `center`, `rect` and `slot2D` (ADR-0024) raise BenchCAD reach
+to 14,150/17,900. Of the 4,152 newly reached programs, 3,315 agree and
+837 disagree. The comparison rules class 258 of the latter. The 579
+explicit verdicts are 404 `occt_wrong`, 71 `arris_refusal`, 102
+`arris_bug` and two `by_design`, both vertex-blend corner patches
+(ADR-0025). There are zero timeouts, in-subset `cq_bug` or unclassified
+rows. The table digest is `cc8eb417…72fe`. The oracle rows and census
+digest reproduce unchanged. The CAD-Recode table also reproduces byte
+for byte at `fe2861b7…71cc`.
+
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
 workers now read `r` (ADR-0015): the oracle builds all 968, and with
@@ -1011,8 +1041,10 @@ oracle's default GProp integration (ADR-0006's amendment). The earlier
 crossing-cylinder verdict uses its closed form. The table's oracle rows
 match the committed bytes. CAD-Recode meets its fidelity target (ADR-0014).
 
-With the corpus deadline of 240 s, well above the slowest program, load no
-longer moves a BenchCAD status. The oracle's bytes are not repeatable run to
+The oracle's 240 s corpus deadline covers the slowest measured oracle run.
+The arris run keeps its 30 s deadline. One double simplex sprocket with a
+through-cut keyway takes 29.6 s alone, close enough for load to move its
+status (BACKLOG). The oracle's bytes are not repeatable run to
 run for some programs: on the BenchCAD re-run 214 rows of 8
 families (`sheet_metal_tray`, `washer`, `spacer_ring`, `snap_clip`,
 `ratchet_sector`, `hollow_tube`, `spline_hub`, `parallel_key`) differed from

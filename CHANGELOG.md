@@ -9,13 +9,14 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   each solid's signed volume, from an independent boundary flux, of an
   `invalid` oracle shape where arris built the part. `compare` accepts it
   only on an arris `ok` against an oracle `invalid` row, with one volume per
-  oracle solid, at least one negative, a sum equal to both sides' volume,
-  and one arris shell per positive solid.
+  oracle solid, at least one negative, a finite sum within the agreement
+  tolerance of both measured volumes, and one arris shell per positive solid.
 
 - In the CadQuery dialect, draw slots with `slot2D(length, diameter, angle)`
   at the workplane origin, a moved point or each point of an array. The angle
   is in degrees. Extrude the slots or cut them with `cutBlind` or
-  `cutThruAll`. Equal dimensions or zero diameter return `runtime`.
+  `cutThruAll`. With nonnegative dimensions, equal dimensions or zero
+  diameter return `runtime`.
   A nonnegative length shorter than a positive diameter returns
   `arris_refusal`. Touching or overlapping slots at array points
   return `unsupported_api`.
@@ -28,9 +29,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - In the CadQuery dialect, use `center(x, y)` to shift the workplane origin
   before drawing or drilling. Pending closed wires keep their original positions.
 
-- In the CadQuery dialect, use `cutThruAll()` to cut circles, circles at
-  points, polygons and closed paths through the entire stock, even from a
-  workplane outside it. Concentric circular rings return `runtime`.
+- In the CadQuery dialect, use `cutThruAll()` to cut circles, rectangles,
+  slots, polygons and closed paths through the entire stock. A distant
+  workplane offset preserves the profile's alignment and the full span
+  of the cut. Concentric circular rings and nested sections with a
+  rectangle return `runtime`.
 
 - In the CadQuery dialect, use `Sketch.face(tool)` to add a copy of another
   sketch's section at the selected points, or use `mode="s"` to subtract it
