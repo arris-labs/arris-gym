@@ -10,6 +10,7 @@ import functools
 import math
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from fractions import Fraction
 from itertools import combinations
 from typing import Concatenate, NoReturn
 
@@ -97,6 +98,12 @@ _NO_SOLID = "Cannot find a solid on the stack or in the parent chain"
 _NO_WIRES = "No pending wires present"
 _Bounds = tuple[tuple[float, float, float], tuple[float, float, float]]
 _UV = tuple[float, float]
+_XYZ = tuple[float, float, float]
+
+
+def _loses_bounds_pad(value: float) -> bool:
+    """Whether rounding at this scale can lose the kernel's bounds padding."""
+    return math.isfinite(value) and math.ulp(value) > _BOUNDS_PAD
 
 
 @dataclass(frozen=True)
@@ -261,6 +268,23 @@ class _PlacedProfiles:
 
     sketches: tuple[arris.build.Sketch, ...]
     kind: str
+    # Rectangles and slots translate the sketch frame to each point.
+    points: tuple[_UV, ...] = ()
+
+
+@dataclass(frozen=True)
+class _PendingWire:
+    """A sketch and an optional point on its sweep axis before a large normal shift."""
+
+    sketch: arris.build.Sketch
+    through_origin: _XYZ | None
+
+    @property
+    def through_plane(self) -> arris.build.Workplane:
+        plane = self.sketch.plane
+        if self.through_origin is None:
+            return plane
+        return arris.build.Workplane(self.through_origin, plane.x, plane.y, plane.z)
 
 
 @dataclass(frozen=True)
@@ -360,12 +384,13 @@ class Workplane:
     Workplane.text
     """
 
-    __slots__ = ("_carried", "_parent", "_plane", "_seams", "_stack")
+    __slots__ = ("_carried", "_parent", "_plane", "_seams", "_stack", "_through_plane")
 
     _plane: arris.build.Workplane
     _stack: tuple[object, ...]
     _parent: Workplane | None
-    _carried: tuple[arris.build.Sketch, ...]
+    _carried: tuple[_PendingWire, ...]
+    _through_plane: arris.build.Workplane | None
     # Where Open CASCADE puts the seam of each cylinder this chain built, or
     # one of its operands did; `None` once a call made a seam no record places
     # (ADR-0020 rule 2, amended). `edges` reads it.
@@ -388,6 +413,7 @@ class Workplane:
         object.__setattr__(self, "_parent", None)
         object.__setattr__(self, "_carried", ())
         object.__setattr__(self, "_seams", ())
+        object.__setattr__(self, "_through_plane", None)
 
     def _derive(self, *objects: object) -> Workplane:
         """A new workplane on this one's plane, `objects` its stack, this one its parent."""
@@ -397,6 +423,7 @@ class Workplane:
         object.__setattr__(child, "_parent", self)
         object.__setattr__(child, "_carried", self._carried)
         object.__setattr__(child, "_seams", self._seams)
+        object.__setattr__(child, "_through_plane", self._through_plane)
         return child
 
     def _with_seams(self, seams: tuple[Seam, ...] | None) -> Workplane:
@@ -408,10 +435,16 @@ class Workplane:
         object.__setattr__(self, "_seams", known)
         return self
 
-    def _derive_on(self, plane: arris.build.Workplane, *objects: object) -> Workplane:
+    def _derive_on(
+        self,
+        plane: arris.build.Workplane,
+        *objects: object,
+        through_plane: arris.build.Workplane | None = None,
+    ) -> Workplane:
         """A new workplane on `plane`, `objects` its stack, this one its parent."""
         child = self._derive(*objects)
         object.__setattr__(child, "_plane", plane)
+        object.__setattr__(child, "_through_plane", through_plane)
         return child
 
     def _solids(self) -> tuple[arris.build.Solid, ...]:
@@ -471,26 +504,43 @@ class Workplane:
             raise ValueError(_NO_WIRES)
         return sketches[0]
 
-    def _visible_wires(self) -> tuple[arris.build.Sketch, ...]:
+    def _visible_wires(self) -> tuple[_PendingWire, ...]:
         """The closed profiles on the visible stack in drawing order."""
         profile = self._stack[0] if len(self._stack) == 1 else None
+        reference = self._through_plane
+        origin = reference.origin if reference is not None else None
         if isinstance(profile, _PlacedProfiles):
-            return profile.sketches
+            if reference is not None and profile.points:
+                return tuple(
+                    _PendingWire(sketch, reference.point(u, v))
+                    for sketch, (u, v) in zip(profile.sketches, profile.points, strict=True)
+                )
+            return tuple(_PendingWire(sketch, origin) for sketch in profile.sketches)
         if isinstance(profile, arris.build.Sketch):
-            return (profile,)
+            return (_PendingWire(profile, origin),)
         return ()
 
-    def _wires(self, form: str) -> tuple[arris.build.Sketch, ...]:
+    def _wires(self, form: str) -> tuple[_PendingWire, ...]:
         """Keep carried profiles first. Mixed sets currently support disjoint discs.
 
         See `unsupported-center-nested-circles` for a section that needs nesting.
         """
         visible = self._visible_wires()
-        for first in self._carried:
-            for second in visible:
+        for carried in self._carried:
+            first = carried.sketch
+            for wire in visible:
+                second = wire.sketch
                 if isinstance(first, _Disc) and isinstance(second, _Disc):
-                    a = first.plane.point(*first.center)
-                    b = second.plane.point(*second.center)
+                    if (
+                        form in ("Workplane.center", "Workplane.cutThruAll")
+                        and carried.through_origin is not None
+                        and wire.through_origin is not None
+                    ):
+                        a = carried.through_plane.point(*first.center)
+                        b = wire.through_plane.point(*second.center)
+                    else:
+                        a = first.plane.point(*first.center)
+                        b = second.plane.point(*second.center)
                     if math.dist(a, b) > abs(first.radius) + abs(second.radius):
                         continue
                 raise UnsupportedApi(f"{form} on multiple wires carried across center")
@@ -597,7 +647,15 @@ class Workplane:
         for degrees, axis in ((rotate.z, plane.z), (rotate.y, plane.y), (rotate.x, plane.x)):
             turned = turned.rotated(degrees * _RADIANS_PER_DEGREE, axis)
         origin = plane.point(offset.x, offset.y, offset.z)
-        return self._derive_on(arris.build.Workplane(origin, turned.x, turned.y, turned.z))
+        reference = None
+        if rotate.x == rotate.y == 0:
+            prior = self._through_plane
+            if prior is not None or _loses_bounds_pad(offset.z):
+                at = (prior or plane).point(offset.x, offset.y)
+                reference = arris.build.Workplane(at, turned.x, turned.y, turned.z)
+        return self._derive_on(
+            arris.build.Workplane(origin, turned.x, turned.y, turned.z), through_plane=reference
+        )
 
     @census_form("Workplane.workplane", keywords={"offset": ("num",)})
     def workplane(self, offset: float = 0.0) -> Workplane:
@@ -656,7 +714,14 @@ class Workplane:
                 plane.origin[1] + n[1] * offset,
                 plane.origin[2] + n[2] * offset,
             )
-            return self._derive_on(arris.build.Workplane(at, plane.x, plane.y, plane.z))
+            reference = plane if _loses_bounds_pad(offset) else None
+            if self._through_plane is not None and (
+                n == self._plane.z or n == (-self._plane.z[0], -self._plane.z[1], -self._plane.z[2])
+            ):
+                reference = arris.build.Workplane(self._through_plane.origin, plane.x, plane.y, n)
+            return self._derive_on(
+                arris.build.Workplane(at, plane.x, plane.y, n), through_plane=reference
+            )
         self._refuse_pending("Workplane.workplane")
         plane = self._plane
         o, n = plane.origin, plane.z
@@ -677,7 +742,15 @@ class Workplane:
             projected[1] + n[1] * offset,
             projected[2] + n[2] * offset,
         )
-        return self._derive_on(arris.build.Workplane(at, plane.x, plane.y, plane.z))
+        # Projection and offset both follow this normal. Preserve a point on
+        # its line before separate rounding of the translated coordinates
+        # can shift the line sideways.
+        reference = self._through_plane
+        if reference is None and (_loses_bounds_pad(height) or _loses_bounds_pad(offset)):
+            reference = plane
+        return self._derive_on(
+            arris.build.Workplane(at, plane.x, plane.y, n), through_plane=reference
+        )
 
     @census_form("Workplane.faces", [("str",)])
     def faces(self, selector: str) -> Workplane:
@@ -1481,6 +1554,7 @@ class Workplane:
                         for plane in self._profile_planes(point, "Workplane.rect")
                     ),
                     "rectangles",
+                    tuple((u, v) for u, v, _ in point.points),
                 )
             )
         if isinstance(point, (_Rect, _Disc)):
@@ -1542,7 +1616,9 @@ class Workplane:
             ]
             if any(_slots_touch(a, b, diameter) for a, b in combinations(lines, 2)):
                 raise UnsupportedApi(f"{form} on points with touching or overlapping slots")
-            return self._derive(_PlacedProfiles(sketches, "slots"))
+            return self._derive(
+                _PlacedProfiles(sketches, "slots", tuple((u, v) for u, v, _ in point.points))
+            )
         centre = point.start if isinstance(point, _Path) else (0.0, 0.0)
         return self._derive(_Slot.draw(self._plane, length, diameter, radians, centre))
 
@@ -1666,7 +1742,7 @@ class Workplane:
         if len(self._stack) == 1 and isinstance(self._stack[0], Sketch):
             return self._combined(self._stack[0]._extrusion(distance))._with_seams(None)
         form = "Workplane.extrude"
-        sketches = self._wires(form) or (self._pending_sketch(form),)
+        sketches = tuple(wire.sketch for wire in self._wires(form)) or (self._pending_sketch(form),)
         if distance == 0:
             raise ValueError(
                 f"Workplane.extrude({distance}, both={both}): a zero distance "
@@ -1711,7 +1787,7 @@ class Workplane:
         """
         form = "Workplane.cutBlind"
         self._refuse_sketch(form)
-        sketches = self._wires(form) or (self._pending_sketch(form),)
+        sketches = tuple(wire.sketch for wire in self._wires(form)) or (self._pending_sketch(form),)
         if until == 0:
             raise ValueError(
                 f"Workplane.cutBlind({until}): a zero depth (CadQuery's Standard_ConstructionError)"
@@ -1749,25 +1825,26 @@ class Workplane:
         if base is None:
             raise ValueError(_NO_SOLID)
         self._refuse_sketch("Workplane.cutThruAll")
-        sketches = self._wires("Workplane.cutThruAll")
-        if not sketches:
+        wires = self._wires("Workplane.cutThruAll")
+        if not wires:
             raise ValueError(_NO_WIRES)
-        if any(isinstance(sketch, _NestedRect) for sketch in sketches):
+        if any(isinstance(wire.sketch, _NestedRect) for wire in wires):
             raise ValueError("CadQuery's StdFail_NotDone: BRep_API: command not done")
-        if any(sketch.holes for sketch in sketches):
+        if any(wire.sketch.holes for wire in wires):
             raise ValueError("CadQuery's Standard_OutOfRange: NCollection_Sequence::Value")
         box = self._bore_bounds(base)
         clearance = self._bore_length(box)
         return self._cut_sketches(
-            base, [self._through_sweep(sketch, box, clearance) for sketch in sketches]
+            base, [self._through_sweep(wire, box, clearance) for wire in wires]
         )
 
     @staticmethod
     def _through_sweep(
-        sketch: arris.build.Sketch, box: _Bounds, clearance: float
+        wire: _PendingWire, box: _Bounds, clearance: float
     ) -> tuple[arris.build.Sketch, float]:
         """A sweep from before the projected stock bounds to past their far end."""
-        plane = sketch.plane
+        sketch = wire.sketch
+        plane = wire.through_plane
         lo, hi = box
         # Each axis contributes its own interval to the projection.
         projected = [
@@ -1776,7 +1853,27 @@ class Workplane:
         ]
         start = sum(near for near, _ in projected) - clearance
         end = sum(far for _, far in projected) + clearance
-        return sketch.moved_to(plane.offset(start)), end - start
+        # Keep the usual placement while the projected bounds resolve the
+        # kernel's padding.
+        scale = max(abs(start), abs(end), *(abs(p) for interval in projected for p in interval))
+        if not _loses_bounds_pad(scale):
+            return sketch.moved_to(plane.offset(start)), end - start
+
+        # A distant plane can lose the stock span and both clearances when
+        # they are expressed as offsets from its origin. Measure the span
+        # on the stock, and round the cap's position only after translating.
+        normal = tuple(Fraction(n) for n in plane.z)
+        near = sum(
+            (Fraction(a if n >= 0 else b) - Fraction(o)) * n
+            for a, b, o, n in zip(lo, hi, plane.origin, normal, strict=True)
+        )
+        offset = (near - Fraction(clearance)) / sum(n * n for n in normal)
+        x, y, z = (
+            float(Fraction(o) + offset * n) for o, n in zip(plane.origin, normal, strict=True)
+        )
+        cap = arris.build.Workplane((x, y, z), plane.x, plane.y, plane.z)
+        span = sum((b - a) * abs(n) for a, b, n in zip(lo, hi, plane.z, strict=True))
+        return sketch.moved_to(cap), span + 2 * clearance
 
     def _cut_sketches(
         self, base: arris.build.Solid, sweeps: Sequence[tuple[arris.build.Sketch, float]]
@@ -1802,7 +1899,10 @@ class Workplane:
         """
         plane = self._plane
         shifted = arris.build.Workplane(plane.point(x, y), plane.x, plane.y, plane.z)
-        child = self._derive_on(shifted, _CenterPoint((0.0, 0.0)))
+        reference = self._through_plane
+        if reference is not None:
+            reference = arris.build.Workplane(reference.point(x, y), plane.x, plane.y, plane.z)
+        child = self._derive_on(shifted, _CenterPoint((0.0, 0.0)), through_plane=reference)
         object.__setattr__(child, "_carried", self._wires("Workplane.center"))
         return child
 
@@ -1963,7 +2063,7 @@ class Workplane:
             if len(wires) != 1:
                 # See `unsupported-center-revolve-multiple`.
                 raise UnsupportedApi(f"{form} on multiple wires carried across center")
-            sketch = wires[0]
+            sketch = wires[0].sketch
         else:
             sketch = self._pending_sketch(form)
         if isinstance(sketch, _Slot) and self._base_solid() is not None:

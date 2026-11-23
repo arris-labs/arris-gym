@@ -234,3 +234,19 @@ Other mixed sets end `unsupported_api`
 A revolution of multiple carried wires also ends `unsupported_api`
 (`unsupported-center-revolve-multiple`). The BenchCAD table contains no
 in-subset `cq_bug` from these contexts.
+
+## Amendment, 2026-11-24: distant through-cut planes
+
+A normal offset keeps the lines swept by the pending section fixed. If
+rounding at the offset can lose the kernel's bounds padding, the workplane
+retains a point on those lines from before the normal shift. Through cuts
+use that reference with the original in-plane placements, including array
+points and carried wires across a `center` shift.
+
+When projection relative to the section still risks losing the bounds
+padding, the sweep measures its span from the stock and rounds its cap
+position after translating the section. This keeps the stock span and
+clearance when its projected bounds would round to the same offset. The
+`regression/cq-through-cut-rounded-*` fixtures hold an axial bore, a tilted
+bore, two circles drawn across a `center` shift and two rectangular
+windows to closed forms.
