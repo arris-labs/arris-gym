@@ -51,36 +51,35 @@ waits for its M3 row); each result is one solid.
 and `arris-report.md` taken from it. Written by
 `uv run --extra corpus tools/cq_slice.py` (the corpus from the Hugging Face
 cache or the network; outside the gate; about 2 s on 32 cores, the sandbox's
-defaults of 30 s and 512 MiB). Digests: table
-`b282d691220e98af5c6478364b4e0b8319058f7affc54ab553ec47c89a9dc7f6`;
-the 300 oracle reports' digests (`OracleReport.digest()`, one per line, in stem
-order) `e8879b59d640b3948f0e69abbd4b228414587466cc2dac2c2e2425edfc5065bc`;
-`arris-report.json` SHA-256
-`7697e6d7960eb95d655b2094b256cc91033150e3d69d9fdff7216bd7a2a6caf7`, `arris-report.md`
-`24ce0d337cdcddd7d38efd3fdcbc1cc6efedb3683d266f8945e8cf7c3e2c2695`
-(arris 0.11.1, plans/bump-arris-0-11 step 4; two runs equal). Under arris
-0.10.0 the table's digest was
-`0c4ae42ed1307b69e8afd58f303959d30f1df2c981efb2a4e1862fa498af8733`: the
-rows differ in their recorded versions alone, every status, measure and class
-equal.
+defaults of 30 s and 512 MiB). Digests for arris 0.12.0:
 
-`verdicts.json` (stem → verdict, ADR-0006) classes the 100 `lobed_knob` rows
-`arris_bug`, its evidence the regression fixture
-`tests/fixtures/regression/cq-union-three-coplanar-cylinders`; SHA-256
-`c160894db5433de28971dee240aafab09aeba0b8a46f4f0f3b68a206970a9f18`.
+- Fidelity table `34c28fcc2fcef4ae2635fadd4d3975d06b3c0f14fe6ef46c7b2030bec3979a22`.
+- The 300 oracle reports' digests (`OracleReport.digest()`, one per line,
+  in stem order) `e8879b59d640b3948f0e69abbd4b228414587466cc2dac2c2e2425edfc5065bc`,
+  unchanged from 0.11.1.
+- `arris-report.json` SHA-256
+  `38c7f5ecaea2c4a6e405bed6f36451384491301c576fe0115c1a7efc6d885584`.
+- `arris-report.md` SHA-256
+  `e094ce9dcf8bb688b4589eafcb8e94d5a70437acd2c3b717b0c0692c95264dee`.
 
-Over all 300 programs: agree 200, disagree 100, unclassified 0. Disagreements
-by class: `arris_bug` 100, every other class 0. Arris statuses: ok 200,
-`arris_refusal` 100, every other 0; oracle statuses: ok 300. No timeouts.
-All 100 `phone_stand` and 100 `venturi_tube` programs agree. All 100
-`lobed_knob` programs end `OpDegenerateError` ("degenerate result: the faces
-touch along a curve interior to both result faces") in a union of a cylinder
-standing on the plane the body's end already lies on (98 at the second
-union, 2 at the fourth), where the oracle builds a solid. The rule classes
-that `arris_refusal`; the verdict re-classes it an arris bug, since arris
-builds the same part: the programs' cylinders fused by one n-ary
-`Solid.fuse` (then cut) match the oracle's volume to 8e-15 relative, all 100.
-The fixture's README holds the shrink.
+All 300 programs build and agree with the oracle under ADR-0005. There are
+zero disagreements, unclassified rows and timeouts. The 100 `lobed_knob`
+programs now complete their chained cylinder fuses, previously
+`OpDegenerateError` in the second fuse for 98 and the fourth for two
+(`regression/cq-union-three-coplanar-cylinders`). All 100 agree under the
+comparison rule, so their `arris_bug` verdicts are retired. The largest
+relative errors are 7.90e-15 for volume and 1.03e-14 for area. Face counts
+differ by up to 128, a diagnostic under ADR-0005.
+
+The 200 `phone_stand` and `venturi_tube` rows still agree. Besides the
+recorded arris version, 82 `phone_stand` rows change only their recorded
+bounds deltas, by at most 5.69e-14. The arris report has no refusals or bugs.
+
+The 0.11.1 table had digest
+`b282d691220e98af5c6478364b4e0b8319058f7affc54ab553ec47c89a9dc7f6` and
+the 0.10.0 table had digest
+`0c4ae42ed1307b69e8afd58f303959d30f1df2c981efb2a4e1862fa498af8733`.
+Their rows differed only in recorded versions.
 
 ## The slice's targets
 

@@ -831,12 +831,15 @@ writes the table, the arris report and the reach report under
 `tests/fixtures/c2/<corpus>/` (rows only, no program text); with
 `--oracle-rows` a committed `oracle.jsonl.gz` answers every program whose
 SHA-256 and oracle versions it holds, so a change to `cq` alone re-runs `cq`
-alone and keeps the oracle's committed draw. On the slice with
-C1's verdicts it gives C1's figures: reach 300/300, 200 agree, 100 `arris_bug`.
+alone and keeps the oracle's committed draw. The C1 slice reaches 300/300
+and all 300 agree on arris 0.12.0. The chained cylinder fuses now build the
+100 `lobed_knob` parts that needed `arris_bug` verdicts on arris 0.11.1
+(`tests/fixtures/c1/README.md`).
 
 **The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset, arris 0.11.1,
-each figure over all programs; BenchCAD with C1's verdicts and its own), beside
-the baseline ADR-0014 set the target from (the C1 subset, no verdicts):
+each figure over all programs) sit beside the baseline ADR-0014 set the
+target from (the C1 subset without verdicts). BenchCAD's 0.11.1 table uses
+both the historical C1 verdicts and its own.
 
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|

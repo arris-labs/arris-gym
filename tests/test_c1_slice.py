@@ -1,4 +1,4 @@
-"""The committed slice is the one the committed census chooses (ADR-0003, delta 2)."""
+"""The committed C1 slice follows the census and agrees with the oracle."""
 
 from __future__ import annotations
 
@@ -6,8 +6,9 @@ import json
 import re
 from pathlib import Path
 
+from arris_gym import Status
 from arris_gym.census import CensusReport
-from arris_gym.fidelity import FidelityTable, OracleReport, RegressionFixture, Verdict, arris_rows
+from arris_gym.fidelity import FidelityTable, OracleReport, OracleStatus, arris_rows
 
 C1 = Path(__file__).parent / "fixtures" / "c1"
 FAMILIES = 3
@@ -72,15 +73,12 @@ def test_the_committed_report_is_the_tables() -> None:
     assert sum(k.count for k in report.refusals) == table.classes["arris_refusal"]
 
 
-def test_each_verdict_names_a_slice_row_and_its_regression_fixture() -> None:
+def test_every_slice_program_builds_and_agrees_without_a_verdict() -> None:
     table = FidelityTable.from_json((C1 / "fidelity.json").read_text(encoding="utf-8"))
-    raw = json.loads((C1 / "verdicts.json").read_text(encoding="utf-8"))
-    rows = {entry.name: entry.row for entry in table.entries}
-    root = C1.parent.parent.parent
-    for stem, value in raw.items():
-        verdict = Verdict.model_validate(value)
-        # The table applied it: the row carries the verdict and is its class.
-        assert rows[stem].verdict == verdict
-        if isinstance(verdict.evidence, RegressionFixture):
-            assert (root / verdict.evidence.path / "program.py").is_file(), verdict.evidence.path
-    assert table.outcomes["unclassified"] == 0
+    assert not (C1 / "verdicts.json").exists()
+    assert table.outcomes == {"agree": table.programs, "disagree": 0, "unclassified": 0}
+    assert table.timed_out == ()
+    for entry in table.entries:
+        assert entry.row.status is Status.OK, entry.name
+        assert entry.row.oracle_status is OracleStatus.OK, entry.name
+        assert entry.row.verdict is None, entry.name

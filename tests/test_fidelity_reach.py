@@ -4,7 +4,7 @@ rows, each over all programs.
 The four-program table is built from the calibration fixtures' rows; its
 expected figures are worked out from which program is in the subset and how
 each row classes, not from the report's output. The slice figures are those of
-C1 (ADR-0011): 200 agree, 100 `arris_bug`, reach 300/300.
+C1 on arris 0.12.0: 300 agree, reach 300/300.
 """
 
 from __future__ import annotations
@@ -118,8 +118,8 @@ def test_the_c1_slice_report_is_c1s_figures() -> None:
     report = reach_report(table, rows, SUBSET)
     assert report.programs == 300
     assert report.in_subset == 300
-    assert report.agree == 200
-    assert report.in_subset_classes["arris_bug"] == 100
+    assert report.agree == 300
+    assert report.in_subset_classes["arris_bug"] == 0
     assert report.in_subset_cq_bug == 0
     assert report.in_subset_by_design == 0
     assert report.timed_out == 0

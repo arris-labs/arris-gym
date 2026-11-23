@@ -37,7 +37,7 @@ verification, **[3]** unproven design. Grades map to tiers.
   Verify any strict xfail that now passes with `inspect`, then lift it.
   Refresh the pin, lock and API reference, reconcile fixture expectations
   against the release notes, add the Unreleased bullet and pass the gate.
-- [ ] Step 2 **[2]**. Run `uv run --extra corpus tools/cq_slice.py`.
+- [x] Step 2 **[2]**. Run `uv run --extra corpus tools/cq_slice.py`.
   If the coplanar fuse fixture builds to the expected geometry, verify the
   100 affected rows against the oracle and retire the corresponding
   verdicts where the measured rows support it. Refresh the C1 fidelity
