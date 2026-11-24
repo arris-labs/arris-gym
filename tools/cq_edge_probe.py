@@ -16,13 +16,14 @@ The evidence of ADR-0020. Two sets of own programs, each with a closed form:
 - `BLENDS` run as they are, with no prelude: the oracle's own report (status,
   its message verbatim, the measures) is the record.
 
-    uv run tools/cq_edge_probe.py [--out-dir tests/fixtures/edges]
+    uv run tools/cq_edge_probe.py [--out-dir tests/fixtures/edges] [--revolves]
 
 writes `constructed.json`, one entry per construction sorted by name: its name,
 kind (`selection` or `blend`), program text, and the record or the report less
 `step` and `seconds`. Two runs give the same bytes. `tests/test_edge_probe.py`
 holds each to its closed form. Outside the gate: the oracle environment is
-needed.
+needed. `--revolves` writes `revolve.json` for the full revolve selections
+and neighboring cases.
 """
 
 from __future__ import annotations
@@ -97,6 +98,47 @@ _pcq.Workplane.edges = _p_edges_wrap
 
 _HEAD = "import cadquery as cq\n\n"
 _SHOW = "\nshow_object(result)\n"
+
+# The head arc is from regression/cq-rivet-edges-across-revolve-axis.
+_RIVET_PATH = (
+    ".moveTo(0, 0).lineTo(2.5, 0).lineTo(2.5, 3).lineTo(4, 3)"
+    ".threePointArc((3.464, 4.625), (0, 6.25)).close()"
+)
+_REVERSE_RIVET_PATH = (
+    ".moveTo(0, 6.25).threePointArc((3.464, 4.625), (4, 3))"
+    ".lineTo(2.5, 3).lineTo(2.5, 0).lineTo(0, 0).close()"
+)
+_REVOLVE_CYLINDER = 'cq.Workplane("XY").polyline([(0, -2), (2, -2), (2, 2), (0, 2)]).close()'
+REVOLVES: dict[str, str] = {
+    **{
+        f"rivet-{plane}": f'cq.Workplane("{plane}"){path}'
+        f'.revolve(360, (0, 0, 0), (0, 1, 0)).edges("<{normal}")'
+        for plane, normal, path in (
+            ("XY", "Z", _RIVET_PATH),
+            ("XZ", "Y", _REVERSE_RIVET_PATH),
+            ("YZ", "X", _RIVET_PATH),
+        )
+    },
+    "rivet-side": f'cq.Workplane("YZ"){_RIVET_PATH}.revolve(360, (0, 0), (0, -1)).edges(">Y")',
+    "rivet-spherical": 'cq.Workplane("XY").moveTo(0, 0).lineTo(2.5, 0).lineTo(2.5, 3)'
+    ".lineTo(4, 3).threePointArc((3, 4), (0, 5)).close()"
+    '.revolve(360, (0, 0), (0, 1)).edges("<Z")',
+    "rivet-parallel": f'cq.Workplane("XZ"){_RIVET_PATH}.revolve(360, (0, 0), (0, 1)).edges("|Z")',
+    "rivet-reselect": f'cq.Workplane("XY"){_RIVET_PATH}'
+    '.revolve(360, (0, 0), (0, 1)).edges("<Z").edges(">X")',
+    "cylinder-side": f'{_REVOLVE_CYLINDER}.revolve(360, (0, -2, 0), (0, 2, 0)).edges(">X")',
+    "cylinder-wall": f'{_REVOLVE_CYLINDER}.revolve(360, (0, -2), (0, 2)).faces(">Z").edges(">X")',
+    "cylinder-reversed": 'cq.Workplane("XY", origin=(3, 1, -2))'
+    ".polyline([(1, -2), (-1, -2), (-1, 2), (1, 2)]).close()"
+    '.revolve(360, (1, 0), (1, -1)).edges("<X")',
+    "partial": f'{_REVOLVE_CYLINDER}.revolve(180, (0, -2), (0, 2)).edges("<X")',
+    "cone": 'cq.Workplane("XY").polyline([(0, -2), (2, -2), (1, 2), (0, 2)]).close()'
+    '.revolve(360, (0, 0), (0, 1)).edges(">X")',
+    "turned": 'cq.Workplane("XY").transformed(rotate=(0, 0, 30))'
+    f'{_RIVET_PATH}.revolve(360, (0, 0), (0, 1)).edges("<Z")',
+    "after-union": f"{_REVOLVE_CYLINDER}.revolve(360, (0, -2), (0, 2))"
+    '.union(cq.Workplane("XY", origin=(0, 8, 0)).box(1, 1, 1)).edges(">X")',
+}
 # The box, 10 by 8 by 4 about the origin.
 _BOX = 'cq.Workplane("XY").box(10, 8, 4)'
 # A cylinder of radius 1 and height 4 along z about the origin, and one of
@@ -278,8 +320,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=(__doc__ or "").split("\n", 1)[0])
     parser.add_argument("--out-dir", type=pathlib.Path, default=OUT)
     parser.add_argument("--workers", type=int, default=WORKERS)
+    parser.add_argument("--revolves", action="store_true")
     args = parser.parse_args(argv)
-    constructions = constructed_programs()
+    constructions = (
+        {
+            name: ("selection", _HEAD + f"result = {chain}" + _SHOW)
+            for name, chain in sorted(REVOLVES.items())
+        }
+        if args.revolves
+        else constructed_programs()
+    )
     texts = [
         (PRELUDE + text) if kind == "selection" else text for kind, text in constructions.values()
     ]
@@ -296,7 +346,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             entry["report"] = json.loads(report.model_dump_json(exclude={"step", "seconds"}))
         out.append(entry)
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    (args.out_dir / "constructed.json").write_text(
+    (args.out_dir / ("revolve.json" if args.revolves else "constructed.json")).write_text(
         json.dumps(out, sort_keys=True, indent=1) + "\n", encoding="utf-8"
     )
     counts: dict[str, int] = {}

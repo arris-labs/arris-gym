@@ -1,0 +1,28 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 167.3124804645804,
+    "area": 168.413332227715,
+    "centroid": [
+      0.0,
+      0.0,
+      3.3372631607037473
+    ],
+    "bounds": [
+      [
+        -3.9275129927477757,
+        -3.9275129927477757,
+        0.0
+      ],
+      [
+        3.9275129927477757,
+        3.9275129927477757,
+        6.280492901819851
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "The meridian swept about the shank axis after chamfering the three rims."
+}

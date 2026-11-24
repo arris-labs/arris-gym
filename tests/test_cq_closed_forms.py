@@ -28,9 +28,12 @@ from arris_gym.fidelity import (
     ClosedForm,
     DisagreementClass,
     DocAnchor,
+    FidelityOutcome,
+    OracleReport,
     RegressionFixture,
     SignedSolids,
     Verdict,
+    compare,
 )
 from arris_gym.sandbox.outcome import ArrisRefusal
 
@@ -70,6 +73,44 @@ def test_the_quadrature_is_exact_on_endpoint_roots() -> None:
     # An empty interval is zero, never an error; a Gauss rule is exact on a polynomial.
     assert cf.tanh_sinh(lambda x: 1.0, 2.0, 2.0) == 0.0
     assert cf.gauss(lambda x: x**5 - x + 1, 0.0, 2.0) == pytest.approx(64 / 6 - 2 + 2, rel=1e-14)
+
+
+RIVET = REGRESSION / "cq-rivet-edges-across-revolve-axis"
+
+
+@pytest.mark.parametrize("blend", ["chamfer", "fillet"])
+@pytest.mark.parametrize(("plane", "normal"), [("XY", "Z"), ("XZ", "Y"), ("YZ", "X")])
+def test_the_rivet_meridian_gives_the_blended_parts_measures(
+    blend: str, plane: str, normal: str
+) -> None:
+    source = (RIVET / "program.py").read_text()
+    program = source.replace('"XZ"', f'"{plane}"').replace('"<Y"', f'"<{normal}"')
+    program = program.replace(".chamfer(", f".{blend}(")
+    form = cf.rivet_closed_form(program)
+    result = ag.run(program, dialect="cq")
+    assert result.status is ag.Status.OK
+    assert _agrees(result, form) == []
+
+
+def test_the_rivet_form_refuses_a_selector_that_does_not_keep_all_rims() -> None:
+    program = (RIVET / "program.py").read_text().replace('"<Y"', '">X"')
+    with pytest.raises(ValueError, match="must blend all three rims"):
+        cf.rivet_closed_form(program)
+
+
+def test_the_recorded_rivet_measurements_disagree_with_the_meridian() -> None:
+    program = (RIVET / "program.py").read_text()
+    report = OracleReport.model_validate_json((RIVET / "oracle.json").read_text())
+    result = ag.run(program, dialect="cq")
+    assert result.program_sha256 == report.program_sha256
+    assert result.status is ag.Status.OK
+    verdict = Verdict(
+        disagreement=DisagreementClass.OCCT_WRONG,
+        evidence=ClosedForm.model_validate(cf.rivet_closed_form(program)),
+    )
+    row = compare(result, report, verdict)
+    assert row.outcome is FidelityOutcome.DISAGREE
+    assert row.disagreement is DisagreementClass.OCCT_WRONG
 
 
 TEE = """import cadquery as cq

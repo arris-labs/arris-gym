@@ -253,3 +253,31 @@ after it, 3 spacer rings with a box cut after it; plans/lift-edges-and-blends st
 lone `cylinder` keeps the seam and `>Y` ties it with the rims, as the oracle does; the seam of a
 revolved wall still ends `unsupported_api` (`unsupported-edges-revolved-side`). Rules 1 and 3
 to 6 are unchanged.
+
+## Amendment (2026-11-24): Seams on full cylinder and rivet revolves
+
+`tools/cq_edge_probe.py --revolves` records CadQuery's selected edges in
+`tests/fixtures/edges/revolve.json`. On `XY`, `XZ` and `YZ`, the normal
+selectors `<Z`, `<Y` and `<X` respectively keep the three circular rims,
+the shank's line seam and the head's arc seam. All five centres of mass
+lie in the drawing plane. The selector toward the drawing side can keep a
+seam alone. Reversing the direction of the axis or the drawing order keeps
+the seam on the side on which the generator was drawn.
+
+**Rule 2, amended.** Record the axis and drawing side after a full turn
+of a closed path about its local y direction on a world-axis-aligned
+plane. The axis lies in the profile plane at one extreme of its drawing
+points. The solid has two plane faces and a cylinder with two rims and
+one seam. An optional spherical or toroidal head adds one rim and one
+seam. The seam's centre of mass has the same axial
+coordinate and radial distance from the axis as the kernel's seam. Project
+that centre from the original drawing side. Parallel selectors keep the
+cylinder's axial line seam under rule 3.
+
+The placement belongs to the original solid, including when the stack
+holds its faces or a previous edge selection. A combine that changes the
+solid calls for fresh evidence. A partial turn keeps its ordinary boundary
+edges. Cones, turned planes with oblique axes, and changed solids use the
+existing bounded rule when the placement is unknown, as does the polar
+bore in the previous amendment. A bare edge selection still resolves to
+no solid (`runtime-edges-revolved-side`).

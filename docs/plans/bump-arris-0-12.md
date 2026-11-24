@@ -9,11 +9,14 @@
 
 Establish the arris 0.12.0 baseline before `lift-lofts-and-tapers`.
 Verify the published wheel against the known coplanar cylinder fuse,
-then explain the outcome and score changes on the current subset.
+match CadQuery's edge selection on the full revolves exercised by
+BenchCAD's `rivet` family, and settle the replay's fidelity differences.
+Record the resulting outcome and score changes.
 
 ## Non-goals
 
-Subset expansion, adopting `tight_bounds` or `classify_points`, and
+New CadQuery calls or selector forms, revolve contexts beyond the
+verified cases, adopting `tight_bounds` or `classify_points`, and
 changing the reward formula or the NumPy pin.
 
 ## Design deltas
@@ -23,7 +26,23 @@ Pin 0.12.0 exactly in `pyproject.toml` and `uv.lock`. Generate
 changes, checker changes, touching-lump booleans and blend refusals
 against the existing fixture contracts. Keep refusal text verbatim.
 The kernel version is recorded in `versions.arris` under ADR-0021.
-Public API forms and module boundaries in arris-gym stay as they are.
+The existing `revolve` and `edges` forms gain seam placement where the
+oracle establishes it. Amend ADR-0020 rule 2 with the verified profiles,
+axis and workplane directions, and when the chain can retain each seam.
+Keep the existing refusal wherever a seam cannot be placed. Review the
+`unsupported-edges-revolved-side` case and the `revolved` parameter in
+`tests/test_cq_edges.py` against the admitted cases. Preserve the
+`polar-bore` refusal. Update Architecture §Dialects.
+
+Amend ADR-0016 to compare the oracle's solid count with the count of
+outer shells for a compound with sealed cavities, keeping the existing
+measure checks. Determine the count from the candidate body and prove
+it on known geometry independently of the oracle count. Step 4 settles
+where to compute it and records any change to a public type or call in
+these deltas and the changelog before implementation. Update
+Architecture §Outcomes and §The oracle, and the glossary's **Compound**
+and **Seam** entries. Module boundaries stay as they are. Oracle rows
+stay pinned. Verdicts follow ADR-0005 and ADR-0006.
 
 ## Steps
 
@@ -42,15 +61,40 @@ verification, **[3]** unproven design. Grades map to tiers.
   100 affected rows against the oracle and retire the corresponding
   verdicts where the measured rows support it. Refresh the C1 fidelity
   table and arris report and explain all changed classes.
-- [ ] Step 3 **[2] [conductor-run]**. Run `tools/cq_corpus.py` on BenchCAD
-  and CAD-Recode with the pinned `--oracle-rows`. Review row differences
-  against 0.11.1 and refresh the C2 baselines and assertions together.
-  Check the reported torus–box refusal and record whether it still holds.
-- [ ] Step 4 **[2] [conductor-run]**. Run `arris-gym rescore benchcad`
+- [x] Step 3 **[3]**. Establish the oracle's selected edges for the full
+  revolves on all three `rivet` axes and implement the verified seam
+  placement under ADR-0020. Lift `cq-rivet-edges-across-revolve-axis`
+  with a verified closed-form verdict against its pinned oracle report.
+  Verify all 90 affected rows with the same method. Add a property over
+  the admitted axis and profile variations. Check neighboring revolve
+  contexts against the oracle and keep refusals where they disagree.
+- [ ] Step 4 **[3]**. Implement and document compound solid counting under
+  ADR-0016. Lift the fidelity assertion for
+  `cq-compound-with-a-sealed-cavity` and test multiple outer shells, a
+  single solid with a cavity and a mismatched oracle solid count.
+  Review the 25 `torus_link` rows with count differences and retain any
+  separate measure disagreements for step 5.
+- [ ] Step 5 **[2]**. Resolve the measure disagreements among `bellows`,
+  `torus_link`, `dome_cap` and `shaft_collar` with closed forms or
+  independently checked oracle evidence. Reuse
+  `cq-revolved-cone-notches-bounds` for the clipped rims. Require the
+  verdict generator to verify each cited cause and regenerate its output
+  byte for byte.
+- [ ] Step 6 **[2]**. Resolve the six blend refusals against oracle
+  `invalid` (`bucket`, `shaft_collar`, `pipe_flange`, `worm_screw`).
+  Check the new `cotter_pin` refusal causes and the `bearing_retainer_cap`
+  checker failures against their fixtures. Add strict regression fixtures
+  for any distinct failure and regenerate the supported verdicts.
+- [ ] Step 7 **[2] [conductor-run]**. Run `tools/cq_corpus.py` on BenchCAD
+  and CAD-Recode from fresh work directories with pinned `--oracle-rows`.
+  Review changed rows against 0.11.1 and refresh the C2 baselines,
+  verdicts and assertions together. Confirm byte-identical oracle rows
+  and record the torus–box check against its closed form.
+- [ ] Step 8 **[2] [conductor-run]**. Run `arris-gym rescore benchcad`
   at 2 and 16 workers. Compare the two outputs and use
   `tools/rescore_diff.py` against the committed 0.11.1 evidence. Explain
   each changed score or route beyond version metadata and record the digest.
-- [ ] Step 5 **[1] [CI]**. Verify the recorded rescore digest on the x86-64
+- [ ] Step 9 **[1] [CI]**. Verify the recorded rescore digest on x86-64
   and aarch64 in CI. Record the run and both matching results before
   fast-forwarding the plan branch.
 
@@ -62,6 +106,12 @@ verification, **[3]** unproven design. Grades map to tiers.
 - Reach stays at 14,150/17,900 on BenchCAD and 968/968 on CAD-Recode, with
   zero in-subset `cq_bug`, zero unclassified rows and zero timeouts.
   Oracle rows stay fixed and each changed class has an explanation.
+- All 90 affected `rivet` rows and the reduced fixture build and receive
+  checked `occt_wrong` verdicts from their closed forms against the pinned
+  oracle reports. The sealed-cavity compound agrees with two oracle solids
+  despite having three shells. Run
+  `tests/test_cq_edges.py`, `tests/test_cq_compound.py`,
+  `tests/test_regression.py` and `tests/test_c2_baseline.py`.
 - C1 fidelity and rescore evidence is refreshed. The rescore digest
   matches across the two worker counts and both Linux architectures.
 - Reassess adoption if the expected fuse fix fails and the corpus
@@ -72,12 +122,29 @@ verification, **[3]** unproven design. Grades map to tiers.
 Update the C1 and C2 fixture READMEs, the C2 figures in
 `docs/ARCHITECTURE.md` and `docs/ROADMAP.md`, and Current state in
 `AGENTS.md`. Reconcile the affected findings in `docs/BACKLOG.md`.
-ADR-0021 covers versioning.
+Update the glossary and ADRs named in Design deltas. ADR-0021 covers
+versioning.
 
 ## Open questions
 
 - Settled in step 1. The published wheel builds the coplanar cylinder
   fixture to its existing closed form. Fixed regression fixtures still
   support the recorded 0.11.1 C2 verdicts through their versioned failure
-  reasons until step 3 checks the actual corpus rows on 0.12.0.
-- ⚠ OPEN (human, step 5) — push the plan branch for the CI check.
+  reasons until the 0.12.0 baselines replace them in step 7.
+- Settled after the initial replay. The human chose to expand the plan
+  to address the 90 in-subset `cq_bug` rows and 110 unclassified rows.
+  The reach, timeout and classification thresholds still apply.
+- Settled in step 3. Full turns of closed paths yielding a cylinder or
+  a cylindrical shank with a spherical or toroidal head place their seams
+  in the drawing plane. The local y axis is world-aligned and can point
+  either way. The placement applies to the original solid and selections
+  on it. See ADR-0020 and `tools/cq_edge_probe.py --revolves`.
+- Settled in step 3 with human approval. The reduced rivet and all 90
+  affected BenchCAD rows build and match the independent meridian
+  calculation under ADR-0005. The pinned reports exceed those limits.
+  The closed-form verdicts satisfy step 3 under ADR-0006. Two generator
+  runs produced byte-identical verdicts, and step 7 records them in the
+  refreshed baseline.
+- ⚠ OPEN: Step 4 (agent) establishes an orientation-aware way to count
+  outer shells and where the count belongs in the fidelity path.
+- ⚠ OPEN: Step 9 (human) authorizes pushing the plan branch for CI.

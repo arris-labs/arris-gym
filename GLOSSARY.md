@@ -268,8 +268,9 @@ CadQuery's same-domain cleaning (ADR-0022).
 **Seam**:
 An edge with one face on both sides, where a closed surface (a cylinder, a
 sphere) meets itself. Where it lies is the kernel's choice; a blend passes
-over it. `cq` records where Open CASCADE puts the seam of each cylinder it
-builds as CadQuery does, and ranks such a seam there (ADR-0020's amendment).
+over it. `cq` ranks a seam where Open CASCADE places it when the construction
+establishes its location, including cylinders and verified full revolves
+(ADR-0020).
 
 **Compound**:
 CadQuery's several solids that do not meet, held as one value. In `cq` it

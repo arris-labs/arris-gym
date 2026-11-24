@@ -14,6 +14,7 @@ the oracle's own records of `tools/cq_edge_probe.py` (`seam-*`).
 
 from __future__ import annotations
 
+import json
 import math
 from collections.abc import Callable
 
@@ -194,25 +195,184 @@ def test_a_cylinders_seam_is_ranked_where_open_cascade_puts_it() -> None:
     assert len(record("cylinder-edges>Y")["kept"]) == 3
 
 
-@pytest.mark.parametrize(
-    "part",
-    [
-        # A revolved wall: where Open CASCADE starts a turned face is not modelled.
+def test_a_polar_bore_still_has_an_unplaced_seam() -> None:
+    """The seam's key runs over the wall's width, so it may tie with the rims (ADR-0020 rule 2)."""
+    part = (
+        cq.Workplane("XY").cylinder(4, 2).faces(">Z").workplane().polarArray(0, 0, 360, 1).hole(1)
+    )
+    with pytest.raises(cq.UnsupportedApi, match=r"depends on an edge's place"):
+        part.edges(">X")
+
+
+def _rivet(
+    plane: cq.Workplane, radius: float, height: float, scale: float, reverse: bool = False
+) -> cq.Workplane:
+    foot, bottom = (0.0, 0.0), (radius, 0.0)
+    shank, shoulder = (radius, height), (4 * scale, height)
+    via, pole = (3.464 * scale, height + 1.625 * abs(scale)), (0.0, height + 3.25 * abs(scale))
+    if reverse:
+        return (
+            plane.moveTo(*pole)
+            .threePointArc(via, shoulder)
+            .lineTo(*shank)
+            .lineTo(*bottom)
+            .lineTo(*foot)
+            .close()
+        )
+    return (
+        plane.moveTo(*foot)
+        .lineTo(*bottom)
+        .lineTo(*shank)
+        .lineTo(*shoulder)
+        .threePointArc(via, pole)
+        .close()
+    )
+
+
+_REVOLVE_PLANES = {"XY": ("X", "Y", "Z"), "XZ": ("X", "Z", "Y"), "YZ": ("Y", "Z", "X")}
+
+
+@pytest.mark.parametrize("plane", sorted(_REVOLVE_PLANES))
+@settings(max_examples=24, deadline=None)
+@given(
+    scale=st.integers(1, 5),
+    length=st.integers(2, 12),
+    offset=st.tuples(st.integers(-6, 6), st.integers(-6, 6), st.integers(-6, 6)),
+    mirrored=st.booleans(),
+    reverse_path=st.booleans(),
+    reverse_axis=st.booleans(),
+)
+def test_full_rivet_revolves_rank_seams_in_the_drawing_plane(
+    plane: str,
+    scale: int,
+    length: int,
+    offset: tuple[int, int, int],
+    mirrored: bool,
+    reverse_path: bool,
+    reverse_axis: bool,
+) -> None:
+    """Both seams tie the rims across the plane, and lie on its drawing side."""
+    radial, axial, normal = _REVOLVE_PLANES[plane]
+    signed_scale = float(-scale if mirrored else scale)
+    wp = _rivet(
+        cq.Workplane(plane, origin=offset), 2.5 * signed_scale, length, signed_scale, reverse_path
+    )
+    part = wp.revolve(360, (0, 0), (0, -1 if reverse_axis else 1))
+    for op in ("<", ">"):
+        assert sorted(kind for kind, _ in kept(part.edges(op + normal))) == ["circle"] * 4 + [
+            "line"
+        ]
+    assert sorted(kind for kind, _ in kept(part.edges((">" if mirrored else "<") + radial))) == [
+        "circle",
+        "circle",
+        "circle",
+    ]
+    # The shank's seam centre is further from the axis than the head arc's.
+    side = ("<" if mirrored else ">") + radial
+    assert kept(part.edges(side)) == kept(part.edges("|" + axial))
+    assert [kind for kind, _ in kept(part.edges(side))] == ["line"]
+    bottom = kept(part.edges("<" + axial))
+    assert bottom == [("circle", offset)]
+
+
+def _revolved_cylinder(angle: float = 360) -> cq.Workplane:
+    return (
         cq.Workplane("XY")
         .polyline([(0, -2), (2, -2), (2, 2), (0, 2)])
         .close()
-        .revolve(360, (0, -2, 0), (0, 2, 0)),
-        # A bore on a polar array: CadQuery turns its axes, `cq` does not.
-        cq.Workplane("XY").cylinder(4, 2).faces(">Z").workplane().polarArray(0, 0, 360, 1).hole(1),
-    ],
-    ids=["revolved", "polar-bore"],
-)
-def test_a_seam_no_record_places_ties_a_selector_across_its_axis_and_is_refused(
-    part: cq.Workplane,
-) -> None:
-    """The seam's key runs over the wall's width, so it may tie with the rims (ADR-0020 rule 2)."""
-    with pytest.raises(cq.UnsupportedApi, match=r"depends on an edge's place"):
-        part.edges(">X")
+        .revolve(angle, (0, -2), (0, 2))
+    )
+
+
+def test_verified_revolves_keep_the_oracles_edges() -> None:
+    xy = _rivet(cq.Workplane("XY"), 2.5, 3, 1).revolve(360, (0, 0), (0, 1))
+    xz = _rivet(cq.Workplane("XZ"), 2.5, 3, 1, reverse=True).revolve(360, (0, 0), (0, 1))
+    yz = _rivet(cq.Workplane("YZ"), 2.5, 3, 1).revolve(360, (0, 0), (0, 1))
+    spherical = (
+        cq.Workplane("XY")
+        .moveTo(0, 0)
+        .lineTo(2.5, 0)
+        .lineTo(2.5, 3)
+        .lineTo(4, 3)
+        .threePointArc((3, 4), (0, 5))
+        .close()
+        .revolve(360, (0, 0), (0, 1))
+    )
+    mirrored = (
+        cq.Workplane("XY", origin=(3, 1, -2))
+        .polyline([(1, -2), (-1, -2), (-1, 2), (1, 2)])
+        .close()
+        .revolve(360, (1, 0), (1, -1))
+    )
+    selections = {
+        "rivet-XY": (xy.edges("<Z"), 1, (0, 0, 0)),
+        "rivet-XZ": (xz.edges("<Y"), 2, (0, 0, 0)),
+        "rivet-YZ": (yz.edges("<X"), 2, (0, 0, 0)),
+        "rivet-side": (
+            _rivet(cq.Workplane("YZ"), 2.5, 3, 1).revolve(360, (0, 0), (0, -1)).edges(">Y"),
+            2,
+            (0, 0, 0),
+        ),
+        "rivet-spherical": (spherical.edges("<Z"), 1, (0, 0, 0)),
+        "rivet-parallel": (xz.edges("|Z"), 2, (0, 0, 0)),
+        "rivet-reselect": (xy.edges("<Z").edges(">X"), 1, (0, 0, 0)),
+        "cylinder-side": (_revolved_cylinder().edges(">X"), 1, (0, 0, 0)),
+        "cylinder-wall": (_revolved_cylinder().faces(">Z").edges(">X"), 1, (0, 0, 0)),
+        "cylinder-reversed": (mirrored.edges("<X"), 1, (4, 1, -2)),
+        "partial": (_revolved_cylinder(180).edges("<X"), 1, (0, 0, 0)),
+    }
+    fixtures = json.loads((fixture_cases.ROOT / "edges" / "revolve.json").read_text())
+    records = {entry["name"]: entry for entry in fixtures}
+    assert {name: entry["program"] for name, entry in records.items()} == {
+        name: f"import cadquery as cq\n\nresult = {chain}\nshow_object(result)\n"
+        for name, chain in probe.REVOLVES.items()
+    }
+    for name, (wp, axis, origin) in selections.items():
+
+        def signature(
+            point: Point, axis: int = axis, origin: Point = origin
+        ) -> tuple[float, float]:
+            return (
+                round(point[axis], 8),
+                round(math.hypot(*(point[k] - origin[k] for k in range(3) if k != axis)), 8),
+            )
+
+        (selected,) = wp._stack
+        assert isinstance(selected, Edges)
+        model = selected.solid.model
+        actual = []
+        for edge in selected.edges:
+            curve = model.curve(edge)
+            actual.append(
+                (curve.kind.upper(), sorted([signature(curve.start), signature(curve.end)]))
+            )
+        oracle = records[name]["record"]
+        want = []
+        for i in oracle["kept"]:
+            candidate = oracle["candidates"][i]
+            want.append(
+                (
+                    candidate["type"],
+                    sorted([signature(candidate["start"]), signature(candidate["end"])]),
+                )
+            )
+        assert sorted(actual) == sorted(want), name
+
+
+def test_revolve_seam_placement_does_not_extend_to_other_profiles_or_changed_bodies() -> None:
+    cone = (
+        cq.Workplane("XY")
+        .polyline([(0, -2), (2, -2), (1, 2), (0, 2)])
+        .close()
+        .revolve(360, (0, 0), (0, 1))
+    )
+    turned = _rivet(cq.Workplane("XY").transformed(rotate=cq.Vector(0, 0, 30)), 2.5, 3, 1).revolve(
+        360, (0, 0), (0, 1)
+    )
+    combined = _revolved_cylinder().union(cq.Workplane("XY", origin=(0, 8, 0)).box(1, 1, 1))
+    for part, selector in ((cone, ">X"), (turned, "<Z"), (combined, ">X")):
+        with pytest.raises(cq.UnsupportedApi, match=r"depends on an edge's place"):
+            part.edges(selector)
 
 
 # The parts of the probe's `seam-*` constructions, built in `cq`: each less its last call.
@@ -415,12 +575,6 @@ UNSUPPORTED: dict[str, tuple[str, str]] = {
         ")\n",
         "Workplane.edges('>X') on a split unified face boundary",
     ),
-    "unsupported-edges-revolved-side": (
-        f"{HEAD}.polyline([(0, -2), (2, -2), (2, 2), (0, 2)]).close()"
-        f'.revolve(360, (0, -2, 0), (0, 2, 0)).edges(">X"){TAIL}',
-        "Workplane.edges('>X'): the selection depends on an edge's place, "
-        "which arris does not decide as CadQuery's kernel does",
-    ),
     "unsupported-edges-type-selector": (
         f'{HEAD}.box(10, 8, 4).edges("%LINE"){TAIL}',
         "Workplane.edges('%LINE')",
@@ -443,6 +597,11 @@ def recorded(slug: str) -> OracleReport:
 
 def test_every_runtime_edges_fixture_is_cadquerys_refusal() -> None:
     committed = cases("runtime-edges-")
+    # An edge selection ends without a solid in cq. The oracle reports the bare edge.
+    side = committed.pop("runtime-edges-revolved-side")
+    report = recorded(side.slug)
+    assert report.measures is not None
+    assert report.measures.bounds == ((2.0, -2.0, 0.0), (2.0, 2.0, 0.0))
     assert sorted(committed) == sorted(RUNTIME)
     for slug, (program, message) in RUNTIME.items():
         assert committed[slug].program == program, slug

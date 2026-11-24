@@ -340,6 +340,9 @@ the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `pushPoints`,
 `fillet` and `chamfer` blend selected edges, or every edge of the stacked
 faces or solid, in one call that skips seams (ADR-0020). `cutBlind` cuts
 pending profiles in one call (ADR-0019).
+For verified full revolves of a cylinder or rivet profile, `edges` ranks
+the seams in the original drawing plane. The placement applies to the
+revolved solid and selections on it (ADR-0020, amendment of 2026-11-24).
 The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
 `arc`, `close`, `assemble` and `finalize` (ADR-0023).
 STEP export waits for its bundle in C2's order.

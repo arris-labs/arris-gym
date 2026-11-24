@@ -11,6 +11,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   now return `arris_refusal` with `OpDegenerateError`. Outcomes and scores
   can change with the recorded kernel version.
 
+- In the CadQuery dialect, axis edge selectors rank seams in the original
+  drawing plane on supported full cylinder and rivet revolves. This lets
+  selectors across the drawing plane reach the rivet's chamfers and fillets
+  and can change outcomes and scores.
+
 - `fidelity.SignedSolids` is new verdict evidence for `occt_wrong`. It holds
   each solid's signed volume, from an independent boundary flux, of an
   `invalid` oracle shape where arris built the part. `compare` accepts it

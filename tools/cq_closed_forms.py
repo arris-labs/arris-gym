@@ -89,6 +89,9 @@ one of them raises, never guessed):
   the strip of a slot across the head: a disc cut by a strip is elementary, the fillet's
   torus a quadrature over its angle (`screw_closed_form`).
 
+- **rivet**: a shank and a head swept from a circular arc, with three chamfered
+  or filleted rims. The blended meridian gives each measure (`rivet_closed_form`).
+
 - **crossing cylinders**: the one CAD-Recode program whose row nothing classes (`CROSSING`).
 - **CAD-Recode sketch solids** (`--sketch-boundary`): integrate the planar
   and cylindrical boundary in an oracle worker, independently of GProp's
@@ -2644,6 +2647,157 @@ def _literals(node: ast.Call) -> tuple[object, ...]:
     return tuple(ast.literal_eval(a) for a in node.args)
 
 
+def _rivet_point(values: object) -> tuple[float, float]:
+    if (
+        not isinstance(values, tuple)
+        or len(values) != 2
+        or not all(type(v) in (int, float) for v in values)
+    ):
+        raise ValueError("a rivet profile point needs two numbers")
+    return float(values[0]), float(values[1])
+
+
+def rivet_closed_form(text: str) -> dict[str, object]:
+    """The blended rivet's measures from its meridian. Refuse other arrangements."""
+    chain = _chain(text)
+    names = [name for name, _ in chain]
+    forward = ["moveTo", "lineTo", "lineTo", "lineTo", "threePointArc"]
+    reverse = ["moveTo", "threePointArc", "lineTo", "lineTo", "lineTo"]
+    if (
+        len(names) != 10
+        or names[0] != "Workplane"
+        or names[1:6] not in (forward, reverse)
+        or names[6:9] != ["close", "revolve", "edges"]
+        or names[9] not in ("chamfer", "fillet")
+        or any(call.keywords for _, call in chain)
+    ):
+        raise ValueError("not the rivet this tool reads")
+    frame, *profile, close, turn, select, blend = [_literals(call) for _, call in chain]
+    frames = {("XY",): (1, "<Z"), ("XZ",): (2, "<Y"), ("YZ",): (2, "<X")}
+    if frame not in tuple(frames) or close or turn != (360, (0, 0, 0), (0, 1, 0)):
+        raise ValueError("a rivet must be a full turn about the plane's y axis")
+    axis, selector = frames[frame]
+    if select != (selector,) or len(blend) != 1 or not isinstance(blend[0], int | float):
+        raise ValueError("a rivet must blend all three rims")
+    distance = float(blend[0])
+    if names[1:6] == forward:
+        foot, base, shank_top, shoulder = map(_rivet_point, profile[:4])
+        mid, pole = map(_rivet_point, profile[4])
+    else:
+        pole = _rivet_point(profile[0])
+        mid, shoulder = map(_rivet_point, profile[1])
+        shank_top, base, foot = map(_rivet_point, profile[2:])
+    shank, height = shank_top
+    head, shoulder_height = shoulder
+    if not (
+        foot == (0, 0)
+        and base == (shank, 0)
+        and shoulder_height == height
+        and 0 < distance < shank < mid[0] < head
+        and 2 * distance < height
+        and pole[0] == 0
+        and height < mid[1] < pole[1]
+    ):
+        raise ValueError("not a shank with a rounded rivet head and room for a blend")
+
+    # Circumcentre of the head's arc, in radius and height coordinates.
+    x, y = mid[0] - head, mid[1] - height
+    u, v = -head, pole[1] - height
+    determinant = 2 * (x * v - y * u)
+    if determinant <= 0:
+        raise ValueError("a rivet head must follow a counterclockwise arc toward the pole")
+    p, q = x * x + y * y, u * u + v * v
+    rc = head + (p * v - q * y) / determinant
+    zc = height + (x * q - u * p) / determinant
+    radius = math.hypot(head - rc, height - zc)
+    if distance >= radius:
+        raise ValueError("a rivet blend consumes the head arc")
+    start = math.atan2(height - zc, head - rc)
+    end = math.atan2(pole[1] - zc, -rc)
+
+    lines = [((0.0, 0.0), (shank - distance, 0.0)), ((shank, distance), (shank, height - distance))]
+    arcs: list[tuple[float, float, float, float, float]] = []
+    if names[-1] == "chamfer":
+        # A chamfer trims each side by a straight-line distance from the rim.
+        angle = start + 2 * math.asin(distance / (2 * radius))
+        rim = head - distance
+        lines.extend(
+            [
+                ((shank - distance, 0.0), (shank, distance)),
+                ((shank, height - distance), (shank + distance, height)),
+                ((rim, height), (rc + radius * math.cos(angle), zc + radius * math.sin(angle))),
+            ]
+        )
+    else:
+        # The third fillet is tangent to the shoulder and the circular head.
+        fillet_height = height + distance
+        rim = rc + math.sqrt((radius - distance) ** 2 - (fillet_height - zc) ** 2)
+        angle = math.atan2(fillet_height - zc, rim - rc)
+        arcs.extend(
+            [
+                (shank - distance, distance, distance, -math.pi / 2, 0.0),
+                (shank + distance, height - distance, distance, math.pi, math.pi / 2),
+                (rim, fillet_height, distance, -math.pi / 2, angle),
+            ]
+        )
+    if not (shank + distance < rim and start < angle < end):
+        raise ValueError("a rivet's blends overlap or consume its head")
+    lines.append(((shank + distance, height), (rim, height)))
+    arcs.append((rc, zc, radius, angle, end))
+
+    # A meridian ordinate (r, z) contributes pi r² dz to volume, z times
+    # that to moment, and 2 pi r ds to area. dz stays signed over an arc
+    # that passes the top of the head before it reaches the rotation axis.
+    volume = moment = area = 0.0
+    reach, top = shank, height
+    for (r0, z0), (r1, z1) in lines:
+        dr, dz = r1 - r0, z1 - z0
+        volume += math.pi * dz * (r0 * r0 + r0 * r1 + r1 * r1) / 3
+        # Integral of the cubic (r0 + dr t)^2 (z0 + dz t) for t in [0, 1].
+        moment += (
+            math.pi
+            * dz
+            * (r0 * r0 * (z0 + dz / 2) + r0 * dr * (z0 + 2 * dz / 3) + dr * dr * (z0 / 3 + dz / 4))
+        )
+        area += math.pi * (r0 + r1) * math.hypot(dr, dz)
+    for r_center, z_center, r_arc, t0, t1 in arcs:
+        dv, dm, da, r_max, z_max = _rivet_arc(r_center, z_center, r_arc, t0, t1)
+        volume += dv
+        moment += dm
+        area += da
+        reach, top = max(reach, r_max), max(top, z_max)
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": [moment / volume if k == axis else 0.0 for k in range(3)],
+        "bounds": [
+            [0.0 if k == axis else -reach for k in range(3)],
+            [top if k == axis else reach for k in range(3)],
+        ],
+        "note": f"{names[-1]} of the three rivet rims, by the meridian in rivet_closed_form",
+    }
+
+
+def _rivet_arc(
+    rc: float, zc: float, radius: float, start: float, end: float
+) -> tuple[float, float, float, float, float]:
+    def r(t: float) -> float:
+        return rc + radius * math.cos(t)
+
+    def z(t: float) -> float:
+        return zc + radius * math.sin(t)
+
+    volume = math.pi * radius * gauss(lambda t: r(t) ** 2 * math.cos(t), start, end)
+    moment = math.pi * radius * gauss(lambda t: z(t) * r(t) ** 2 * math.cos(t), start, end)
+    sweep = rc * (end - start) + radius * (math.sin(end) - math.sin(start))
+    area = 2 * math.pi * radius * abs(sweep)
+    lo, hi = sorted((start, end))
+    reach = rc + radius if lo <= 0 <= hi else max(r(start), r(end))
+    top = zc + radius if lo <= math.pi / 2 <= hi else max(z(start), z(end))
+    return volume, moment, area, reach, top
+
+
 def flanged_gear_closed_form(text: str) -> dict[str, object]:
     """The `ClosedForm` JSON of a flanged `spur_gear_*` program (two `union`s, two `cut`s).
 
@@ -4618,6 +4772,7 @@ FORM_FAMILIES = (
     "double_simplex_sprocket_",
     "sprocket_",
     "pan_head_screw_",
+    "rivet_",
     "spur_gear_",
     "hex_nut_",
 )
@@ -4655,6 +4810,8 @@ def closed_form_for(stem: str, text: str, sha256: str) -> dict[str, object] | No
         return plate_closed_form(text)
     if stem.startswith("pan_head_screw_"):
         return screw_closed_form(text)
+    if stem.startswith("rivet_"):
+        return rivet_closed_form(text)
     if stem.startswith("spur_gear_"):
         return flanged_gear_closed_form(text) if ".union(" in text else gear_closed_form(text)
     if stem.startswith("hex_nut_"):

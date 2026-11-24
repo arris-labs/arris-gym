@@ -572,10 +572,10 @@ spindle-torus refusal.
 `runtime-edges-*` and `unsupported-edges-*` of plans/lift-edges-and-blends step 2
 (`tests/test_cq_edges.py`, which also holds step 3's `|X |Y |Z` and `'>Z or <Z'` on a box, a
 cylinder and a drilled plate), each beside the oracle's recorded report: `edges(">Z")` on an
-empty stack is CadQuery's `ValueError` for an empty selection, and the oracle builds what
-`cq` refuses: a revolved wall's `>X`, where its seam, which no record places, may tie the rims
-(ADR-0020 rule 2 and its amendment), the
-type selector `%LINE`, and a `box` on a stack of edges (rule 6). A program that ends in
+empty stack is CadQuery's `ValueError` for an empty selection. The oracle builds the
+type selector `%LINE` and a `box` on a stack of edges, which `cq` refuses.
+`runtime-edges-revolved-side` selects the seam on a full cylinder revolve on
+`XY`, then ends with a selection holding no solid (ADR-0020). A program that ends in
 edges has no `ok-` fixture: the oracle reports a bare edge as a shape of volume 0 and
 `cq` a result holding no solid, so what `edges` keeps is held on the stack in
 `tests/test_cq_edges.py` and by the part a blend makes of it (`ok-fillet-*`, step 4).

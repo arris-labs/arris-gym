@@ -25,6 +25,7 @@ from arris_gym.cq._selector import (
     SELECTORS,
     Edges,
     Faces,
+    RevolveSeams,
     Seam,
     edges_of_faces,
     edges_of_solid,
@@ -317,6 +318,54 @@ class _CenterPoint(_Path):
     """The origin point left by center, with no pending path."""
 
 
+@dataclass(frozen=True, kw_only=True)
+class _ClosedPath(arris.build.Sketch):
+    """A drawn loop with its control points' range along the workplane's x direction."""
+
+    u_range: tuple[float, float]
+
+
+def _revolve_seams(
+    solid: arris.build.Solid,
+    sketch: arris.build.Sketch,
+    plane: arris.build.Workplane,
+    start_at: _XYZ,
+    end_at: _XYZ,
+    start: _XYZ,
+) -> RevolveSeams | None:
+    """Place seams on the drawing side for the verified cylinder and rivet profiles."""
+    if (
+        not isinstance(sketch, _ClosedPath)
+        or sketch.plane != plane
+        or start_at[0] != end_at[0]
+        or start_at[2] != 0.0
+        or end_at[2] != 0.0
+        or any(v not in (-1.0, 0.0, 1.0) for v in (*plane.x, *plane.y))
+    ):
+        return None
+    lo, hi = sketch.u_range
+    if lo == start_at[0] < hi:
+        sign = 1.0
+    elif lo < start_at[0] == hi:
+        sign = -1.0
+    else:
+        return None
+    model = solid.model
+    kinds = sorted(model.surface(face).kind for face in model.faces(solid.body))
+    if kinds not in (
+        ["cylinder", "plane", "plane"],
+        ["cylinder", "plane", "plane", "sphere"],
+        ["cylinder", "plane", "plane", "torus"],
+    ):
+        return None
+    # A cylinder has two rims and a line seam. The head adds a rim and an arc seam.
+    if len(edges_of_solid(solid)) != (3 if len(kinds) == 3 else 5):
+        return None
+    axial = next(k for k, v in enumerate(plane.y) if abs(v) == 1.0)
+    x, y, z = plane.x
+    return RevolveSeams(solid, start, axial, (sign * x, sign * y, sign * z))
+
+
 def _what(selected: Faces | Edges) -> str:
     """`faces` or `edges`: what a stack of selected objects holds, for a message."""
     return "faces" if isinstance(selected, Faces) else "edges"
@@ -335,14 +384,14 @@ def _uv(point: object, refusal: str) -> tuple[float, float]:
     return (pair[0], pair[1])
 
 
-def _axis_point(point: object) -> tuple[float, ...]:
+def _axis_point(point: object) -> _XYZ:
     """A `revolve` axis point as numbers: two or three, else outside the subset."""
     numbers = numbers_of(point, (2, 3))
     if numbers is None:
         shape = shape_of(point)
         of = f"tuple of {shape}" if shape.endswith(" numbers") else shape
         raise UnsupportedApi(f"Workplane.revolve(num, {of})")
-    return numbers
+    return (numbers[0], numbers[1], numbers[2] if len(numbers) == 3 else 0.0)
 
 
 def _one_sided_sketch_extrusion[**P](
@@ -384,13 +433,22 @@ class Workplane:
     Workplane.text
     """
 
-    __slots__ = ("_carried", "_parent", "_plane", "_seams", "_stack", "_through_plane")
+    __slots__ = (
+        "_carried",
+        "_parent",
+        "_plane",
+        "_revolve_seams",
+        "_seams",
+        "_stack",
+        "_through_plane",
+    )
 
     _plane: arris.build.Workplane
     _stack: tuple[object, ...]
     _parent: Workplane | None
     _carried: tuple[_PendingWire, ...]
     _through_plane: arris.build.Workplane | None
+    _revolve_seams: RevolveSeams | None
     # Where Open CASCADE puts the seam of each cylinder this chain built, or
     # one of its operands did; `None` once a call made a seam no record places
     # (ADR-0020 rule 2, amended). `edges` reads it.
@@ -413,6 +471,7 @@ class Workplane:
         object.__setattr__(self, "_parent", None)
         object.__setattr__(self, "_carried", ())
         object.__setattr__(self, "_seams", ())
+        object.__setattr__(self, "_revolve_seams", None)
         object.__setattr__(self, "_through_plane", None)
 
     def _derive(self, *objects: object) -> Workplane:
@@ -423,6 +482,7 @@ class Workplane:
         object.__setattr__(child, "_parent", self)
         object.__setattr__(child, "_carried", self._carried)
         object.__setattr__(child, "_seams", self._seams)
+        object.__setattr__(child, "_revolve_seams", self._revolve_seams)
         object.__setattr__(child, "_through_plane", self._through_plane)
         return child
 
@@ -812,9 +872,9 @@ class Workplane:
         before. A compound's edges are those of every piece.
         The selection is the one object on the new
         stack, which `fillet` and `chamfer` take; the solid stays in the chain.
-        A degenerate edge is no candidate. A seam of a cylinder this chain built
-        is ranked where Open CASCADE puts it, which the chain records (ADR-0020's
-        amendment). Raises `UnsupportedApi` for any other selector and where the
+        A degenerate edge is no candidate. The chain records where Open CASCADE
+        places seams on cylinders and verified full revolves (ADR-0020 rule 2).
+        Raises `UnsupportedApi` for any other selector and where the
         selection depends on an edge's place arris does not decide as CadQuery's
         kernel does (a seam no record places on a face about another axis, an
         ellipse arc or B-spline edge able to reach the kept cluster), or where
@@ -831,16 +891,31 @@ class Workplane:
             raise UnsupportedApi(f"Workplane.edges({selector!r})")
         for o in self._stack:
             if isinstance(o, Edges):
-                kept = select_edges(o.solid, o.edges, selector, self._seams)
+                kept = select_edges(
+                    o.solid, o.edges, selector, self._seams, revolve=self._revolve_seams
+                )
                 return self._derive(Edges(o.solid, kept))
             if isinstance(o, Faces):
                 candidates, fragments = edges_of_faces(o.solid, o.groups)
-                kept = select_edges(o.solid, candidates, selector, self._seams, fragments=fragments)
+                kept = select_edges(
+                    o.solid,
+                    candidates,
+                    selector,
+                    self._seams,
+                    fragments=fragments,
+                    revolve=self._revolve_seams,
+                )
                 return self._derive(Edges(o.solid, kept))
         solids = self._solids()
         if solids:
             (solid,) = solids
-            kept = select_edges(solid, edges_of_solid(solid), selector, self._seams)
+            kept = select_edges(
+                solid,
+                edges_of_solid(solid),
+                selector,
+                self._seams,
+                revolve=self._revolve_seams,
+            )
             return self._derive(Edges(solid, kept))
         if selector is not None and (
             not self._stack or self._has_sketch() or isinstance(self._stack[0], _CenterPoint)
@@ -2030,7 +2105,16 @@ class Workplane:
         else:
             segments = (*segments, _Segment(last.start))
         loop = arris.Loop.path(last.start, [segment.built() for segment in segments])
-        return self._derive(arris.build.Sketch(self._plane, loop))
+        profile_u = [last.start[0]]
+        profile_u.extend(
+            point[0]
+            for segment in segments
+            for point in (segment.to, segment.via)
+            if point is not None
+        )
+        return self._derive(
+            _ClosedPath(self._plane, loop, u_range=(min(profile_u), max(profile_u)))
+        )
 
     @census_form("Workplane.revolve", [("num",), ("tuple",), ("tuple",)])
     def revolve(
@@ -2078,8 +2162,12 @@ class Workplane:
         made = arris.build.default_model().revolve(
             sketch.profile(), start, direction, degrees * _REVOLVE_RADIANS_PER_DEGREE
         )
-        # Where Open CASCADE starts a turned face is not modelled: no seam is placed.
-        return self._combined(arris.build.Solid.of(made))._with_seams(None)._consume_wires()
+        solid = arris.build.Solid.of(made)
+        result = self._combined(solid)._with_seams(None)._consume_wires()
+        if degrees == 360.0 and result._stack[0] is solid:
+            placement = _revolve_seams(solid, sketch, self._plane, start_at, end_at, start)
+            object.__setattr__(result, "_revolve_seams", placement)
+        return result
 
     @census_form("Workplane.union", [None])
     def union(self, toUnion: Workplane) -> Workplane:

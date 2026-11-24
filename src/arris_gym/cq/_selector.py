@@ -27,6 +27,7 @@ __all__ = [
     "SELECTORS",
     "Edges",
     "Faces",
+    "RevolveSeams",
     "Seam",
     "edges_of_faces",
     "edges_of_solid",
@@ -120,6 +121,23 @@ class Seam:
     axis: tuple[float, float, float]
     radius: float
     side: tuple[float, float, float]
+
+
+@dataclass(frozen=True)
+class RevolveSeams:
+    """The meridian of a verified full revolve, scoped to its original solid."""
+
+    solid: arris.build.Solid
+    origin: tuple[float, float, float]
+    axial: int
+    side: tuple[float, float, float]
+
+    def key(self, centre: tuple[float, float, float], axis: int) -> float:
+        """Project the seam centre at the generator's azimuth (ADR-0020 rule 2)."""
+        if axis == self.axial:
+            return centre[axis]
+        radius = math.hypot(*(centre[k] - self.origin[k] for k in range(3) if k != self.axial))
+        return self.origin[axis] + radius * self.side[axis]
 
 
 def seams_of(tool: arris.build.Solid, side: Sequence[float]) -> tuple[Seam, ...] | None:
@@ -529,13 +547,14 @@ def _edge_keys(
     edges: Sequence[arris.Edge],
     axis: int,
     seams: Sequence[Seam] | None = None,
+    revolve: RevolveSeams | None = None,
 ) -> tuple[list[float], list[float]]:
     """Each edge's key along `axis` and how far it is trusted (ADR-0020 rule 2).
 
     A width of 0 is an exact key. A seam's key is exact where its face is a
     surface of revolution about an axis parallel to `axis`, or where `seams`
-    place it as Open CASCADE does (`_placed_key`); else it lies anywhere on its
-    face, so it is the face's box (centre, half the extent).
+    or `revolve` place it as Open CASCADE does. Otherwise the interval is
+    the face's box (centre, half the extent).
     An ellipse arc's or a B-spline edge's key is its polyline's centre of
     mass at a margin of the solid's box diagonal.
     """
@@ -552,6 +571,10 @@ def _edge_keys(
         centre = _exact_centre(model, edge)
         faces = model.faces_of(solid.body, edge)
         if len(faces) == 1:
+            if revolve is not None and centre is not None:
+                keys.append(revolve.key(centre, axis))
+                widths.append(0.0)
+                continue
             info = model.surface(faces[0])
             along = (
                 info.axis is not None
@@ -611,6 +634,7 @@ def select_edges(
     seams: Sequence[Seam] | None = None,
     *,
     fragments: frozenset[int] = frozenset(),
+    revolve: RevolveSeams | None = None,
 ) -> tuple[arris.Edge, ...]:
     """The `edges` of `solid` that CadQuery's `selector` keeps (ADR-0020).
 
@@ -639,7 +663,9 @@ def select_edges(
         both = {
             edge.index
             for side in selector.split(" or ")
-            for edge in select_edges(solid, edges, side, seams, fragments=fragments)
+            for edge in select_edges(
+                solid, edges, side, seams, fragments=fragments, revolve=revolve
+            )
         }
         return tuple(e for e in edges if e.index in both)
     if selector is None:
@@ -648,7 +674,8 @@ def select_edges(
         selected = _parallel(solid.model, edges, _AXIS[selector[1]])
     else:
         maximum = selector[0] == ">"
-        keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]], seams)
+        placement = revolve if revolve is not None and revolve.solid is solid else None
+        keys, widths = _edge_keys(solid, edges, _AXIS[selector[1]], seams, placement)
         fragment_slots = [i for i, edge in enumerate(edges) if edge.index in fragments]
         if fragment_slots:
             # A joined edge's key is a length-weighted mean of its fragment
