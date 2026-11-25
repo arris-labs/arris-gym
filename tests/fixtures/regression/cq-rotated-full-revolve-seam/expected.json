@@ -1,0 +1,13 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 49.51280921751413,
+    "area": 71.55495766254153,
+    "centroid": [0.0, 0.0, 0.0],
+    "bounds": [[-2.0, -2.0, -2.0], [2.0, 2.0, 2.0]],
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "A rotated frame has inexact axis components, so edges(\">X\") refuses to rank the full-revolve seam."
+}

@@ -265,8 +265,10 @@ seam alone. Reversing the direction of the axis or the drawing order keeps
 the seam on the side on which the generator was drawn.
 
 **Rule 2, amended.** Record the axis and drawing side after a full turn
-of a closed path about its local y direction on a world-axis-aligned
-plane. The axis lies in the profile plane at one extreme of its drawing
+of a closed path about its local y direction on a plane with exact world
+axis directions. The local x and y vectors have components in
+`{-1, 0, 1}`, as on the named workplanes. The revolution axis lies in
+the profile plane at one extreme of its drawing
 points. The solid has two plane faces and a cylinder with two rims and
 one seam. An optional spherical or toroidal head adds one rim and one
 seam. The seam's centre of mass has the same axial
@@ -277,7 +279,11 @@ cylinder's axial line seam under rule 3.
 The placement belongs to the original solid, including when the stack
 holds its faces or a previous edge selection. A combine that changes the
 solid calls for fresh evidence. A partial turn keeps its ordinary boundary
-edges. Cones, turned planes with oblique axes, and changed solids use the
-existing bounded rule when the placement is unknown, as does the polar
-bore in the previous amendment. A bare edge selection still resolves to
-no solid (`runtime-edges-revolved-side`).
+edges. Cones, changed solids and planes with inexact frame components
+use the bounded rule, as does the polar bore in the previous amendment.
+For example, rotating `XY` by 180° about Z gives inexact frame components.
+The bounded rule leaves the revolved cylinder's `edges("<X")`
+`unsupported_api`, where CadQuery selects the line seam. The neighboring
+`edges(">X")` selects both rims in CadQuery
+(`regression/cq-rotated-full-revolve-seam`). A bare edge selection still
+resolves to no solid (`runtime-edges-revolved-side`).
