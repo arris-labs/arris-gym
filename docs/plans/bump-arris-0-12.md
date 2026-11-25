@@ -74,7 +74,7 @@ verification, **[3]** unproven design. Grades map to tiers.
   single solid with a cavity and a mismatched oracle solid count.
   Review the 25 `torus_link` rows with count differences and retain any
   separate measure disagreements for step 5.
-- [ ] Step 5 **[2]**. Resolve the measure disagreements among `bellows`,
+- [x] Step 5 **[2]**. Resolve the measure disagreements among `bellows`,
   `torus_link`, `dome_cap` and `shaft_collar` with closed forms or
   independently checked oracle evidence. Reuse
   `cq-revolved-cone-notches-bounds` for the clipped rims. Require the
@@ -88,8 +88,9 @@ verification, **[3]** unproven design. Grades map to tiers.
 - [ ] Step 7 **[2] [conductor-run]**. Run `tools/cq_corpus.py` on BenchCAD
   and CAD-Recode from fresh work directories with pinned `--oracle-rows`.
   Review changed rows against 0.11.1 and refresh the C2 baselines,
-  verdicts and assertions together. Confirm byte-identical oracle rows
-  and record the torus–box check against its closed form.
+  verdicts and assertions together using step 5's checked measure verdicts.
+  Confirm byte-identical oracle rows and record the torus–box check
+  against its closed form.
 - [ ] Step 8 **[2] [conductor-run]**. Run `arris-gym rescore benchcad`
   at 2 and 16 workers. Compare the two outputs and use
   `tools/rescore_diff.py` against the committed 0.11.1 evidence. Explain
@@ -151,4 +152,10 @@ versioning.
   A single shell is one solid. An unavailable count leaves agreement
   undetermined for a body with several shells. All 25 count-only
   `torus_link` rows agree on replay. Three measure gaps remain for step 5.
+- Settled in step 5. All 79 measure gaps have checked verdicts. Clipped
+  rim and cross-hole bounds account for 51 arris bugs. The meridian
+  calculation and independent trim integrals establish 28 oracle
+  measurement errors. The generator writes the measure verdicts byte
+  for byte from the pinned oracle reports. See
+  `tests/fixtures/c2/benchcad/measure-replay.md`.
 - ⚠ OPEN: Step 9 (human) authorizes pushing the plan branch for CI.

@@ -1,0 +1,1087 @@
+{
+ "bellows_000163_s20260507": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_000367_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_001313_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_001795_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_002132_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_003270_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_003367_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_003530_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004132_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004190_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004544_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004831_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004879_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_005109_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_005535_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_006086_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_008482_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_008780_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_008847_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_009794_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_009976_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_010156_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_010702_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_010863_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_011354_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_011797_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_011849_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_012536_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_012993_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_013044_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_013200_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_015057_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_015783_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_016906_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_017493_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_018509_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_018626_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_019562_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_019711_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_019961_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "dome_cap_002178_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 22283.77055202357,
+   "bounds": [
+    [
+     -33.370000000381104,
+     0,
+     -33.370000000381104
+    ],
+    [
+     33.370000000381104,
+     69.43,
+     33.370000000381104
+    ]
+   ],
+   "centroid": [
+    0,
+    35.45039289306134,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 160413.10708393765
+  }
+ },
+ "dome_cap_002478_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 31212.455405080236,
+   "bounds": [
+    [
+     -39.68000000000126,
+     0,
+     -39.68000000000126
+    ],
+    [
+     39.68000000000126,
+     83.62,
+     39.68000000000126
+    ]
+   ],
+   "centroid": [
+    0,
+    35.7864669655073,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 342724.16435994965
+  }
+ },
+ "dome_cap_002793_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 55724.84971279821,
+   "bounds": [
+    [
+     -58.700000000101326,
+     0,
+     -58.700000000101326
+    ],
+    [
+     58.700000000101326,
+     95.25,
+     58.700000000101326
+    ]
+   ],
+   "centroid": [
+    0,
+    47.63523989322349,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 625045.5253635809
+  }
+ },
+ "dome_cap_004293_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 42079.99202000191,
+   "bounds": [
+    [
+     -48.320000000000014,
+     0,
+     -48.320000000000014
+    ],
+    [
+     48.320000000000014,
+     93.49,
+     48.320000000000014
+    ]
+   ],
+   "centroid": [
+    0,
+    39.548074875803636,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 557624.1728331004
+  }
+ },
+ "dome_cap_004871_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 7245.899256811231,
+   "bounds": [
+    [
+     -19.67000000002739,
+     0,
+     -19.67000000002739
+    ],
+    [
+     19.67000000002739,
+     38.42,
+     19.67000000002739
+    ]
+   ],
+   "centroid": [
+    0,
+    18.249528622095276,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 33105.25243946424
+  }
+ },
+ "dome_cap_005523_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 47284.77457854541,
+   "bounds": [
+    [
+     -57.11000000010272,
+     0,
+     -57.11000000010272
+    ],
+    [
+     57.11000000010272,
+     77.78,
+     57.11000000010272
+    ]
+   ],
+   "centroid": [
+    0,
+    33.86629037420718,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 537004.1608636568
+  }
+ },
+ "dome_cap_007777_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 21781.501791333525,
+   "bounds": [
+    [
+     -32.98000000005955,
+     0,
+     -32.98000000005955
+    ],
+    [
+     32.98000000005955,
+     60.04,
+     32.98000000005955
+    ]
+   ],
+   "centroid": [
+    0,
+    30.99531354631164,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 117698.8651104291
+  }
+ },
+ "dome_cap_008257_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 27729.675016675254,
+   "bounds": [
+    [
+     -33.440000000422536,
+     0,
+     -33.440000000422536
+    ],
+    [
+     33.440000000422536,
+     74.62,
+     33.440000000422536
+    ]
+   ],
+   "centroid": [
+    0,
+    39.70897425377763,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 152666.76694701854
+  }
+ },
+ "dome_cap_009007_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 76873.86133863458,
+   "bounds": [
+    [
+     -65.92000000003894,
+     0,
+     -65.92000000003894
+    ],
+    [
+     65.92000000003894,
+     116.43,
+     65.92000000003894
+    ]
+   ],
+   "centroid": [
+    0,
+    60.60987161320543,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 938971.5250365495
+  }
+ },
+ "dome_cap_009386_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 63188.52935962439,
+   "bounds": [
+    [
+     -55.28000000014541,
+     0,
+     -55.28000000014541
+    ],
+    [
+     55.28000000014541,
+     104.22,
+     55.28000000014541
+    ]
+   ],
+   "centroid": [
+    0,
+    51.648571887764746,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 642779.1851688799
+  }
+ },
+ "dome_cap_010072_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 21629.564601220944,
+   "bounds": [
+    [
+     -36.19000000000503,
+     0,
+     -36.19000000000503
+    ],
+    [
+     36.19000000000503,
+     59.88,
+     36.19000000000503
+    ]
+   ],
+   "centroid": [
+    0,
+    30.078089877151474,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 149597.68583681493
+  }
+ },
+ "dome_cap_010623_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 40048.41846336548,
+   "bounds": [
+    [
+     -46.940000000007345,
+     0,
+     -46.940000000007345
+    ],
+    [
+     46.940000000007345,
+     77.33,
+     46.940000000007345
+    ]
+   ],
+   "centroid": [
+    0,
+    39.12844893067484,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 319345.7369598885
+  }
+ },
+ "dome_cap_010660_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 56027.90922852991,
+   "bounds": [
+    [
+     -60.91000000006447,
+     0,
+     -60.91000000006447
+    ],
+    [
+     60.91000000006447,
+     96.92,
+     60.91000000006447
+    ]
+   ],
+   "centroid": [
+    0,
+    44.53154578436541,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 775586.7852141276
+  }
+ },
+ "dome_cap_011331_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 20493.381094958324,
+   "bounds": [
+    [
+     -34.09000000015213,
+     0,
+     -34.09000000015213
+    ],
+    [
+     34.09000000015213,
+     62.69,
+     34.09000000015213
+    ]
+   ],
+   "centroid": [
+    0,
+    29.96516814872984,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 157358.5737668893
+  }
+ },
+ "dome_cap_012275_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 38375.14190781038,
+   "bounds": [
+    [
+     -42.490000000148186,
+     0,
+     -42.490000000148186
+    ],
+    [
+     42.490000000148186,
+     86.88,
+     42.490000000148186
+    ]
+   ],
+   "centroid": [
+    0,
+    42.87269890336688,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 339933.16430140537
+  }
+ },
+ "dome_cap_012413_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17240.79032090949,
+   "bounds": [
+    [
+     -33.32000000000074,
+     0,
+     -33.32000000000074
+    ],
+    [
+     33.32000000000074,
+     56.86,
+     33.32000000000074
+    ]
+   ],
+   "centroid": [
+    0,
+    23.56956647664846,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 157833.24533007323
+  }
+ },
+ "dome_cap_012565_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 97706.14163659271,
+   "bounds": [
+    [
+     -73.70000000007225,
+     0,
+     -73.70000000007225
+    ],
+    [
+     73.70000000007225,
+     117.63,
+     73.70000000007225
+    ]
+   ],
+   "centroid": [
+    0,
+    56.222384523790076,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 1262946.9395906073
+  }
+ },
+ "dome_cap_012908_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 65993.76384374937,
+   "bounds": [
+    [
+     -68.6100000000012,
+     0,
+     -68.6100000000012
+    ],
+    [
+     68.6100000000012,
+     90.51,
+     68.6100000000012
+    ]
+   ],
+   "centroid": [
+    0,
+    38.922123299697944,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 896317.0813281662
+  }
+ },
+ "dome_cap_013156_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 41506.58260902752,
+   "bounds": [
+    [
+     -53.52000000022122,
+     0,
+     -53.52000000022122
+    ],
+    [
+     53.52000000022122,
+     76.84,
+     53.52000000022122
+    ]
+   ],
+   "centroid": [
+    0,
+    36.30127798384598,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 429863.6934363398
+  }
+ },
+ "dome_cap_014304_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 47872.68014809548,
+   "bounds": [
+    [
+     -46.53000000005775,
+     0,
+     -46.53000000005775
+    ],
+    [
+     46.53000000005775,
+     100.28,
+     46.53000000005775
+    ]
+   ],
+   "centroid": [
+    0,
+    53.626095475870166,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 406720.9725581778
+  }
+ },
+ "dome_cap_015600_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 18527.146535815547,
+   "bounds": [
+    [
+     -30.97000000000168,
+     0,
+     -30.97000000000168
+    ],
+    [
+     30.97000000000168,
+     56.0,
+     30.97000000000168
+    ]
+   ],
+   "centroid": [
+    0,
+    23.45979449348598,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 134104.73710932932
+  }
+ },
+ "dome_cap_016619_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 32278.39791734213,
+   "bounds": [
+    [
+     -34.33000000009944,
+     0,
+     -34.33000000009944
+    ],
+    [
+     34.33000000009944,
+     83.49,
+     34.33000000009944
+    ]
+   ],
+   "centroid": [
+    0,
+    45.8915904587747,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 176971.70427302655
+  }
+ },
+ "dome_cap_016831_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 53379.573124622824,
+   "bounds": [
+    [
+     -58.3600000002325,
+     0,
+     -58.3600000002325
+    ],
+    [
+     58.3600000002325,
+     87.87,
+     58.3600000002325
+    ]
+   ],
+   "centroid": [
+    0,
+    42.208063081398905,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 584365.1258657479
+  }
+ },
+ "dome_cap_018926_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 76558.31099603706,
+   "bounds": [
+    [
+     -68.45000000014194,
+     0,
+     -68.45000000014194
+    ],
+    [
+     68.45000000014194,
+     103.24,
+     68.45000000014194
+    ]
+   ],
+   "centroid": [
+    0,
+    46.31399182506412,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 1033923.9220979062
+  }
+ },
+ "dome_cap_019965_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 70014.78775956317,
+   "bounds": [
+    [
+     -64.2700000002018,
+     0,
+     -64.2700000002018
+    ],
+    [
+     64.2700000002018,
+     102.12,
+     64.2700000002018
+    ]
+   ],
+   "centroid": [
+    0,
+    51.45392523621766,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 784514.67029804
+  }
+ },
+ "shaft_collar_000264_s20260507": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_000733_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_001358_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_004395_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_004597_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_005873_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_008009_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_011081_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_015251_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_017642_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_018360_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "torus_link_004364_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 73358.72047,
+   "bounds": [
+    [
+     -103.9400001,
+     -21.5800001,
+     -103.9400001
+    ],
+    [
+     109.54,
+     21.5800001,
+     103.9400001
+    ]
+   ],
+   "centroid": [
+    -4.8e-07,
+    0.0,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 759868.9311
+  }
+ },
+ "torus_link_017596_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 44985.4978,
+   "bounds": [
+    [
+     -102.65,
+     -12.2600001,
+     -97.6600001
+    ],
+    [
+     102.65,
+     12.2600001,
+     97.6600001
+    ]
+   ],
+   "centroid": [
+    3e-08,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 255847.4265
+  }
+ },
+ "torus_link_019579_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 15710.91987,
+   "bounds": [
+    [
+     -66.3500001,
+     -6.2800001,
+     -66.3500001
+    ],
+    [
+     71.01,
+     6.2800001,
+     66.3500001
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 47634.47245
+  }
+ }
+}

@@ -863,6 +863,140 @@ def bellows_closed_form(text: str) -> dict[str, object]:
     }
 
 
+_DOME = re.compile(
+    rf'cq\.Workplane\("XY"\)\s*\.moveTo\(0\.0, 0\.0\)\s*'
+    rf"\.lineTo\({_NUMBER}, 0\.0\)\s*\.lineTo\({_NUMBER}, {_NUMBER}\)\s*"
+    rf"\.threePointArc\(\({_NUMBER}, {_NUMBER}\), \(0\.0, {_NUMBER}\)\)\s*"
+    r"\.close\(\)\s*\.revolve\(360, \(0, 0, 0\), \(0, 1, 0\)\)\s*"
+    rf'(?:\.faces\("<Y"\)\.workplane\(\)\s*\.circle\({_NUMBER}\)\s*'
+    rf"\.cutBlind\(-{_NUMBER}\)\s*)?"
+    rf'\.faces\("<Y"\)\.workplane\(\)\s*\.polarArray\({_NUMBER}, 0, 360, (\d+)\)\s*'
+    rf"\.hole\({_NUMBER}\)\s*"
+    rf'(?:\.faces\("<Y"\)\s*\.edges\(\)\s*\.(chamfer|fillet)\({_NUMBER}\)\s*)?\)'
+)
+
+
+def dome_closed_form(text: str) -> dict[str, object]:
+    """Measure a drilled circular-arc dome from its meridian and cutter discs."""
+    match = _DOME.search(text)
+    if match is None:
+        raise ValueError("not the dome this tool reads")
+    r, start_r, spring, mx, my, top = map(float, match.groups()[:6])
+    pocket, depth, pitch, holes, diameter, blend, size = match.groups()[6:]
+    b, d, p, a, c = (float(value or 0) for value in (pocket, depth, pitch, diameter, size))
+    a /= 2
+    n = int(holes)
+    if not (
+        r == start_r
+        and 0 <= c < spring < top
+        and 0 <= d < spring
+        and n >= 2
+        and 0 < a < p * math.sin(math.pi / n)
+        and p + a < r
+        and 0 <= b < r
+    ):
+        raise ValueError("dome dimensions outside the closed form")
+    if c and (
+        r - b <= 2 * c
+        or (b and d <= c)
+        or (b and p + a + c >= b)
+        or (not b and (p + a + 2 * c >= r or a + c >= p * math.sin(math.pi / n)))
+    ):
+        raise ValueError("dome blends meet another boundary")
+
+    # Circumcentre relative to the arc start.
+    u, v = mx - r, my - spring
+    w, z = -r, top - spring
+    determinant = 2 * (u * z - v * w)
+    if determinant <= 0:
+        raise ValueError("dome arc does not turn toward the axis")
+    cx = r + ((u * u + v * v) * z - (w * w + z * z) * v) / determinant
+    cy = spring + (u * (w * w + z * z) - w * (u * u + v * v)) / determinant
+    radius = math.hypot(r - cx, spring - cy)
+    begin = math.atan2(spring - cy, r - cx)
+    end = math.atan2(top - cy, -cx)
+    if not (-math.pi / 4 < begin < math.pi / 4 and math.pi / 4 < end < 3 * math.pi / 4):
+        raise ValueError("dome arc does not run from the rim to the axis")
+
+    def arc_r(t: float) -> float:
+        return cx + radius * math.cos(t)
+
+    def roof(rho: float) -> float:
+        return cy + math.sqrt(radius**2 - (rho - cx) ** 2)
+
+    def half_angle(rho: float) -> float:
+        cosine = (rho**2 + p * p - a * a) / (2 * rho * p)
+        return math.acos(min(1.0, max(-1.0, cosine)))
+
+    def over_hole(fn: Callable[[float], float], upper: float) -> float:
+        return tanh_sinh(lambda rho: 2 * rho * half_angle(rho) * fn(rho), p - a, upper)
+
+    def section(t: float) -> float:
+        return math.pi * arc_r(t) ** 2 * radius * math.cos(t)
+
+    disk = math.pi * a * a
+    pocket_disk = math.pi * b * b
+    shared = over_hole(lambda _: 1, min(b, p + a))
+    volume = math.pi * r * r * spring + tanh_sinh(section, begin, end)
+    moment = math.pi * r * r * spring**2 / 2 + tanh_sinh(
+        lambda t: section(t) * (cy + radius * math.sin(t)), begin, end
+    )
+    area = (
+        math.pi * r * r
+        + 2 * math.pi * r * spring
+        + tanh_sinh(lambda t: 2 * math.pi * arc_r(t) * radius, begin, end)
+    )
+    volume -= pocket_disk * d + n * (over_hole(roof, p + a) - d * shared)
+    moment -= (
+        pocket_disk * d * d / 2
+        + n * (over_hole(lambda rho: roof(rho) ** 2, p + a) - d * d * shared) / 2
+    )
+    pocket_wall = 2 * math.pi * b * d
+    if p - a < b < p + a:
+        pocket_wall -= n * 2 * b * half_angle(b) * d
+    wall = (
+        2
+        * a
+        * tanh_sinh(lambda t: roof(math.hypot(p + a * math.cos(t), a * math.sin(t))), 0, math.pi)
+    )
+    if b > p - a:
+        angle = math.acos(max(-1.0, min(1.0, (p * p + a * a - b * b) / (2 * p * a))))
+        wall -= 2 * a * d * angle
+    roof_patch = over_hole(lambda rho: radius / (roof(rho) - cy), p + a)
+    # The base and pocket floor together lose one disc per through hole.
+    area += pocket_wall + n * (wall - roof_patch - disk)
+
+    def cutback(y: float) -> float:
+        return c - y if blend == "chamfer" else c - math.sqrt(y * (2 * c - y))
+
+    for rim, sign, count in ((r, -1, 1), (b or a, 1, 1 if b else n)):
+
+        def removed(y: float, rim: float = rim, sign: int = sign) -> float:
+            e = cutback(y)
+            return math.pi * e * (2 * rim + sign * e)
+
+        volume -= count * tanh_sinh(removed, 0, c)
+        moment -= count * tanh_sinh(lambda y: y * removed(y), 0, c)
+        if blend == "chamfer":
+            patch = 2 * math.pi * (rim + sign * c / 2) * c * math.sqrt(2)
+        else:
+            patch = 2 * math.pi * c * (rim * math.pi / 2 + sign * c * (math.pi / 2 - 1))
+        area += count * (patch - removed(0) - 2 * math.pi * rim * c)
+
+    extent = cx + radius if begin < 0 else r
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": [0, moment / volume, 0],
+        "bounds": [[-extent, 0, -extent], [extent, top, extent]],
+        "note": "Circular meridian from the three programmed points. Integrate the pocket and "
+        "drill discs against the roof height, subtract their shared volume, and integrate the "
+        "rim blends by revolving a line or quarter circle "
+        "(tools/cq_closed_forms.py, dome_closed_form).",
+    }
+
+
 def _hook(text: str) -> dict[str, object]:
     """The u_bolt / j_hook parameters, refusing a program that is not that shape."""
     cyl = _cylinders(text)
@@ -5068,10 +5202,141 @@ def signed_solid_forms(texts: Sequence[str], *, workers: int = WORKERS) -> list[
     return forms
 
 
-def check_bug_cause(result: ExecResult, report: OracleReport, fixture: str) -> None:
+def _clipped_bellows_bounds(text: str) -> Box:
+    """Bound the union of the two rims left by the polar arrays."""
+    match = _BELLOWS.search(text)
+    if match is None:
+        raise ValueError("not the bellows this tool reads")
+    pts = [(_num(x), _num(y)) for x, y in _PAIR.findall(match[1])]
+    _, pitch, count, radius, top, pitch2, count2, radius2, bottom = match.groups()[1:]
+    if len(pts) < 10 or (pitch, count, radius) != (pitch2, count2, radius2):
+        raise ValueError("clipped bellows requires matching arrays on both rims")
+    r, height = pts[-4]
+    p, a, n = _num(pitch), _num(radius), int(count)
+    if not (
+        n >= 2
+        and 0 < p - a < r < p + a
+        and a < p * math.sin(math.pi / n)
+        and pts[2] == (r, 0)
+        and pts[3][0] == r
+        and abs(pts[3][1] + _num(bottom)) <= PLACEMENT_TOL
+        and abs(height + _num(top) - pts[-5][1]) <= PLACEMENT_TOL
+        and all(0 <= y <= height for _, y in pts)
+    ):
+        raise ValueError("bellows cuts do not remove the two outer rims")
+    half_angle = math.acos((r * r + p * p - a * a) / (2 * r * p))
+    period = math.tau / n
+
+    def extent(angle: float) -> float:
+        # The bottom plane mirrors the top's X axis. Take the larger surviving
+        # support of the two rims. A disc minus these disjoint cutters attains
+        # its directional maximum at a surviving rim point or circle intersection.
+        separation = max(abs(math.remainder(q, period)) for q in (angle, math.pi - angle))
+        return r * math.cos(max(0, half_angle - separation))
+
+    lo = (-extent(math.pi), 0.0, -extent(-math.pi / 2))
+    hi = (extent(0), height, extent(math.pi / 2))
+    other_radii = [x for i, (x, _) in enumerate(pts) if i not in (2, 3, len(pts) - 4)]
+    if max(other_radii) >= min(-lo[0], -lo[2], hi[0], hi[2]):
+        raise ValueError("a bellows profile segment can extend past the clipped rims")
+    return lo, hi
+
+
+_COLLAR_STOCK = re.compile(
+    rf'cq\.Workplane\("(XY|XZ|YZ)"\)\s*'
+    rf"(?:\.circle\({_NUMBER}\)\s*\.extrude\({_NUMBER}\)|\.cylinder\({_NUMBER}, {_NUMBER}\))"
+)
+_COLLAR_CUT = re.compile(
+    rf'\.cut\(\s*cq\.Workplane\("(XY|XZ|YZ)"\)\s*'
+    rf"\.transformed\(offset=cq\.Vector\(0\.0, 0\.0, {_NUMBER}\), "
+    rf"rotate=cq\.Vector\(90\.0, 0\.0, (0|120|240)\.0\)\)\s*"
+    rf"\.cylinder\({_NUMBER}, {_NUMBER}\)\s*\)"
+)
+
+
+def _check_clipped_rim(result: ExecResult, report: OracleReport, text: str) -> None:
+    from arris_gym.fidelity import BOUNDS_ABS
+
+    expected_lo, expected_hi = _clipped_bellows_bounds(text)
+    assert result.measures is not None
+    assert report.measures is not None
+    lo, hi = result.measures.bounds
+    oracle_lo, oracle_hi = report.measures.bounds
+    for expected, oracle in zip(expected_lo + expected_hi, oracle_lo + oracle_hi, strict=True):
+        if abs(expected - oracle) > BOUNDS_ABS:
+            raise ValueError("oracle bounds differ from the clipped rims")
+    if max(abs(lo[1] - expected_lo[1]), abs(hi[1] - expected_hi[1])) > BOUNDS_ABS:
+        raise ValueError("the bellows bounds disagree along the revolve axis")
+    overshoots = False
+    for axis in (0, 2):
+        lower, upper = expected_lo[axis] - lo[axis], hi[axis] - expected_hi[axis]
+        if min(lower, upper) < -BOUNDS_ABS:
+            raise ValueError("bellows bounds exclude part of the clipped rims")
+        overshoots |= max(lower, upper) > BOUNDS_ABS
+    if not overshoots:
+        raise ValueError("the bellows bounds do not extend past the clipped rims")
+
+
+def _check_mid_collar(result: ExecResult, report: OracleReport, text: str) -> None:
+    from arris_gym.fidelity import BOUNDS_ABS
+
+    stock = _COLLAR_STOCK.search(text)
+    cuts = list(_COLLAR_CUT.finditer(text))
+    if stock is None or len(cuts) != 3 or text.count(".cut(") != len(cuts):
+        raise ValueError("not the repeated cross-hole collar")
+    plane, disk_radius, extrusion, cylinder_height, cylinder_radius = stock.groups()
+    r, h = float(disk_radius or cylinder_radius), float(extrusion or cylinder_height)
+    _, first_offset, _, first_length, first_radius = cuts[0].groups()
+    blend = max(
+        map(float, re.findall(rf"\.(?:chamfer|fillet)\({_NUMBER}\)", text[: cuts[0].start()])),
+        default=0.0,
+    )
+    for rotation, cut in zip(("0", "120", "240"), cuts, strict=True):
+        cut_plane, offset, turn, length, radius = cut.groups()
+        a = float(radius)
+        if (
+            cut_plane != plane
+            or turn != rotation
+            or (offset, length, radius) != (first_offset, first_length, first_radius)
+            or abs(float(offset) - h / 2) > PLACEMENT_TOL
+            or not (0 < a < h / 2 - blend and float(length) > 2 * r)
+        ):
+            raise ValueError("the cutter is not a repeated through bore at mid-height")
+    # The radius survives along the drill direction above or below the hole.
+    # The turned workplane's normal lies along its original local y axis.
+    axis = 1 if plane == "XY" else 2
+    assert result.measures is not None
+    assert report.measures is not None
+    lo, hi = result.measures.bounds
+    oracle_lo, oracle_hi = report.measures.bounds
+    if abs(oracle_lo[axis] + r) > BOUNDS_ABS or abs(oracle_hi[axis] - r) > BOUNDS_ABS:
+        raise ValueError("oracle bounds differ from the stock radius along the bore")
+    if min(-r - lo[axis], hi[axis] - r) <= BOUNDS_ABS or any(
+        max(abs(lo[k] - oracle_lo[k]), abs(hi[k] - oracle_hi[k])) > BOUNDS_ABS
+        for k in range(3)
+        if k != axis
+    ):
+        raise ValueError("the box lacks the cross hole's two loose bounds")
+
+
+def check_bug_cause(
+    result: ExecResult, report: OracleReport, fixture: str, *, measure_program: str | None = None
+) -> None:
     """Raise `ValueError` unless the row shows the cause of its `--arris-bug` `fixture`."""
     name = Path(fixture).name
-    if name in ("cq-chamfers-overlap-on-a-face", "cq-through-keyway-after-overlapping-chamfers"):
+    if measure_program is not None:
+        from arris_gym import Status
+        from arris_gym.fidelity import OracleStatus
+
+        if result.status is not Status.OK or report.status is not OracleStatus.OK:
+            raise ValueError("the bounds evidence requires two measured results")
+        if name == "cq-revolved-cone-notches-bounds":
+            _check_clipped_rim(result, report, measure_program)
+        elif name == "cq-cross-hole-bounds":
+            _check_mid_collar(result, report, measure_program)
+        else:
+            raise ValueError(f"no measure replay check for fixture {name!r}")
+    elif name in ("cq-chamfers-overlap-on-a-face", "cq-through-keyway-after-overlapping-chamfers"):
         check_overlap_cause(result, report, fixture)
     elif name in ("cq-keyway-through-filleted-rim-bounds", "cq-slot-into-rounded-rim-bounds"):
         from arris_gym.fidelity import BOUNDS_ABS, OracleStatus
@@ -5179,15 +5444,64 @@ def _boundary_coordinates(point: Vec) -> Vec:
     )
 
 
+_MEASURE_FIXTURES = {
+    "bellows": "tests/fixtures/regression/cq-revolved-cone-notches-bounds",
+    "shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds",
+}
+
+
+def _measure_replay_verdicts(
+    stems: Sequence[str], texts: dict[str, str]
+) -> dict[str, dict[str, object]]:
+    """Derive evidence for each explicitly named 0.12.0 measure disagreement."""
+    verdicts: dict[str, dict[str, object]] = {}
+    torus = []
+    for stem in stems:
+        family = re.sub(r"_\d+_s\d+$", "", stem)
+        if family in _MEASURE_FIXTURES:
+            verdicts[stem] = {
+                "disagreement": "arris_bug",
+                "evidence": {"kind": "fixture", "path": _MEASURE_FIXTURES[family]},
+            }
+        elif family == "dome_cap":
+            verdicts[stem] = {
+                "disagreement": "occt_wrong",
+                "evidence": dome_closed_form(texts[stem]),
+            }
+        elif family == "torus_link":
+            torus.append(stem)
+        else:
+            raise ValueError(f"no measure replay evidence for {stem}")
+    if torus:
+        forms = sketch_boundary_forms(
+            [texts[stem] + "\nr = result\n" for stem in torus], blends=True
+        )
+        for stem, form in zip(torus, forms, strict=True):
+            verdicts[stem] = {"disagreement": "occt_wrong", "evidence": form}
+    return verdicts
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Write the verdicts of a corpus table's unclassified rows, checked against both sides."""
     import arris_gym as ag
     from arris_gym.census import benchcad, cadrecode
-    from arris_gym.fidelity import FidelityOutcome, FidelityTable, OracleReport, Verdict, compare
+    from arris_gym.fidelity import (
+        FidelityOutcome,
+        FidelityTable,
+        OracleReport,
+        OracleStatus,
+        Verdict,
+        compare,
+    )
 
     parser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars="@")
     parser.add_argument("--corpus", choices=("benchcad", "cadrecode"), default="benchcad")
-    parser.add_argument("--table", type=Path, required=True, help="a fidelity.json.gz")
+    parser.add_argument("--table", type=Path, help="a fidelity.json.gz")
+    parser.add_argument(
+        "--measure-replay",
+        type=Path,
+        help="recheck the listed BenchCAD measure disagreements, one stem per line",
+    )
     parser.add_argument("--oracle-rows", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument(
@@ -5240,13 +5554,38 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.sketch_boundary and args.corpus != "cadrecode":
         parser.error("--sketch-boundary requires --corpus cadrecode")
+    measure_stems: frozenset[str] = frozenset()
+    if args.measure_replay is not None:
+        if args.corpus != "benchcad":
+            parser.error("--measure-replay requires --corpus benchcad")
+        lines = args.measure_replay.read_text(encoding="utf-8").splitlines()
+        measure_stems = frozenset(lines)
+        if not lines or "" in measure_stems or len(lines) != len(measure_stems):
+            parser.error("--measure-replay requires distinct, nonempty stems")
+    if args.table is None and (
+        not measure_stems or args.refusal or args.arris_bug or args.sketch_boundary
+    ):
+        parser.error("--table is required for table-based verdict selection")
     refusals = dict(item.split("=", 1) for item in args.refusal)
     arris_bugs = dict(item.split("=", 1) for item in args.arris_bug)
     designs = dict(item.split("=", 1) for item in args.by_design)
     explicit = frozenset([*args.boundary, *args.blended_boundary, *args.signed_solids, *designs])
+    if measure_stems & explicit:
+        parser.error("a measure replay stem is also specified by another option")
     programs = benchcad.read() if args.corpus == "benchcad" else cadrecode.read()
     texts = {p.stem: p.text for p in programs}
-    verdicts = verdicts_for(args.table, texts, refusals, arris_bugs, explicit)
+    verdicts = (
+        verdicts_for(args.table, texts, refusals, arris_bugs, explicit | measure_stems)
+        if args.table is not None
+        else {}
+    )
+    if not measure_stems <= texts.keys():
+        parser.error(f"unknown measure replay stems: {sorted(measure_stems - texts.keys())}")
+    try:
+        verdicts.update(_measure_replay_verdicts(sorted(measure_stems), texts))
+    except ValueError as error:
+        print(error, file=sys.stderr)
+        return 1
     # The probes read the result as `r`, CAD-Recode's name; BenchCAD's is `result`.
     alias = "\nr = result\n" if args.corpus == "benchcad" else ""
     for stems, blends in ((args.boundary, False), (args.blended_boundary, True)):
@@ -5291,7 +5630,26 @@ def main(argv: Sequence[str] | None = None) -> int:
                 check_refusal_cause(result.refusal, str(evidence["path"]))
             if verdicts[stem]["disagreement"] == "by_design":
                 check_by_design_cause(result, reports[stem])
-            if verdicts[stem]["disagreement"] == "arris_bug" and isinstance(evidence, dict):
+            if stem in measure_stems:
+                if result.program_sha256 != reports[stem].program_sha256:
+                    raise ValueError("the pinned oracle report is for a different program")
+                report = reports[stem]
+                if (
+                    result.status is not ag.Status.OK
+                    or report.status is not OracleStatus.OK
+                    or result.measures is None
+                    or report.measures is None
+                    or result.measures.solids != report.measures.solids
+                    or compare(result, report).outcome is not FidelityOutcome.UNCLASSIFIED
+                ):
+                    raise ValueError(
+                        "the row lacks an unclassified measure gap with matching solids"
+                    )
+                if verdicts[stem]["disagreement"] == "arris_bug" and isinstance(evidence, dict):
+                    check_bug_cause(
+                        result, reports[stem], str(evidence["path"]), measure_program=texts[stem]
+                    )
+            elif verdicts[stem]["disagreement"] == "arris_bug" and isinstance(evidence, dict):
                 try:
                     check_bug_cause(result, reports[stem], str(evidence["path"]))
                 except ValueError as error:  # counted, never labelled: the row stays as it is

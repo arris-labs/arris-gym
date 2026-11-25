@@ -2025,3 +2025,83 @@ def test_a_corner_patch_is_by_design_only_where_both_kernels_built_one_part() ->
         cf.check_by_design_cause(result, oracle(601.0))
     with pytest.raises(ValueError, match="several solids"):
         cf.check_by_design_cause(result, oracle(600.0005, solids=2))
+
+
+_DOME_PROGRAM = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .moveTo(0.0, 0.0)
+    .lineTo(10.0, 0.0)
+    .lineTo(10.0, 10.0)
+    .threePointArc((6.0, 18.0), (0.0, 20.0))
+    .close()
+    .revolve(360, (0, 0, 0), (0, 1, 0))
+    {pocket}
+    .faces("<Y").workplane()
+    .polarArray(5, 0, 360, 4)
+    .hole(2)
+    {blend}
+)
+"""
+
+
+@pytest.mark.parametrize(
+    ("pocket_radius", "blend"),
+    [(0, ""), (5, ""), (8, ".chamfer(0.5)"), (0, ".fillet(0.5)")],
+)
+def test_dome_closed_form_covers_pocket_overlap_and_rim_blends(
+    pocket_radius: int, blend: str
+) -> None:
+    pocket = (
+        f'.faces("<Y").workplane().circle({pocket_radius}).cutBlind(-2)' if pocket_radius else ""
+    )
+    finishing = f'.faces("<Y").edges(){blend}' if blend else ""
+    program = _DOME_PROGRAM.format(pocket=pocket, blend=finishing)
+    result = ag.run(program, dialect="cq")
+    assert result.status is ag.Status.OK, result.message
+    assert _agrees(result, cf.dome_closed_form(program)) == []
+
+
+def test_clipped_bellows_bound_uses_circle_intersections_at_both_rims() -> None:
+    program = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .polyline([(1, 0), (6, 0), (10, 0), (10, 2), (6, 2), (3, 3), (6, 4),
+               (10, 6), (6, 6), (1, 6), (1, 0)])
+    .close()
+    .revolve(360, (0, 0, 0), (0, 1, 0))
+    .faces(">Y").workplane().polarArray(10, 0, 360, 2).circle(2).cutBlind(-2)
+    .faces("<Y").workplane().polarArray(10, 0, 360, 2).circle(2).cutBlind(-2)
+)
+"""
+    lo, hi = cf._clipped_bellows_bounds(program)
+    assert lo == pytest.approx((-9.8, 0, -10))
+    assert hi == pytest.approx((9.8, 6, 10))
+    with pytest.raises(ValueError, match="do not remove the two outer rims"):
+        cf._clipped_bellows_bounds(program.replace(".cutBlind(-2)", ".cutBlind(-1)", 1))
+
+
+def test_measure_replay_covers_every_listed_stem_with_the_expected_evidence() -> None:
+    root = C2 / "benchcad"
+    stems = (root / "measure-replay.txt").read_text().splitlines()
+    verdicts = json.loads((root / "measure-verdicts.json").read_text())
+    expected = {
+        "bellows": (40, "arris_bug", "fixture"),
+        "shaft_collar": (11, "arris_bug", "fixture"),
+        "dome_cap": (25, "occt_wrong", "closed_form"),
+        "torus_link": (3, "occt_wrong", "closed_form"),
+    }
+    assert stems == sorted(verdicts)
+    for family, (count, disagreement, kind) in expected.items():
+        entries = [
+            Verdict.model_validate(v)
+            for stem, v in verdicts.items()
+            if re.fullmatch(rf"{family}_\d+_s\d+", stem)
+        ]
+        assert len(entries) == count
+        assert all(
+            v.disagreement.value == disagreement and v.evidence.kind == kind for v in entries
+        )
+    assert len(stems) == sum(count for count, _, _ in expected.values())

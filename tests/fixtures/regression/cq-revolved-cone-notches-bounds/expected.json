@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 405.48816351202976,
+    "area": 633.9220564551518,
+    "centroid": [
+      0,
+      1.1565239961910798,
+      0
+    ],
+    "bounds": [
+      [
+        -9.8,
+        0,
+        -10
+      ],
+      [
+        9.8,
+        2,
+        10
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "note": "The cone's cross sections are nested disks. Two through notches remove the X extrema of the largest disk. Intersect x^2 + z^2 = 100 with (x - 10)^2 + z^2 = 4 to get x = 9.8. Reflection gives -9.8; both Z extrema and both end planes survive. For volume and Y moment, subtract the two notches from the full frustum using radial disc width 2 rho acos((rho^2 + 96)/(20 rho)) on [8, 10] times the removed interval [(rho - 6)/2, 2]. Area loses that disc patch from the top and the cone (the cone's area factor is sqrt(5)/2). It gains the two notch walls, the integral of 5 - rho/2 along each radius-2 cutter circle inside rho <= 10.",
+  "xfail": "arris 0.12.0 returns the uncut cone's X extrema after the through notches remove them"
+}
