@@ -193,7 +193,9 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   and one-wire errors, smooth solid construction and stock lookup when
   `combine` is true. Confirmed on the oracle by `tests/fixtures/lofts/`.
   ADR-0026 records the wire pairing read in Open CASCADE 7.9.3 and the
-  constructed comparisons.
+  constructed comparisons. `PlaneOfWire` and `ComputeOrigin` in
+  `BRepFill/BRepFill_CompatibleWires.cxx` use each wire's length-weighted
+  centre of mass and compare starts in both directions.
 - `Workplane.box` with a negative dimension: CadQuery 2.3.0 ends in Open
   CASCADE's `Standard_DomainError` (observed by running it, not read in its
   source); the subset raises `ValueError`, so the program ends `runtime` as

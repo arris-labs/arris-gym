@@ -1,0 +1,424 @@
+{
+  "upper-cap": {
+    "program": "import cadquery as cq\nsection = cq.Workplane(\"XY\").circle(2).workplane(offset=3).circle(1)\nresult = section.loft().faces(\">Z\").workplane().circle(0.5).extrude(2)\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 23.561944901923447,
+        "area": 51.794913372516845,
+        "centroid": [
+          5.5365211121772336e-17,
+          -4.8154839490943683e-17,
+          1.3666666666666663
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            -2.0000001,
+            -1e-07
+          ],
+          [
+            2.0000001,
+            2.0000001,
+            5.0
+          ]
+        ],
+        "faces": 5,
+        "solids": 1
+      },
+      "step_sha256": "0300ac3ce77f05eee6b89f2591d4fa3801245cd8e0bdd574b8cd896191fe8fb8",
+      "program_sha256": "f3fe6e78117f7d4ccfb7bedcfe2b65e7136239f1304ca45cc08f0b86db71f72e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "nested": {
+    "program": "import cadquery as cq\nresult = cq.Workplane(\"XY\").circle(2).circle(1).loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 0.0,
+        "area": 25.132741228718345,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            -2.0,
+            0.0
+          ],
+          [
+            2.0,
+            2.0,
+            0.0
+          ]
+        ],
+        "faces": 2,
+        "solids": 1
+      },
+      "step_sha256": "3ab6ada706d53102ff557e81914efde892905923127e877b59268f9c30899883",
+      "program_sha256": "30efa592a25815f0d1af730c34b8726089c2afe5ea0f9a58611d785090938423",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "shifted-discs": {
+    "program": "import cadquery as cq\nsection = cq.Workplane(\"XY\").circle(2).workplane(offset=3).moveTo(1, 0).circle(1)\nresult = section.loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 21.99114830157455,
+        "area": 46.17594743394929,
+        "centroid": [
+          0.39285854591907926,
+          -6.934247409425031e-17,
+          1.178571426127999
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            -2.0000001,
+            -1e-07
+          ],
+          [
+            2.0000001,
+            2.0000001,
+            3.0000001
+          ]
+        ],
+        "faces": 3,
+        "solids": 1
+      },
+      "step_sha256": "85c3695b6f701ef0f2d5fbc2e7e4ad5eb3d7a666d725516d8e695742d8f72eea",
+      "program_sha256": "8a9f1ba95bfa8298f3125b0b2ca5d0d378f1c3891c6e22c0e04b0d2b9b1cedde",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "tilted-disc": {
+    "program": "import cadquery as cq\nsection = cq.Workplane(\"XY\").circle(2).transformed(rotate=cq.Vector(20, 0, 0), offset=cq.Vector(0, 0, 3))\nresult = section.circle(1).loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 21.612225868081143,
+        "area": 45.3312769745722,
+        "centroid": [
+          2.06534386110514e-06,
+          0.05703665381864317,
+          1.1720330131259886
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            -2.0000001,
+            -1e-07
+          ],
+          [
+            2.0000001,
+            2.0000001,
+            3.3420202433256687
+          ]
+        ],
+        "faces": 3,
+        "solids": 1
+      },
+      "step_sha256": "0693f0cae43ec714d7ba06e39d85eb7fb600b5c22d70465de057531c996bce94",
+      "program_sha256": "7543d05779050bba5350ac394ea6f6ec4ad576b4b753c671917b847333475311",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "unequal-edges": {
+    "program": "import cadquery as cq\nsection = cq.Workplane(\"XY\").polygon(3, 4).workplane(offset=3).rect(2, 1)\nresult = section.loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 10.719283100678677,
+        "area": 30.488816515072216,
+        "centroid": [
+          0.015435599618519188,
+          4.010651190371688e-17,
+          1.2763736348302805
+        ],
+        "bounds": [
+          [
+            -1.000000100000001,
+            -1.732050907568877,
+            -1e-07
+          ],
+          [
+            2.0000001000000003,
+            1.7320509075688777,
+            3.0000001
+          ]
+        ],
+        "faces": 9,
+        "solids": 1
+      },
+      "step_sha256": "907a89cb823c7b1086a0695229cfa7279225dbea047a2bae35bcacf549126394",
+      "program_sha256": "2e4d544ebf4b3891de221bbb017004babc6e3630174e81048379074469ce4179",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "curved-outline": {
+    "program": "import cadquery as cq\nsection = cq.Workplane(\"XY\").rect(4, 3).workplane(offset=3)\nresult = section.moveTo(-1, 0).threePointArc((0, 1), (1, 0)).close().loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 17.94085513018209,
+        "area": 43.429031994540864,
+        "centroid": [
+          8.089364532996704e-17,
+          0.15723597376526185,
+          1.064017283624646
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            -1.5000001,
+            -1e-07
+          ],
+          [
+            2.0000001,
+            1.5000001,
+            3.0000001000000003
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "ed75ab2dfabe4572d064a3dcce0234dbe8b249a5987f5756de367c2781a9d958",
+      "program_sha256": "b3b3f6642c56aebc64795e51c51f0894a2dc1bae34db0460829f292d80a0b59d",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "sketch": {
+    "program": "import cadquery as cq\nresult = cq.Workplane(\"XY\").sketch().circle(2).finalize().loft()\n",
+    "report": {
+      "status": "runtime",
+      "message": "ValueError: More than one wire is required",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "f0bcca91d98a2c2df167eeff5b02f17f71500aff19d125158b7a2897bfd3f866",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "carried-only": {
+    "program": "import cadquery as cq\nsection = cq.Workplane(\"XY\").circle(2).workplane(offset=3).circle(1).workplane()\nresult = section.loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 21.99114857512855,
+        "area": 45.51172806533726,
+        "centroid": [
+          -5.603834438769055e-16,
+          -2.581950030761909e-17,
+          1.1785714285714286
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            -2.0000001,
+            -1e-07
+          ],
+          [
+            2.0000001,
+            2.0000001,
+            3.0000001
+          ]
+        ],
+        "faces": 3,
+        "solids": 1
+      },
+      "step_sha256": "779ae78e76f3cdd7c8d790be1b26fab8718b968275fb049d63884695f8d804b2",
+      "program_sha256": "a366a236d1fcbfa86b5b921abb3ba31e90c0c6e1fdfd90294cdba6a280ae4d4c",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "rolled-disc": {
+    "program": "import cadquery as cq\n\nsection = cq.Workplane(\"XY\").circle(2)\nupper = section.transformed(rotate=cq.Vector(0, 0, 90), offset=cq.Vector(0, 0, 3)).circle(1)\nresult = upper.loft(combine=False)\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 21.99114857512855,
+        "area": 45.51172806533726,
+        "centroid": [
+          -5.65431943371292e-16,
+          6.935686451007895e-17,
+          1.1785714285714284
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            -2.0000001,
+            -1e-07
+          ],
+          [
+            2.0000001,
+            2.0000001,
+            3.0000001
+          ]
+        ],
+        "faces": 3,
+        "solids": 1
+      },
+      "step_sha256": "b97f609f559a6b37af7e360db20cb07080aaaebc48b5daaa1de638c78356f281",
+      "program_sha256": "1d08da61cbf8ab6b4f2d0aa061d350810bcc88d03bd2b7a29fde2d41a6f138d8",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "curved-side-limit": {
+    "program": "import cadquery as cq\n\nsection = cq.Workplane(\"XY\").polygon(48, 20)\nupper = section.transformed(rotate=cq.Vector(0, 0, 180 / 48 - 1), offset=cq.Vector(0, 0, 8))\nresult = upper.polygon(48, 16).loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 2037.5274011859387,
+        "area": 979.589461589943,
+        "centroid": [
+          -3.0693870554982375e-17,
+          -5.628480433779664e-16,
+          3.7048065741840266
+        ],
+        "bounds": [
+          [
+            -10.0000001,
+            -10.0000001,
+            -1e-07
+          ],
+          [
+            10.0000001,
+            10.0000001,
+            8.0000001
+          ]
+        ],
+        "faces": 50,
+        "solids": 1
+      },
+      "step_sha256": "e92254ee4f45c951fedafc22905d7f3583fd53241196b0de037081e4a370c702",
+      "program_sha256": "3413d3db608550f5155130892fae2bb4f070f3aef89411d2c096d4db3207dc71",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "over-curved-side-limit": {
+    "program": "import cadquery as cq\n\nsection = cq.Workplane(\"XY\").polygon(49, 20)\nupper = section.transformed(rotate=cq.Vector(0, 0, 180 / 49 - 1), offset=cq.Vector(0, 0, 8))\nresult = upper.polygon(49, 16).loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 2037.804991680593,
+        "area": 979.6690959460333,
+        "centroid": [
+          4.673400876652908e-16,
+          3.7123360571690276e-17,
+          3.704812692568866
+        ],
+        "bounds": [
+          [
+            -9.979454027503364,
+            -9.994862262006878,
+            -1e-07
+          ],
+          [
+            10.0000001,
+            9.994862262006878,
+            8.0000001
+          ]
+        ],
+        "faces": 51,
+        "solids": 1
+      },
+      "step_sha256": "d9c00b9f95fadec8645cdedbb7d4a7fb53a9a6842afd28a9f55269081c603cb0",
+      "program_sha256": "3b7b8c2260469b940ca5cfd622bc42b752f69788ed710ebbbb9f72fecb635d41",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "planar-over-side-limit": {
+    "program": "import cadquery as cq\n\nsection = cq.Workplane(\"XY\").polygon(52, 20)\nupper = section.transformed(rotate=cq.Vector(0, 0, 0), offset=cq.Vector(0, 0, 8))\nresult = upper.polygon(52, 16).loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 2039.1591987727186,
+        "area": 979.9470719125493,
+        "centroid": [
+          3.009543416128156e-16,
+          -2.7645599806359437e-16,
+          3.704918032786886
+        ],
+        "bounds": [
+          [
+            -10.0000001,
+            -10.0000001,
+            -1e-07
+          ],
+          [
+            10.0000001,
+            10.0000001,
+            8.0000001
+          ]
+        ],
+        "faces": 54,
+        "solids": 1
+      },
+      "step_sha256": "ece67899907e85f7581bdb8eafa6e65fcc55e23c579cd06800a158e14e1b1de5",
+      "program_sha256": "883bce8e63cb857b580e3fa786c60c92e4047b7073747c69e6a0d067978b7659",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  }
+}

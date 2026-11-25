@@ -95,9 +95,14 @@ def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
     return rows
 
 
-def reach_stems(corpus: str) -> list[str]:
-    """The stems today's subset admits, sorted (`reach`'s own census reading)."""
-    return sorted(reach(census_rows(corpus), cq.subset()).stems)
+def baseline_subset() -> cq.Subset:
+    """The declarations used for the committed arris 0.12.0 table."""
+    record = json.loads((C2 / "subset-arris-0.12.0.json").read_text())
+    return cq.Subset(
+        forms=tuple(cq.CensusForm(**form) for form in record["forms"]),
+        selectors=tuple(record["selectors"]),
+        end_forms=tuple(record["end_forms"]),
+    )
 
 
 def table_of(corpus: str) -> FidelityTable:
@@ -106,7 +111,7 @@ def table_of(corpus: str) -> FidelityTable:
     )
 
 
-@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 14_150)])
+@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 15_142)])
 def test_current_subset_reach_over_the_committed_census(corpus: str, expected: int) -> None:
     measured = reach(census_rows(corpus), cq.subset())
     assert measured.programs == CORPORA[corpus][1]
@@ -139,7 +144,7 @@ def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
     rows = census_rows(corpus)
-    assert reach_report(table, rows, cq.subset()) == committed
+    assert reach_report(table, rows, baseline_subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, rows, fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]
@@ -228,7 +233,7 @@ def test_benchcads_previously_refused_connecting_rods_build_on_both_kernels() ->
     """ADR-0022 ranks the seam-split cylinder side as one face for all six rows."""
     agreements = {"000909", "007540"}
     oracle_errors = {"002995", "007023", "015811", "016153"}
-    inside = set(reach_stems("benchcad"))
+    inside = set(reach(census_rows("benchcad"), baseline_subset()).stems)
     rows = {entry.name: entry.row for entry in table_of("benchcad").entries}
     for number in sorted(agreements | oracle_errors):
         stem = f"connecting_rod_{number}_s20260505"

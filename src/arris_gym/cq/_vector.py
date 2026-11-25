@@ -3,10 +3,30 @@ exports it."""
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import NoReturn
 
 from arris_gym.cq._forms import census_form
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
+
+
+def cross(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
+    """The cross product of two three-dimensional directions."""
+    return (
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    )
+
+
+def dot(a: Sequence[float], b: Sequence[float]) -> float:
+    """The dot product of two three-dimensional directions."""
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+
+
+def sub(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
+    """The displacement from point `b` to point `a`."""
+    return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
 
 
 class Vector:

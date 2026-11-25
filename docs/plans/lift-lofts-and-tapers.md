@@ -82,7 +82,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   `transformed`. Verify their world placement, order, branch independence
   and stock lookup with `hypothesis` and oracle cases on offset and rotated
   frames, including the face-based `propeller` chain. Move affected fixtures.
-- [ ] Step 3 **[3]**. Lift `loft` using the verified construction. Cover
+- [x] Step 3 **[3]**. Lift `loft` using the verified construction. Cover
   no sections, one section, both combine values with stock, wire consumption,
   and a later `faces(">Z").workplane()`. Add a frustum property over radii,
   heights and frames. Pin the declarations for the historical C2 table.
@@ -150,6 +150,12 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   use the active normal and refuse a differing one. Revolution requires
   the axis to lie in the drawing plane. The existing consumers refuse
   multiple sections carried across plane changes.
+- **Settled, Step 3 (ADR-0026).** Match circle starts even when the second
+  frame rotates in-plane. The largest agreeing polygon probe has 48
+  nonplanar sides. Use that count as the current limit. The sampled
+  144- and 196-sided gears now reach a typed refusal, as does the
+  three-section interpolation case. Their static reach and acceptance
+  stay in force for replay and resolution.
 - ⚠ OPEN: Agent, Steps 3 and 7. Which gear lofts can meet the corpus
   deadline and fidelity criteria? Verify before enabling a path that
   depends on the missing interpolation or performance capabilities.

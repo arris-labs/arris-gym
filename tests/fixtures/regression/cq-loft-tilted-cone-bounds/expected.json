@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 7.330382858376184,
+    "area": 29.036612082424064,
+    "centroid": [
+      0,
+      -0.010596103908350704,
+      0.6070503863449518
+    ],
+    "bounds": [
+      [
+        -2,
+        -2.017147796750066,
+        -0.01745240643728351
+      ],
+      [
+        2,
+        1.9822429838754991,
+        1.0347525080309583
+      ]
+    ],
+    "solids": 1,
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "The arris loft's bounds are wider than the closed-form bounds."
+}

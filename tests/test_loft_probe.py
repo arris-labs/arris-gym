@@ -16,7 +16,7 @@ import arris_gym as ag
 import fixture_cases
 from arris_gym.census import ProgramCensus, reach
 from arris_gym.fidelity import OracleReport, OracleStatus, compare
-from test_c2_baseline import census_rows
+from test_c2_baseline import baseline_subset, census_rows
 
 ROOT = fixture_cases.ROOT / "lofts"
 CASES = fixture_cases.load("lofts")
@@ -133,23 +133,10 @@ def test_loft_oracle_consumes_pending_wires_and_combines_with_stock() -> None:
 
 def test_the_loft_declaration_reaches_the_six_measured_benchcad_families() -> None:
     rows = census_rows("benchcad")
-    # Step 3 moves the loft form into the subset. Isolate its census contribution
-    # from the independent lifts in this plan.
-    future_forms = ("Workplane.loft", "Workplane.mirrorY")
-    current = ag.cq.subset()
-    before = replace(
-        current,
-        forms=tuple(
-            replace(form, keywords=tuple(k for k in form.keywords if k[0] != "taper"))
-            if form.name == "Workplane.extrude"
-            else form
-            for form in current.forms
-            if form.name not in future_forms
-        ),
-    )
+    before = baseline_subset()
     before_reach = reach(rows, before)
     assert before_reach.in_subset == 14_150
-    loft = ag.cq.CensusForm("Workplane.loft", (), (("combine", ("bool",)),))
+    (loft,) = (form for form in ag.cq.subset().forms if form.name == "Workplane.loft")
     after = reach(rows, replace(before, forms=(*before.forms, loft)))
     added = set(after.stems) - set(before_reach.stems)
     counts = Counter(stem.rsplit("_", 2)[0] for stem in added)

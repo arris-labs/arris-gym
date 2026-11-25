@@ -25,7 +25,7 @@
     "solids": 1
   },
   "step_sha256": "5a5491ac9fe3a296d4e1eed1d9206f113fb222a8c8f529eead4a4fad7a6145f0",
-  "program_sha256": "5cf1cf93a4b55cb213e1f3d8c80df717675f3977984e33db3d6d3f732afb8426",
+  "program_sha256": "86e2aada9397fb5dc9f10270b9ed1d0ed07b4c0af3fd7cf20d78b62b850570bc",
   "versions": {
     "cadquery": "2.3.0",
     "ocp": "7.9.3.0",

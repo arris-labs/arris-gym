@@ -16,6 +16,9 @@ import arris
 import arris.build
 
 from arris_gym.cq._unsupported import UnsupportedApi
+from arris_gym.cq._vector import cross as _cross
+from arris_gym.cq._vector import dot as _dot
+from arris_gym.cq._vector import sub as _sub
 
 __all__ = [
     "AXIS_SELECTORS",
@@ -161,14 +164,6 @@ def seams_of(tool: arris.build.Solid, side: Sequence[float]) -> tuple[Seam, ...]
             return None
         found.append(Seam(info.origin, info.axis, info.radius, (side[0], side[1], side[2])))
     return tuple(found)
-
-
-def _cross(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
-    return (
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    )
 
 
 def _length(v: Sequence[float]) -> float:
@@ -431,14 +426,6 @@ def _may_join(model: arris.Model, a: arris.Edge, b: arris.Edge) -> bool:
             and abs(p.radius - q.radius) <= model.tolerance
         )
     return True
-
-
-def _sub(a: Sequence[float], b: Sequence[float]) -> tuple[float, float, float]:
-    return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
-
-
-def _dot(a: Sequence[float], b: Sequence[float]) -> float:
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 
 
 def _exact_centre(model: arris.Model, edge: arris.Edge) -> tuple[float, float, float] | None:

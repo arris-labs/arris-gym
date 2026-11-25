@@ -134,4 +134,4 @@ def test_the_docstring_example_runs() -> None:
 
 def test_the_exceptions_are_exported() -> None:
     assert issubclass(SandboxUnavailable, RuntimeError)
-    assert str(UnsupportedApi("Workplane.loft")) == "Workplane.loft"
+    assert str(UnsupportedApi("Workplane.shell")) == "Workplane.shell"

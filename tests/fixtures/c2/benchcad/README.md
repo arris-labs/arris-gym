@@ -26,10 +26,11 @@ and shared under its [CC-BY-4.0 licence](https://creativecommons.org/licenses/by
 `fidelity.json.gz` compares all 17,900 programs under `cq` on arris 0.12.0
 with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
 `arris-report.json` and `.md` describe the refusals and arris bugs.
-`reach-report.json` checks the table against the census and the current subset.
+`reach-report.json` checks the table against the census and the declarations
+recorded in `../subset-arris-0.12.0.json` before the loft lift (`5131d96`).
 
-Regenerate with the synced oracle environment and a fresh work directory
-(outside the gate):
+Regenerate at `5131d96` with the synced oracle environment and a fresh work
+directory (outside the gate):
 
 ```sh
 root=tests/fixtures/c2/benchcad

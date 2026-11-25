@@ -169,3 +169,42 @@ and the through-cut on a tilted frame. The single rectangle cases moved
 from the refusal records in `tests/fixtures/profiles/rect-contexts.json`.
 Multiple visible wires, nested profiles, slots and open paths stay
 outside this lift.
+
+## Amendment (2026-11-26) — two-section loft
+
+The subset admits `loft()` and `loft(combine=bool)` with two placed
+sections. It pairs straight-edged sections with the same edge count,
+using the length-weighted wire centres. Pairing changes only the cyclic
+start and winding of the second outline. For two coaxial circles with
+the same normal, align the second section's circle start to the first
+while keeping its centre and plane. The 90° rotation in
+`tests/fixtures/lofts/runtime-contexts.json` gives the same frustum as
+the unrotated section on the oracle. Passing the drawing starts to arris
+gives a twisted surface and a relative volume gap of 2/7 in that case.
+
+The same records pin the oracle outcomes for section kinds outside the
+verified construction. The subset refuses nested wires, circles without
+a common directed axis, curved paths, unequal edge counts, finalized
+sketches in place of pending wires and more than two sections. The
+three-section interpolation regressions retain their desired geometry.
+Both the face-based stock fixture and the `>Z` follow-on cap fixture
+use the solid on the result stack. A later call on that result has no
+pending wires. The frozen source workplane keeps its sections.
+
+The loft checks its polygon side count before combining with stock or
+returning a solid. The 16-, 24-, 32- and 48-sided twisted polygon probes
+agreed with the oracle and took 3.59, 5.75, 7.25 and 10.71 s in the
+sandbox on the development machine. The 144- and 196-sided gear
+prefixes still timed out in the body worker at 30 s on the paired
+construction. The subset refuses more than 48 nonplanar side faces
+pending check and measurement evidence. This limit is the largest
+measured agreeing case within the corpus deadline, and admits planar
+lofts above that edge count. The 48- and 49-side boundary fixtures and
+the 52-sided planar fixture are in `lofts/runtime-contexts.json`.
+The forms still count toward reach under ADR-0012.
+
+The exact bounds from the two caps disagree with arris's measures on
+the tilted cone and on the triangular and twisted polygon lofts. The
+strict regressions record both the closed forms and the oracle reports.
+These are kernel measure gaps and keep their desired bounds under
+ADR-0005.

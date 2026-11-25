@@ -4,6 +4,7 @@
 through `tools/oracle_run.py` on pinned CadQuery 2.3.0 and OCP 7.9.3.0.
 The adjacent report retains its program hash and measures. The test
 compares the paired results under ADR-0005.
+The two-section CadQuery programs also run unchanged in the subset.
 
 - **disc-frustum** has radii 2 and 1 and height 3. Its volume is
   7π, its area is π(5 + 3√10) and its centroid is at z = 33/28.
@@ -37,6 +38,22 @@ and without stock, default combine, and another operation on the upper
 cap. The stock is a radius-3 cylinder from Y = −2 to Y = 2. The frustum
 starts at Y = 2 and the follow-on operation adds a radius-0.5 cylinder
 from Y = 5 to Y = 7. The tests calculate the measures from those shapes.
+The subset consumes the sections on the loft result, preserving an earlier
+workplane for its independently held branch.
+
+`runtime-contexts.json` records reports for a loft followed by
+`faces(">Z").workplane()`, two sections carried onto an empty stack,
+and a 90° in-plane rotation of a circular section. The rotation leaves
+the frustum's measures unchanged. It also records the oracle outcomes
+for nested, shifted, tilted, unequal-edge and curved sections and for a
+finalized `Sketch` on the stack. The subset reports its refusal for each.
+The 48-sided twisted polygon agrees with the oracle and passes the full
+body check within the 30 s corpus deadline. The 49-sided twisted polygon
+exercises the refusal at the next count. The 52-sided planar loft shows
+that the limit applies to nonplanar side faces. The strict regressions
+`regression/cq-loft-triangle-bounds`, `regression/cq-loft-tilted-cone-bounds`
+and `regression/cq-loft-twisted-polygon-bounds` hold the kernel's bounds
+against independent closed forms.
 
 ## Three-section regressions
 

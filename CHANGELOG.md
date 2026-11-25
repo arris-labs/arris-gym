@@ -5,6 +5,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, `loft()` builds a smooth solid through two
+  coaxial circles or matching straight-sided sections. It joins the solid
+  to stock by default. Use `loft(combine=False)` to keep the new solid separate.
+
 - In the CadQuery dialect, `workplane(offset=…)` and `transformed(…)` keep
   a single pending disc, rectangle, polygon or closed path where it was
   drawn. You can change the workplane and then extrude or blind-cut the

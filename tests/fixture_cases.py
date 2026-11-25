@@ -38,7 +38,7 @@ BY_MACHINE = "message_by_machine"
 
 
 def c1_subset() -> cq.Subset:
-    """The subset the committed `c2/` census curves were measured under, and the C2 baseline.
+    """The C1 declarations used for the committed census curves.
 
     Today's subset less what C2 has lifted since: ADR-0015's `r = …`
     (plans/in-subset-cq-bugs step 2), `cq.Workplane`'s `origin=` (step 6),
@@ -52,7 +52,8 @@ def c1_subset() -> cq.Subset:
     `Workplane.cskHole`; plans/lift-arrays-and-blind-cuts' forms:
     `Workplane.rarray`, `Workplane.polarArray`, `Workplane.cutBlind`;
     plans/lift-edges-and-blends' forms: `Workplane.edges`, `Workplane.fillet`,
-    `Workplane.chamfer`, and `Workplane.sketch` and `Sketch.*` (ADR-0023).
+    `Workplane.chamfer`, `Workplane.sketch` and `Sketch.*` (ADR-0023),
+    and `Workplane.loft` (ADR-0026).
 
     A frozen record, never widened to admit a lifted form: `reach.json` is the
     C1 curve and `test_committed_benchcad_curve_repeats_offline` holds it.
@@ -92,6 +93,7 @@ def c1_subset() -> cq.Subset:
                 "Workplane.threePointArc",
                 "Workplane.sphere",
                 "Workplane.polygon",
+                "Workplane.loft",
             )
         ),
         selectors=(),

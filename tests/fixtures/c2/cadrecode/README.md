@@ -60,10 +60,11 @@ the library's code licence does not replace it.
 `fidelity.json.gz` compares all 968 programs under `cq` on arris 0.12.0
 with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
 `arris-report.json` and `.md` carry the refusals. `reach-report.json`
-checks this table against the census and the current subset.
+checks this table against the census and the declarations recorded in
+`../subset-arris-0.12.0.json` before the loft lift (`5131d96`).
 
-Regenerate with the synced oracle environment and a fresh work directory
-(outside the gate):
+Regenerate at `5131d96` with the synced oracle environment and a fresh work
+directory (outside the gate):
 
 ```sh
 root=tests/fixtures/c2/cadrecode

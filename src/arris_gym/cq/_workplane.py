@@ -36,7 +36,7 @@ from arris_gym.cq._selector import (
 )
 from arris_gym.cq._sketch import Sketch
 from arris_gym.cq._unsupported import UnsupportedApi, is_python_name
-from arris_gym.cq._vector import Vector
+from arris_gym.cq._vector import Vector, cross, dot, sub
 
 __all__ = ["Workplane", "is_python_name"]
 
@@ -97,6 +97,10 @@ _SKETCH_TO_VECTOR = "Cannot convert object type '<class 'cadquery.sketch.Sketch'
 
 _NO_SOLID = "Cannot find a solid on the stack or in the parent chain"
 _NO_WIRES = "No pending wires present"
+# Largest measured agreeing two-section loft with nonplanar sides under the
+# corpus deadline (lofts/runtime-contexts.json, `curved-side-limit`). The
+# sampled 144- and 196-sided gears time out after construction (ADR-0026).
+_MAX_LOFT_CURVED_SIDES = 48
 _Bounds = tuple[tuple[float, float, float], tuple[float, float, float]]
 _UV = tuple[float, float]
 _XYZ = tuple[float, float, float]
@@ -205,6 +209,13 @@ class _Slot(arris.build.Sketch):
     ) -> _Slot:
         sketch = plane.slot(length, diameter, center=centre, angle=angle)
         return cls(sketch.plane, sketch.outer, sketch.holes)
+
+
+@dataclass(frozen=True, kw_only=True)
+class _Polygon(arris.build.Sketch):
+    """A polygon with its vertices in drawing order for loft correspondence."""
+
+    vertices: tuple[_UV, ...]
 
 
 def _slot_centerline(u: float, v: float, aim: float, half_run: float) -> tuple[_UV, _UV]:
@@ -324,6 +335,96 @@ class _ClosedPath(arris.build.Sketch):
     """A drawn loop with its control points' range along the workplane's x direction."""
 
     u_range: tuple[float, float]
+    vertices: tuple[_UV, ...] | None
+
+
+def _polygon_vertices(sketch: arris.build.Sketch) -> tuple[_UV, ...] | None:
+    """The start of each straight edge in drawing order, for a loft section."""
+    if isinstance(sketch, _Rect):
+        u, v = sketch.center
+        a, b = sketch.width / 2, sketch.height / 2
+        return ((u - a, v - b), (u + a, v - b), (u + a, v + b), (u - a, v + b))
+    if isinstance(sketch, _Polygon | _ClosedPath):
+        return sketch.vertices
+    return None
+
+
+def _wire_centroid(points: tuple[_XYZ, ...]) -> _XYZ:
+    """The centre of mass of the wire, weighting edge midpoints by length."""
+    ends = points[1:] + points[:1]
+    lengths = [math.dist(a, b) for a, b in zip(points, ends, strict=True)]
+    perimeter = math.fsum(lengths)
+    if perimeter == 0:
+        return points[0]
+    x, y, z = (
+        math.fsum(
+            length * ((a[i] + b[i]) / 2) for a, b, length in zip(points, ends, lengths, strict=True)
+        )
+        / perimeter
+        for i in range(3)
+    )
+    return (x, y, z)
+
+
+def _paired_polygon(
+    first: arris.build.Sketch,
+    first_vertices: tuple[_UV, ...],
+    second: arris.build.Sketch,
+    second_vertices: tuple[_UV, ...],
+) -> arris.build.Sketch:
+    """Pair polygon vertices by wire-centred distances, as measured in ADR-0026."""
+    a = tuple(first.plane.point(*p) for p in first_vertices)
+    b = tuple(second.plane.point(*p) for p in second_vertices)
+    delta = sub(_wire_centroid(a), _wire_centroid(b))
+    normal = first.plane.z
+    along = dot(normal, delta)
+    dx, dy, dz = (d - n * along for d, n in zip(delta, normal, strict=True))
+    shifted = tuple((x + dx, y + dy, z + dz) for x, y, z in b)
+    count = len(b)
+
+    def cost(order: tuple[int, int]) -> float:
+        start, direction = order
+        return sum(
+            math.dist(point, shifted[(start + i * direction) % count]) for i, point in enumerate(a)
+        )
+
+    # Visit starts in drawing order, forward then backward, keeping the first
+    # minimum. Move the seam and winding only, leaving the section in place.
+    start, direction = min(((i, sign) for i in range(count) for sign in (1, -1)), key=cost)
+    if (start, direction) == (0, 1):
+        return second
+    return second.plane.polygon(
+        tuple(second_vertices[(start + i * direction) % count] for i in range(count))
+    )
+
+
+def _loft_sections(
+    first: arris.build.Sketch, second: arris.build.Sketch
+) -> tuple[arris.build.Sketch, arris.build.Sketch]:
+    """Align the two verified section kinds for the pinned smooth loft."""
+    if isinstance(first, _Disc) and isinstance(second, _Disc):
+        model = arris.build.default_model()
+        delta = sub(second.plane.point(*second.center), first.plane.point(*first.center))
+        if (
+            math.dist(first.plane.z, second.plane.z) > model.angular_tolerance
+            or math.hypot(*cross(delta, first.plane.z)) > model.tolerance
+        ):
+            raise UnsupportedApi("Workplane.loft on circles without a common directed axis")
+        if first.plane.x == second.plane.x:
+            return first, second
+        # Match the circle starts so an in-plane turn of the frame leaves a
+        # cone or cylinder. The second circle's centre and plane stay fixed.
+        plane = arris.build.Workplane.of(
+            second.plane.point(*second.center), second.plane.z, first.plane.x
+        )
+        return first, plane.circle(second.radius)
+    a, b = _polygon_vertices(first), _polygon_vertices(second)
+    if a is None or b is None or len(a) != len(b):
+        raise UnsupportedApi(
+            "Workplane.loft requires coaxial circles or straight-sided polygons "
+            "with matching edge counts"
+        )
+    return first, _paired_polygon(first, a, second, b)
 
 
 def _revolve_seams(
@@ -1809,7 +1910,8 @@ class Workplane:
             raise ValueError(f"{named}: fewer than three sides enclose no area")
         if diameter == 0:
             raise ValueError(f"{named}: a zero diameter (CadQuery's StdFail_NotDone)")
-        return self._derive(self._plane.polygon(vertices))
+        sketch = self._plane.polygon(vertices)
+        return self._derive(_Polygon(sketch.plane, sketch.outer, vertices=tuple(vertices)))
 
     @census_form("Workplane.sketch")
     def sketch(self) -> Sketch:
@@ -1878,6 +1980,49 @@ class Workplane:
             tool = sketch.extrude(distance, both=both)
             result = result._combined(tool)._with_seams(seams_of(tool, sketch.plane.x))
         return result._consume_wires()
+
+    @census_form("Workplane.loft", keywords={"combine": ("bool",)})
+    def loft(self, *, combine: bool = True) -> Workplane:
+        """Smooth a solid through two closed sections in their drawing frames.
+
+        Admits coaxial circles with the same normal and straight-sided
+        polygons with matching edge counts. Sections with holes and other
+        loft section combinations raise `UnsupportedApi`, as do lofts
+        beyond the verified limit of 48 nonplanar side faces. An empty
+        or single-section chain raises `ValueError` with CadQuery's words.
+        Fuse with the nearest solid when `combine=True`. The result holds
+        one solid on the active workplane and consumes the pending sections.
+        Earlier branches keep their sections (ADR-0026).
+
+        >>> import arris_gym.cq as cq
+        >>> wp = cq.Workplane("XY").circle(2).workplane(offset=3).circle(1)
+        >>> round(wp.loft()._solids()[0].measure().volume / math.pi, 9)
+        7.0
+        """
+        sections = tuple(wire.sketch for wire in self._carried + self._visible_wires())
+        if not sections:
+            self._refuse_sketch("Workplane.loft")
+            raise ValueError(_NO_WIRES)
+        if any(section.holes for section in sections):
+            raise UnsupportedApi("Workplane.loft on nested wires")
+        if len(sections) == 1:
+            raise ValueError("More than one wire is required")
+        if len(sections) != 2:
+            raise UnsupportedApi("Workplane.loft on more than two sections")
+        first, second = _loft_sections(*sections)
+        solid = arris.build.Sketch.loft((first, second), kind="smooth")
+        if not isinstance(first, _Disc):
+            model = solid.model
+            curved_sides = sum(
+                model.surface(face).kind != "plane" for face in model.faces(solid.body)
+            )
+            if curved_sides > _MAX_LOFT_CURVED_SIDES:
+                # See over-curved-side-limit in lofts/runtime-contexts.json.
+                raise UnsupportedApi(
+                    f"Workplane.loft on more than {_MAX_LOFT_CURVED_SIDES} nonplanar side faces"
+                )
+        result = self._combined(solid) if combine else self._derive(solid)
+        return result._with_seams(None)._consume_wires()
 
     @census_form("Workplane.cutBlind", [("num",)])
     def cutBlind(self, until: float) -> Workplane:
@@ -2159,8 +2304,13 @@ class Workplane:
             for point in (segment.to, segment.via)
             if point is not None
         )
+        vertices = None
+        if all(segment.via is None for segment in segments):
+            vertices = (last.start, *(segment.to for segment in segments[:-1]))
         return self._derive(
-            _ClosedPath(self._plane, loop, u_range=(min(profile_u), max(profile_u)))
+            _ClosedPath(
+                self._plane, loop, u_range=(min(profile_u), max(profile_u)), vertices=vertices
+            )
         )
 
     @census_form("Workplane.revolve", [("num",), ("tuple",), ("tuple",)])

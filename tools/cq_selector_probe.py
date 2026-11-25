@@ -383,6 +383,7 @@ def before_subset() -> Subset:
         "Workplane.center",
         "Workplane.rect",
         "Workplane.slot2D",
+        "Workplane.loft",
     }
     named = {form.name for form in BUNDLE} | later
     return Subset(

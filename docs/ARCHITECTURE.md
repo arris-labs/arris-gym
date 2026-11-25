@@ -338,7 +338,7 @@ axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces
 the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `pushPoints`,
 `rarray`, `polarArray`, `hole` (a diameter, with `depth=`), `cboreHole`,
 `cskHole`, `cutBlind`, `cutThruAll`, `center`, `box`, `cylinder`, `sphere`,
-`circle`, `rect`, `slot2D`, `polygon`, `extrude`, `union`, `cut`, `moveTo`,
+`circle`, `rect`, `slot2D`, `polygon`, `extrude`, `loft`, `union`, `cut`, `moveTo`,
 `lineTo`, `threePointArc`, `polyline`, `close`, `revolve` and
 `Workplane.sketch()`. The edge selectors include the six axis selectors,
 `|X |Y |Z` and `'>Z or <Z'`. Edge selections rank by centre of mass.
@@ -584,6 +584,17 @@ axis in the active plane's coordinates and requires it to lie in the
 section's drawing plane. These calls consume the sections on the result
 while preserving the source branch. With multiple sections carried across
 plane changes, these calls raise `unsupported_api` (ADR-0026).
+
+`loft()` takes two closed sections in drawing order at their original
+placements. It matches the starts of coaxial circles with the same normal
+and pairs the vertices of straight-sided sections of equal edge counts.
+It builds a smooth solid, fuses it with the nearest stock by default and
+consumes the sections on the result. `loft(combine=False)` puts the loft
+alone on the stack. Both forms keep the active frame and the original
+workplane branch. With zero sections or one section it raises CadQuery's
+`ValueError`. With more than two sections, nested wires, unverified section
+combinations or more than 48 nonplanar side faces from polygons it raises
+`UnsupportedApi` (ADR-0026).
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted

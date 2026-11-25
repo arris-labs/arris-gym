@@ -221,6 +221,14 @@ A defect a run measured, one block each:
 - Measured: the propeller's bounds differ by 9.69; the wing nut oracle reports `ok` and `invalid` respectively; the loft-only controls agree
 - State: measured; reduce after the lift and classify on the replay evidence
 
+### loft-bounds-too-wide
+- What: the bounds are wider than the extreme points of the lofted solid
+- Where: arris 0.12.0, bounds on a `Sketch.loft` body
+- Seen: ADR-0026's two-section lift on 2026-11-26
+- Reproduce: `tests/fixtures/regression/cq-loft-{triangle,tilted-cone,twisted-polygon}-bounds`
+- Measured: X min is near −1.25 for the triangle against −1, Y max is near 1.99969549 for the cone against 1.98224298, and the twisted polygon's largest bound gap is 0.27602
+- State: strict regressions with closed-form bounds and recorded oracle evidence; filed in `../arris/docs/ideas/loft-tight-bounds.md`
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)
