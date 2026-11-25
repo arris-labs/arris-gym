@@ -42,3 +42,4 @@ training cycle starts from.
 | [0023](0023-a-cq-sketch-extrudes-as-an-ordered-fold-of-prisms.md) | A `cq` sketch extrudes as an ordered fold of prisms | accepted |
 | [0024](0024-a-cq-through-cut-sweeps-placed-profiles-past-the-stock.md) | A `cq` through cut sweeps placed profiles past the stock | accepted |
 | [0025](0025-a-vertex-blends-corner-patch-is-each-kernels-own.md) | A vertex blend's corner patch is each kernel's own | accepted |
+| [0026](0026-a-cq-loft-pairs-world-placed-sections-before-smoothing.md) | A `cq` loft pairs world-placed sections before smoothing | accepted |

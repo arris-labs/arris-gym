@@ -1,0 +1,29 @@
+{
+  "dialect": "arris",
+  "status": "ok",
+  "measures": {
+    "volume": 56.712614267518845,
+    "area": 114.68808025123413,
+    "centroid": [
+      0.8315286526166853,
+      0.23721052370028997,
+      3.1545373711688365
+    ],
+    "bounds": [
+      [
+        -3.0000001000000025,
+        -2.62049860933826,
+        -1e-07
+      ],
+      [
+        4.63014587549894,
+        2.4204986093382597,
+        6.0000001
+      ]
+    ],
+    "solids": 1,
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "The middle section uses a different interpolation parameter from the oracle."
+}

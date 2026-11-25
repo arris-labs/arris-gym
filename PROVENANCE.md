@@ -181,6 +181,12 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   points in plane coordinates (a third coordinate along the normal); a
   right-handed turn about the direction from start to end; the result fused
   with the solid in the chain (`combine=True`).
+- `Workplane.loft`, `_combineWithBase` and `Solid.makeLoft` (`cadquery/cq.py`,
+  `cadquery/occ_impl/shapes.py`): pending wires in drawing order, the empty
+  and one-wire errors, smooth solid construction and stock lookup when
+  `combine` is true. Confirmed on the oracle by `tests/fixtures/lofts/`.
+  ADR-0026 records the wire pairing read in Open CASCADE 7.9.3 and the
+  constructed comparisons.
 - `Workplane.box` with a negative dimension: CadQuery 2.3.0 ends in Open
   CASCADE's `Standard_DomainError` (observed by running it, not read in its
   source); the subset raises `ValueError`, so the program ends `runtime` as

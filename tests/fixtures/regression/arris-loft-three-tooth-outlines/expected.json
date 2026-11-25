@@ -1,0 +1,29 @@
+{
+  "dialect": "arris",
+  "status": "ok",
+  "measures": {
+    "volume": 137.20582371134748,
+    "area": 189.82889964143266,
+    "centroid": [
+      0.8127727455094284,
+      0.2945080309977689,
+      3.1566928794477103
+    ],
+    "bounds": [
+      [
+        -3.0000001,
+        -3.5917409614830866,
+        -1e-07
+      ],
+      [
+        5.1465645945634195,
+        3.3917409614830794,
+        6.0000001
+      ]
+    ],
+    "solids": 1,
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "The three-section tooth loft uses a different interpolation parameter from the oracle."
+}

@@ -199,6 +199,22 @@ A defect a run measured, one block each:
 - Measured: every row of the C1 table records `arris_gym`; the rescore digest (`Score.digest()`) already leaves it out
 - State: measured; drop `arris_gym` from the digest's body, as `Score.digest()` does, and re-record the three digests in one `fixtures:` commit
 
+### gear-loft-body-check-time
+- What: the body worker hits the 30 s corpus deadline checking and measuring lofts with many curved sides
+- Where: arris 0.12.0, loft body read, full check and measures in the sandbox
+- Seen: ADR-0026 (2026-11-26), BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`
+- Reproduce: keep the chain through the first loft in the three stems under `tests/fixtures/lofts/README.md` and return that loft
+- Measured: all three loft-only prefixes time out in the body worker, and the same builds returning a box take 0.029–0.036 s
+- State: measured; the consumer report is `../arris/docs/ideas/benchcad-loft-interpolation-and-body-check.md`
+
+### loft-follow-on-bounds-and-blends
+- What: a completed propeller has a bounding-box gap, and two wing nuts receive a later fillet refusal
+- Where: provisional arris 0.12.0 loft adapter, after the first loft
+- Seen: ADR-0026 (2026-11-26), BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`
+- Reproduce: run the completed `propeller_000111_s20260505`, `wing_nut_000008_s20260505` and `wing_nut_000078_s20260505` and compare the pinned oracle rows
+- Measured: the propeller's bounds differ by 9.69; the wing nut oracle reports `ok` and `invalid` respectively; the loft-only controls agree
+- State: measured; reduce after the lift and classify on the replay evidence
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)

@@ -249,6 +249,10 @@ A mutable `cq` value on a workplane's plane, with an ordered fold of
 placed regions, a selection of plane-local points, and free edges.
 `finalize` puts that sketch on a workplane's stack for `extrude` (ADR-0023).
 
+**Loft section**:
+A closed profile in the world frame where it was drawn, passed to a loft
+in drawing order (ADR-0026).
+
 **Edge key**:
 What an axis selector ranks an edge by: its centre of mass along the axis,
 exact on a line, a circle and an arc, bounded on a seam whose face's axis

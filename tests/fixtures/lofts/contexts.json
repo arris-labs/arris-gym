@@ -1,0 +1,195 @@
+{
+  "empty": {
+    "program": "import cadquery as cq\nresult = cq.Workplane(\"XY\").loft()\n",
+    "report": {
+      "status": "runtime",
+      "message": "ValueError: No pending wires present",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "c5ba3a5c0c56fe0cc03d91695afabc37cbf6e4334ab59d5a4c7259ccd6284374",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "single": {
+    "program": "import cadquery as cq\nresult = cq.Workplane(\"XY\").circle(2).loft()\n",
+    "report": {
+      "status": "runtime",
+      "message": "ValueError: More than one wire is required",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "9feb50b8938c7293efc6a1750c799ba2c2bc0f0f011766394b73e886ec2283a2",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "stock-default": {
+    "program": "import cadquery as cq\nstock = cq.Workplane(\"XZ\").cylinder(4, 3)\nsection = stock.faces(\">Y\").workplane().circle(2).workplane(offset=3).circle(1)\nresult = section.loft()\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 135.0884841043611,
+        "area": 152.32587828739022,
+        "centroid": [
+          -9.780000183311589e-17,
+          0.5174418604651164,
+          -3.279664231317363e-17
+        ],
+        "bounds": [
+          [
+            -3.0,
+            -2.0,
+            -3.0
+          ],
+          [
+            3.0,
+            5.0000001,
+            3.0
+          ]
+        ],
+        "faces": 5,
+        "solids": 1
+      },
+      "step_sha256": "dd6fe2a259725047ea168807d727acb02f24938a4222e1f3c365000e9378e1e1",
+      "program_sha256": "3438f2db018e532e384306a95c3b82dafe907b4c7b70b7394cd2d6d003a3a3c5",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "stock-combine": {
+    "program": "import cadquery as cq\nstock = cq.Workplane(\"XZ\").cylinder(4, 3)\nsection = stock.faces(\">Y\").workplane().circle(2).workplane(offset=3).circle(1)\nresult = section.loft(combine=True)\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 135.0884841043611,
+        "area": 152.32587828739022,
+        "centroid": [
+          -9.780000183311589e-17,
+          0.5174418604651164,
+          -3.279664231317363e-17
+        ],
+        "bounds": [
+          [
+            -3.0,
+            -2.0,
+            -3.0
+          ],
+          [
+            3.0,
+            5.0000001,
+            3.0
+          ]
+        ],
+        "faces": 5,
+        "solids": 1
+      },
+      "step_sha256": "dd6fe2a259725047ea168807d727acb02f24938a4222e1f3c365000e9378e1e1",
+      "program_sha256": "b34aad6f02150443fed952c4b5daa6ee3ea19c40a826f33e6e9c6aa75efd4baa",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "stock-separate": {
+    "program": "import cadquery as cq\nstock = cq.Workplane(\"XZ\").cylinder(4, 3)\nsection = stock.faces(\">Y\").workplane().circle(2).workplane(offset=3).circle(1)\nresult = section.loft(combine=False)\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 21.991148575128552,
+        "area": 45.51172806533726,
+        "centroid": [
+          2.9786147016880554e-16,
+          3.178571428571429,
+          -2.123487397825181e-17
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            1.9999999,
+            -2.0000001
+          ],
+          [
+            2.0000001,
+            5.0000001,
+            2.0000001
+          ]
+        ],
+        "faces": 3,
+        "solids": 1
+      },
+      "step_sha256": "ea55a004d1e62e968bb0392e2a1f982c1674f8ba17a7a6c26138cb33a7243462",
+      "program_sha256": "10a8295ab207d3f2db0685789daaa6bf51d26fccd065ca5506ce4b8d2c4f3e9f",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "stock-follow": {
+    "program": "import cadquery as cq\nstock = cq.Workplane(\"XZ\").cylinder(4, 3)\nsection = stock.faces(\">Y\").workplane().circle(2).workplane(offset=3).circle(1)\nresult = section.loft().faces(\">Y\").workplane().circle(0.5).extrude(2)\n",
+    "report": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 136.65928043115602,
+        "area": 158.60906359456982,
+        "centroid": [
+          -1.8360290115217233e-16,
+          0.5804597701149433,
+          -1.5248451068604226e-17
+        ],
+        "bounds": [
+          [
+            -3.0,
+            -2.0,
+            -3.0
+          ],
+          [
+            3.0,
+            7.0,
+            3.0
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": "d38dfd2dcb3137f8c284760bbefd41c8e431d9cffa365e3597351f14ba1a128a",
+      "program_sha256": "9df68b5a44fb25624700fc6cf05f3ecb5d2f6f2a4a5daa69f52eefc9d6107738",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "consume": {
+    "program": "import cadquery as cq\nstock = cq.Workplane(\"XZ\").cylinder(4, 3)\nsection = stock.faces(\">Y\").workplane().circle(2).workplane(offset=3).circle(1)\nlofted = section.loft()\nresult = section.loft()\n",
+    "report": {
+      "status": "runtime",
+      "message": "ValueError: No pending wires present",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "cf6aa0901eb2b3ffdd5b27324f4c50905e5a31c191a0fa4ff4770a9a5404061d",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  }
+}
