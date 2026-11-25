@@ -125,10 +125,11 @@ training.
 at 14,150/17,900 (79.1% against the 85% target) and CAD-Recode at its
 968/968 target (ADR-0014). Agreement is 11,691 and 893 respectively,
 with two BenchCAD `by_design` rows under ADR-0025. Both corpora have
-zero unclassified rows, timeouts and in-subset `cq_bug` rows. The
-`bump-arris-0-12` rescore and CI checks precede `lift-lofts-and-tapers`,
-which completes bundle 5, then the tail (`shell` and the rest) and the
-C2 cross-architecture digest check.
+zero unclassified rows, timeouts and in-subset `cq_bug` rows. The C1
+rescore has 300 successful rows with exact IoU of 1.0 and the same digest
+at 2 and 16 workers. Its CI check on both architectures precedes
+`lift-lofts-and-tapers`, which completes bundle 5, then the tail
+(`shell` and the rest) and the C2 cross-architecture digest check.
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified

@@ -98,67 +98,62 @@ the gate); the same run leaves `oracle.jsonl` byte-identical. Read by
 `rescore.json` and `rescore.md` are the 300 slice programs run under `cq`
 and scored against their targets: `uv run --locked --extra corpus arris-gym
 rescore benchcad --out DIR --workers N` (network once, for the corpus; outside
-the gate). Digest `8621e0ccf239cfb4b0322c9fc75681d760308dcbc0dfeb972be563c7ae88d0cd`
-(arris 0.11.1, plans/bump-arris-0-11 step 5), equal from a run at 2 workers and a run at 16 (the two `rescore.json` files are
-byte-identical). 300 rows: `ok` 200, `arris_refusal` 100, every other status
-0; stages `none` 200, `program` 100; IoU routes `exact` 100, `sampled` 100;
-timeouts none. Invalidity 1/3; mean reward 0.483560 over all 300, and 0.975340
-over the 200 valid ones alone (survivors, never reported without the first).
-Each row carries the source, CC-BY-4.0, and the arris, numpy and reward versions.
-Under arris 0.10.0 the digest was
-`f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812`; the
-0.11.1 table differs from it in each row's `versions.arris` alone, every
-status, measure, IoU route and reward bit-equal (ADR-0021: the reward's
-version stays 1).
-Across machines on arris 0.11.1 (CI run 43946448566 on commit 4f3431f, both
-`rescore` jobs green): the digest
-`8621e0ccf239cfb4b0322c9fc75681d760308dcbc0dfeb972be563c7ae88d0cd` was equal
-on `ubuntu-latest` (x86-64) and `ubuntu-24.04-arm` (aarch64), as on the
-development machine; CI run 43952222713 on commit 59a9499 is green on all
-four jobs.
+the gate). On arris 0.12.0, runs at 2 and 16 workers produced
+byte-identical JSON and Markdown with digest
+`7653aec26a1f12111b53e4ec7587b926431eb68a9628a3b95443a3107ba23551`.
+All 300 rows are `ok`, stage `none`, with exact IoU of 1.0. No row timed
+out. Invalidity is 0 and mean reward is 0.964561 over all 300 programs.
+Each row carries the source, CC-BY-4.0, and the arris, NumPy and reward
+versions.
 
-Across machines under arris 0.10.0 (CI run 42709431327 on commit 9d25b86, all 4 jobs green): the
-digest `f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812` was
-equal on three machines of two architectures:
+Compared with the 0.11.1 reports committed in `bd4c0bd`,
+`tools/rescore_diff.py` first locates changes at the program on 100 rows,
+at the IoU route on 100 and at versions on 100. The program and target
+STEP hashes and the target body digests match on all 300 rows. The
+reward stays at version 1 under ADR-0021.
 
-- the development machine: AMD Ryzen 9 7950X, x86-64, glibc 2.39;
-- GitHub `ubuntu-latest`: AMD EPYC 7763, x86-64, glibc 2.43;
-- GitHub `ubuntu-24.04-arm`: ARM Neoverse-N2, aarch64, glibc 2.39.
+- **`lobed_knob` (100).** The chained cylinder fuses now build
+  (`regression/cq-union-three-coplanar-cylinders`). All 100 rows move
+  from `arris_refusal` at stage `program` and reward −0.5 to `ok` with
+  rewards of 0.9391 to 0.9526. The measures term is within 1e-13 of 1.
+  The genus matches on every pair. The candidate has 17 to 128 more faces
+  than the target. The face-kind histograms reproduce topology of 0.5461
+  to 0.6964 on all 100 pairs (ADR-0009). For `lobed_knob_000072_s20260505` the
+  candidate has 67 planes and 9 cylinders, and the target has 3 planes
+  and 8 cylinders. The topology term is ½ + ½ · 11/76. The surface term
+  (0.8467 to 0.8577) measures distance between finite draws from the two
+  tessellations. The field metrics use their own mesh chord and
+  normalization (ADR-0010), giving voxel IoU of 0.9613 to 1.0 and
+  Chamfer ×10³ of 0.9325 to 1.0615.
+- **`phone_stand` (100).** All move from sampled to exact IoU, with IoU
+  still 1.0 and every numerical score and field metric bit-equal. Both
+  body digests are unchanged. For `phone_stand_000059_s20260505`, the
+  candidate has 14 planes and the target 10. On 0.11.1 the kernel's
+  `interference` refuses that pair with `OpDegenerateError` because the
+  coplanar faces are split differently. On 0.12.0 it reports overlap with
+  both containment flags. The face split still lowers topology to
+  0.8036–0.9091 across the family. See `docs/BACKLOG.md`, Finding
+  `interference-split-planar-faces`.
+- **`venturi_tube` (100).** Only `versions.arris` changes. The exact
+  route, both body digests, and every numerical score and field metric
+  match the 0.11.1 table. The face-kind histograms and genus match within
+  each pair, so topology is 1.0 on all 100 rows.
 
-So `transformed`'s libm did not move any body's bytes between x86-64 and
-aarch64.
+### Earlier digests
 
-Why the rows look as they do (the `inspect` skill, probed on the pairs):
+On 0.11.1, 200 rows were `ok` and 100 were `arris_refusal`, with 100 exact
+and 100 sampled IoU routes and no timeouts. Mean reward was 0.483560 over
+all 300 programs and 0.975340 over the 200 valid programs. The digest
+`8621e0ccf239cfb4b0322c9fc75681d760308dcbc0dfeb972be563c7ae88d0cd`
+matched locally at 2 and 16 workers and in CI run 43946448566 on commit
+`4f3431f` on `ubuntu-latest` (x86-64) and `ubuntu-24.04-arm` (aarch64).
+CI run 43952222713 on `59a9499` passed all four jobs.
 
-- **The 100 `arris_refusal`** are all `lobed_knob`, ending `OpDegenerateError`
-  ("the faces touch along a curve interior to both result faces"): reward -0.5
-  and stage `program`, as planned (the arris fix is out of scope).
-- **`phone_stand` takes the sampled route on all 100.** The exact route asks
-  `interference` of the candidate against the target and the kernel answers
-  `OpDegenerateError` with the same words ("the faces touch along a curve
-  interior to both result faces"), though every face is a plane; a body
-  against itself answers 1.0. The cause is the pair, not the part: the
-  candidate has 14 or more planar faces and the target, read from Open
-  Cascade's STEP, fewer (it merges coplanar faces), so coincident faces split
-  differently meet along curves. ADR-0008's `phone_stand` pairs were arris-built
-  perturbations of one body with the same split, so all 900 answered; "refusals
-  only cone against cone" holds for those, not for an arris body against an
-  Open Cascade one. The IoU is 1.0 on all 100 by the sampled route all the same.
-  Filed as a Finding in `docs/BACKLOG.md` (arris: interference of coincident
-  planar faces split differently).
-- **`phone_stand`'s `topology` is 0.80 to 0.91 and `venturi_tube`'s is 1.0**
-  for the same reason: `topology` is ½ · Σmin/Σmax over the face-kind histogram
-  plus ½ · 1/(1 + |Δgenus|) (ADR-0009). All of `phone_stand`'s faces are planes,
-  the candidate has more of them than the target on all 100, and the formula
-  recomputed from the two bodies' measures equals the recorded term on all 100
-  (for the first, 10 planes against 14: ½ · 10/14 + ½ = 0.857); `venturi_tube`'s
-  candidate and target have identical histograms (4 cones, 6 cylinders,
-  2 planes for the first) and genus.
-- **`surface` is 0.85 to 0.89** in both families: the two bodies are the same
-  surface, so the term is exp(−d/τ) of the sampling's own noise floor, d between
-  0.0063 and 0.0083 (ADR-0009), and exp(−0.0083/0.05) = 0.847. The recorded
-  minima are 0.847 (`venturi_tube`) and 0.858 (`phone_stand`, floor 0.0077:
-  0.857). `iou` is 1.0 and `measures` at least 0.99999999999 on all 200.
+On 0.10.0, the digest
+`f89bce241c80fa1deadd9a662c38b0b6095c5ad4277c5f6ab7a6735c5b1c7812`
+matched locally and on both CI architectures (run 42709431327, commit
+`9d25b86`). The 0.11.1 rows differed from that table only in the recorded
+arris version.
 
 ## Attribution
 

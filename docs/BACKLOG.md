@@ -81,7 +81,7 @@ A defect a run measured, one block each:
 - Seen: plans/m5-rescore step 7, `arris-gym rescore benchcad`, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, all 100 `phone_stand` slice pairs, 2026-11-09
 - Reproduce: `uv run --extra corpus arris-gym rescore benchcad`, then the `iou_route` of the `phone_stand` rows in `rescore.json`
 - Measured: 100 of 100 refused; the sampled IoU is 1.0 on all 100; the same body against itself answers 1.0 exactly
-- State: measured; reported in `../arris/docs/ideas/interference-split-planar-faces.md`; no regression fixture (a pair of two bodies, not one program)
+- State: fixed in arris 0.12.0. All 100 slice pairs use exact IoU and retain IoU of 1.0, with unchanged body digests and numerical scores. The kernel's `query/interference-box-against-its-halves` fixture covers split coplanar faces.
 
 ### torus-box-point-contact
 - What: arris refuses the fuse of a torus and a box whose face touches the torus at its seam vertex (`arris_refusal`, "no closed form for +f6 (plane surface) against +v0 (point)"); the oracle builds two solids meeting at that point

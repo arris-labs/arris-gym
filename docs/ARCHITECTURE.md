@@ -716,9 +716,10 @@ The determinism digest is the SHA-256 of a report's rows in program order,
 each row carrying status, refusal, body digest and measures as hex floats, and
 nothing wall-clock. It is the acceptance: equal on two machines.
 
-**Measured.** The re-scored table's digest (§The re-scored table) is equal on
-three machines: AMD Ryzen 9 7950X and AMD EPYC 7763 (x86-64), ARM Neoverse-N2
-(aarch64), glibc 2.39 to 2.43. So `Workplane.rotated`'s libm did not move body
+**Measured.** On arris 0.10.0 the re-scored table's digest (§The re-scored
+table) matches on three machines: AMD Ryzen 9 7950X and AMD EPYC 7763
+(x86-64), ARM Neoverse-N2 (aarch64), glibc 2.39 to 2.43.
+So `Workplane.rotated`'s libm did not move body
 bytes on the slice. The digest moves with any version it covers: a new
 `arris` or `numpy` version, or the reward's, changes it (arris-gym's own
 version is recorded in each row but not hashed, ADR-0011), and the
@@ -1102,12 +1103,14 @@ depends on the main environment alone, never on CadQuery (ADR-0011).
 - **The digest** is the SHA-256 of each row's name, statuses, body digests,
   `step_sha256` and `Score.digest()`, then the counts and aggregates as hex
   floats. No timeout message, nothing wall-clock; input order does not move it.
-- **Measured on the slice (reward 1):** `ok` 200, `arris_refusal` 100
-  (`lobed_knob`, reward −0.5), stages `none` 200 and `program` 100, no
-  timeouts; `mean_reward` 0.4836 over 300, 0.9753 over the 200 valid;
-  invalidity 1/3. The IoU is 1.0 on all 200 valid rows, exact on 100 and
-  sampled on the 100 `phone_stand` rows, whose exact route the kernel refuses
-  (`BACKLOG.md`, Findings). Digest `8621e0cc…` (arris 0.11.1; under 0.10.0 `f89bce24…`), equal on two architectures.
+- **Measured on the slice (arris 0.12.0, reward 1).** All 300 rows are
+  `ok` in stage `none` and have exact IoU of 1.0. No row timed out.
+  Invalidity is 0 and mean reward is 0.964561 over all 300 programs.
+  The kernel builds all 100 formerly refused `lobed_knob` programs.
+  All 100 `phone_stand` pairs move to the exact route with bit-equal
+  numerical scores. Digest `7653aec2…3551` matches at 2 and 16 workers.
+  The cross-architecture check for this digest is pending. Earlier runs
+  and the per-family comparisons are in `tests/fixtures/c1/README.md`.
 - `tools/rescore_diff.py A B` names the rows two tables differ at and the first
   stage each differs at.
 

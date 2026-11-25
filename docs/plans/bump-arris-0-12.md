@@ -92,7 +92,7 @@ verification, **[3]** unproven design. Grades map to tiers.
   and 6. Replace historical verdicts for stems covered by step 6.
   Confirm byte-identical oracle rows and record the torus–box check
   against its closed form.
-- [ ] Step 8 **[2] [conductor-run]**. Run `arris-gym rescore benchcad`
+- [x] Step 8 **[2] [conductor-run]**. Run `arris-gym rescore benchcad`
   at 2 and 16 workers. Compare the two outputs and use
   `tools/rescore_diff.py` against the committed 0.11.1 evidence. Explain
   each changed score or route beyond version metadata and record the digest.
@@ -172,4 +172,10 @@ versioning.
   The checked failure list replaces those verdicts too.
   The torus–box point contact builds two solids and agrees with the
   closed form and the oracle (ADR-0005, ADR-0016).
+- Settled in step 8. Both worker counts produce byte-identical reports,
+  digest `7653aec26a1f12111b53e4ec7587b926431eb68a9628a3b95443a3107ba23551`.
+  All 300 rows score with exact IoU of 1.0 and zero timeouts. The 0.11.1
+  comparison first differs at program for 100 `lobed_knob` rows, at IoU
+  route for 100 `phone_stand` rows and at versions for 100 `venturi_tube`
+  rows. The C1 fixture README records the score changes.
 - ⚠ OPEN: Step 9 (human) authorizes pushing the plan branch for CI.

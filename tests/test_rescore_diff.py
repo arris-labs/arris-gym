@@ -14,11 +14,12 @@ from typing import Any
 import pytest
 
 import rescore_diff
+from arris_gym.reward import failed_score
+from arris_gym.sandbox import Status
 
 C1 = Path(__file__).parent / "fixtures" / "c1"
 TABLE: dict[str, Any] = json.loads((C1 / "rescore.json").read_text(encoding="utf-8"))
 GOOD = next(r["name"] for r in TABLE["rows"] if r["stage"] == "none")
-REFUSED = next(r["name"] for r in TABLE["rows"] if r["stage"] == "program")
 
 
 def planted(name: str, edit: Any) -> dict[str, Any]:
@@ -64,8 +65,19 @@ def test_the_first_stage_wins_when_several_differ() -> None:
 
 
 def test_a_failed_row_differs_in_its_program_status() -> None:
-    other = planted(REFUSED, lambda r: r.update(program_status="runtime"))
-    assert rescore_diff.diff(TABLE, other)[0] == f"{REFUSED}: first differs at program"
+    def failure(status: Status) -> dict[str, Any]:
+        return planted(
+            GOOD,
+            lambda row: row.update(
+                stage="program",
+                program_status=status.value,
+                candidate_sha256=None,
+                score=failed_score(status, "test failure").model_dump(mode="json"),
+            ),
+        )
+
+    lines = rescore_diff.diff(failure(Status.SYNTAX), failure(Status.RUNTIME))
+    assert lines == [f"{GOOD}: first differs at program"]
 
 
 def test_a_row_in_one_table_only_and_a_moved_aggregate_are_named() -> None:

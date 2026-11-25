@@ -1,222 +1,222 @@
 # re-scored table
 
-Digest `8621e0ccf239cfb4b0322c9fc75681d760308dcbc0dfeb972be563c7ae88d0cd`.
+Digest `7653aec26a1f12111b53e4ec7587b926431eb68a9628a3b95443a3107ba23551`.
 
 Over 300 programs (every failure counted):
 
-- statuses: ok 200, syntax 0, runtime 0, unsupported_api 0, arris_refusal 100, checker_fail 0, timeout 0, crash 0
-- stages: none 200, program 100, target 0, scoring 0
-- IoU routes: exact 100, sampled 100
-- invalidity rate 0.333333
-- mean reward over all 300 programs: 0.483560
-- mean reward over the 200 valid programs only (survivors, not comparable): 0.975340
+- statuses: ok 300, syntax 0, runtime 0, unsupported_api 0, arris_refusal 0, checker_fail 0, timeout 0, crash 0
+- stages: none 300, program 0, target 0, scoring 0
+- IoU routes: exact 300, sampled 0
+- invalidity rate 0.000000
+- mean reward over all 300 programs: 0.964561
+- mean reward over the 300 valid programs only (survivors, not comparable): 0.964561
 - timed out: none
 
 Sources: ` "BenchCAD/BenchCAD (code_gen) (CC-BY-4.0)" `.
-arris and numpy: ` "0.11.1" ` / ` "2.3.4" `; reward version ` "[1]" `.
+arris and numpy: ` "0.12.0" ` / ` "2.3.4" `; reward version ` "[1]" `.
 
 | name | stage | status | reward | IoU route | IoU | surface | measures | topology |
 |---|---|---|---|---|---|---|---|---|
-| ` "lobed_knob_000072_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000093_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000115_s20260507" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000135_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000203_s20260507" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000266_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000301_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000354_s20260507" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000493_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000557_s20260507" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000770_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000778_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_000802_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001098_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001179_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001355_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001494_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001614_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001681_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001682_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_001927_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_002095_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_002911_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_003289_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_003522_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_003729_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_003796_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_003835_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_003936_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_003960_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_004139_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_004149_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_004155_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_004519_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_004639_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005024_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005070_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005141_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005143_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005246_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005580_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005764_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005850_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005851_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_005879_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006048_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006073_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006083_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006219_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006504_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006592_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006621_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006797_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006809_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_006833_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007069_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007094_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007148_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007160_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007247_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007305_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007405_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007531_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007598_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007612_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007687_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007866_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007888_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007894_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_007927_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008148_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008268_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008277_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008466_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008476_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008617_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008661_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008667_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008970_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008996_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_008999_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_009086_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_009192_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_009461_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_009549_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_009650_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_009876_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010044_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010134_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010160_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010321_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010389_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010447_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010465_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010701_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_010791_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_011295_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_011510_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_011521_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "lobed_knob_011564_s20260505" ` | program | arris_refusal | -0.5000 |  |  |  |  |  |
-| ` "phone_stand_000059_s20260505" ` | none | ok | 0.9705 | sampled | 1.0000 | 0.8766 | 1.0000 | 0.8571 |
-| ` "phone_stand_000106_s20260507" ` | none | ok | 0.9639 | sampled | 1.0000 | 0.8637 | 1.0000 | 0.8036 |
-| ` "phone_stand_000300_s20260505" ` | none | ok | 0.9642 | sampled | 1.0000 | 0.8646 | 1.0000 | 0.8056 |
-| ` "phone_stand_000332_s20260505" ` | none | ok | 0.9639 | sampled | 1.0000 | 0.8622 | 1.0000 | 0.8056 |
-| ` "phone_stand_000336_s20260507" ` | none | ok | 0.9685 | sampled | 1.0000 | 0.8742 | 1.0000 | 0.8382 |
-| ` "phone_stand_000374_s20260507" ` | none | ok | 0.9683 | sampled | 1.0000 | 0.8677 | 1.0000 | 0.8462 |
-| ` "phone_stand_000381_s20260507" ` | none | ok | 0.9661 | sampled | 1.0000 | 0.8754 | 1.0000 | 0.8103 |
-| ` "phone_stand_000399_s20260507" ` | none | ok | 0.9637 | sampled | 1.0000 | 0.8620 | 1.0000 | 0.8036 |
-| ` "phone_stand_000419_s20260505" ` | none | ok | 0.9701 | sampled | 1.0000 | 0.8646 | 1.0000 | 0.8704 |
-| ` "phone_stand_000472_s20260507" ` | none | ok | 0.9653 | sampled | 1.0000 | 0.8661 | 1.0000 | 0.8158 |
-| ` "phone_stand_000575_s20260507" ` | none | ok | 0.9718 | sampled | 1.0000 | 0.8778 | 1.0000 | 0.8704 |
-| ` "phone_stand_000577_s20260505" ` | none | ok | 0.9709 | sampled | 1.0000 | 0.8794 | 1.0000 | 0.8571 |
-| ` "phone_stand_000597_s20260505" ` | none | ok | 0.9708 | sampled | 1.0000 | 0.8701 | 1.0000 | 0.8704 |
-| ` "phone_stand_000649_s20260505" ` | none | ok | 0.9655 | sampled | 1.0000 | 0.8744 | 1.0000 | 0.8056 |
-| ` "phone_stand_000754_s20260505" ` | none | ok | 0.9736 | sampled | 1.0000 | 0.8777 | 1.0000 | 0.8906 |
-| ` "phone_stand_000985_s20260505" ` | none | ok | 0.9686 | sampled | 1.0000 | 0.8755 | 1.0000 | 0.8382 |
-| ` "phone_stand_001373_s20260505" ` | none | ok | 0.9727 | sampled | 1.0000 | 0.8730 | 1.0000 | 0.8871 |
-| ` "phone_stand_001405_s20260505" ` | none | ok | 0.9670 | sampled | 1.0000 | 0.8704 | 1.0000 | 0.8281 |
-| ` "phone_stand_001406_s20260505" ` | none | ok | 0.9667 | sampled | 1.0000 | 0.8644 | 1.0000 | 0.8333 |
-| ` "phone_stand_001431_s20260505" ` | none | ok | 0.9717 | sampled | 1.0000 | 0.8766 | 1.0000 | 0.8704 |
-| ` "phone_stand_001546_s20260505" ` | none | ok | 0.9675 | sampled | 1.0000 | 0.8859 | 1.0000 | 0.8103 |
-| ` "phone_stand_001552_s20260505" ` | none | ok | 0.9696 | sampled | 1.0000 | 0.8826 | 1.0000 | 0.8382 |
-| ` "phone_stand_001721_s20260505" ` | none | ok | 0.9662 | sampled | 1.0000 | 0.8803 | 1.0000 | 0.8036 |
-| ` "phone_stand_001730_s20260505" ` | none | ok | 0.9711 | sampled | 1.0000 | 0.8782 | 1.0000 | 0.8621 |
-| ` "phone_stand_001752_s20260505" ` | none | ok | 0.9723 | sampled | 1.0000 | 0.8678 | 1.0000 | 0.8906 |
-| ` "phone_stand_001776_s20260505" ` | none | ok | 0.9720 | sampled | 1.0000 | 0.8791 | 1.0000 | 0.8704 |
-| ` "phone_stand_001796_s20260505" ` | none | ok | 0.9687 | sampled | 1.0000 | 0.8705 | 1.0000 | 0.8462 |
-| ` "phone_stand_001887_s20260505" ` | none | ok | 0.9690 | sampled | 1.0000 | 0.8656 | 1.0000 | 0.8571 |
-| ` "phone_stand_001978_s20260505" ` | none | ok | 0.9696 | sampled | 1.0000 | 0.8776 | 1.0000 | 0.8462 |
-| ` "phone_stand_002052_s20260505" ` | none | ok | 0.9683 | sampled | 1.0000 | 0.8732 | 1.0000 | 0.8382 |
-| ` "phone_stand_002192_s20260505" ` | none | ok | 0.9633 | sampled | 1.0000 | 0.8580 | 1.0000 | 0.8056 |
-| ` "phone_stand_002296_s20260505" ` | none | ok | 0.9686 | sampled | 1.0000 | 0.8701 | 1.0000 | 0.8462 |
-| ` "phone_stand_002471_s20260505" ` | none | ok | 0.9706 | sampled | 1.0000 | 0.8719 | 1.0000 | 0.8654 |
-| ` "phone_stand_002625_s20260505" ` | none | ok | 0.9699 | sampled | 1.0000 | 0.8671 | 1.0000 | 0.8654 |
-| ` "phone_stand_002633_s20260505" ` | none | ok | 0.9741 | sampled | 1.0000 | 0.8687 | 1.0000 | 0.9091 |
-| ` "phone_stand_002779_s20260505" ` | none | ok | 0.9734 | sampled | 1.0000 | 0.8758 | 1.0000 | 0.8906 |
-| ` "phone_stand_003032_s20260505" ` | none | ok | 0.9745 | sampled | 1.0000 | 0.8841 | 1.0000 | 0.8906 |
-| ` "phone_stand_003041_s20260505" ` | none | ok | 0.9685 | sampled | 1.0000 | 0.8692 | 1.0000 | 0.8462 |
-| ` "phone_stand_003269_s20260505" ` | none | ok | 0.9670 | sampled | 1.0000 | 0.8820 | 1.0000 | 0.8103 |
-| ` "phone_stand_003390_s20260505" ` | none | ok | 0.9697 | sampled | 1.0000 | 0.8784 | 1.0000 | 0.8462 |
-| ` "phone_stand_003536_s20260505" ` | none | ok | 0.9663 | sampled | 1.0000 | 0.8815 | 1.0000 | 0.8036 |
-| ` "phone_stand_003541_s20260505" ` | none | ok | 0.9638 | sampled | 1.0000 | 0.8612 | 1.0000 | 0.8056 |
-| ` "phone_stand_003746_s20260505" ` | none | ok | 0.9648 | sampled | 1.0000 | 0.8656 | 1.0000 | 0.8103 |
-| ` "phone_stand_003876_s20260505" ` | none | ok | 0.9745 | sampled | 1.0000 | 0.8842 | 1.0000 | 0.8906 |
-| ` "phone_stand_004002_s20260505" ` | none | ok | 0.9740 | sampled | 1.0000 | 0.8678 | 1.0000 | 0.9091 |
-| ` "phone_stand_004198_s20260505" ` | none | ok | 0.9702 | sampled | 1.0000 | 0.8819 | 1.0000 | 0.8462 |
-| ` "phone_stand_004217_s20260505" ` | none | ok | 0.9689 | sampled | 1.0000 | 0.8652 | 1.0000 | 0.8571 |
-| ` "phone_stand_004376_s20260505" ` | none | ok | 0.9696 | sampled | 1.0000 | 0.8772 | 1.0000 | 0.8462 |
-| ` "phone_stand_004477_s20260505" ` | none | ok | 0.9696 | sampled | 1.0000 | 0.8771 | 1.0000 | 0.8462 |
-| ` "phone_stand_004478_s20260505" ` | none | ok | 0.9689 | sampled | 1.0000 | 0.8722 | 1.0000 | 0.8462 |
-| ` "phone_stand_004565_s20260505" ` | none | ok | 0.9698 | sampled | 1.0000 | 0.8788 | 1.0000 | 0.8462 |
-| ` "phone_stand_004697_s20260505" ` | none | ok | 0.9731 | sampled | 1.0000 | 0.8759 | 1.0000 | 0.8871 |
-| ` "phone_stand_004740_s20260505" ` | none | ok | 0.9644 | sampled | 1.0000 | 0.8658 | 1.0000 | 0.8056 |
-| ` "phone_stand_004754_s20260505" ` | none | ok | 0.9655 | sampled | 1.0000 | 0.8739 | 1.0000 | 0.8056 |
-| ` "phone_stand_004774_s20260505" ` | none | ok | 0.9651 | sampled | 1.0000 | 0.8710 | 1.0000 | 0.8056 |
-| ` "phone_stand_005005_s20260505" ` | none | ok | 0.9712 | sampled | 1.0000 | 0.8762 | 1.0000 | 0.8654 |
-| ` "phone_stand_005044_s20260505" ` | none | ok | 0.9640 | sampled | 1.0000 | 0.8629 | 1.0000 | 0.8056 |
-| ` "phone_stand_005203_s20260505" ` | none | ok | 0.9711 | sampled | 1.0000 | 0.8815 | 1.0000 | 0.8571 |
-| ` "phone_stand_005218_s20260505" ` | none | ok | 0.9701 | sampled | 1.0000 | 0.8685 | 1.0000 | 0.8654 |
-| ` "phone_stand_005457_s20260505" ` | none | ok | 0.9702 | sampled | 1.0000 | 0.8687 | 1.0000 | 0.8654 |
-| ` "phone_stand_005532_s20260505" ` | none | ok | 0.9727 | sampled | 1.0000 | 0.8706 | 1.0000 | 0.8906 |
-| ` "phone_stand_005632_s20260505" ` | none | ok | 0.9676 | sampled | 1.0000 | 0.8626 | 1.0000 | 0.8462 |
-| ` "phone_stand_005706_s20260505" ` | none | ok | 0.9714 | sampled | 1.0000 | 0.8745 | 1.0000 | 0.8704 |
-| ` "phone_stand_005924_s20260505" ` | none | ok | 0.9714 | sampled | 1.0000 | 0.8800 | 1.0000 | 0.8621 |
-| ` "phone_stand_005969_s20260505" ` | none | ok | 0.9684 | sampled | 1.0000 | 0.8688 | 1.0000 | 0.8462 |
-| ` "phone_stand_005989_s20260505" ` | none | ok | 0.9651 | sampled | 1.0000 | 0.8714 | 1.0000 | 0.8056 |
-| ` "phone_stand_006372_s20260505" ` | none | ok | 0.9644 | sampled | 1.0000 | 0.8657 | 1.0000 | 0.8056 |
-| ` "phone_stand_006466_s20260505" ` | none | ok | 0.9672 | sampled | 1.0000 | 0.8831 | 1.0000 | 0.8103 |
-| ` "phone_stand_006581_s20260505" ` | none | ok | 0.9685 | sampled | 1.0000 | 0.8658 | 1.0000 | 0.8519 |
-| ` "phone_stand_006836_s20260505" ` | none | ok | 0.9737 | sampled | 1.0000 | 0.8807 | 1.0000 | 0.8871 |
-| ` "phone_stand_006941_s20260505" ` | none | ok | 0.9688 | sampled | 1.0000 | 0.8705 | 1.0000 | 0.8478 |
-| ` "phone_stand_007198_s20260505" ` | none | ok | 0.9700 | sampled | 1.0000 | 0.8804 | 1.0000 | 0.8462 |
-| ` "phone_stand_007609_s20260505" ` | none | ok | 0.9660 | sampled | 1.0000 | 0.8742 | 1.0000 | 0.8103 |
-| ` "phone_stand_007735_s20260505" ` | none | ok | 0.9710 | sampled | 1.0000 | 0.8876 | 1.0000 | 0.8462 |
-| ` "phone_stand_007788_s20260505" ` | none | ok | 0.9702 | sampled | 1.0000 | 0.8816 | 1.0000 | 0.8462 |
-| ` "phone_stand_007924_s20260505" ` | none | ok | 0.9642 | sampled | 1.0000 | 0.8648 | 1.0000 | 0.8056 |
-| ` "phone_stand_007980_s20260505" ` | none | ok | 0.9699 | sampled | 1.0000 | 0.8636 | 1.0000 | 0.8704 |
-| ` "phone_stand_008429_s20260505" ` | none | ok | 0.9674 | sampled | 1.0000 | 0.8697 | 1.0000 | 0.8333 |
-| ` "phone_stand_008758_s20260505" ` | none | ok | 0.9698 | sampled | 1.0000 | 0.8659 | 1.0000 | 0.8654 |
-| ` "phone_stand_008814_s20260505" ` | none | ok | 0.9713 | sampled | 1.0000 | 0.8736 | 1.0000 | 0.8704 |
-| ` "phone_stand_008862_s20260505" ` | none | ok | 0.9692 | sampled | 1.0000 | 0.8747 | 1.0000 | 0.8462 |
-| ` "phone_stand_008997_s20260505" ` | none | ok | 0.9699 | sampled | 1.0000 | 0.8796 | 1.0000 | 0.8462 |
-| ` "phone_stand_009177_s20260505" ` | none | ok | 0.9701 | sampled | 1.0000 | 0.8798 | 1.0000 | 0.8478 |
-| ` "phone_stand_009257_s20260505" ` | none | ok | 0.9670 | sampled | 1.0000 | 0.8714 | 1.0000 | 0.8261 |
-| ` "phone_stand_009349_s20260505" ` | none | ok | 0.9663 | sampled | 1.0000 | 0.8660 | 1.0000 | 0.8261 |
-| ` "phone_stand_009407_s20260505" ` | none | ok | 0.9647 | sampled | 1.0000 | 0.8683 | 1.0000 | 0.8056 |
-| ` "phone_stand_009525_s20260505" ` | none | ok | 0.9675 | sampled | 1.0000 | 0.8752 | 1.0000 | 0.8261 |
-| ` "phone_stand_009552_s20260505" ` | none | ok | 0.9735 | sampled | 1.0000 | 0.8640 | 1.0000 | 0.9091 |
-| ` "phone_stand_009893_s20260505" ` | none | ok | 0.9661 | sampled | 1.0000 | 0.8753 | 1.0000 | 0.8103 |
-| ` "phone_stand_009920_s20260505" ` | none | ok | 0.9665 | sampled | 1.0000 | 0.8677 | 1.0000 | 0.8261 |
-| ` "phone_stand_010002_s20260505" ` | none | ok | 0.9704 | sampled | 1.0000 | 0.8703 | 1.0000 | 0.8654 |
-| ` "phone_stand_010184_s20260505" ` | none | ok | 0.9736 | sampled | 1.0000 | 0.8782 | 1.0000 | 0.8889 |
-| ` "phone_stand_010279_s20260505" ` | none | ok | 0.9677 | sampled | 1.0000 | 0.8721 | 1.0000 | 0.8333 |
-| ` "phone_stand_010322_s20260505" ` | none | ok | 0.9681 | sampled | 1.0000 | 0.8718 | 1.0000 | 0.8382 |
-| ` "phone_stand_010481_s20260505" ` | none | ok | 0.9652 | sampled | 1.0000 | 0.8719 | 1.0000 | 0.8056 |
-| ` "phone_stand_010522_s20260505" ` | none | ok | 0.9672 | sampled | 1.0000 | 0.8731 | 1.0000 | 0.8261 |
-| ` "phone_stand_010605_s20260505" ` | none | ok | 0.9712 | sampled | 1.0000 | 0.8822 | 1.0000 | 0.8571 |
-| ` "phone_stand_010679_s20260505" ` | none | ok | 0.9708 | sampled | 1.0000 | 0.8699 | 1.0000 | 0.8704 |
-| ` "phone_stand_011018_s20260505" ` | none | ok | 0.9640 | sampled | 1.0000 | 0.8643 | 1.0000 | 0.8036 |
-| ` "phone_stand_011024_s20260505" ` | none | ok | 0.9715 | sampled | 1.0000 | 0.8843 | 1.0000 | 0.8571 |
+| ` "lobed_knob_000072_s20260505" ` | none | ok | 0.9412 | exact | 1.0000 | 0.8492 | 1.0000 | 0.5724 |
+| ` "lobed_knob_000093_s20260505" ` | none | ok | 0.9436 | exact | 1.0000 | 0.8545 | 1.0000 | 0.5918 |
+| ` "lobed_knob_000115_s20260507" ` | none | ok | 0.9410 | exact | 1.0000 | 0.8484 | 1.0000 | 0.5714 |
+| ` "lobed_knob_000135_s20260505" ` | none | ok | 0.9424 | exact | 1.0000 | 0.8498 | 1.0000 | 0.5847 |
+| ` "lobed_knob_000203_s20260507" ` | none | ok | 0.9452 | exact | 1.0000 | 0.8562 | 1.0000 | 0.6071 |
+| ` "lobed_knob_000266_s20260505" ` | none | ok | 0.9462 | exact | 1.0000 | 0.8487 | 1.0000 | 0.6290 |
+| ` "lobed_knob_000301_s20260505" ` | none | ok | 0.9411 | exact | 1.0000 | 0.8488 | 1.0000 | 0.5724 |
+| ` "lobed_knob_000354_s20260507" ` | none | ok | 0.9400 | exact | 1.0000 | 0.8523 | 1.0000 | 0.5550 |
+| ` "lobed_knob_000493_s20260505" ` | none | ok | 0.9462 | exact | 1.0000 | 0.8518 | 1.0000 | 0.6250 |
+| ` "lobed_knob_000557_s20260507" ` | none | ok | 0.9413 | exact | 1.0000 | 0.8478 | 1.0000 | 0.5764 |
+| ` "lobed_knob_000770_s20260505" ` | none | ok | 0.9422 | exact | 1.0000 | 0.8489 | 1.0000 | 0.5847 |
+| ` "lobed_knob_000778_s20260505" ` | none | ok | 0.9415 | exact | 1.0000 | 0.8515 | 1.0000 | 0.5723 |
+| ` "lobed_knob_000802_s20260505" ` | none | ok | 0.9428 | exact | 1.0000 | 0.8485 | 1.0000 | 0.5917 |
+| ` "lobed_knob_001098_s20260505" ` | none | ok | 0.9402 | exact | 1.0000 | 0.8488 | 1.0000 | 0.5625 |
+| ` "lobed_knob_001179_s20260505" ` | none | ok | 0.9526 | exact | 1.0000 | 0.8515 | 1.0000 | 0.6964 |
+| ` "lobed_knob_001355_s20260505" ` | none | ok | 0.9439 | exact | 1.0000 | 0.8554 | 1.0000 | 0.5938 |
+| ` "lobed_knob_001494_s20260505" ` | none | ok | 0.9413 | exact | 1.0000 | 0.8507 | 1.0000 | 0.5714 |
+| ` "lobed_knob_001614_s20260505" ` | none | ok | 0.9392 | exact | 1.0000 | 0.8521 | 1.0000 | 0.5461 |
+| ` "lobed_knob_001681_s20260505" ` | none | ok | 0.9403 | exact | 1.0000 | 0.8499 | 1.0000 | 0.5618 |
+| ` "lobed_knob_001682_s20260505" ` | none | ok | 0.9402 | exact | 1.0000 | 0.8494 | 1.0000 | 0.5618 |
+| ` "lobed_knob_001927_s20260505" ` | none | ok | 0.9401 | exact | 1.0000 | 0.8482 | 1.0000 | 0.5625 |
+| ` "lobed_knob_002095_s20260505" ` | none | ok | 0.9414 | exact | 1.0000 | 0.8520 | 1.0000 | 0.5714 |
+| ` "lobed_knob_002911_s20260505" ` | none | ok | 0.9403 | exact | 1.0000 | 0.8521 | 1.0000 | 0.5588 |
+| ` "lobed_knob_003289_s20260505" ` | none | ok | 0.9429 | exact | 1.0000 | 0.8511 | 1.0000 | 0.5893 |
+| ` "lobed_knob_003522_s20260505" ` | none | ok | 0.9439 | exact | 1.0000 | 0.8566 | 1.0000 | 0.5918 |
+| ` "lobed_knob_003729_s20260505" ` | none | ok | 0.9415 | exact | 1.0000 | 0.8489 | 1.0000 | 0.5764 |
+| ` "lobed_knob_003796_s20260505" ` | none | ok | 0.9465 | exact | 1.0000 | 0.8508 | 1.0000 | 0.6290 |
+| ` "lobed_knob_003835_s20260505" ` | none | ok | 0.9402 | exact | 1.0000 | 0.8495 | 1.0000 | 0.5618 |
+| ` "lobed_knob_003936_s20260505" ` | none | ok | 0.9495 | exact | 1.0000 | 0.8513 | 1.0000 | 0.6618 |
+| ` "lobed_knob_003960_s20260505" ` | none | ok | 0.9399 | exact | 1.0000 | 0.8517 | 1.0000 | 0.5550 |
+| ` "lobed_knob_004139_s20260505" ` | none | ok | 0.9466 | exact | 1.0000 | 0.8543 | 1.0000 | 0.6250 |
+| ` "lobed_knob_004149_s20260505" ` | none | ok | 0.9525 | exact | 1.0000 | 0.8509 | 1.0000 | 0.6964 |
+| ` "lobed_knob_004155_s20260505" ` | none | ok | 0.9436 | exact | 1.0000 | 0.8502 | 1.0000 | 0.5980 |
+| ` "lobed_knob_004519_s20260505" ` | none | ok | 0.9456 | exact | 1.0000 | 0.8517 | 1.0000 | 0.6176 |
+| ` "lobed_knob_004639_s20260505" ` | none | ok | 0.9408 | exact | 1.0000 | 0.8524 | 1.0000 | 0.5632 |
+| ` "lobed_knob_005024_s20260505" ` | none | ok | 0.9436 | exact | 1.0000 | 0.8543 | 1.0000 | 0.5918 |
+| ` "lobed_knob_005070_s20260505" ` | none | ok | 0.9411 | exact | 1.0000 | 0.8497 | 1.0000 | 0.5714 |
+| ` "lobed_knob_005141_s20260505" ` | none | ok | 0.9456 | exact | 1.0000 | 0.8554 | 1.0000 | 0.6125 |
+| ` "lobed_knob_005143_s20260505" ` | none | ok | 0.9428 | exact | 1.0000 | 0.8484 | 1.0000 | 0.5917 |
+| ` "lobed_knob_005246_s20260505" ` | none | ok | 0.9428 | exact | 1.0000 | 0.8505 | 1.0000 | 0.5893 |
+| ` "lobed_knob_005580_s20260505" ` | none | ok | 0.9448 | exact | 1.0000 | 0.8533 | 1.0000 | 0.6071 |
+| ` "lobed_knob_005764_s20260505" ` | none | ok | 0.9424 | exact | 1.0000 | 0.8505 | 1.0000 | 0.5847 |
+| ` "lobed_knob_005850_s20260505" ` | none | ok | 0.9417 | exact | 1.0000 | 0.8493 | 1.0000 | 0.5781 |
+| ` "lobed_knob_005851_s20260505" ` | none | ok | 0.9401 | exact | 1.0000 | 0.8481 | 1.0000 | 0.5625 |
+| ` "lobed_knob_005879_s20260505" ` | none | ok | 0.9425 | exact | 1.0000 | 0.8509 | 1.0000 | 0.5847 |
+| ` "lobed_knob_006048_s20260505" ` | none | ok | 0.9462 | exact | 1.0000 | 0.8490 | 1.0000 | 0.6290 |
+| ` "lobed_knob_006073_s20260505" ` | none | ok | 0.9415 | exact | 1.0000 | 0.8491 | 1.0000 | 0.5769 |
+| ` "lobed_knob_006083_s20260505" ` | none | ok | 0.9391 | exact | 1.0000 | 0.8517 | 1.0000 | 0.5461 |
+| ` "lobed_knob_006219_s20260505" ` | none | ok | 0.9437 | exact | 1.0000 | 0.8547 | 1.0000 | 0.5918 |
+| ` "lobed_knob_006504_s20260505" ` | none | ok | 0.9424 | exact | 1.0000 | 0.8504 | 1.0000 | 0.5847 |
+| ` "lobed_knob_006592_s20260505" ` | none | ok | 0.9438 | exact | 1.0000 | 0.8555 | 1.0000 | 0.5918 |
+| ` "lobed_knob_006621_s20260505" ` | none | ok | 0.9463 | exact | 1.0000 | 0.8496 | 1.0000 | 0.6290 |
+| ` "lobed_knob_006797_s20260505" ` | none | ok | 0.9394 | exact | 1.0000 | 0.8518 | 1.0000 | 0.5492 |
+| ` "lobed_knob_006809_s20260505" ` | none | ok | 0.9407 | exact | 1.0000 | 0.8523 | 1.0000 | 0.5632 |
+| ` "lobed_knob_006833_s20260505" ` | none | ok | 0.9399 | exact | 1.0000 | 0.8491 | 1.0000 | 0.5585 |
+| ` "lobed_knob_007069_s20260505" ` | none | ok | 0.9448 | exact | 1.0000 | 0.8560 | 1.0000 | 0.6023 |
+| ` "lobed_knob_007094_s20260505" ` | none | ok | 0.9412 | exact | 1.0000 | 0.8503 | 1.0000 | 0.5714 |
+| ` "lobed_knob_007148_s20260505" ` | none | ok | 0.9436 | exact | 1.0000 | 0.8500 | 1.0000 | 0.5980 |
+| ` "lobed_knob_007160_s20260505" ` | none | ok | 0.9437 | exact | 1.0000 | 0.8512 | 1.0000 | 0.5980 |
+| ` "lobed_knob_007247_s20260505" ` | none | ok | 0.9437 | exact | 1.0000 | 0.8554 | 1.0000 | 0.5918 |
+| ` "lobed_knob_007305_s20260505" ` | none | ok | 0.9393 | exact | 1.0000 | 0.8494 | 1.0000 | 0.5513 |
+| ` "lobed_knob_007405_s20260505" ` | none | ok | 0.9400 | exact | 1.0000 | 0.8480 | 1.0000 | 0.5618 |
+| ` "lobed_knob_007531_s20260505" ` | none | ok | 0.9409 | exact | 1.0000 | 0.8515 | 1.0000 | 0.5667 |
+| ` "lobed_knob_007598_s20260505" ` | none | ok | 0.9412 | exact | 1.0000 | 0.8492 | 1.0000 | 0.5724 |
+| ` "lobed_knob_007612_s20260505" ` | none | ok | 0.9417 | exact | 1.0000 | 0.8497 | 1.0000 | 0.5781 |
+| ` "lobed_knob_007687_s20260505" ` | none | ok | 0.9432 | exact | 1.0000 | 0.8552 | 1.0000 | 0.5865 |
+| ` "lobed_knob_007866_s20260505" ` | none | ok | 0.9413 | exact | 1.0000 | 0.8507 | 1.0000 | 0.5714 |
+| ` "lobed_knob_007888_s20260505" ` | none | ok | 0.9400 | exact | 1.0000 | 0.8519 | 1.0000 | 0.5550 |
+| ` "lobed_knob_007894_s20260505" ` | none | ok | 0.9409 | exact | 1.0000 | 0.8473 | 1.0000 | 0.5724 |
+| ` "lobed_knob_007927_s20260505" ` | none | ok | 0.9453 | exact | 1.0000 | 0.8523 | 1.0000 | 0.6143 |
+| ` "lobed_knob_008148_s20260505" ` | none | ok | 0.9424 | exact | 1.0000 | 0.8499 | 1.0000 | 0.5847 |
+| ` "lobed_knob_008268_s20260505" ` | none | ok | 0.9430 | exact | 1.0000 | 0.8512 | 1.0000 | 0.5893 |
+| ` "lobed_knob_008277_s20260505" ` | none | ok | 0.9417 | exact | 1.0000 | 0.8536 | 1.0000 | 0.5723 |
+| ` "lobed_knob_008466_s20260505" ` | none | ok | 0.9464 | exact | 1.0000 | 0.8502 | 1.0000 | 0.6290 |
+| ` "lobed_knob_008476_s20260505" ` | none | ok | 0.9437 | exact | 1.0000 | 0.8507 | 1.0000 | 0.5980 |
+| ` "lobed_knob_008617_s20260505" ` | none | ok | 0.9436 | exact | 1.0000 | 0.8503 | 1.0000 | 0.5980 |
+| ` "lobed_knob_008661_s20260505" ` | none | ok | 0.9416 | exact | 1.0000 | 0.8525 | 1.0000 | 0.5723 |
+| ` "lobed_knob_008667_s20260505" ` | none | ok | 0.9398 | exact | 1.0000 | 0.8527 | 1.0000 | 0.5524 |
+| ` "lobed_knob_008970_s20260505" ` | none | ok | 0.9453 | exact | 1.0000 | 0.8497 | 1.0000 | 0.6176 |
+| ` "lobed_knob_008996_s20260505" ` | none | ok | 0.9452 | exact | 1.0000 | 0.8562 | 1.0000 | 0.6071 |
+| ` "lobed_knob_008999_s20260505" ` | none | ok | 0.9463 | exact | 1.0000 | 0.8521 | 1.0000 | 0.6250 |
+| ` "lobed_knob_009086_s20260505" ` | none | ok | 0.9416 | exact | 1.0000 | 0.8493 | 1.0000 | 0.5769 |
+| ` "lobed_knob_009192_s20260505" ` | none | ok | 0.9461 | exact | 1.0000 | 0.8504 | 1.0000 | 0.6250 |
+| ` "lobed_knob_009461_s20260505" ` | none | ok | 0.9438 | exact | 1.0000 | 0.8555 | 1.0000 | 0.5918 |
+| ` "lobed_knob_009549_s20260505" ` | none | ok | 0.9415 | exact | 1.0000 | 0.8554 | 1.0000 | 0.5667 |
+| ` "lobed_knob_009650_s20260505" ` | none | ok | 0.9412 | exact | 1.0000 | 0.8505 | 1.0000 | 0.5705 |
+| ` "lobed_knob_009876_s20260505" ` | none | ok | 0.9455 | exact | 1.0000 | 0.8512 | 1.0000 | 0.6176 |
+| ` "lobed_knob_010044_s20260505" ` | none | ok | 0.9416 | exact | 1.0000 | 0.8525 | 1.0000 | 0.5723 |
+| ` "lobed_knob_010134_s20260505" ` | none | ok | 0.9462 | exact | 1.0000 | 0.8490 | 1.0000 | 0.6290 |
+| ` "lobed_knob_010160_s20260505" ` | none | ok | 0.9436 | exact | 1.0000 | 0.8544 | 1.0000 | 0.5918 |
+| ` "lobed_knob_010321_s20260505" ` | none | ok | 0.9451 | exact | 1.0000 | 0.8554 | 1.0000 | 0.6071 |
+| ` "lobed_knob_010389_s20260505" ` | none | ok | 0.9454 | exact | 1.0000 | 0.8577 | 1.0000 | 0.6071 |
+| ` "lobed_knob_010447_s20260505" ` | none | ok | 0.9414 | exact | 1.0000 | 0.8467 | 1.0000 | 0.5786 |
+| ` "lobed_knob_010465_s20260505" ` | none | ok | 0.9462 | exact | 1.0000 | 0.8490 | 1.0000 | 0.6290 |
+| ` "lobed_knob_010701_s20260505" ` | none | ok | 0.9462 | exact | 1.0000 | 0.8512 | 1.0000 | 0.6250 |
+| ` "lobed_knob_010791_s20260505" ` | none | ok | 0.9404 | exact | 1.0000 | 0.8509 | 1.0000 | 0.5618 |
+| ` "lobed_knob_011295_s20260505" ` | none | ok | 0.9423 | exact | 1.0000 | 0.8492 | 1.0000 | 0.5847 |
+| ` "lobed_knob_011510_s20260505" ` | none | ok | 0.9432 | exact | 1.0000 | 0.8551 | 1.0000 | 0.5865 |
+| ` "lobed_knob_011521_s20260505" ` | none | ok | 0.9446 | exact | 1.0000 | 0.8545 | 1.0000 | 0.6023 |
+| ` "lobed_knob_011564_s20260505" ` | none | ok | 0.9461 | exact | 1.0000 | 0.8510 | 1.0000 | 0.6250 |
+| ` "phone_stand_000059_s20260505" ` | none | ok | 0.9705 | exact | 1.0000 | 0.8766 | 1.0000 | 0.8571 |
+| ` "phone_stand_000106_s20260507" ` | none | ok | 0.9639 | exact | 1.0000 | 0.8637 | 1.0000 | 0.8036 |
+| ` "phone_stand_000300_s20260505" ` | none | ok | 0.9642 | exact | 1.0000 | 0.8646 | 1.0000 | 0.8056 |
+| ` "phone_stand_000332_s20260505" ` | none | ok | 0.9639 | exact | 1.0000 | 0.8622 | 1.0000 | 0.8056 |
+| ` "phone_stand_000336_s20260507" ` | none | ok | 0.9685 | exact | 1.0000 | 0.8742 | 1.0000 | 0.8382 |
+| ` "phone_stand_000374_s20260507" ` | none | ok | 0.9683 | exact | 1.0000 | 0.8677 | 1.0000 | 0.8462 |
+| ` "phone_stand_000381_s20260507" ` | none | ok | 0.9661 | exact | 1.0000 | 0.8754 | 1.0000 | 0.8103 |
+| ` "phone_stand_000399_s20260507" ` | none | ok | 0.9637 | exact | 1.0000 | 0.8620 | 1.0000 | 0.8036 |
+| ` "phone_stand_000419_s20260505" ` | none | ok | 0.9701 | exact | 1.0000 | 0.8646 | 1.0000 | 0.8704 |
+| ` "phone_stand_000472_s20260507" ` | none | ok | 0.9653 | exact | 1.0000 | 0.8661 | 1.0000 | 0.8158 |
+| ` "phone_stand_000575_s20260507" ` | none | ok | 0.9718 | exact | 1.0000 | 0.8778 | 1.0000 | 0.8704 |
+| ` "phone_stand_000577_s20260505" ` | none | ok | 0.9709 | exact | 1.0000 | 0.8794 | 1.0000 | 0.8571 |
+| ` "phone_stand_000597_s20260505" ` | none | ok | 0.9708 | exact | 1.0000 | 0.8701 | 1.0000 | 0.8704 |
+| ` "phone_stand_000649_s20260505" ` | none | ok | 0.9655 | exact | 1.0000 | 0.8744 | 1.0000 | 0.8056 |
+| ` "phone_stand_000754_s20260505" ` | none | ok | 0.9736 | exact | 1.0000 | 0.8777 | 1.0000 | 0.8906 |
+| ` "phone_stand_000985_s20260505" ` | none | ok | 0.9686 | exact | 1.0000 | 0.8755 | 1.0000 | 0.8382 |
+| ` "phone_stand_001373_s20260505" ` | none | ok | 0.9727 | exact | 1.0000 | 0.8730 | 1.0000 | 0.8871 |
+| ` "phone_stand_001405_s20260505" ` | none | ok | 0.9670 | exact | 1.0000 | 0.8704 | 1.0000 | 0.8281 |
+| ` "phone_stand_001406_s20260505" ` | none | ok | 0.9667 | exact | 1.0000 | 0.8644 | 1.0000 | 0.8333 |
+| ` "phone_stand_001431_s20260505" ` | none | ok | 0.9717 | exact | 1.0000 | 0.8766 | 1.0000 | 0.8704 |
+| ` "phone_stand_001546_s20260505" ` | none | ok | 0.9675 | exact | 1.0000 | 0.8859 | 1.0000 | 0.8103 |
+| ` "phone_stand_001552_s20260505" ` | none | ok | 0.9696 | exact | 1.0000 | 0.8826 | 1.0000 | 0.8382 |
+| ` "phone_stand_001721_s20260505" ` | none | ok | 0.9662 | exact | 1.0000 | 0.8803 | 1.0000 | 0.8036 |
+| ` "phone_stand_001730_s20260505" ` | none | ok | 0.9711 | exact | 1.0000 | 0.8782 | 1.0000 | 0.8621 |
+| ` "phone_stand_001752_s20260505" ` | none | ok | 0.9723 | exact | 1.0000 | 0.8678 | 1.0000 | 0.8906 |
+| ` "phone_stand_001776_s20260505" ` | none | ok | 0.9720 | exact | 1.0000 | 0.8791 | 1.0000 | 0.8704 |
+| ` "phone_stand_001796_s20260505" ` | none | ok | 0.9687 | exact | 1.0000 | 0.8705 | 1.0000 | 0.8462 |
+| ` "phone_stand_001887_s20260505" ` | none | ok | 0.9690 | exact | 1.0000 | 0.8656 | 1.0000 | 0.8571 |
+| ` "phone_stand_001978_s20260505" ` | none | ok | 0.9696 | exact | 1.0000 | 0.8776 | 1.0000 | 0.8462 |
+| ` "phone_stand_002052_s20260505" ` | none | ok | 0.9683 | exact | 1.0000 | 0.8732 | 1.0000 | 0.8382 |
+| ` "phone_stand_002192_s20260505" ` | none | ok | 0.9633 | exact | 1.0000 | 0.8580 | 1.0000 | 0.8056 |
+| ` "phone_stand_002296_s20260505" ` | none | ok | 0.9686 | exact | 1.0000 | 0.8701 | 1.0000 | 0.8462 |
+| ` "phone_stand_002471_s20260505" ` | none | ok | 0.9706 | exact | 1.0000 | 0.8719 | 1.0000 | 0.8654 |
+| ` "phone_stand_002625_s20260505" ` | none | ok | 0.9699 | exact | 1.0000 | 0.8671 | 1.0000 | 0.8654 |
+| ` "phone_stand_002633_s20260505" ` | none | ok | 0.9741 | exact | 1.0000 | 0.8687 | 1.0000 | 0.9091 |
+| ` "phone_stand_002779_s20260505" ` | none | ok | 0.9734 | exact | 1.0000 | 0.8758 | 1.0000 | 0.8906 |
+| ` "phone_stand_003032_s20260505" ` | none | ok | 0.9745 | exact | 1.0000 | 0.8841 | 1.0000 | 0.8906 |
+| ` "phone_stand_003041_s20260505" ` | none | ok | 0.9685 | exact | 1.0000 | 0.8692 | 1.0000 | 0.8462 |
+| ` "phone_stand_003269_s20260505" ` | none | ok | 0.9670 | exact | 1.0000 | 0.8820 | 1.0000 | 0.8103 |
+| ` "phone_stand_003390_s20260505" ` | none | ok | 0.9697 | exact | 1.0000 | 0.8784 | 1.0000 | 0.8462 |
+| ` "phone_stand_003536_s20260505" ` | none | ok | 0.9663 | exact | 1.0000 | 0.8815 | 1.0000 | 0.8036 |
+| ` "phone_stand_003541_s20260505" ` | none | ok | 0.9638 | exact | 1.0000 | 0.8612 | 1.0000 | 0.8056 |
+| ` "phone_stand_003746_s20260505" ` | none | ok | 0.9648 | exact | 1.0000 | 0.8656 | 1.0000 | 0.8103 |
+| ` "phone_stand_003876_s20260505" ` | none | ok | 0.9745 | exact | 1.0000 | 0.8842 | 1.0000 | 0.8906 |
+| ` "phone_stand_004002_s20260505" ` | none | ok | 0.9740 | exact | 1.0000 | 0.8678 | 1.0000 | 0.9091 |
+| ` "phone_stand_004198_s20260505" ` | none | ok | 0.9702 | exact | 1.0000 | 0.8819 | 1.0000 | 0.8462 |
+| ` "phone_stand_004217_s20260505" ` | none | ok | 0.9689 | exact | 1.0000 | 0.8652 | 1.0000 | 0.8571 |
+| ` "phone_stand_004376_s20260505" ` | none | ok | 0.9696 | exact | 1.0000 | 0.8772 | 1.0000 | 0.8462 |
+| ` "phone_stand_004477_s20260505" ` | none | ok | 0.9696 | exact | 1.0000 | 0.8771 | 1.0000 | 0.8462 |
+| ` "phone_stand_004478_s20260505" ` | none | ok | 0.9689 | exact | 1.0000 | 0.8722 | 1.0000 | 0.8462 |
+| ` "phone_stand_004565_s20260505" ` | none | ok | 0.9698 | exact | 1.0000 | 0.8788 | 1.0000 | 0.8462 |
+| ` "phone_stand_004697_s20260505" ` | none | ok | 0.9731 | exact | 1.0000 | 0.8759 | 1.0000 | 0.8871 |
+| ` "phone_stand_004740_s20260505" ` | none | ok | 0.9644 | exact | 1.0000 | 0.8658 | 1.0000 | 0.8056 |
+| ` "phone_stand_004754_s20260505" ` | none | ok | 0.9655 | exact | 1.0000 | 0.8739 | 1.0000 | 0.8056 |
+| ` "phone_stand_004774_s20260505" ` | none | ok | 0.9651 | exact | 1.0000 | 0.8710 | 1.0000 | 0.8056 |
+| ` "phone_stand_005005_s20260505" ` | none | ok | 0.9712 | exact | 1.0000 | 0.8762 | 1.0000 | 0.8654 |
+| ` "phone_stand_005044_s20260505" ` | none | ok | 0.9640 | exact | 1.0000 | 0.8629 | 1.0000 | 0.8056 |
+| ` "phone_stand_005203_s20260505" ` | none | ok | 0.9711 | exact | 1.0000 | 0.8815 | 1.0000 | 0.8571 |
+| ` "phone_stand_005218_s20260505" ` | none | ok | 0.9701 | exact | 1.0000 | 0.8685 | 1.0000 | 0.8654 |
+| ` "phone_stand_005457_s20260505" ` | none | ok | 0.9702 | exact | 1.0000 | 0.8687 | 1.0000 | 0.8654 |
+| ` "phone_stand_005532_s20260505" ` | none | ok | 0.9727 | exact | 1.0000 | 0.8706 | 1.0000 | 0.8906 |
+| ` "phone_stand_005632_s20260505" ` | none | ok | 0.9676 | exact | 1.0000 | 0.8626 | 1.0000 | 0.8462 |
+| ` "phone_stand_005706_s20260505" ` | none | ok | 0.9714 | exact | 1.0000 | 0.8745 | 1.0000 | 0.8704 |
+| ` "phone_stand_005924_s20260505" ` | none | ok | 0.9714 | exact | 1.0000 | 0.8800 | 1.0000 | 0.8621 |
+| ` "phone_stand_005969_s20260505" ` | none | ok | 0.9684 | exact | 1.0000 | 0.8688 | 1.0000 | 0.8462 |
+| ` "phone_stand_005989_s20260505" ` | none | ok | 0.9651 | exact | 1.0000 | 0.8714 | 1.0000 | 0.8056 |
+| ` "phone_stand_006372_s20260505" ` | none | ok | 0.9644 | exact | 1.0000 | 0.8657 | 1.0000 | 0.8056 |
+| ` "phone_stand_006466_s20260505" ` | none | ok | 0.9672 | exact | 1.0000 | 0.8831 | 1.0000 | 0.8103 |
+| ` "phone_stand_006581_s20260505" ` | none | ok | 0.9685 | exact | 1.0000 | 0.8658 | 1.0000 | 0.8519 |
+| ` "phone_stand_006836_s20260505" ` | none | ok | 0.9737 | exact | 1.0000 | 0.8807 | 1.0000 | 0.8871 |
+| ` "phone_stand_006941_s20260505" ` | none | ok | 0.9688 | exact | 1.0000 | 0.8705 | 1.0000 | 0.8478 |
+| ` "phone_stand_007198_s20260505" ` | none | ok | 0.9700 | exact | 1.0000 | 0.8804 | 1.0000 | 0.8462 |
+| ` "phone_stand_007609_s20260505" ` | none | ok | 0.9660 | exact | 1.0000 | 0.8742 | 1.0000 | 0.8103 |
+| ` "phone_stand_007735_s20260505" ` | none | ok | 0.9710 | exact | 1.0000 | 0.8876 | 1.0000 | 0.8462 |
+| ` "phone_stand_007788_s20260505" ` | none | ok | 0.9702 | exact | 1.0000 | 0.8816 | 1.0000 | 0.8462 |
+| ` "phone_stand_007924_s20260505" ` | none | ok | 0.9642 | exact | 1.0000 | 0.8648 | 1.0000 | 0.8056 |
+| ` "phone_stand_007980_s20260505" ` | none | ok | 0.9699 | exact | 1.0000 | 0.8636 | 1.0000 | 0.8704 |
+| ` "phone_stand_008429_s20260505" ` | none | ok | 0.9674 | exact | 1.0000 | 0.8697 | 1.0000 | 0.8333 |
+| ` "phone_stand_008758_s20260505" ` | none | ok | 0.9698 | exact | 1.0000 | 0.8659 | 1.0000 | 0.8654 |
+| ` "phone_stand_008814_s20260505" ` | none | ok | 0.9713 | exact | 1.0000 | 0.8736 | 1.0000 | 0.8704 |
+| ` "phone_stand_008862_s20260505" ` | none | ok | 0.9692 | exact | 1.0000 | 0.8747 | 1.0000 | 0.8462 |
+| ` "phone_stand_008997_s20260505" ` | none | ok | 0.9699 | exact | 1.0000 | 0.8796 | 1.0000 | 0.8462 |
+| ` "phone_stand_009177_s20260505" ` | none | ok | 0.9701 | exact | 1.0000 | 0.8798 | 1.0000 | 0.8478 |
+| ` "phone_stand_009257_s20260505" ` | none | ok | 0.9670 | exact | 1.0000 | 0.8714 | 1.0000 | 0.8261 |
+| ` "phone_stand_009349_s20260505" ` | none | ok | 0.9663 | exact | 1.0000 | 0.8660 | 1.0000 | 0.8261 |
+| ` "phone_stand_009407_s20260505" ` | none | ok | 0.9647 | exact | 1.0000 | 0.8683 | 1.0000 | 0.8056 |
+| ` "phone_stand_009525_s20260505" ` | none | ok | 0.9675 | exact | 1.0000 | 0.8752 | 1.0000 | 0.8261 |
+| ` "phone_stand_009552_s20260505" ` | none | ok | 0.9735 | exact | 1.0000 | 0.8640 | 1.0000 | 0.9091 |
+| ` "phone_stand_009893_s20260505" ` | none | ok | 0.9661 | exact | 1.0000 | 0.8753 | 1.0000 | 0.8103 |
+| ` "phone_stand_009920_s20260505" ` | none | ok | 0.9665 | exact | 1.0000 | 0.8677 | 1.0000 | 0.8261 |
+| ` "phone_stand_010002_s20260505" ` | none | ok | 0.9704 | exact | 1.0000 | 0.8703 | 1.0000 | 0.8654 |
+| ` "phone_stand_010184_s20260505" ` | none | ok | 0.9736 | exact | 1.0000 | 0.8782 | 1.0000 | 0.8889 |
+| ` "phone_stand_010279_s20260505" ` | none | ok | 0.9677 | exact | 1.0000 | 0.8721 | 1.0000 | 0.8333 |
+| ` "phone_stand_010322_s20260505" ` | none | ok | 0.9681 | exact | 1.0000 | 0.8718 | 1.0000 | 0.8382 |
+| ` "phone_stand_010481_s20260505" ` | none | ok | 0.9652 | exact | 1.0000 | 0.8719 | 1.0000 | 0.8056 |
+| ` "phone_stand_010522_s20260505" ` | none | ok | 0.9672 | exact | 1.0000 | 0.8731 | 1.0000 | 0.8261 |
+| ` "phone_stand_010605_s20260505" ` | none | ok | 0.9712 | exact | 1.0000 | 0.8822 | 1.0000 | 0.8571 |
+| ` "phone_stand_010679_s20260505" ` | none | ok | 0.9708 | exact | 1.0000 | 0.8699 | 1.0000 | 0.8704 |
+| ` "phone_stand_011018_s20260505" ` | none | ok | 0.9640 | exact | 1.0000 | 0.8643 | 1.0000 | 0.8036 |
+| ` "phone_stand_011024_s20260505" ` | none | ok | 0.9715 | exact | 1.0000 | 0.8843 | 1.0000 | 0.8571 |
 | ` "venturi_tube_000085_s20260507" ` | none | ok | 0.9817 | exact | 1.0000 | 0.8647 | 1.0000 | 1.0000 |
 | ` "venturi_tube_000123_s20260507" ` | none | ok | 0.9831 | exact | 1.0000 | 0.8746 | 1.0000 | 1.0000 |
 | ` "venturi_tube_000129_s20260505" ` | none | ok | 0.9810 | exact | 1.0000 | 0.8594 | 1.0000 | 1.0000 |
