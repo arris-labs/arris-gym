@@ -67,8 +67,12 @@ class ExecResult(BaseModel):
 
 `BodyRef` is the worker's `write_body` bytes and their SHA-256, which it
 checks on construction. `Measures` is the volume, area, centroid, bounds,
-face and shell counts, genus and a face-kind histogram (kind and count pairs,
-sorted by kind), so a fixture or a digest needs no worker. `ExecResult`
+face, shell and solid counts, genus and a face-kind histogram (kind and
+count pairs, sorted by kind), so a fixture or a digest needs no worker.
+`Measures.solids` counts the body's outer shells. For a body with several
+shells, the body worker gets the count from arris's STEP writer, which
+groups shells by orientation and nesting (ADR-0016). A refused export
+leaves the solid count unknown. `ExecResult`
 refuses a combination its status contradicts: a refusal without
 `ARRIS_REFUSAL`, a body without `OK` or `CHECKER_FAIL`, measures without `OK`, violations without
 `CHECKER_FAIL`.
@@ -110,8 +114,8 @@ module-level `result`, a `Solid`. The census counted BenchCAD's end forms:
 all 17,900 programs end in `show_object(result)`. A `cq` result resolves to
 the solid on its `Workplane`'s stack (ADR-0007): no result, a value
 that is not a `Workplane` or a stack with no solid is `runtime`. A CadQuery
-**compound** (solids that do not meet) is that one solid, its body holding a
-shell per piece, measured and scored as any body (ADR-0016).
+**compound** is that one solid, its body holding an outer shell per
+material piece and a shell for each sealed cavity (ADR-0016).
 CAD-Recode's original validation split ends in `r = …` on all 968 programs.
 The subset admits that end form (ADR-0015); the C1 reach curve ranked it
 first, a bridge that unlocks no program without further API forms.
@@ -352,8 +356,8 @@ form. A program's result is the last `show_object` argument, else
 module-level `result`, else module-level `r` (ADR-0015), and resolves to
 the one solid on a `Workplane`'s stack: none or a non-`Workplane` is
 `runtime`. A `union` of disjoint solids, or a `cut` that splits its base,
-leaves a compound: the one solid `fuse` or `cut` returns, a shell per piece,
-on which later calls act as on any solid (ADR-0016). A `union` on a chain
+leaves a compound: the one solid `fuse` or `cut` returns, with an outer shell
+per piece. Later calls act on it as on any solid (ADR-0016). A `union` on a chain
 holding no solid is its operand's solid where it stands, on the caller's
 plane; a `cut` there ends `runtime`, both as in CadQuery. Inside the worker
 a module exposing its CadQuery names is installed as `sys.modules["cadquery"]`,
@@ -791,11 +795,12 @@ report, verdict=None)` gives a **fidelity row** (`FidelityRow`): `agree`,
 (ADR-0006) classes what the two statuses settle. An arris refusal, crash or
 checker failure, or a `runtime` where the oracle builds the part, has a
 class, as does an `unsupported_api` against an `ok` or an `invalid` oracle shape (`cq_bug`: the subset
-declared it does not run the form). Two ordinary failures agree. Two `ok` sides agree inside the agreement
-tolerance when the oracle holds one solid, or as many solids as arris's body
-has shells (a compound, ADR-0016). A measure gap, the oracle failing alone and a timeout on either
-side are `unclassified` until a **verdict** (a class and its evidence: a
-closed form, which `compare` checks, a second oracle's record, **signed
+declared it does not run the form). Two ordinary failures agree. Two `ok`
+sides agree when the solid counts match and all judged measures are inside
+the agreement tolerance (ADR-0016). A count or measure gap, the oracle
+failing alone and a timeout on either side are `unclassified` until a
+**verdict** (a class and its evidence: a closed form, which `compare` checks,
+a second oracle's record, **signed
 solids**, a doc anchor for `by_design`, or a regression fixture) classes
 them. For the GProp discrepancies in ADR-0023, and BenchCAD parts of planar,
 cylindrical, conical and toroidal faces, the `ClosedForm` evidence carries
@@ -803,8 +808,8 @@ independently integrated measures of the oracle's boundary (ADR-0006).
 `SignedSolids`, for `occt_wrong` alone, carries each solid's signed volume of
 an `invalid` oracle shape where arris built an `ok` one. A solid turned
 inside out has negative volume. `compare` checks the finite sum against
-both measured volumes and requires one arris shell per positive oracle
-solid (ADR-0006, amended 2026-11-23). A vertex blend's corner patch is each
+both measured volumes and requires one arris solid per positive oracle
+solid (ADR-0006 and ADR-0016). A vertex blend's corner patch is each
 kernel's own (ADR-0025), so a difference confined to it is `by_design`. A verdict may also
 replace the rule's class, except the `arris_bug` of an arris crash or checker
 failure. An unclassified row makes a cycle red. The arris

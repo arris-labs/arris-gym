@@ -77,7 +77,10 @@ class Cache:
                 fields["body"] = BodyRef.of(body)
             else:
                 fields["body"] = None
-            return ExecResult.model_validate(fields)
+            result = ExecResult.model_validate(fields)
+            if result.measures is not None and "solids" not in result.measures.model_fields_set:
+                return None  # an older entry without solid-count evidence
+            return result
         except (OSError, ValueError, KeyError, TypeError):
             return None  # pydantic's ValidationError is a ValueError
 

@@ -118,8 +118,14 @@ def test_a_body_ref_refuses_a_digest_that_is_not_its_bytes() -> None:
 
 
 def test_a_result_round_trips_through_json() -> None:
-    result = make(Status.OK)
+    result = make(Status.OK, measures=Measures.model_validate(BOX.model_dump() | {"solids": 1}))
     assert ExecResult.model_validate_json(result.model_dump_json()) == result
+
+
+@pytest.mark.parametrize("solids", [0, 2])
+def test_measures_refuses_an_impossible_solid_count(solids: int) -> None:
+    with pytest.raises(ValidationError):
+        Measures.model_validate(BOX.model_dump() | {"solids": solids})
 
 
 def test_the_docstring_example_runs() -> None:

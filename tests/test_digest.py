@@ -82,6 +82,15 @@ def test_a_one_bit_change_of_a_measure_moves_the_digest() -> None:
     assert ag.dump_text(nudged) != ag.dump_text(box)
 
 
+def test_the_solid_count_is_in_the_text_and_digest() -> None:
+    box = ag.run(CASES["ok-box"].program)
+    assert box.measures is not None
+    no_count = box.model_copy(update={"measures": box.measures.model_copy(update={"solids": None})})
+    assert "measures.solids: 1\n" in ag.dump_text(box)
+    assert "measures.solids: none\n" in ag.dump_text(no_count)
+    assert ag.digest([box]) != ag.digest([no_count])
+
+
 @pytest.mark.parametrize("slug", SLUGS)
 def test_text_is_stable_for_each_status(slug: str) -> None:
     result = ag.run(CASES[slug].program)

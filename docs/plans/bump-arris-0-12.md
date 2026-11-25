@@ -35,11 +35,11 @@ Keep the existing refusal wherever a seam cannot be placed. Review the
 `polar-bore` refusal. Update Architecture §Dialects.
 
 Amend ADR-0016 to compare the oracle's solid count with the count of
-outer shells for a compound with sealed cavities, keeping the existing
-measure checks. Determine the count from the candidate body and prove
-it on known geometry independently of the oracle count. Step 4 settles
-where to compute it and records any change to a public type or call in
-these deltas and the changelog before implementation. Update
+outer shells, keeping the existing measure checks. Determine the count
+from the candidate body and prove it on known geometry independently of
+the oracle count. The body worker supplies `Measures.solids` (an optional
+integer) for `compare`, and `dump_text` and the execution digest include it.
+Older disk cache entries with measures are re-run. Update
 Architecture §Outcomes and §The oracle, and the glossary's **Compound**
 and **Seam** entries. Module boundaries stay as they are. Oracle rows
 stay pinned. Verdicts follow ADR-0005 and ADR-0006.
@@ -68,7 +68,7 @@ verification, **[3]** unproven design. Grades map to tiers.
   Verify all 90 affected rows with the same method. Add a property over
   the admitted axis and profile variations. Check neighboring revolve
   contexts against the oracle and keep refusals where they disagree.
-- [ ] Step 4 **[3]**. Implement and document compound solid counting under
+- [x] Step 4 **[3]**. Implement and document compound solid counting under
   ADR-0016. Lift the fidelity assertion for
   `cq-compound-with-a-sealed-cavity` and test multiple outer shells, a
   single solid with a cavity and a mismatched oracle solid count.
@@ -145,6 +145,10 @@ versioning.
   The closed-form verdicts satisfy step 3 under ADR-0006. Two generator
   runs produced byte-identical verdicts, and step 7 records them in the
   refreshed baseline.
-- ⚠ OPEN: Step 4 (agent) establishes an orientation-aware way to count
-  outer shells and where the count belongs in the fidelity path.
+- Settled in step 4. For a checked body with several shells, count the
+  solid entities from arris's STEP writer in the body worker. Its shell
+  nesting uses signed shell volumes and emits one entity per outer shell.
+  A single shell is one solid. An unavailable count leaves agreement
+  undetermined for a body with several shells. All 25 count-only
+  `torus_link` rows agree on replay. Three measure gaps remain for step 5.
 - ⚠ OPEN: Step 9 (human) authorizes pushing the plan branch for CI.

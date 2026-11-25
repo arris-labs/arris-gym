@@ -11,6 +11,7 @@ measures, and writes one `BodyFrame` to the result pipe. Private.
 from __future__ import annotations
 
 import os
+import re
 
 import arris
 
@@ -23,6 +24,21 @@ CHECK_LEVEL = "full"
 # The message of a body that `read_body` accepted and the full check did not:
 # the violations themselves are the checker's words.
 FAILED_FULL_CHECK = f'the body read back fails check(body, "{CHECK_LEVEL}")'
+
+# The AP214 writer emits one of these entities per outer shell, including
+# when that shell contains cavities. Match entity records only.
+_STEP_SOLID = re.compile(r"^#[0-9]+ = (?:MANIFOLD_SOLID_BREP|BREP_WITH_VOIDS)\(", re.MULTILINE)
+
+
+def _solid_count(model: arris.Model, body: arris.Body, shells: int) -> int | None:
+    if shells == 1:
+        return 1
+    try:
+        step = model.write_step([body])
+    except arris.StepError:
+        # A checked body can have a form the STEP writer cannot represent.
+        return None
+    return sum(1 for _ in _STEP_SOLID.finditer(step))
 
 
 def _violations(report: arris.Report) -> tuple[str, ...]:
@@ -49,6 +65,7 @@ def _measures(model: arris.Model, body: arris.Body, report: arris.Report) -> Mea
         bounds=bounds,
         faces=euler.faces,
         shells=euler.shells,
+        solids=_solid_count(model, body, euler.shells),
         genus=euler.genus,
         face_kinds=tuple(sorted(kinds.items())),
     )

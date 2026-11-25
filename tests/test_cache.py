@@ -46,6 +46,24 @@ def test_a_disk_cache_serves_a_new_sandbox(tmp_path: pathlib.Path) -> None:
     assert rows[0].measures is not None
 
 
+def test_a_disk_cache_entry_from_before_solid_counting_is_rebuilt(tmp_path: pathlib.Path) -> None:
+    program = PROGRAMS[0]
+    with ag.Sandbox(cache_dir=tmp_path) as sandbox:
+        sandbox.run(program)
+    (entry,) = tmp_path.glob("*/*.json")
+    data = json.loads(entry.read_text())
+    del data["result"]["measures"]["solids"]
+    entry.write_text(json.dumps(data))
+
+    with ag.Sandbox(cache_dir=tmp_path) as sandbox:
+        result = sandbox.run(program)
+        assert sandbox.executions == 1
+        assert result.measures is not None
+        assert result.measures.solids == 1
+        assert sandbox.run(program) == result
+        assert sandbox.executions == 1
+
+
 def test_a_changed_memory_limit_misses() -> None:
     with ag.Sandbox() as sandbox:
         sandbox.run(PROGRAMS[0])

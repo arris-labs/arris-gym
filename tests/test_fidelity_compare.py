@@ -396,7 +396,7 @@ def test_an_oracle_solid_turned_inside_out_is_open_cascades_error() -> None:
         (
             report(OracleStatus.INVALID, INVERTED.model_copy(update={"solids": 3})),
             (13.0, 12.0, -1.0),
-            "positive solids are not arris's shells",
+            "positive solid count disagrees with arris",
         ),
     ],
     ids=["oracle-ok", "count", "no-negative", "sum", "shells"],
@@ -414,6 +414,12 @@ def test_signed_solids_must_also_hold_for_arris() -> None:
         compare(
             result(Status.OK, wide), report(OracleStatus.INVALID, INVERTED), signed_verdict(25, -1)
         )
+
+
+def test_signed_solids_match_the_solid_count_of_a_body_with_a_cavity() -> None:
+    arris_side = result(Status.OK, BOX.model_copy(update={"shells": 2, "solids": 1}))
+    row = compare(arris_side, report(OracleStatus.INVALID, INVERTED), signed_verdict(25, -1))
+    assert row.disagreement is DisagreementClass.OCCT_WRONG
 
 
 def test_signed_solids_with_an_overflowing_sum_are_refused() -> None:

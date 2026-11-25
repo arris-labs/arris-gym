@@ -24,7 +24,7 @@ from arris_gym.fidelity._agreement import (
     within_tolerance,
 )
 from arris_gym.fidelity._oracle import OracleReport, OracleStatus, OracleVersions
-from arris_gym.sandbox import ArrisRefusal, ExecResult, Status, Versions
+from arris_gym.sandbox import ArrisRefusal, ExecResult, Measures, Status, Versions
 
 _CONFIG = ConfigDict(frozen=True, extra="forbid")
 # The oracle statuses that carry measures (`OracleReport` enforces it).
@@ -304,12 +304,17 @@ def _check_closed_form(
         raise ValueError("the verdict's closed form contradicts the measures")
 
 
+def _solid_count(measures: Measures) -> int | None:
+    # A single shell is sufficient evidence even on an older result.
+    return 1 if measures.shells == 1 else measures.solids
+
+
 def _check_signed_solids(form: SignedSolids, result: ExecResult, report: OracleReport) -> None:
     """Hold signed solids to both sides (ADR-0006, amended 2026-11-22).
 
     The row is arris `ok` against an oracle `invalid`; the volumes are one per solid of the
     oracle's shape, one at least negative; their sum is the oracle's signed volume and
-    arris's, each inside `VOLUME_REL`; and arris has a shell for each positive solid.
+    arris's, each inside `VOLUME_REL`; and arris has a solid for each positive solid.
     """
     if result.status is not Status.OK or report.status is not OracleStatus.INVALID:
         raise ValueError("signed solids on a row that is not arris ok against an invalid oracle")
@@ -329,21 +334,8 @@ def _check_signed_solids(form: SignedSolids, result: ExecResult, report: OracleR
         scale = max(abs(total), abs(measured))
         if scale and abs(total - measured) > VOLUME_REL * scale:
             raise ValueError("signed solids whose sum is not the measured volume")
-    if sum(1 for v in volumes if v > 0.0) != result.measures.shells:
-        raise ValueError("signed solids whose positive solids are not arris's shells")
-
-
-def _pieces_agree(result: ExecResult, report: OracleReport) -> bool:
-    """Whether the oracle's solids are one, or as many as the result's shells.
-
-    A compound's solids are its pieces, and a piece without a cavity is one
-    shell of arris's body (ADR-0016). One solid with a cavity has more
-    shells than solids, so a single solid is judged by its measures alone,
-    as before; a compound whose pieces hold cavities is not judged to agree.
-    """
-    if result.measures is None or report.measures is None:
-        return False
-    return report.measures.solids in (1, result.measures.shells)
+    if sum(1 for v in volumes if v > 0.0) != _solid_count(result.measures):
+        raise ValueError("signed solids whose positive solid count disagrees with arris")
 
 
 def compare(
@@ -352,11 +344,10 @@ def compare(
     """The fidelity row of one program: its arris result against its oracle report.
 
     The rule (ADR-0006) classes what the two statuses settle; two `ok`
-    sides agree when the oracle has one solid, or a compound of as many
-    solids as the result has shells (ADR-0016), and every judged measure is
-    inside the agreement tolerance (ADR-0005), and are `unclassified`
-    otherwise, as are a timeout on either side and the oracle failing
-    alone. An `unsupported_api` against an oracle `invalid` shape is
+    sides agree when their solid counts match (ADR-0016) and every judged
+    measure is inside the agreement tolerance (ADR-0005). Other pairs of
+    `ok` sides are `unclassified`, as are a timeout on either side and the
+    oracle failing alone. An `unsupported_api` against an oracle `invalid` shape is
     `cq_bug`, as against `ok`: the subset declared it does not run the form.
     A `verdict` classes such a row, or replaces the rule's class.
 
@@ -382,9 +373,11 @@ def compare(
     deltas = None
     if result.measures is not None and report.measures is not None:
         deltas = measure_deltas(result.measures, report.measures)
-    if ruling is _Rule.MEASURE:
-        agrees = deltas is not None and _pieces_agree(result, report) and within_tolerance(deltas)
-        ruling = _Rule.AGREE if agrees else _Rule.UNCLASSIFIED
+        if ruling is _Rule.MEASURE:
+            agrees = _solid_count(result.measures) == report.measures.solids and within_tolerance(
+                deltas
+            )
+            ruling = _Rule.AGREE if agrees else _Rule.UNCLASSIFIED
     if ruling is _Rule.AGREE and verdict is not None:
         raise ValueError("a verdict on a row that agrees")
     if (

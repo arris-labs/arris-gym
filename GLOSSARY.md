@@ -36,8 +36,9 @@ Distinct from a refusal: something died.
 _Avoid_: panic
 
 **Measures**:
-What the kernel measures of a body (volume, area, centroid, bounds, counts,
-genus), read by the body worker and carried on the result beside the body.
+What the kernel measures of a body (volume, area, centroid, bounds, face,
+shell and solid counts, genus), read by the body worker and carried on the
+result beside the body.
 
 **Failure**:
 Any status but `ok`. Failures are counted in every aggregate. An error is
@@ -273,9 +274,10 @@ establishes its location, including cylinders and verified full revolves
 (ADR-0020).
 
 **Compound**:
-CadQuery's several solids that do not meet, held as one value. In `cq` it
-is one solid whose body holds a shell per piece, measured and scored as any
-body; its oracle report counts one solid per piece (ADR-0016).
+CadQuery's several solids held as one value. In `cq` it is one solid
+whose body holds an outer shell per material piece and an inner shell for
+each sealed cavity. The solid count on each side counts material pieces
+(ADR-0016).
 
 **Selector string**:
 The string a program passes to `faces`, `edges` and the other selector

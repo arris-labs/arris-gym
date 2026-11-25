@@ -1,4 +1,4 @@
-"""A compound result under `cq`: one solid whose body holds a shell per piece.
+"""A compound result under `cq`: one body with an outer shell per piece.
 
 ADR-0016. Read on the oracle (CadQuery 2.3.0, `ok-compound-*`,
 `ok-cut-into-pieces`, `ok-workplane-on-compound`): a `union` of solids that
@@ -6,7 +6,7 @@ do not meet, or a `cut` that splits its base, is a compound; Open CASCADE
 reports its volume, area and faces as the sums over its solids, its bounds as
 their union and one solid per piece. `cq` builds the same part as one arris
 body of several shells, measured and scored as any body; a fidelity row
-agrees when the oracle's solids are one or as many as the body's shells.
+agrees when both solid counts match and all judged measures agree.
 """
 
 from __future__ import annotations
@@ -52,7 +52,7 @@ def test_a_compound_fixture_agrees_with_the_recorded_oracle(slug: str) -> None:
     report = _report(slug)
     assert result.measures is not None
     assert report.measures is not None
-    assert report.measures.solids == result.measures.shells
+    assert result.measures.solids == result.measures.shells == report.measures.solids
     assert compare(result, report).outcome is FidelityOutcome.AGREE
 
 
@@ -90,16 +90,16 @@ def test_a_compound_of_another_piece_count_than_the_body_does_not_agree() -> Non
     report = _report(slug)
     assert result.measures is not None
     assert report.measures is not None
-    for solids in (3, 4):
+    for solids in (1, 3, 4):
         other = report.model_copy(
             update={"measures": report.measures.model_copy(update={"solids": solids})}
         )
         assert compare(result, other).outcome is FidelityOutcome.UNCLASSIFIED
 
 
-def test_one_oracle_solid_is_judged_by_its_measures_whatever_the_shells() -> None:
-    # A solid with a cavity has two shells and is one solid on both sides; the
-    # rule for one oracle solid is the measures alone, as before ADR-0016.
+def test_a_single_solid_with_a_cavity_counts_as_one() -> None:
+    # A box cut by a smaller box entirely inside it has one material piece
+    # and two shells.
     result = ag.run(
         "import cadquery as cq\n"
         "r = cq.Workplane('XY').box(3, 3, 3).cut(cq.Workplane('XY').box(1, 1, 1))\n",
@@ -107,6 +107,7 @@ def test_one_oracle_solid_is_judged_by_its_measures_whatever_the_shells() -> Non
     )
     assert result.measures is not None
     assert result.measures.shells == 2
+    assert result.measures.solids == 1
     report = OracleReport.model_validate(
         {
             "status": "ok",
@@ -125,6 +126,33 @@ def test_one_oracle_solid_is_judged_by_its_measures_whatever_the_shells() -> Non
         }
     )
     assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
+def test_a_compound_with_a_sealed_cavity_agrees_with_the_recorded_oracle() -> None:
+    case = next(
+        c for c in fixture_cases.load("regression") if c.slug == "cq-compound-with-a-sealed-cavity"
+    )
+    result = fixture_cases.run(case)
+    assert fixture_cases.check(result, case.expected) == []
+    assert result.measures is not None
+    assert result.measures.shells == 3
+    assert result.measures.solids == 2
+    path = fixture_cases.ROOT / "regression" / case.slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text(encoding="utf-8"))
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
+    assert report.measures is not None
+    wrong_count = report.model_copy(
+        update={"measures": report.measures.model_copy(update={"solids": 3})}
+    )
+    assert compare(result, wrong_count).outcome is FidelityOutcome.UNCLASSIFIED
+    measure_gap = report.model_copy(
+        update={"measures": report.measures.model_copy(update={"volume": 200.0})}
+    )
+    assert compare(result, measure_gap).outcome is FidelityOutcome.UNCLASSIFIED
+    old_measures = ag.Measures.model_validate(result.measures.model_dump(exclude={"solids"}))
+    assert old_measures.solids is None
+    old_result = result.model_copy(update={"measures": old_measures})
+    assert compare(old_result, report).outcome is FidelityOutcome.UNCLASSIFIED
 
 
 def test_a_compound_scores_against_itself_exactly_one() -> None:
@@ -185,3 +213,5 @@ def test_disjoint_boxes_unioned_are_a_compound_of_their_closed_form(
         },
     }
     assert fixture_cases.check(result, expected) == [], result.message
+    assert result.measures is not None
+    assert result.measures.solids == len(sizes)

@@ -11,7 +11,7 @@ import enum
 import hashlib
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class Status(enum.Enum):
@@ -82,6 +82,9 @@ class Measures(_Frozen):
     `bounds` is the pair (lowest corner, highest corner) as the kernel
     reports it, padded by its tolerance. `face_kinds` pairs each surface kind
     with its face count, sorted by kind, so its order never depends on a hash.
+    `shells` includes sealed cavity shells. `solids` counts the outer shells,
+    one per material piece. It is None when no count is available. A known
+    count must be positive and at most `shells`.
     """
 
     volume: float
@@ -90,8 +93,15 @@ class Measures(_Frozen):
     bounds: tuple[tuple[float, float, float], tuple[float, float, float]]
     faces: int
     shells: int
+    solids: int | None = Field(default=None, gt=0)
     genus: int
     face_kinds: tuple[tuple[str, int], ...]
+
+    @model_validator(mode="after")
+    def _solid_count_fits(self) -> Self:
+        if self.solids is not None and self.solids > self.shells:
+            raise ValueError("the solid count exceeds the shell count")
+        return self
 
 
 class Versions(_Frozen):

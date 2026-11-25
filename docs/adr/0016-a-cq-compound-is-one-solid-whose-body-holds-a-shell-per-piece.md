@@ -157,3 +157,35 @@ oracle's wrong centroid makes a row `unclassified`, and a verdict
   centroid, but it changes the oracle's committed bytes for BenchCAD's
   compound rows. That is a change of the oracle with its own plan, not part
   of this decision.
+
+## Amendment (2026-11-25) — solid counts include pieces with sealed cavities
+
+BenchCAD's `torus_link` family now builds compounds with sealed cavities on
+arris 0.12.0. An outer shell bounds each material piece and an inner shell
+bounds each sealed cavity. The outer shells alone count toward
+`Measures.solids`. `Measures.shells` counts both kinds.
+
+The body worker assigns a count of one to a solid with a single shell.
+For a checked body with several shells it calls `Model.write_step`. The
+writer uses the signs of the kernel's integrated shell volumes and the
+nesting of the shells. It emits one `MANIFOLD_SOLID_BREP` or
+`BREP_WITH_VOIDS` entity per outer shell. The body worker counts those
+entities in the generated STEP text. If the writer refuses, the count
+is unknown and the worker can still deliver the body's other measures.
+The count is optional for older serialized measures. Older disk cache
+entries with measures are recomputed to include it.
+
+Two `ok` sides agree when their solid counts match and their judged
+measures meet ADR-0005. A one-shell body establishes a count of one even
+when compared from older measures. An unknown count for a body with
+several shells leaves the row `unclassified` without a verdict. The
+signed-solids verdict of ADR-0006 compares the number of positive oracle
+solids with arris's solid count.
+
+`regression/cq-compound-with-a-sealed-cavity` has three shells and two
+solids by construction. It agrees with the pinned oracle report. A replay
+of all 150 BenchCAD `torus_link` programs against their pinned oracle
+reports gives 147 agreements, 25 more than the previous replay. The
+other three (`torus_link_004364_s20260505`, `torus_link_017596_s20260505`
+and `torus_link_019579_s20260505`) match the solid counts and retain
+their measure gaps.

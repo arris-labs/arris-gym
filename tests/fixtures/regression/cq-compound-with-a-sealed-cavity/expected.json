@@ -1,0 +1,28 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 208.80612558307394,
+    "area": 397.1210875188426,
+    "centroid": [
+      4.298393988935647,
+      0,
+      0
+    ],
+    "bounds": [
+      [
+        -4,
+        -4,
+        -4
+      ],
+      [
+        8,
+        4,
+        4
+      ]
+    ],
+    "shells": 3,
+    "genus": 1
+  },
+  "note": "The torus contributes volume 6 pi^2 and area 12 pi^2. The 4 by 8 by 6 box contributes volume 192 minus the cavity's 13.5 pi and area 208 plus the cavity's 22.5 pi, including both caps. Its centroid is at x = 6, the torus's at 0. Two outer shells and one cavity shell enclose two solids, with genus 1 from the torus."
+}

@@ -16,12 +16,17 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   selectors across the drawing plane reach the rivet's chamfers and fillets
   and can change outcomes and scores.
 
+- `Measures.solids` counts the material pieces in a body with sealed
+  cavities. `fidelity.compare` checks that count against the oracle's
+  solid count.
+
 - `fidelity.SignedSolids` is new verdict evidence for `occt_wrong`. It holds
   each solid's signed volume, from an independent boundary flux, of an
   `invalid` oracle shape where arris built the part. `compare` accepts it
   only on an arris `ok` against an oracle `invalid` row, with one volume per
   oracle solid, at least one negative, a finite sum within the agreement
-  tolerance of both measured volumes, and one arris shell per positive solid.
+  tolerance of both measured volumes, and matching counts of arris solids
+  and positive oracle solids.
 
 - In the CadQuery dialect, draw slots with `slot2D(length, diameter, angle)`
   at the workplane origin, a moved point or each point of an array. The angle
@@ -340,6 +345,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ### Breaking
 
+- Serialized `Measures` and `dump_text` include `solids`, which can be
+  `None` when the count is unavailable. Accept the new field in readers
+  and regenerate saved execution digests.
 - `fidelity.Verdict.evidence` can now contain `fidelity.SignedSolids`.
   Add a `signed_solids` case to exhaustive evidence handlers.
 - `cq.subset()` declares `Workplane.cutThruAll()`, `Workplane.center(x, y)`,

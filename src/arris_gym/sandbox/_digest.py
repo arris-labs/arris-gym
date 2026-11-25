@@ -34,6 +34,7 @@ def _vector(values: Iterable[float], number: Number) -> str:
 def _measure_lines(measures: Measures, number: Number) -> list[str]:
     low, high = measures.bounds
     kinds = ", ".join(f"[{_string(kind)}, {count}]" for kind, count in measures.face_kinds)
+    solids = "none" if measures.solids is None else str(measures.solids)
     return [
         f"measures.volume: {number(measures.volume)}",
         f"measures.area: {number(measures.area)}",
@@ -41,6 +42,7 @@ def _measure_lines(measures: Measures, number: Number) -> list[str]:
         f"measures.bounds: [{_vector(low, number)}, {_vector(high, number)}]",
         f"measures.faces: {measures.faces}",
         f"measures.shells: {measures.shells}",
+        f"measures.solids: {solids}",
         f"measures.genus: {measures.genus}",
         f"measures.face_kinds: [{kinds}]",
     ]
