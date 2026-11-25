@@ -68,7 +68,7 @@ disagreement class changes on 1,160 rows.
 | `arris_refusal` to agreement | 846 | Contact fuses now build on 231 `ball_knob`, 220 `hinge`, 81 `wall_anchor`, 68 more `lobed_knob`, 56 `threaded_adapter`, 8 `spur_gear`, 77 `torus_link` and 23 `bearing_retainer_cap`. Another 48 `dome_cap` and 32 `rivet` now revolve, and 2 `bellows` finish their blind cuts. The `torus_link` comparisons include 25 compounds whose outer-shell counts now match the oracle (ADR-0016). |
 | `arris_refusal` to `occt_wrong` | 118 | 90 `rivet` builds select the expected seams on all three revolve axes (ADR-0020). Their measures match the blended meridian closed form. The other 25 `dome_cap` and 3 `torus_link` have checked measure verdicts. |
 | `arris_refusal` to `arris_bug` | 58 | Closed forms confirm loose bounds on 40 `bellows` clipped rims and 11 `shaft_collar` cross holes. Another 7 `bearing_retainer_cap` now reach the plate union and fail the checker. |
-| Agreement to `arris_bug` | 2 | Two `bearing_retainer_cap` builds now fail the checker at the plate union. |
+| Agreement to `arris_bug` | 2 | Two `bearing_retainer_cap` rows change from recorded agreement to checker failures at the plate union. |
 | Agreement to `arris_refusal` | 5 | Two `bucket`, two `shaft_collar` and one `pipe_flange` refuse overlapping rim blends. The oracle remains `invalid`. |
 | `cq_bug` to `arris_refusal` | 1 | The outside-subset `worm_screw` refuses an overlapping rim blend against an `invalid` oracle. |
 | `arris_bug` to `arris_refusal` | 8 | Six `cam` and two `shaft_collar` programs now return typed refusals for overlapping rim blends. |

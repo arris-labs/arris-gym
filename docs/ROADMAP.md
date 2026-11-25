@@ -121,7 +121,7 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status (2026-11-25).** The arris 0.12.0 replay keeps BenchCAD reach
+**Status (2026-11-25).** The verified arris 0.12.0 baseline keeps BenchCAD reach
 at 14,150/17,900 (79.1% against the 85% target) and CAD-Recode at its
 968/968 target (ADR-0014). Agreement is 11,691 and 893 respectively,
 with two BenchCAD `by_design` rows under ADR-0025. Both corpora have

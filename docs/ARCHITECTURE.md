@@ -320,8 +320,9 @@ split. `timeout` is not in the key, since no outcome that depends on it is
 stored: never `timeout`, `crash`, or a `MemoryError` (known by type: a frame
 says it ended on one). `Sandbox(cache_dir=None)` keeps results in memory; given
 a directory, one JSON (the result without its body) and one body file by key,
-each written by rename, the JSON last; a torn entry is a miss. `executions`
-counts programs actually run. Nothing the cache holds is reachable by a worker.
+each written by rename with the JSON last. A torn entry or an older entry
+whose measures lack the `solids` field is a miss. `executions` counts programs
+actually run. Nothing the cache holds is reachable by a worker.
 
 ## Dialects
 
@@ -344,9 +345,10 @@ the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `pushPoints`,
 `fillet` and `chamfer` blend selected edges, or every edge of the stacked
 faces or solid, in one call that skips seams (ADR-0020). `cutBlind` cuts
 pending profiles in one call (ADR-0019).
-For verified full revolves of a cylinder or rivet profile, `edges` ranks
-the seams in the original drawing plane. The placement applies to the
-revolved solid and selections on it (ADR-0020, amendment of 2026-11-24).
+For verified full revolves of a cylinder or rivet profile on a plane
+with exact world axis directions, `edges` ranks the seams in the original
+drawing plane. The placement applies to the revolved solid and selections
+on it (ADR-0020, amendment of 2026-11-24).
 The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
 `arc`, `close`, `assemble` and `finalize` (ADR-0023).
 STEP export waits for its bundle in C2's order.
@@ -618,10 +620,10 @@ body a program made: a kernel crash in scoring costs a status, not the run.
 When scoring fails the `Score`'s status is `runtime` (the kernel's words,
 verbatim: a target it cannot read, say), `timeout` or `crash`, and its reward
 −1.0, so a scorer that fails never pays. Weights, τ and N live in a frozen
-`RewardConfig` with a version, written into every result row, and a change
-of arris-gym's that can move a reward bumps it; a bump of the pinned `arris`
-or `numpy` is named by the row's own `versions`, not by the reward's version
-(ADR-0021).
+`RewardConfig`. Each `Score` records its config's version. Changes to the
+scoring calculation or its configuration bump that version. Kernel and
+NumPy pins are tracked in `versions`. Changes to the program dialect can
+change the execution result passed to the same scorer (ADR-0021).
 
 **The field's metrics sit beside ours** under `s.field` (`FieldMetrics`,
 `reward/_field.py`), computed in the score worker as BenchCAD's own scorer
@@ -1032,8 +1034,9 @@ rows. The table digest is `cc8eb417…72fe`. The oracle rows and census
 digest reproduce unchanged. The CAD-Recode table also reproduces byte
 for byte at `fe2861b7…71cc`.
 
-The arris 0.12.0 replay adds 961 BenchCAD agreements at the same reach and
-with byte-identical oracle rows. The chained cylinder fuses build on all
+The arris 0.12.0 table has 961 more BenchCAD agreements at the same reach
+and with byte-identical oracle rows. Its digest is `fccfdbea…1ce72`.
+The chained cylinder fuses build on all
 168 previously failing `lobed_knob` programs. The seam placement in
 ADR-0020 admits 90 `rivet` builds that agree with their closed forms.
 Counting outer shells under ADR-0016 resolves the count differences on
@@ -1108,9 +1111,9 @@ depends on the main environment alone, never on CadQuery (ADR-0011).
   Invalidity is 0 and mean reward is 0.964561 over all 300 programs.
   The kernel builds all 100 formerly refused `lobed_knob` programs.
   All 100 `phone_stand` pairs move to the exact route with bit-equal
-  numerical scores. Digest `7653aec2…3551` matches at 2 and 16 workers.
-  The cross-architecture check for this digest is pending. Earlier runs
-  and the per-family comparisons are in `tests/fixtures/c1/README.md`.
+  numerical scores. Digest `7653aec2…3551` matches at 2 and 16 workers
+  and in CI on x86-64 and aarch64. The CI run and per-family comparisons
+  are in `tests/fixtures/c1/README.md`.
 - `tools/rescore_diff.py A B` names the rows two tables differ at and the first
   stage each differs at.
 

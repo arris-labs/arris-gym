@@ -24,10 +24,11 @@ Rules an application never writes down. They apply to all of `src/` and
 - **Tolerances and weights are named, never a literal.** A `1e-9` in an
   algorithm is a bug: it is a named, commented constant in one place. The
   reward's weights, τ and N live only in its versioned config.
-- **The reward's version moves with its meaning.** A change of arris-gym's
-  that can move any reward, however slightly, bumps the version and says so
-  in the commit. A bump of the pinned `arris` or `numpy` is named by
-  `versions.arris` / `versions.numpy`, not the reward's version (ADR-0021).
+- **The reward's version moves with its meaning.** A change to the scoring
+  calculation or its configuration that can move a reward bumps the version
+  and says so in the commit. The scorer takes the program's execution result
+  as input. Pin changes are recorded in `versions.arris` or `versions.numpy`
+  (ADR-0021).
 
 ## Determinism
 

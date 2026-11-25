@@ -113,7 +113,7 @@ Compared with the 0.11.1 reports committed in `bd4c0bd`,
 `tools/rescore_diff.py` first locates changes at the program on 100 rows,
 at the IoU route on 100 and at versions on 100. The program and target
 STEP hashes and the target body digests match on all 300 rows. The
-reward stays at version 1 under ADR-0021.
+scorer applies the same version 1 calculation under ADR-0021.
 
 - **`lobed_knob` (100).** The chained cylinder fuses now build
   (`regression/cq-union-three-coplanar-cylinders`). All 100 rows move

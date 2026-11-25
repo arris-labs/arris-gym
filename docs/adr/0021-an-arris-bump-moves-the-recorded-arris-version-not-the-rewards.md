@@ -72,3 +72,12 @@ context above:
 
 The decision is unchanged: a kernel bump is named by `versions.arris`, never
 by the reward's version.
+
+## Amendment (2026-11-25): the scorer takes an execution result
+
+The version describes the calculation for a given execution result and
+target. Improving CadQuery compatibility can change the execution
+result sent to `score`, for example from `unsupported_api` to a valid
+body. The scoring calculation continues to assign the version 1 rewards
+for those inputs. Reproducing a program's result also requires the same
+program dialect implementation.

@@ -271,7 +271,7 @@ An edge with one face on both sides, where a closed surface (a cylinder, a
 sphere) meets itself. Where it lies is the kernel's choice; a blend passes
 over it. `cq` ranks a seam where Open CASCADE places it when the construction
 establishes its location, including cylinders and verified full revolves
-(ADR-0020).
+on planes with exact world axis directions (ADR-0020).
 
 **Compound**:
 CadQuery's several solids held as one value. In `cq` it is one solid

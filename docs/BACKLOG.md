@@ -28,12 +28,12 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `cq/_workplane.py` `_uv` takes a `str.format` template for its refusal message; pass the call's name and build the message inside it
 - arris 0.11.1 returns a top face with intersecting loops when two round posts sit on a box with footprints tangent to opposite edges. The same case predates sketches and is held by `regression/cq-rarray-posts-tangent-to-box`.
 - Determine when CadQuery preserves a torus seam after a cut, then preserve those faces in `cq` (`regression/cq-workplane-on-a-cut-torus-crossing-its-seam`).
+- Verify full-revolve seam placement for rotated frames with floating-point roundoff. A rotated cylinder's two-rim chamfer is held by `regression/cq-rotated-full-revolve-seam` (ADR-0020).
 - Measure CadQuery's join tolerance before admitting near-coincident endpoints in `Sketch.assemble` (`regression/cq-sketch-assemble-near-endpoints` holds a 1e-8 gap that CadQuery joins).
 - `cq` keeps no CadQuery context along a chain: a `circle` on a stack other than one `moveTo` point, a stack of points or one pending circle, a `moveTo` on a pending wire, and `transformed`, `union`, `cut` on a pending wire and `box` on a drawn path or sketch or on a stack holding a solid (CadQuery centres it on the solid's centre), and a `polyline` of fewer than two points (CadQuery starts the next call from the origin), end `unsupported_api`; lift them in the knee's bundle order when a program writes them
 - A target read from a STEP is exactly one solid (ADR-0011), so a re-scored corpus whose oracle builds a compound (827 BenchCAD oracle `ok` reports hold 2 to 9 solids) gets a `runtime` target; decide how a compound target is read before BenchCAD is re-scored beyond the slice (ADR-0016)
 - `FIXTURE_DEADLINE` (60 s, `tests/fixture_cases.py`) hides a fixture's slowdown up to 12x past `run`'s 5 s default that users get: record each `ok` fixture's runtime or assert a bound so a speed regression shows; and `tests/test_regression.py` would run a future `timeout` regression fixture to 60 s five times, not to `TIMEOUT_DEADLINE`
 - `cq`'s `workplane()` on a compound puts the plane at arris's centroid, while CadQuery uses Open CASCADE's `Center()`, which can be wrong for a compound (`cq/ok-compound-occt-centroid`): the two planes differ in that construction; add a fixture with a closed form if a corpus program reaches it
-- Check the X bounds after a blind cut clips a conical rim. The arris 0.12.0 replay exposes loose bounds on 40 `bellows` rows, reproduced by `regression/cq-revolved-cone-notches-bounds`.
 - `show_object(x, color=...)` ends `runtime` (a `TypeError` from the builtin's signature) where the goal says an out-of-subset form is `unsupported_api`: route the builtin's form through `cq/_forms.py`
 - `cq/_forms.py` `kind_of` decides the "call" kind by class name, so a program's own `class Vector` passes the form check, and `transformed(rotate=cq.Workplane("XY"))` ends `unsupported_api` as `Workplane.z`: decide by type
 - `test_regression.py`'s strict `xfail(raises=AssertionError)` also covers the `sandbox.executions == REPEATS` assert, so a cache-hit bug would pass as the expected failure; and `fixture_cases.load`'s faces guard has no test
@@ -97,7 +97,7 @@ A defect a run measured, one block each:
 - Seen: plans/lift-sphere step 3, the re-run of both corpora after `sphere` was lifted, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, `ball_knob_000027_s20260506`, 2026-11-13
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k sphere-pole`
 - Measured: 231 `ball_knob` rows refused, 153 of them in the subset (the rest still miss another form); messages 53 (stem first), 66 (sphere first), 61 and 51 (a point); the oracle's volume and area equal the closed form to 1e-9 for three of the four shrunk fixtures (`-sphere-first`'s is the base fixture's two solids, the oracle not run on that operand order). The 191 `capsule` rows (tangent sphere and cylinder along a rim) all agree
-- State: regression/cq-sphere-pole-on-disc, -sphere-first, -corpus, -cylinder (the desired compound of ADR-0016, strict `xfail`); reported in `../arris/docs/ideas/fuse-contact-refusals.md`
+- State: fixed in arris 0.12.0. All four regression variants build the expected compound and all 231 `ball_knob` rows agree with the pinned oracle. Reported in `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 ### occt-compound-centroid
 - What: Open CASCADE's centroid of a compound of two disjoint boxes is wrong in one solid order: a 2 × 2 × 2 box at the origin united with a 2 × 4 × 4 box centred on (5, 0, 1) reports (4.725, 0, 0.975), where the closed form and arris give (4, 0, 0.8); volume, area and bounds are right
@@ -121,15 +121,15 @@ A defect a run measured, one block each:
 - Seen: plans/lift-cylinder step 5, the in-subset rows no rule could class once `cylinder` was lifted, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k "tangent or rim-point"`
 - Measured: `cotter_pin` 159 of 159 (tangent cylinders, the first union; their oracle report is `invalid`), `hinge` 61 of 61, `pull_handle` 176 of 176 (`OpInternalError`), `bucket` 3 at +x (`OpDegenerateError`, "shells would touch along an edge or at a vertex") and 3 at -x (`OpInternalError`, "a hole of f9 lies inside no region"); the oracle's volume and area equal each shrunk fixture's closed form to 1e-9 or better
-- State: regression/cq-tangent-cylinders, cq-tangent-cylinder-and-box, cq-tangent-end-disc, cq-cone-box-rim-point, cq-cone-box-rim-point-far-side; reported in `../arris/docs/ideas/fuse-contact-refusals.md`; the 159 `cotter_pin` rows are `arris_refusal` by cq-tangent-cylinders (verdict in `tests/fixtures/c2/benchcad/verdicts.json`)
+- State: on arris 0.12.0, `cq-tangent-cylinders`, `cq-tangent-cylinder-and-box` and `cq-cone-box-rim-point` pass. `cq-tangent-end-disc` and `cq-cone-box-rim-point-far-side` remain strict `xfail`. The 159 `cotter_pin` rows refuse at the head union and cite `cq-cotter-pin-self-contact` or `cq-cotter-pin-tangent-faces`. The 176 `pull_handle` rows still refuse. Reported in `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 ### horn-torus-revolve
 - What: arris refuses a revolve of a circle that touches the axis (a half horn torus, R = r), `OpDegenerateError` "an arc's circle crosses the revolve axis: a spindle torus"; Open CASCADE builds it, volume pi^2 r^2 R
 - Where: arris 0.10.0 and 0.11.1 `revolve`, reached by `cq`'s `Workplane.revolve` after `circle`
 - Seen: plans/lift-cylinder step 5, the `cotter_pin` programs' last union (radius 4 at x = 4), BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k horn-torus`
-- Measured: not reached by any corpus row (the tangent cylinders before it are refused first); the oracle's 631.65 for R = r = 4 is the closed form
-- State: regression/cq-horn-torus; reported in `../arris/docs/ideas/fuse-contact-refusals.md`
+- Measured: on 0.11.1, the tangent-cylinder union refused first on all 159 `cotter_pin` rows. The oracle's 631.65 for R = r = 4 is the closed form.
+- State: fixed in arris 0.12.0. The `regression/cq-horn-torus` fixture builds and all 159 `cotter_pin` programs reach the subsequent union. Reported in `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 ### spindle-torus-revolve
 - What: arris refuses a revolve of an arc that stays on one side of the axis while its circle crosses it (the outer part of a spindle torus), `OpDegenerateError` "an arc's circle crosses the revolve axis: a spindle torus"; Open CASCADE builds it, V = pi (236 + 225 pi - 225 asin(4/5)) / 3 on the fixtures; the horn-torus finding (a circle that touches the axis) is its neighbour
@@ -137,7 +137,7 @@ A defect a run measured, one block each:
 - Seen: plans/lift-three-point-arc steps 3 and 4, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 2026-11-13
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k spindle-torus`
 - Measured: 281 BenchCAD rows hit the message (`rivet` 122, `dome_cap` 159), 68 of them in the subset (`rivet` 32, the arc starts on the axis, at a slant, and `dome_cap` 36, the arc ends on it; its circle is centred 1.3e-4 off the axis from rounded points); the oracle's volume, area and centroid equal each fixture's closed form to 1e-12
-- State: regression/cq-spindle-torus-arc-from-axis, cq-spindle-torus-arc-to-axis; reported in `../arris/docs/ideas/spindle-torus-revolve.md`
+- State: the `cq-spindle-torus-arc-from-axis` and `cq-spindle-torus-arc-to-axis` fixtures build on arris 0.12.0. All 122 `rivet` rows build, with 90 receiving closed-form verdicts. Reported in `../arris/docs/ideas/spindle-torus-revolve.md`.
 
 ### slots-through-a-cylinder
 - What: arris refuses the third of three slots cut 60 degrees apart through a cylinder's axis (`OpDegenerateError`, "the faces touch along a curve interior to both result faces"); two slots build, and Open CASCADE builds all three
@@ -145,7 +145,7 @@ A defect a run measured, one block each:
 - Seen: plans/lift-cylinder step 5, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, 81 `wall_anchor` programs, 2026-11-13
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k three-slots`
 - Measured: 81 of 81 `wall_anchor` rows refused at the third slot; the oracle's volume and area equal the closed form to 1e-15
-- State: regression/cq-three-slots-through-cylinder; reported in `../arris/docs/ideas/slots-through-a-cylinder.md`
+- State: fixed in arris 0.12.0. The `cq-three-slots-through-cylinder` fixture passes and all 81 formerly refused `wall_anchor` rows agree. Reported in `../arris/docs/ideas/slots-through-a-cylinder.md`.
 
 ### occt-wrong-tee-and-hook
 - What: Open CASCADE's volume, area and centroid are off the closed form on three `cylinder` part families: `t_pipe_fitting` tees by 1e-8 to 1.5e-4 relative, `u_bolt` and `j_hook` (a half torus joined to cylinders) by up to 1e-5; arris is within 1e-10 of the closed form on all of them
@@ -161,7 +161,7 @@ A defect a run measured, one block each:
 - Seen: plans/lift-face-selectors step 7b, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`, `bearing_retainer_cap` (e.g. `_000183_s20260505`, `_000434_s20260507`, `_000542_s20260505`), 2026-11-14
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k "tangent-inside or end-cylinders-tangent"`
 - Measured: 65 of 160 `bearing_retainer_cap` rows, all in the subset: 22 `checker_fail` slotted plates whose middle arc's rounded ends fall outside the cylinder, 25 `OpInternalError` whose ends fall inside it, 15 `checker_fail` and 3 `OpInternalError` bars with tangent end bosses (2 more of those `OpUnsupportedError`, 21 `ok`); the oracle's volume, area and centroid equal each fixture's closed form
-- State: regression/cq-union-cylinder-tangent-inside, cq-union-end-cylinders-tangent, cq-union-arc-tangent-inside-cylinder (strict `xfail`); reported in `../arris/docs/ideas/union-tangent-inside.md`. On arris 0.12.0, the 24 reached cap builds that fail the checker have verified plate-union verdicts citing `regression/cq-retainer-plate-arc-loop-intersection`.
+- State: the three original tangent-union fixtures pass on arris 0.12.0. The 24 cap builds that fail the checker have verified plate-union verdicts citing `regression/cq-retainer-plate-arc-loop-intersection` (strict `xfail`). Reports are in `../arris/docs/ideas/union-tangent-inside.md` and `../arris/docs/ideas/retainer-plate-arc-union.md`.
 
 ### cross-hole-bounds
 - What: arris's body box reaches past the part where a NURBS edge is its extent: a cylinder of radius 2 drilled across by a hole of radius 0.5 is boxed to y = +-2.0012, the hole's two side-wall edges boxed by their control hulls; volume, area and centroid are the closed form's. Open CASCADE gives the tight box but a volume 3e-5 off the closed form on the same part
@@ -170,7 +170,15 @@ A defect a run measured, one block each:
 - Reproduce: `uv run pytest --runxfail tests/test_regression.py -k cross-hole-bounds`
 - Measured: those 5 rows, all in the subset, bounds 5e-4 to 1e-3 past the closed form along the set screw's axis; the oracle's volume 3e-6 to 1e-5 off it where computed (`_004211`, quadrature at 30 digits: arris 1.3e-10, the oracle 7.0e-6)
 - Seen again: plans/lift-edges-and-blends step 7c: 81 `clevis_pin` programs (a cylinder chamfered at both rims, one or two cross holes; bounds 1e-3 to 5e-3 wide, the oracle's volume to 2.2e-5 off) and `spacer_ring_008375` (a chamfered ring slotted to a floor inside its thickness: the slot's walls cut the chamfer's cone in two NURBS hyperbolas, x max 0.037 past the part)
-- State: regression/cq-cross-hole-bounds and regression/cq-chamfer-slot-bounds (strict `xfail`); the 5 `shaft_collar` and the 81 `clevis_pin` rows `arris_bug` by the first, `spacer_ring_008375` by the second (`tests/fixtures/c2/benchcad/verdicts.json` once step 8 re-runs), `occt_wrong` by a closed form once arris's box is tight; reported in `../arris/docs/ideas/tight-body-bounds.md`
+- State: `regression/cq-cross-hole-bounds` and `regression/cq-chamfer-slot-bounds` remain strict `xfail`. The 0.12.0 replay adds 11 verified `shaft_collar` bounds verdicts. Reported in `../arris/docs/ideas/tight-body-bounds.md`.
+
+### revolved-cone-notch-bounds
+- What: a blind cut clips a conical rim, but the reported X bounds still extend to the uncut rim.
+- Where: arris 0.12.0 `Model.bounds(body)`, read by the sandbox into `Measures.bounds`.
+- Seen: the BenchCAD 0.12.0 replay at revision `5919f578ab09ec283603a082fab07c7639ab56eb`, detailed in `tests/fixtures/c2/benchcad/measure-replay.md`.
+- Reproduce: `uv run --locked pytest --runxfail tests/test_regression.py -k cq-revolved-cone-notches-bounds`.
+- Measured: 40 `bellows` programs exceed the constructed extents. The reduced case gives X ≈ ±10.000000115 against the closed form ±9.8.
+- State: strict `xfail`, `regression/cq-revolved-cone-notches-bounds`. Reported in `../arris/docs/ideas/revolved-cone-notch-bounds.md`.
 
 - `cq` seam placement and closed-form tool hardening (plans/lift-edges-and-blends review): `_placed_key` tests `info.axis[axis] != 0.0` exactly where the rest of the function uses `angular_tolerance` (a cylinder on a `transformed` plane loses its seam placement and ends `unsupported_api`); `_closed_form_job` catches every `ValueError`, so a bug inside a closed form reads as "another arrangement" (a dedicated exception); `_with_seams` mutates a workplane after it is derived (safe today, fragile).
 - The finer `faces` estimate pass tessellates at a chord of 1e-7 of the diagonal: measure its cost on large curved faces, since a slow machine turns it into a `timeout`, the one status wall-clock time may change.

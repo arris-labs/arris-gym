@@ -206,3 +206,10 @@ Consequences:
 - The Decision's evidence table also admits `SignedSolids` for `occt_wrong`
   alone. Its `ValueError` list includes signed solids that fail the checks
   above. The fixed-order volume sum must be finite.
+
+## Amendment (2026-11-25): signed solids use the material-piece count
+
+The signed-solids check compares the number of positive oracle solids
+with arris's solid count under ADR-0016. A sealed cavity adds a shell
+inside its material piece. A one-shell body establishes one solid, and
+a body with several shells needs a known count for the verdict.

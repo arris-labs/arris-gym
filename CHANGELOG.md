@@ -13,8 +13,8 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 - In the CadQuery dialect, axis edge selectors rank seams in the original
   drawing plane on supported full cylinder and rivet revolves. This lets
-  selectors across the drawing plane reach the rivet's chamfers and fillets
-  and can change outcomes and scores.
+  selectors across the drawing plane reach the rivet's chamfers and fillets.
+  Programs that now build receive geometry-based scores under reward version 1.
 
 - `Measures.solids` counts the material pieces in a body with sealed
   cavities. `fidelity.compare` checks that count against the oracle's

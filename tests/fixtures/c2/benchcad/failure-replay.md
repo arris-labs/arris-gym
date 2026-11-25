@@ -46,8 +46,9 @@ the setbacks add up to more than the face's radial width.
 The fixtures are `regression/cq-chamfers-overlap-on-a-face` and
 `regression/cq-fillets-overlap-on-a-face`. The six formerly unclassified rows
 are `arris_refusal`. The six cams and two collars previously classed
-`arris_bug` also receive `arris_refusal`. Prefix runs of the seven rows
-added in step 7 build before the rim blend and refuse at the blend.
+`arris_bug` also receive `arris_refusal`. Prefix runs of the six cams
+and `shaft_collar_017314_s20260505` build before the rim blend and refuse
+at the blend.
 The worm screw remains outside the subset. Its first chamfer refuses
 before the helix sweep, and a fresh oracle run truncated after that
 chamfer also returns `invalid`.
