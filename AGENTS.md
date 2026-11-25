@@ -39,7 +39,7 @@ against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **C2:** Both corpora retain their reach on arris 0.12.0. BenchCAD reaches
 14,150/17,900 with 11,691 agreements and CAD-Recode reaches 968/968 with
 893 agreements. Both have zero in-subset `cq_bug`, unclassified rows and timeouts.
-**Next:** Verify the 0.12.0 rescore digest in CI on both architectures, then `lift-lofts-and-tapers` (`docs/ROADMAP.md`).
+**Next:** `lift-lofts-and-tapers` (`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code
 

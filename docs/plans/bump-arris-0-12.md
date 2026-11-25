@@ -96,7 +96,7 @@ verification, **[3]** unproven design. Grades map to tiers.
   at 2 and 16 workers. Compare the two outputs and use
   `tools/rescore_diff.py` against the committed 0.11.1 evidence. Explain
   each changed score or route beyond version metadata and record the digest.
-- [ ] Step 9 **[1] [CI]**. Verify the recorded rescore digest on x86-64
+- [x] Step 9 **[1] [CI]**. Verify the recorded rescore digest on x86-64
   and aarch64 in CI. Record the run and both matching results before
   fast-forwarding the plan branch.
 
@@ -178,4 +178,6 @@ versioning.
   comparison first differs at program for 100 `lobed_knob` rows, at IoU
   route for 100 `phone_stand` rows and at versions for 100 `venturi_tube`
   rows. The C1 fixture README records the score changes.
-- ⚠ OPEN: Step 9 (human) authorizes pushing the plan branch for CI.
+- Settled in step 9. [CI run 45691768350](https://github.com/arris-labs/arris-gym/actions/runs/45691768350)
+  on `3a817e6` reproduced the step 8 digest on both `ubuntu-latest`
+  (x86-64) and `ubuntu-24.04-arm` (aarch64).

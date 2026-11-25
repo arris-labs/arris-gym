@@ -101,6 +101,9 @@ rescore benchcad --out DIR --workers N` (network once, for the corpus; outside
 the gate). On arris 0.12.0, runs at 2 and 16 workers produced
 byte-identical JSON and Markdown with digest
 `7653aec26a1f12111b53e4ec7587b926431eb68a9628a3b95443a3107ba23551`.
+Both [CI rescore jobs](https://github.com/arris-labs/arris-gym/actions/runs/45691768350)
+on commit `3a817e6` reproduced that digest: `ubuntu-latest` (x86-64)
+and `ubuntu-24.04-arm` (aarch64).
 All 300 rows are `ok`, stage `none`, with exact IoU of 1.0. No row timed
 out. Invalidity is 0 and mean reward is 0.964561 over all 300 programs.
 Each row carries the source, CC-BY-4.0, and the arris, NumPy and reward
