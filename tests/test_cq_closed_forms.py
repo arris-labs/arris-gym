@@ -1127,6 +1127,10 @@ def test_a_row_refused_for_another_reason_is_not_classed_by_the_tangent_fixture(
     "slug",
     [
         "cq-locator-block-intersecting-bores-fillet",
+        "cq-chamfers-overlap-on-a-face",
+        "cq-cotter-pin-self-contact",
+        "cq-cotter-pin-tangent-faces",
+        "cq-fillets-overlap-on-a-face",
         "cq-short-slot-flat-link",
         "cq-rim-chamfer-after-crosswise-fillet",
         "cq-rim-chamfer-after-parallel-fillet",
@@ -1152,6 +1156,47 @@ def test_a_refusal_fixture_identifies_the_corpus_failure(slug: str) -> None:
         other = "another cause"
     with pytest.raises(ValueError, match="another reason"):
         cf.check_refusal_cause(result.refusal.model_copy(update={"message": other}), path)
+
+
+@pytest.mark.parametrize(
+    ("slug", "disagreement"),
+    [
+        ("cq-cotter-pin-self-contact", "arris_refusal"),
+        ("cq-retainer-plate-arc-loop-intersection", "arris_bug"),
+    ],
+)
+def test_failure_replay_requires_the_fixtures_failure_signature(
+    slug: str, disagreement: str
+) -> None:
+    """Check the evidence against live fixtures and reject unrelated failures."""
+    from arris_gym.fidelity import OracleReport, OracleStatus, Verdict, compare
+
+    fixture = REGRESSION / slug
+    result = ag.run((fixture / "program.py").read_text(), dialect="cq")
+    report = OracleReport.model_validate_json((fixture / "oracle.json").read_text())
+    verdict = Verdict.model_validate(cf._failure_replay_verdict(result, report, slug))
+    assert verdict.disagreement.value == disagreement
+    assert compare(result, report, verdict).verdict == verdict
+
+    with pytest.raises(ValueError, match="different program"):
+        cf._failure_replay_verdict(
+            result, report.model_copy(update={"program_sha256": "0" * 64}), slug
+        )
+    with pytest.raises(ValueError, match=r"invalid oracle shape|self-intersecting loops"):
+        cf._failure_replay_verdict(
+            result, report.model_copy(update={"status": OracleStatus.RUNTIME}), slug
+        )
+    if result.refusal is not None:
+        refusal = result.refusal.model_copy(update={"entities": ("+f2", "+f5")})
+        with pytest.raises(ValueError, match="refusal entities"):
+            cf._failure_replay_verdict(result.model_copy(update={"refusal": refusal}), report, slug)
+    else:
+        with pytest.raises(ValueError, match="self-intersecting loops"):
+            cf._failure_replay_verdict(
+                result.model_copy(update={"violations": ("L5 f1: loops 0 and 1 intersect",)}),
+                report,
+                slug,
+            )
 
 
 def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> None:

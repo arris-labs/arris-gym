@@ -177,6 +177,19 @@ _BLEND_DOES_NOT_FIT = (
 # re-run, (exception class, message prefix, number of entities), so a row refused for another
 # reason is never classed by that fixture's name.
 REFUSAL_CAUSES: dict[str, tuple[str, str, int]] = {
+    "cq-chamfers-overlap-on-a-face": ("OpDegenerateError", _BLEND_DOES_NOT_FIT, 3),
+    "cq-cotter-pin-self-contact": (
+        "OpDegenerateError",
+        "degenerate result: a result shell or lump would touch itself, "
+        "or the contact cannot be split into manifold shells",
+        2,
+    ),
+    "cq-cotter-pin-tangent-faces": (
+        "OpDegenerateError",
+        "degenerate result: two faces of one lump of the result meet at a tangent contact",
+        2,
+    ),
+    "cq-fillets-overlap-on-a-face": ("OpDegenerateError", _BLEND_DOES_NOT_FIT, 3),
     "cq-locator-block-intersecting-bores-fillet": ("OpUnsupportedError", "no closed form for ", 0),
     "cq-rim-chamfer-after-crosswise-fillet": (
         "OpDegenerateError",
@@ -5481,6 +5494,53 @@ def _measure_replay_verdicts(
     return verdicts
 
 
+_RETAINER_FIXTURE = "cq-retainer-plate-arc-loop-intersection"
+_FAILURE_REPLAY_ENTITIES = {
+    "cq-chamfers-overlap-on-a-face": ("e", "e", "f"),
+    "cq-cotter-pin-self-contact": ("v", "v"),
+    "cq-cotter-pin-tangent-faces": ("f", "f"),
+    "cq-fillets-overlap-on-a-face": ("e", "e", "f"),
+}
+
+
+def _failure_replay_verdict(
+    result: ExecResult, report: OracleReport, slug: str
+) -> dict[str, object]:
+    """Require the pinned oracle status and the reduced fixture's failure signature."""
+    from arris_gym import Status
+    from arris_gym.fidelity import OracleStatus
+
+    if result.program_sha256 != report.program_sha256:
+        raise ValueError("the pinned oracle report is for a different program")
+    path = f"tests/fixtures/regression/{slug}"
+    if slug == _RETAINER_FIXTURE:
+        if (
+            result.status is not Status.CHECKER_FAIL
+            or report.status is not OracleStatus.OK
+            or not result.violations
+            or not all(
+                re.fullmatch(r"L5 f\d+: loop \d+ intersects itself", v) for v in result.violations
+            )
+        ):
+            raise ValueError("the row lacks the retainer plate's self-intersecting loops")
+        disagreement = "arris_bug"
+    else:
+        if slug not in _FAILURE_REPLAY_ENTITIES:
+            raise ValueError(f"no failure replay check for fixture {slug!r}")
+        if result.status is not Status.ARRIS_REFUSAL or report.status is not OracleStatus.INVALID:
+            raise ValueError("the row must pair an arris refusal with an invalid oracle shape")
+        check_refusal_cause(result.refusal, path)
+        assert result.refusal is not None
+        entities = _FAILURE_REPLAY_ENTITIES[slug]
+        if not all(
+            re.fullmatch(rf"\+{kind}\d+", entity)
+            for kind, entity in zip(entities, result.refusal.entities, strict=True)
+        ):
+            raise ValueError(f"the refusal entities differ from fixture {slug!r}")
+        disagreement = "arris_refusal"
+    return {"disagreement": disagreement, "evidence": {"kind": "fixture", "path": path}}
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Write the verdicts of a corpus table's unclassified rows, checked against both sides."""
     import arris_gym as ag
@@ -5501,6 +5561,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--measure-replay",
         type=Path,
         help="recheck the listed BenchCAD measure disagreements, one stem per line",
+    )
+    parser.add_argument(
+        "--failure-replay",
+        type=Path,
+        help="recheck listed BenchCAD failures, one stem=fixture-slug per line",
     )
     parser.add_argument("--oracle-rows", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
@@ -5562,8 +5627,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         measure_stems = frozenset(lines)
         if not lines or "" in measure_stems or len(lines) != len(measure_stems):
             parser.error("--measure-replay requires distinct, nonempty stems")
+    failures: dict[str, str] = {}
+    if args.failure_replay is not None:
+        if args.corpus != "benchcad":
+            parser.error("--failure-replay requires --corpus benchcad")
+        lines = args.failure_replay.read_text(encoding="utf-8").splitlines()
+        for line in lines:
+            stem, _, slug = line.partition("=")
+            if not stem or not slug or stem in failures:
+                parser.error("--failure-replay requires distinct stem=fixture-slug entries")
+            failures[stem] = slug
+        if not failures:
+            parser.error("--failure-replay requires at least one entry")
     if args.table is None and (
-        not measure_stems or args.refusal or args.arris_bug or args.sketch_boundary
+        (not measure_stems and not failures)
+        or args.refusal
+        or args.arris_bug
+        or args.sketch_boundary
     ):
         parser.error("--table is required for table-based verdict selection")
     refusals = dict(item.split("=", 1) for item in args.refusal)
@@ -5572,15 +5652,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     explicit = frozenset([*args.boundary, *args.blended_boundary, *args.signed_solids, *designs])
     if measure_stems & explicit:
         parser.error("a measure replay stem is also specified by another option")
+    if failures.keys() & (explicit | measure_stems):
+        parser.error("a failure replay stem is also specified by another option")
     programs = benchcad.read() if args.corpus == "benchcad" else cadrecode.read()
     texts = {p.stem: p.text for p in programs}
     verdicts = (
-        verdicts_for(args.table, texts, refusals, arris_bugs, explicit | measure_stems)
+        verdicts_for(
+            args.table, texts, refusals, arris_bugs, explicit | measure_stems | failures.keys()
+        )
         if args.table is not None
         else {}
     )
     if not measure_stems <= texts.keys():
         parser.error(f"unknown measure replay stems: {sorted(measure_stems - texts.keys())}")
+    if unknown_failures := failures.keys() - texts.keys():
+        parser.error(f"unknown failure replay stems: {sorted(unknown_failures)}")
     try:
         verdicts.update(_measure_replay_verdicts(sorted(measure_stems), texts))
     except ValueError as error:
@@ -5618,13 +5704,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     for line in gzip.decompress(args.oracle_rows.read_bytes()).decode("utf-8").splitlines():
         row = json.loads(line)
         reports[row["stem"]] = OracleReport.model_validate(row["report"])
-    stems = list(verdicts)
+    stems = sorted(verdicts.keys() | failures.keys())
     with ag.Sandbox() as sandbox:
         results = sandbox.run_many([texts[s] for s in stems], dialect="cq", workers=WORKERS)
     refused = []
     not_its_cause = []
     for stem, result in zip(stems, results, strict=True):
         try:
+            if stem in failures:
+                verdicts[stem] = _failure_replay_verdict(result, reports[stem], failures[stem])
+                compare(result, reports[stem], Verdict.model_validate(verdicts[stem]))
+                continue
             evidence = verdicts[stem]["evidence"]
             if verdicts[stem]["disagreement"] == "arris_refusal" and isinstance(evidence, dict):
                 check_refusal_cause(result.refusal, str(evidence["path"]))

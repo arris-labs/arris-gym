@@ -80,7 +80,7 @@ verification, **[3]** unproven design. Grades map to tiers.
   `cq-revolved-cone-notches-bounds` for the clipped rims. Require the
   verdict generator to verify each cited cause and regenerate its output
   byte for byte.
-- [ ] Step 6 **[2]**. Resolve the six blend refusals against oracle
+- [x] Step 6 **[2]**. Resolve the six blend refusals against oracle
   `invalid` (`bucket`, `shaft_collar`, `pipe_flange`, `worm_screw`).
   Check the new `cotter_pin` refusal causes and the `bearing_retainer_cap`
   checker failures against their fixtures. Add strict regression fixtures
@@ -88,7 +88,8 @@ verification, **[3]** unproven design. Grades map to tiers.
 - [ ] Step 7 **[2] [conductor-run]**. Run `tools/cq_corpus.py` on BenchCAD
   and CAD-Recode from fresh work directories with pinned `--oracle-rows`.
   Review changed rows against 0.11.1 and refresh the C2 baselines,
-  verdicts and assertions together using step 5's checked measure verdicts.
+  verdicts and assertions together using the checked verdicts from steps 5
+  and 6. Replace historical verdicts for stems covered by step 6.
   Confirm byte-identical oracle rows and record the torus–box check
   against its closed form.
 - [ ] Step 8 **[2] [conductor-run]**. Run `arris-gym rescore benchcad`
@@ -158,4 +159,9 @@ versioning.
   measurement errors. The generator writes the measure verdicts byte
   for byte from the pinned oracle reports. See
   `tests/fixtures/c2/benchcad/measure-replay.md`.
+- Settled in step 6. The six unclassified blends and the historical
+  collar internal error now have checked `arris_refusal` verdicts for
+  overlapping rim blends. The 159 cotter pins refuse at the head union.
+  The 24 retainer caps fail the checker at the plate union and cite its
+  strict regression. See `tests/fixtures/c2/benchcad/failure-replay.md`.
 - ⚠ OPEN: Step 9 (human) authorizes pushing the plan branch for CI.

@@ -1,0 +1,6 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "note": "The plate and cylinder overlap over the interior of the plate and a positive axial interval. Their union should be a valid solid.",
+  "xfail": "the fuse of the plate's nearly tangent arc with the cylinder leaves intersecting loops in the result"
+}
