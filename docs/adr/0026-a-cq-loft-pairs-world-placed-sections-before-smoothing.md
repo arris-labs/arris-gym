@@ -142,3 +142,30 @@ explicit section parameters and faster handling of many curved sides.
   coordinates are rounded independently in each section. An exact
   simplification would need to preserve the resulting boundary at every
   tooth.
+
+## Amendment (2026-11-26) — plane changes and existing consumers
+
+`workplane` and `transformed` empty the visible stack and carry one closed
+disc, rectangle, polygon or path forward in its drawing frame. The next
+section uses the active frame. Carrying sections appends to an ordered
+tuple on the new workplane. The parent chain still supplies the nearest
+solid, including stock selected by a face. On one wire, its centre is in
+the drawing plane, so projecting the origin onto the plane through that
+centre leaves it where it was before applying `workplane`'s offset.
+
+The pinned oracle uses the active plane's normal for `extrude` and
+`cutBlind`. The subset takes a single carried wire for these calls when
+the normals agree. A through-cut sweeps a single carried wire along its
+drawing normal even after a tilt. Revolution takes the axis from the
+active plane and requires that axis to lie in the wire's drawing plane.
+The existing consumers refuse multiple wires carried across plane
+changes. In the offset pair probes the oracle could not build planar
+faces out of the two wires.
+
+`tests/fixtures/lofts/plane-change-contexts.json` records the consumer
+probes, including a sweep of the first section in the face-based propeller
+chain, carried profiles on rotated frames, both kinds of tilt refusal
+and the through-cut on a tilted frame. The single rectangle cases moved
+from the refusal records in `tests/fixtures/profiles/rect-contexts.json`.
+Multiple visible wires, nested profiles, slots and open paths stay
+outside this lift.

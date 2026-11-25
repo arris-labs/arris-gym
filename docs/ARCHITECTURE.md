@@ -569,8 +569,21 @@ ends on the start.
 stack its origin is the old one moved `d` along the normal; on a stack
 holding one solid it is the old origin projected onto the plane through
 the solid's centroid (a compound's: all its pieces'), then moved `d`
-(CadQuery's `ProjectedOrigin`). A pending wire on the stack ends
-`unsupported_api`.
+(CadQuery's `ProjectedOrigin`). When the stack holds a single closed disc,
+rectangle, polygon or path, `workplane` offsets the active plane along its
+normal, including the frame inherited from a face. Both `workplane` and
+`transformed` carry that section at its drawing position and append it to
+the earlier sections in drawing order. Each branch has its own tuple of
+sections. Slots, nested profiles, multiple wires on the visible stack and
+open paths raise `unsupported_api` on either plane change.
+
+`extrude` and `cutBlind` accept one section carried across a plane change
+when its normal agrees with the active plane's. `cutThruAll` uses the
+section's normal even if the active plane is tilted. `revolve` reads its
+axis in the active plane's coordinates and requires it to lie in the
+section's drawing plane. These calls consume the sections on the result
+while preserving the source branch. With multiple sections carried across
+plane changes, these calls raise `unsupported_api` (ADR-0026).
 
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted

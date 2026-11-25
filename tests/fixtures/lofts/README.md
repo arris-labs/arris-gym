@@ -75,3 +75,19 @@ loft.
 Each of these three prefixes returned `ok` on the oracle. The timing
 observations use two workers and describe the development machine. The
 tests exercise numerical results and do not require those wall-clock times.
+
+## Plane changes
+
+`plane-change-contexts.json` pins CadQuery 2.3.0 and Open CASCADE 7.9.3.0
+reports for the existing subset's operations with a carried section.
+`test_cq_plane_sections.py` checks measures, solid counts and statuses or
+the stated subset refusal. The rectangle cases from `profiles/` keep
+their original program and oracle report.
+
+The propeller sweep adapts `propeller_000111_s20260505` from
+BenchCAD/BenchCAD, revision `5919f578ab09ec283603a082fab07c7639ab56eb`
+(CC-BY-4.0). A centred radius-18.46 cylinder along Y has its upper face at
+Y = 7.78. A radius-16.614 disc drawn there and swept 5.6 extends to
+Y = 13.38. The solid's volume is
+π × (18.46² × 15.56 + 16.614² × 5.6).
+The independent stack check also draws the second section at Y = 13.38.

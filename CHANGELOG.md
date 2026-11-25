@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, `workplane(offset=…)` and `transformed(…)` keep
+  a single pending disc, rectangle, polygon or closed path where it was
+  drawn. You can change the workplane and then extrude or blind-cut the
+  original profile along the same normal.
+
 - Upgrade the geometry kernel to arris 0.12.0. Chained fuses of cylinders
   on a shared end plane now build, as do several point- and edge-touching
   unions and horn and spindle torus revolves. Some overlapping blends

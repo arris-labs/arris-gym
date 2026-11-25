@@ -36,6 +36,9 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   (`cadquery/occ_impl/geom.py`): the new origin is `offset` in the old
   plane's coordinates; the axes turn by the product Rx·Ry·Rz of rotations in
   degrees about the old plane's own x, y and z axes, so the z angle acts first.
+  `newObject` preserves the pending wires in CadQuery's shared context
+  through a plane change. The subset keeps them in drawing order on each
+  branch (ADR-0026).
 - `Workplane.workplane` (`cadquery/cq.py`, with `Vector.projectToPlane` in
   `cadquery/occ_impl/geom.py`): the new plane keeps the old axes; its
   centre is the old origin on an empty stack and the one object's `Center()`
@@ -44,6 +47,10 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   plane through that centre, then moved `offset` along the unit normal, and
   the new stack is empty. Confirmed on the oracle on `XY`, `YZ`, `XZ` and
   `ZX` with `origin=` by `tests/fixtures/cq/ok-workplane-*`.
+  For a single wire drawn on its plane, projecting the old origin onto the
+  plane through the wire's centre leaves that origin in place before the
+  offset. The face-based cases in
+  `tests/fixtures/lofts/plane-change-contexts.json` exercise this placement.
 - `Workplane.box` (`cadquery/cq.py`, with `eachpoint` and
   `_combineWithBase`): `length`, `width` and `height` along the plane's x, y
   and normal, centred on its origin by default, and on each point of the

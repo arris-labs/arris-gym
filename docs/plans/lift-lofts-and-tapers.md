@@ -78,7 +78,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   `helical_gear` (two and three sections), `propeller`, `tapered_boss`,
   `twisted_bracket` and `wing_nut` against pinned oracle reports. Write
   ADR-0026 and numerical fixtures. Check build time against the corpus deadline.
-- [ ] Step 2 **[3]**. Carry the pending sections through `workplane` and
+- [x] Step 2 **[3]**. Carry the pending sections through `workplane` and
   `transformed`. Verify their world placement, order, branch independence
   and stock lookup with `hypothesis` and oracle cases on offset and rotated
   frames, including the face-based `propeller` chain. Move affected fixtures.
@@ -144,6 +144,12 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   gears are among 392 projected gear rows to verify. With all 392 deferred,
   the projected all-lifts reach would be 15,326/17,900. The reduced loft
   and timing evidence are filed with arris. The plan's acceptance stands.
+- **Settled, Step 2 (ADR-0026).** Plane changes carry one closed disc,
+  rectangle, polygon or path at a time. The oracle probes support a
+  through-cut along the drawing normal even after a tilt. Linear sweeps
+  use the active normal and refuse a differing one. Revolution requires
+  the axis to lie in the drawing plane. The existing consumers refuse
+  multiple sections carried across plane changes.
 - ⚠ OPEN: Agent, Steps 3 and 7. Which gear lofts can meet the corpus
   deadline and fidelity criteria? Verify before enabling a path that
   depends on the missing interpolation or performance capabilities.

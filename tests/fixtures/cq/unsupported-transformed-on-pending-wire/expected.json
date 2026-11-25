@@ -1,5 +1,0 @@
-{
-  "dialect": "cq",
-  "status": "unsupported_api",
-  "message": "Workplane.transformed on a pending wire"
-}

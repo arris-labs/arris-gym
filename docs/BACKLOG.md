@@ -30,7 +30,13 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - Determine when CadQuery preserves a torus seam after a cut, then preserve those faces in `cq` (`regression/cq-workplane-on-a-cut-torus-crossing-its-seam`).
 - Verify full-revolve seam placement for rotated frames with floating-point roundoff. A rotated cylinder's two-rim chamfer is held by `regression/cq-rotated-full-revolve-seam` (ADR-0020).
 - Measure CadQuery's join tolerance before admitting near-coincident endpoints in `Sketch.assemble` (`regression/cq-sketch-assemble-near-endpoints` holds a 1e-8 gap that CadQuery joins).
-- `cq` keeps no CadQuery context along a chain: a `circle` on a stack other than one `moveTo` point, a stack of points or one pending circle, a `moveTo` on a pending wire, and `transformed`, `union`, `cut` on a pending wire and `box` on a drawn path or sketch or on a stack holding a solid (CadQuery centres it on the solid's centre), and a `polyline` of fewer than two points (CadQuery starts the next call from the origin), end `unsupported_api`; lift them in the knee's bundle order when a program writes them
+- CadQuery's context is shared along a chain. The subset keeps pending
+  sections on each branch (ADR-0026). Plane changes on slots, nested
+  profiles, multiple visible wires and open paths end `unsupported_api`.
+  Other limits include `moveTo`, `union` and `cut` on a visible pending
+  wire, `box` on a drawn path, sketch or solid, `circle` on an unsupported
+  stack and `polyline` with fewer than two points. Lift these in the knee's
+  bundle order where written.
 - A target read from a STEP is exactly one solid (ADR-0011), so a re-scored corpus whose oracle builds a compound (827 BenchCAD oracle `ok` reports hold 2 to 9 solids) gets a `runtime` target; decide how a compound target is read before BenchCAD is re-scored beyond the slice (ADR-0016)
 - `FIXTURE_DEADLINE` (60 s, `tests/fixture_cases.py`) hides a fixture's slowdown up to 12x past `run`'s 5 s default that users get: record each `ok` fixture's runtime or assert a bound so a speed regression shows; and `tests/test_regression.py` would run a future `timeout` regression fixture to 60 s five times, not to `TIMEOUT_DEADLINE`
 - `cq`'s `workplane()` on a compound puts the plane at arris's centroid, while CadQuery uses Open CASCADE's `Center()`, which can be wrong for a compound (`cq/ok-compound-occt-centroid`): the two planes differ in that construction; add a fixture with a closed form if a corpus program reaches it

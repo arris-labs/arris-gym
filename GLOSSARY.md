@@ -241,6 +241,8 @@ it (ADR-0019). A bore (`hole`, `cboreHole`, `cskHole`) cuts at each point
 (ADR-0018). `circle`, `rect` and `slot2D` draw a profile at each point for
 `extrude`, `cutBlind` or `cutThruAll`. `center` leaves one point at the new
 origin and preserves the placement of pending wires (ADR-0024).
+`workplane` and `transformed` empty the stack and carry a single loft
+section at its original placement (ADR-0026).
 `edges` puts a **stack of edges** on it, the solid's, the stacked faces' or
 the stacked edges' own, which `fillet` and `chamfer` blend (ADR-0020).
 

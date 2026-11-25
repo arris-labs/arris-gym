@@ -94,6 +94,8 @@ rectangular array or a nested section, alongside their pinned oracle
 reports. The programs start on the top workplane of the same stock.
 `test_cq_rect.py` binds every report to its program and checks the
 subset's refusal.
+The `one-workplane` and `one-transformed` rectangle cases now agree and
+are recorded in `../lofts/plane-change-contexts.json`.
 
 The slot fixtures under `cq/` use the same section area and perimeter.
 Each polar slot is centred at (0, ±4), with its own axis at 120° or 300°.
@@ -109,3 +111,5 @@ area by multiplying the section area and perimeter by 6π.
 plus unsupported stacks and argument forms for `slot2D`. Its oracle reports
 include an overlapping-slot blind cut that crashed. `test_cq_slot.py` binds
 the reports to their exact programs and checks the subset's refusals.
+The single-slot and slot-array plane changes remain outside ADR-0026's
+single disc, rectangle, polygon and closed-path forms.

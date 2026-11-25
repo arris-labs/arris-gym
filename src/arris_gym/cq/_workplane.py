@@ -9,7 +9,7 @@ from __future__ import annotations
 import functools
 import math
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from fractions import Fraction
 from itertools import combinations
 from typing import Concatenate, NoReturn
@@ -275,10 +275,11 @@ class _PlacedProfiles:
 
 @dataclass(frozen=True)
 class _PendingWire:
-    """A sketch and an optional point on its sweep axis before a large normal shift."""
+    """A placed sketch, its carry context and a reference for distant through-cuts."""
 
     sketch: arris.build.Sketch
     through_origin: _XYZ | None
+    across_plane: bool = False
 
     @property
     def through_plane(self) -> arris.build.Workplane:
@@ -581,11 +582,19 @@ class Workplane:
         return ()
 
     def _wires(self, form: str) -> tuple[_PendingWire, ...]:
-        """Keep carried profiles first. Mixed sets currently support disjoint discs.
+        """Keep carried profiles first and check the consumer's section count.
 
+        Wires carried by `center` alone can mix with visible disjoint discs.
         See `unsupported-center-nested-circles` for a section that needs nesting.
         """
         visible = self._visible_wires()
+        if any(wire.across_plane for wire in self._carried):
+            # Plane changes collect loft sections. The sweep operations only
+            # model one wire in this context (lofts/plane-change-contexts.json).
+            wires = self._carried + visible
+            if form != "Workplane.center" and len(wires) != 1:
+                raise UnsupportedApi(f"{form} on multiple wires carried across plane changes")
+            return wires
         for carried in self._carried:
             first = carried.sketch
             for wire in visible:
@@ -605,6 +614,33 @@ class Workplane:
                         continue
                 raise UnsupportedApi(f"{form} on multiple wires carried across center")
         return self._carried + visible
+
+    def _plane_change_section(self, form: str) -> _PendingWire | None:
+        """Admit a single closed disc, rectangle, polygon or path on the stack."""
+        wires = self._visible_wires()
+        if len(wires) == 1 and not wires[0].sketch.holes and not isinstance(wires[0].sketch, _Slot):
+            return replace(wires[0], across_plane=True)
+        self._refuse_pending(form)
+        return None
+
+    def _carry_section(self, section: _PendingWire | None) -> Workplane:
+        """Append a wire to a plane change's newly derived result."""
+        if section is not None:
+            object.__setattr__(self, "_carried", (*self._carried, section))
+        return self
+
+    def _sweep_sketches(self, form: str) -> tuple[arris.build.Sketch, ...]:
+        """Sketches for a linear sweep, whose direction comes from the active plane."""
+        wires = self._wires(form)
+        for wire in wires:
+            if not wire.across_plane:
+                continue
+            normal_gap = math.dist(wire.sketch.plane.z, self._plane.z)
+            if normal_gap > arris.build.default_model().angular_tolerance:
+                # The oracle uses the active normal after a tilt. See
+                # tilt-extrude and tilt-cutBlind in lofts/plane-change-contexts.json.
+                raise UnsupportedApi(f"{form} on a carried wire with a different normal")
+        return tuple(wire.sketch for wire in wires) or (self._pending_sketch(form),)
 
     def _consume_wires(self) -> Workplane:
         """Clear consumed wires on a newly derived result."""
@@ -687,6 +723,9 @@ class Workplane:
         axes; the turn is CadQuery's matrix product Rx·Ry·Rz, so the z angle
         acts first and every axis is this workplane's, not the turned one's.
         A zero rotation leaves the axes exactly as they were.
+        A single closed disc, rectangle, polygon or path keeps its world
+        placement as a pending section. Other pending profiles, open paths
+        and stacks of points raise `UnsupportedApi`.
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").transformed(
@@ -698,7 +737,7 @@ class Workplane:
         if isinstance(rotate, Sketch) or isinstance(offset, Sketch):
             # A Sketch has the census kind "call" (`unsupported-sketch-transformed-vector`).
             raise UnsupportedApi("Workplane.transformed requires Vector arguments")
-        self._refuse_pending("Workplane.transformed")
+        section = self._plane_change_section("Workplane.transformed")
         plane = self._plane
         turned = plane
         # Each `rotated` turns about a fixed world direction through the
@@ -715,7 +754,7 @@ class Workplane:
                 reference = arris.build.Workplane(at, turned.x, turned.y, turned.z)
         return self._derive_on(
             arris.build.Workplane(origin, turned.x, turned.y, turned.z), through_plane=reference
-        )
+        )._carry_section(section)
 
     @census_form("Workplane.workplane", keywords={"offset": ("num",)})
     def workplane(self, offset: float = 0.0) -> Workplane:
@@ -728,8 +767,10 @@ class Workplane:
         read on the oracle: `ok-workplane-*`). The solid stays in the chain
         for the next call to fuse with. A compound counts as one solid, its
         centroid that of all its pieces (CadQuery's `Shape.Center`, read on the
-        oracle: `ok-workplane-on-compound`). Refuses, as `UnsupportedApi`, a
-        pending wire on the stack.
+        oracle: `ok-workplane-on-compound`). On a single closed disc,
+        rectangle, polygon or path, the origin moves along the normal and the
+        section keeps its world placement. Other pending profiles and open
+        paths raise `UnsupportedApi`.
 
         On a stack `faces` made, one planar face gives the plane of that
         face (ADR-0017 rule 3): its normal the face's outward normal, its x
@@ -782,13 +823,13 @@ class Workplane:
             return self._derive_on(
                 arris.build.Workplane(at, plane.x, plane.y, n), through_plane=reference
             )
-        self._refuse_pending("Workplane.workplane")
+        section = self._plane_change_section("Workplane.workplane")
         plane = self._plane
         o, n = plane.origin, plane.z
-        if not self._stack or isinstance(self._stack[0], _CenterPoint):
+        if section is not None or not self._stack or isinstance(self._stack[0], _CenterPoint):
             center = o
         else:
-            # Past `_refuse_pending`, a stack that is not empty holds one solid.
+            # The remaining stack holds one solid.
             (solid,) = self._stack
             assert isinstance(solid, arris.build.Solid)
             center = solid.measure().centroid
@@ -810,7 +851,7 @@ class Workplane:
             reference = plane
         return self._derive_on(
             arris.build.Workplane(at, plane.x, plane.y, n), through_plane=reference
-        )
+        )._carry_section(section)
 
     @census_form("Workplane.faces", [("str",)])
     def faces(self, selector: str) -> Workplane:
@@ -1805,6 +1846,8 @@ class Workplane:
         `Standard_ConstructionError` from the zero-length sweep).
         A finalized `sketch()` is extruded as one section (ADR-0023).
         The `both` keyword on that stack raises `UnsupportedApi`.
+        After a plane change, extrusion accepts one pending section with
+        the same normal as the active plane (ADR-0026).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").circle(1).extrude(2)
@@ -1817,7 +1860,7 @@ class Workplane:
         if len(self._stack) == 1 and isinstance(self._stack[0], Sketch):
             return self._combined(self._stack[0]._extrusion(distance))._with_seams(None)
         form = "Workplane.extrude"
-        sketches = tuple(wire.sketch for wire in self._wires(form)) or (self._pending_sketch(form),)
+        sketches = self._sweep_sketches(form)
         if distance == 0:
             raise ValueError(
                 f"Workplane.extrude({distance}, both={both}): a zero distance "
@@ -1854,6 +1897,8 @@ class Workplane:
         (`clean=`, `both=`, `taper=`) and an `until` that is not a number
         end `unsupported_api`. A stack of selected faces or of points, and a
         drawn path, are outside the subset, as for `extrude`.
+        After a plane change, the cut accepts one pending section with the
+        same normal as the active plane (ADR-0026).
 
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").box(2, 2, 2).faces(">Z").workplane()
@@ -1862,7 +1907,7 @@ class Workplane:
         """
         form = "Workplane.cutBlind"
         self._refuse_sketch(form)
-        sketches = tuple(wire.sketch for wire in self._wires(form)) or (self._pending_sketch(form),)
+        sketches = self._sweep_sketches(form)
         if until == 0:
             raise ValueError(
                 f"Workplane.cutBlind({until}): a zero depth (CadQuery's Standard_ConstructionError)"
@@ -1885,6 +1930,8 @@ class Workplane:
         for nests with a rectangle, as in `runtime-through-rect-on-rect`).
         A finalized sketch and keyword
         forms raise `UnsupportedApi` (ADR-0024 §A).
+        After a plane change, a single pending section cuts along its own
+        normal (ADR-0026).
 
         See `ok-cut-thru-all-far`, `runtime-cut-thru-all-no-solid`,
         `runtime-cut-thru-all-no-wires`, `runtime-cut-thru-all-ring`,
@@ -2133,6 +2180,8 @@ class Workplane:
         `ValueError` (`runtime`) when the stack holds no pending sketch.
         Revolving a slot on a chain with existing stock raises
         `UnsupportedApi` (see `unsupported-slot-revolve-with-stock`).
+        After a plane change, revolution accepts one pending section and
+        an axis lying in that section's drawing plane (ADR-0026).
 
         >>> import math
         >>> import arris_gym.cq as cq
@@ -2142,12 +2191,15 @@ class Workplane:
         3.0
         """
         form = "Workplane.revolve"
+        across_plane = False
         if self._carried:
             wires = self._wires(form)
             if len(wires) != 1:
                 # See `unsupported-center-revolve-multiple`.
                 raise UnsupportedApi(f"{form} on multiple wires carried across center")
-            sketch = wires[0].sketch
+            (wire,) = wires
+            sketch = wire.sketch
+            across_plane = wire.across_plane
         else:
             sketch = self._pending_sketch(form)
         if isinstance(sketch, _Slot) and self._base_solid() is not None:
@@ -2159,7 +2211,17 @@ class Workplane:
         start = self._plane.point(*start_at)
         end = self._plane.point(*end_at)
         direction = (end[0] - start[0], end[1] - start[1], end[2] - start[2])
-        made = arris.build.default_model().revolve(
+        model = arris.build.default_model()
+        if across_plane:
+            plane = sketch.plane
+            height = math.fsum((start[i] - plane.origin[i]) * plane.z[i] for i in range(3))
+            rise = math.fsum(direction[i] * plane.z[i] for i in range(3))
+            if abs(height) > model.tolerance or abs(rise) > model.angular_tolerance * math.hypot(
+                *direction
+            ):
+                # See after-revolve and tilt-revolve in lofts/plane-change-contexts.json.
+                raise UnsupportedApi(f"{form} with an axis outside the carried wire's plane")
+        made = model.revolve(
             sketch.profile(), start, direction, degrees * _REVOLVE_RADIANS_PER_DEGREE
         )
         solid = arris.build.Solid.of(made)

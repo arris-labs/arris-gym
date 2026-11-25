@@ -1,0 +1,30 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 3.141592653589793,
+    "area": 12.566370614359172,
+    "centroid": [
+      0,
+      0,
+      0.5
+    ],
+    "bounds": [
+      [
+        -1,
+        -1,
+        0
+      ],
+      [
+        1,
+        1,
+        1
+      ]
+    ],
+    "shells": 1,
+    "genus": 0,
+    "faces": 3,
+    "face_kinds": [["cylinder", 1], ["plane", 2]]
+  },
+  "note": "A height-1 unit cylinder starts at z=0, the drawing plane of the disc. Its volume is pi, with two cap areas of pi each and a wall area of 2*pi."
+}
