@@ -1213,43 +1213,47 @@ def test_a_family_fixture_classes_only_its_in_subset_rows(tmp_path: Path) -> Non
     collars = [e for e in table.entries if e.name.startswith("shaft_collar_")]
     # Rows outside the subset, of a family flagged below: no fixture classes them.
     outside = [e for e in table.entries if e.row.status is ag.Status.UNSUPPORTED_API][:3]
-    pins = [e for e in table.entries if e.name.startswith("cotter_pin_") and e.row.verdict][:3]
-    knob = next(e for e in table.entries if e.name.startswith("lobed_knob_") and e.row.verdict)
+    channels = [e for e in table.entries if e.name.startswith("u_channel_") and e.row.verdict][:3]
+    cap = next(
+        e for e in table.entries if e.name.startswith("bearing_retainer_cap_") and e.row.verdict
+    )
     assert outside
+    assert len(channels) == 3
     assert any(e.row.outcome.value == "agree" for e in collars)  # rows no verdict touches
-    picked = [*collars, *pins, knob, *outside]
+    picked = [*collars, *channels, cap, *outside]
     path = tmp_path / "fidelity.json.gz"
     path.write_bytes(gzip.compress(fidelity_table(picked).to_json().encode()))
     texts = {e.name: "" for e in picked}
-    tangent = "tests/fixtures/regression/cq-tangent-cylinders"
+    chamfer = "tests/fixtures/regression/cq-rim-chamfer-after-crosswise-fillet"
     refusals = {
-        "cotter_pin": tangent,
-        **{re.sub(r"_\d+_s\d+$", "", e.name): tangent for e in outside},
+        "u_channel": chamfer,
+        **{re.sub(r"_\d+_s\d+$", "", e.name): chamfer for e in outside},
     }
-    overlap = "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
-    bugs = {
-        "shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds",
-        "shaft_collar_016155_s20260505": overlap,
-        "shaft_collar_017314_s20260505": overlap,
+    bugs = {"shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds"}
+    # Replay checks and boundary integrals explicitly own these stems.
+    root = C2 / "benchcad"
+    measured = set((root / "measure-replay.txt").read_text().splitlines())
+    failed = {
+        line.split("=", 1)[0] for line in (root / "failure-replay.txt").read_text().splitlines()
     }
-    # The collars classed by their boundary integral (`--blended-boundary`), each by its stem.
     integrated = frozenset(
         k
         for k, v in committed.items()
         if k.startswith("shaft_collar_") and "Green's theorem" in str(v["evidence"])
     )
     assert len(integrated) == 3
-    got = cf.verdicts_for(path, texts, refusals, bugs, integrated)
-    want = {k: v for k, v in committed.items() if k.startswith(("shaft_collar_", "cotter_pin_"))}
-    want = {k: v for k, v in want.items() if k in texts and k not in integrated}
+    explicit = integrated | measured | failed
+    got = cf.verdicts_for(path, texts, refusals, bugs, explicit)
+    want = {k: v for k, v in committed.items() if k in texts and k not in explicit}
     assert got == want
-    assert len([k for k in got if k.startswith("shaft_collar_")]) == 64
+    assert len([k for k in got if k.startswith("shaft_collar_")]) == 62
+    assert cap.name not in got
     assert not {e.name for e in outside} & set(got)
     own = {e.name for e in collars if e.row.program_sha256 in cf.COLLARS}  # its closed form
     assert len(own) == 1
-    assert set(cf.verdicts_for(path, texts, refusals)) == {e.name for e in pins} | own
+    assert set(cf.verdicts_for(path, texts, refusals)) == {e.name for e in channels} | own
     with pytest.raises(ValueError, match="both"):
-        cf.verdicts_for(path, texts, refusals, {"cotter_pin": bugs["shaft_collar"]})
+        cf.verdicts_for(path, texts, refusals, {"u_channel": bugs["shaft_collar"]})
 
 
 def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
@@ -1269,7 +1273,7 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
         and e.row.verdict
         and e.row.program_sha256 not in cf.COLLARS  # its own closed form, not a fixture's row
     ]
-    assert len(collars) == 66
+    assert len(collars) == 79
     path = tmp_path / "fidelity.json.gz"
     path.write_bytes(gzip.compress(fidelity_table(collars).to_json().encode()))
     texts = {e.name: "" for e in collars}
@@ -1279,7 +1283,7 @@ def test_a_row_stem_classes_that_row_alone(tmp_path: Path) -> None:
     paths = {name: v["evidence"]["path"] for name, v in got.items()}  # type: ignore[index]
     assert paths.pop(collars[0].name) == one
     assert set(paths.values()) == {family}
-    assert len(paths) == 65
+    assert len(paths) == 78
 
 
 def test_a_row_whose_program_no_closed_form_reads_stays_unclassified(

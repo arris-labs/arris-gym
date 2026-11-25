@@ -1,4 +1,186 @@
 {
+ "bearing_retainer_cap_000183_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_001271_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_002590_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_002809_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_003030_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_003250_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_004154_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_004169_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_004656_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_005195_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_006460_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_006593_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_006881_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_007380_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_007918_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_009827_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_012997_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_013103_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_013380_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_013795_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_015340_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_015370_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_017480_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bearing_retainer_cap_017991_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+  }
+ },
+ "bellows_000163_s20260507": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_000367_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_000539_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -77,6 +259,27 @@
    "volume": 38789.84284331322
   }
  },
+ "bellows_001313_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_001795_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_002132_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_002655_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -129,6 +332,34 @@
    "volume": 727222.4326440997
   }
  },
+ "bellows_003270_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_003367_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_003530_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004132_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_004146_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -155,6 +386,48 @@
    "volume": 313063.0104577692
   }
  },
+ "bellows_004190_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004544_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004831_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_004879_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_005109_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_005535_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_005903_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -179,6 +452,13 @@
    "kind": "closed_form",
    "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=35.227, r=1.315, d=10.22, cone=((28.669, 215.54), (37.05, 225.76)), profile=((12.45, 0.0), (33.0, 0.0), (37.05, 0.0), (37.05, 10.22), (33.0, 10.22), (17.401, 27.33), (32.794, 44.44), (17.182, 61.55), (31.969, 78.66), (16.963, 95.77), (31.144, 112.88), (16.744, 129.99), (30.319, 147.1), (16.525, 164.21), (29.494, 181.32), (16.306, 198.43), (28.669, 215.54), (37.05, 225.76), (33.0, 225.76), (12.45, 225.76), (12.45, 0.0))",
    "volume": 350875.622229355
+  }
+ },
+ "bellows_006086_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
   }
  },
  "bellows_006447_s20260505": {
@@ -259,6 +539,27 @@
    "volume": 137765.81076872812
   }
  },
+ "bellows_008482_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_008780_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_008847_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_009246_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -283,6 +584,20 @@
    "kind": "closed_form",
    "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=32.255, r=1.16, d=2.81, cone=((30.5, 185.69), (33.69, 188.5)), profile=((9.97, 0.0), (30.5, 0.0), (33.69, 0.0), (33.69, 2.81), (30.5, 2.81), (14.91, 14.24), (30.5, 25.67), (14.91, 37.1), (30.5, 48.53), (14.91, 59.96), (30.5, 71.39), (14.91, 82.82), (30.5, 94.25), (14.91, 105.68), (30.5, 117.11), (14.91, 128.54), (30.5, 139.97), (14.91, 151.4), (30.5, 162.83), (14.91, 174.26), (30.5, 185.69), (33.69, 188.5), (30.5, 188.5), (9.97, 188.5), (9.97, 0.0))",
    "volume": 268006.635799756
+  }
+ },
+ "bellows_009794_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_009976_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
   }
  },
  "bellows_010022_s20260505": {
@@ -311,6 +626,20 @@
    "volume": 533024.613659479
   }
  },
+ "bellows_010156_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_010702_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_010796_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -335,6 +664,13 @@
    "kind": "closed_form",
    "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=37.472, r=1.98, d=2.83, cone=((34.86, 145.87), (39.61, 148.7)), profile=((12.22, 0.0), (34.86, 0.0), (39.61, 0.0), (39.61, 2.83), (34.86, 2.83), (16.3, 11.77), (34.86, 20.71), (16.3, 29.65), (34.86, 38.59), (16.3, 47.53), (34.86, 56.47), (16.3, 65.41), (34.86, 74.35), (16.3, 83.29), (34.86, 92.23), (16.3, 101.17), (34.86, 110.11), (16.3, 119.05), (34.86, 127.99), (16.3, 136.93), (34.86, 145.87), (39.61, 148.7), (34.86, 148.7), (12.22, 148.7), (12.22, 0.0))",
    "volume": 263171.27449099143
+  }
+ },
+ "bellows_010863_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
   }
  },
  "bellows_011187_s20260505": {
@@ -363,6 +699,13 @@
    "volume": 546976.3992297594
   }
  },
+ "bellows_011354_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_011718_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -387,6 +730,13 @@
    "kind": "closed_form",
    "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=27.62, r=0.955, d=4.81, cone=((24.809, 92.01), (28.97, 96.82)), profile=((10.26, 0.0), (25.97, 0.0), (28.97, 0.0), (28.97, 4.81), (25.97, 4.81), (13.214, 15.71), (25.881, 26.61), (13.123, 37.51), (25.524, 48.41), (13.032, 59.31), (25.167, 70.21), (12.941, 81.11), (24.809, 92.01), (28.97, 96.82), (25.97, 96.82), (10.26, 96.82), (10.26, 0.0))",
    "volume": 96946.02515147235
+  }
+ },
+ "bellows_011797_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
   }
  },
  "bellows_011847_s20260505": {
@@ -415,6 +765,41 @@
    "volume": 32437.94555678092
   }
  },
+ "bellows_011849_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_012536_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_012993_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_013044_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_013200_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_014604_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -441,6 +826,13 @@
    "volume": 363911.034107506
   }
  },
+ "bellows_015057_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_015255_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -465,6 +857,13 @@
    "kind": "closed_form",
    "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=34.611, r=1.07, d=3.02, cone=((33.22, 121.1), (35.75, 124.12)), profile=((17.15, 0.0), (33.22, 0.0), (35.75, 0.0), (35.75, 3.02), (33.22, 3.02), (19.48, 12.86), (33.22, 22.7), (19.48, 32.54), (33.22, 42.38), (19.48, 52.22), (33.22, 62.06), (19.48, 71.9), (33.22, 81.74), (19.48, 91.58), (33.22, 101.42), (19.48, 111.26), (33.22, 121.1), (35.75, 124.12), (33.22, 124.12), (17.15, 124.12), (17.15, 0.0))",
    "volume": 172032.11960329494
+  }
+ },
+ "bellows_015783_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
   }
  },
  "bellows_016367_s20260505": {
@@ -517,6 +916,20 @@
    "kind": "closed_form",
    "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=6, rp=22.047, r=1.32, d=2.45, cone=((20.54, 102.17), (23.28, 104.62)), profile=((7.53, 0.0), (20.54, 0.0), (23.28, 0.0), (23.28, 2.45), (20.54, 2.45), (9.68, 10.76), (20.54, 19.07), (9.68, 27.38), (20.54, 35.69), (9.68, 44.0), (20.54, 52.31), (9.68, 60.62), (20.54, 68.93), (9.68, 77.24), (20.54, 85.55), (9.68, 93.86), (20.54, 102.17), (23.28, 104.62), (20.54, 104.62), (7.53, 104.62), (7.53, 0.0))",
    "volume": 63723.989461712816
+  }
+ },
+ "bellows_016906_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_017493_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
   }
  },
  "bellows_017770_s20260505": {
@@ -597,6 +1010,34 @@
    "volume": 59826.355814807015
   }
  },
+ "bellows_018509_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_018626_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_019562_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bellows_019711_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
  "bellows_019849_s20260505": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -647,6 +1088,27 @@
    "kind": "closed_form",
    "note": "a bellows: a closed profile turned about y (Pappus), n holes r on a circle rp cut from each end, through the bottom flange d and from the top face down to the cone (x_k, y_k) to (R, H) under it, the sliver's volume, moment and wall integrals of its depth over the disc and around it (tools/cq_closed_forms.py, bellows_measures): n=4, rp=37.761, r=1.815, d=3.16, cone=((32.397, 130.48), (40.02, 133.64)), profile=((14.764, 0.0), (35.0, 0.0), (40.02, 0.0), (40.02, 3.16), (35.0, 3.16), (19.939, 13.77), (34.876, 24.38), (19.797, 34.99), (34.38, 45.6), (19.656, 56.21), (33.884, 66.82), (19.514, 77.43), (33.389, 88.04), (19.372, 98.65), (32.893, 109.26), (19.23, 119.87), (32.397, 130.48), (40.02, 133.64), (35.0, 133.64), (14.764, 133.64), (14.764, 0.0))",
    "volume": 229745.36613432303
+  }
+ },
+ "bellows_019961_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-revolved-cone-notches-bounds"
+  }
+ },
+ "bucket_002516_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
+  }
+ },
+ "bucket_009912_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
   }
  },
  "cam_000061_s20260507": {
@@ -702,10 +1164,10 @@
   }
  },
  "cam_000896_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers"
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
   }
  },
  "cam_001007_s20260505": {
@@ -716,10 +1178,10 @@
   }
  },
  "cam_001249_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers"
+   "path": "tests/fixtures/regression/cq-fillets-overlap-on-a-face"
   }
  },
  "cam_001547_s20260505": {
@@ -905,10 +1367,10 @@
   }
  },
  "cam_004951_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers"
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
   }
  },
  "cam_005180_s20260505": {
@@ -964,10 +1426,10 @@
   }
  },
  "cam_007606_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers"
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
   }
  },
  "cam_007828_s20260505": {
@@ -1205,10 +1667,10 @@
   }
  },
  "cam_011690_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers"
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
   }
  },
  "cam_011771_s20260505": {
@@ -1446,10 +1908,10 @@
   }
  },
  "cam_015660_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-through-keyway-after-overlapping-chamfers"
+   "path": "tests/fixtures/regression/cq-fillets-overlap-on-a-face"
   }
  },
  "cam_016441_s20260505": {
@@ -2988,1113 +3450,1763 @@
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000102_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000132_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000231_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000356_s20260507": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000358_s20260507": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000370_s20260507": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_000425_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000451_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000476_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000527_s20260507": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_000557_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000601_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_000620_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_000629_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000708_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_000803_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_000936_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001044_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001166_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001356_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001372_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001419_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_001514_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001756_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_001800_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001828_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001866_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001909_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_001932_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_001975_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_002061_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_002131_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_002284_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_002308_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_002534_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_002600_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_002654_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_002828_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_002947_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_002960_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_002963_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_003058_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_003073_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_003074_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_003602_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_003687_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_003767_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_003935_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_004250_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_004368_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_004432_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_004450_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_004460_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_004509_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_004576_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_004689_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_004714_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_004729_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_004848_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_004875_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_004943_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005034_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005236_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005305_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005555_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005575_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005600_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005607_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005750_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_005880_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_006144_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_006322_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_006329_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_006743_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_006883_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_006947_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_006970_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_006982_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_007353_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_007365_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_007393_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_007580_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_007690_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_007806_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_007861_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_007919_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_007995_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_008083_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_008445_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_008474_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_008756_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_008856_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_008857_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_008974_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_008994_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_009185_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_009345_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_009431_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_009463_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_009619_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_009657_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_009811_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_010032_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_010666_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_010916_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_011071_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_011312_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_011349_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_011702_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_012239_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_012288_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_012360_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_012474_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_012515_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_012522_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_012637_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013138_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013165_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013192_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013285_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013366_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013430_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013511_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013782_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013823_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_013938_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_014392_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_014774_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_014843_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015034_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015517_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015575_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015598_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015763_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015930_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015956_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_015973_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_016016_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_016062_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_016556_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-tangent-faces"
   }
  },
  "cotter_pin_016581_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_017094_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_017505_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_017587_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_017598_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_018017_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_018068_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_018131_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_018259_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_018376_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_018456_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_018760_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_019010_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_019382_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_019502_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_019585_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_019941_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
   }
  },
  "cotter_pin_019943_s20260505": {
   "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-tangent-cylinders"
+   "path": "tests/fixtures/regression/cq-cotter-pin-self-contact"
+  }
+ },
+ "dome_cap_002178_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 22283.77055202357,
+   "bounds": [
+    [
+     -33.370000000381104,
+     0,
+     -33.370000000381104
+    ],
+    [
+     33.370000000381104,
+     69.43,
+     33.370000000381104
+    ]
+   ],
+   "centroid": [
+    0,
+    35.45039289306134,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 160413.10708393765
+  }
+ },
+ "dome_cap_002478_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 31212.455405080236,
+   "bounds": [
+    [
+     -39.68000000000126,
+     0,
+     -39.68000000000126
+    ],
+    [
+     39.68000000000126,
+     83.62,
+     39.68000000000126
+    ]
+   ],
+   "centroid": [
+    0,
+    35.7864669655073,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 342724.16435994965
+  }
+ },
+ "dome_cap_002793_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 55724.84971279821,
+   "bounds": [
+    [
+     -58.700000000101326,
+     0,
+     -58.700000000101326
+    ],
+    [
+     58.700000000101326,
+     95.25,
+     58.700000000101326
+    ]
+   ],
+   "centroid": [
+    0,
+    47.63523989322349,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 625045.5253635809
+  }
+ },
+ "dome_cap_004293_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 42079.99202000191,
+   "bounds": [
+    [
+     -48.320000000000014,
+     0,
+     -48.320000000000014
+    ],
+    [
+     48.320000000000014,
+     93.49,
+     48.320000000000014
+    ]
+   ],
+   "centroid": [
+    0,
+    39.548074875803636,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 557624.1728331004
+  }
+ },
+ "dome_cap_004871_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 7245.899256811231,
+   "bounds": [
+    [
+     -19.67000000002739,
+     0,
+     -19.67000000002739
+    ],
+    [
+     19.67000000002739,
+     38.42,
+     19.67000000002739
+    ]
+   ],
+   "centroid": [
+    0,
+    18.249528622095276,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 33105.25243946424
+  }
+ },
+ "dome_cap_005523_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 47284.77457854541,
+   "bounds": [
+    [
+     -57.11000000010272,
+     0,
+     -57.11000000010272
+    ],
+    [
+     57.11000000010272,
+     77.78,
+     57.11000000010272
+    ]
+   ],
+   "centroid": [
+    0,
+    33.86629037420718,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 537004.1608636568
+  }
+ },
+ "dome_cap_007777_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 21781.501791333525,
+   "bounds": [
+    [
+     -32.98000000005955,
+     0,
+     -32.98000000005955
+    ],
+    [
+     32.98000000005955,
+     60.04,
+     32.98000000005955
+    ]
+   ],
+   "centroid": [
+    0,
+    30.99531354631164,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 117698.8651104291
+  }
+ },
+ "dome_cap_008257_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 27729.675016675254,
+   "bounds": [
+    [
+     -33.440000000422536,
+     0,
+     -33.440000000422536
+    ],
+    [
+     33.440000000422536,
+     74.62,
+     33.440000000422536
+    ]
+   ],
+   "centroid": [
+    0,
+    39.70897425377763,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 152666.76694701854
+  }
+ },
+ "dome_cap_009007_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 76873.86133863458,
+   "bounds": [
+    [
+     -65.92000000003894,
+     0,
+     -65.92000000003894
+    ],
+    [
+     65.92000000003894,
+     116.43,
+     65.92000000003894
+    ]
+   ],
+   "centroid": [
+    0,
+    60.60987161320543,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 938971.5250365495
+  }
+ },
+ "dome_cap_009386_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 63188.52935962439,
+   "bounds": [
+    [
+     -55.28000000014541,
+     0,
+     -55.28000000014541
+    ],
+    [
+     55.28000000014541,
+     104.22,
+     55.28000000014541
+    ]
+   ],
+   "centroid": [
+    0,
+    51.648571887764746,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 642779.1851688799
+  }
+ },
+ "dome_cap_010072_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 21629.564601220944,
+   "bounds": [
+    [
+     -36.19000000000503,
+     0,
+     -36.19000000000503
+    ],
+    [
+     36.19000000000503,
+     59.88,
+     36.19000000000503
+    ]
+   ],
+   "centroid": [
+    0,
+    30.078089877151474,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 149597.68583681493
+  }
+ },
+ "dome_cap_010623_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 40048.41846336548,
+   "bounds": [
+    [
+     -46.940000000007345,
+     0,
+     -46.940000000007345
+    ],
+    [
+     46.940000000007345,
+     77.33,
+     46.940000000007345
+    ]
+   ],
+   "centroid": [
+    0,
+    39.12844893067484,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 319345.7369598885
+  }
+ },
+ "dome_cap_010660_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 56027.90922852991,
+   "bounds": [
+    [
+     -60.91000000006447,
+     0,
+     -60.91000000006447
+    ],
+    [
+     60.91000000006447,
+     96.92,
+     60.91000000006447
+    ]
+   ],
+   "centroid": [
+    0,
+    44.53154578436541,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 775586.7852141276
+  }
+ },
+ "dome_cap_011331_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 20493.381094958324,
+   "bounds": [
+    [
+     -34.09000000015213,
+     0,
+     -34.09000000015213
+    ],
+    [
+     34.09000000015213,
+     62.69,
+     34.09000000015213
+    ]
+   ],
+   "centroid": [
+    0,
+    29.96516814872984,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 157358.5737668893
+  }
+ },
+ "dome_cap_012275_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 38375.14190781038,
+   "bounds": [
+    [
+     -42.490000000148186,
+     0,
+     -42.490000000148186
+    ],
+    [
+     42.490000000148186,
+     86.88,
+     42.490000000148186
+    ]
+   ],
+   "centroid": [
+    0,
+    42.87269890336688,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 339933.16430140537
+  }
+ },
+ "dome_cap_012413_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17240.79032090949,
+   "bounds": [
+    [
+     -33.32000000000074,
+     0,
+     -33.32000000000074
+    ],
+    [
+     33.32000000000074,
+     56.86,
+     33.32000000000074
+    ]
+   ],
+   "centroid": [
+    0,
+    23.56956647664846,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 157833.24533007323
+  }
+ },
+ "dome_cap_012565_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 97706.14163659271,
+   "bounds": [
+    [
+     -73.70000000007225,
+     0,
+     -73.70000000007225
+    ],
+    [
+     73.70000000007225,
+     117.63,
+     73.70000000007225
+    ]
+   ],
+   "centroid": [
+    0,
+    56.222384523790076,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 1262946.9395906073
+  }
+ },
+ "dome_cap_012908_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 65993.76384374937,
+   "bounds": [
+    [
+     -68.6100000000012,
+     0,
+     -68.6100000000012
+    ],
+    [
+     68.6100000000012,
+     90.51,
+     68.6100000000012
+    ]
+   ],
+   "centroid": [
+    0,
+    38.922123299697944,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 896317.0813281662
+  }
+ },
+ "dome_cap_013156_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 41506.58260902752,
+   "bounds": [
+    [
+     -53.52000000022122,
+     0,
+     -53.52000000022122
+    ],
+    [
+     53.52000000022122,
+     76.84,
+     53.52000000022122
+    ]
+   ],
+   "centroid": [
+    0,
+    36.30127798384598,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 429863.6934363398
+  }
+ },
+ "dome_cap_014304_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 47872.68014809548,
+   "bounds": [
+    [
+     -46.53000000005775,
+     0,
+     -46.53000000005775
+    ],
+    [
+     46.53000000005775,
+     100.28,
+     46.53000000005775
+    ]
+   ],
+   "centroid": [
+    0,
+    53.626095475870166,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 406720.9725581778
+  }
+ },
+ "dome_cap_015600_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 18527.146535815547,
+   "bounds": [
+    [
+     -30.97000000000168,
+     0,
+     -30.97000000000168
+    ],
+    [
+     30.97000000000168,
+     56.0,
+     30.97000000000168
+    ]
+   ],
+   "centroid": [
+    0,
+    23.45979449348598,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 134104.73710932932
+  }
+ },
+ "dome_cap_016619_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 32278.39791734213,
+   "bounds": [
+    [
+     -34.33000000009944,
+     0,
+     -34.33000000009944
+    ],
+    [
+     34.33000000009944,
+     83.49,
+     34.33000000009944
+    ]
+   ],
+   "centroid": [
+    0,
+    45.8915904587747,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 176971.70427302655
+  }
+ },
+ "dome_cap_016831_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 53379.573124622824,
+   "bounds": [
+    [
+     -58.3600000002325,
+     0,
+     -58.3600000002325
+    ],
+    [
+     58.3600000002325,
+     87.87,
+     58.3600000002325
+    ]
+   ],
+   "centroid": [
+    0,
+    42.208063081398905,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 584365.1258657479
+  }
+ },
+ "dome_cap_018926_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 76558.31099603706,
+   "bounds": [
+    [
+     -68.45000000014194,
+     0,
+     -68.45000000014194
+    ],
+    [
+     68.45000000014194,
+     103.24,
+     68.45000000014194
+    ]
+   ],
+   "centroid": [
+    0,
+    46.31399182506412,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 1033923.9220979062
+  }
+ },
+ "dome_cap_019965_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 70014.78775956317,
+   "bounds": [
+    [
+     -64.2700000002018,
+     0,
+     -64.2700000002018
+    ],
+    [
+     64.2700000002018,
+     102.12,
+     64.2700000002018
+    ]
+   ],
+   "centroid": [
+    0,
+    51.45392523621766,
+    0
+   ],
+   "kind": "closed_form",
+   "note": "Circular meridian from the three programmed points. Integrate the pocket and drill discs against the roof height, subtract their shared volume, and integrate the rim blends by revolving a line or quarter circle (tools/cq_closed_forms.py, dome_closed_form).",
+   "volume": 784514.67029804
   }
  },
  "double_simplex_sprocket_000014_s20260505": {
@@ -22580,6 +23692,13 @@
    "volume": 921266.6655143254
   }
  },
+ "pipe_flange_016767_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
+  }
+ },
  "piston_000251_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
@@ -23024,6 +24143,2346 @@
    "volume": 8237.435245984272
   }
  },
+ "rivet_000039_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 520.7429483278103,
+   "bounds": [
+    [
+     -3.9275129927477757,
+     -3.9275129927477757,
+     0.0
+    ],
+    [
+     3.9275129927477757,
+     3.9275129927477757,
+     28.71049290181985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.289017692665961
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 607.7245005896995
+  }
+ },
+ "rivet_000133_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 832.5062987520728,
+   "bounds": [
+    [
+     -4.7130155912973315,
+     0.0,
+     -4.7130155912973315
+    ],
+    [
+     4.7130155912973315,
+     38.83659148218382,
+     4.7130155912973315
+    ]
+   ],
+   "centroid": [
+    0.0,
+    20.57428052710842,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1174.1026167590398
+  }
+ },
+ "rivet_000165_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 328.63455756079446,
+   "bounds": [
+    [
+     -3.9275129927477757,
+     0.0,
+     -3.9275129927477757
+    ],
+    [
+     3.9275129927477757,
+     16.48049290181985,
+     3.9275129927477757
+    ]
+   ],
+   "centroid": [
+    0.0,
+    8.991171544401766,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 367.58901213092975
+  }
+ },
+ "rivet_000421_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2015.0307201290148,
+   "bounds": [
+    [
+     -7.824410676772489,
+     -7.824410676772489,
+     0.0
+    ],
+    [
+     7.824410676772489,
+     7.824410676772489,
+     54.8109858036397
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    29.193213239674634
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4663.5599585697855
+  }
+ },
+ "rivet_000520_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2334.649594865895,
+   "bounds": [
+    [
+     -9.389292812126985,
+     0.0,
+     -9.389292812126985
+    ],
+    [
+     9.389292812126985,
+     50.73318296436764,
+     9.389292812126985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    27.32630379615431,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 6357.647682048931
+  }
+ },
+ "rivet_000784_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 385.6544642234491,
+   "bounds": [
+    [
+     -3.9275129927477757,
+     -3.9275129927477757,
+     0.0
+    ],
+    [
+     3.9275129927477757,
+     3.9275129927477757,
+     20.11049290181985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    10.881323948121295
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 438.86389545924806
+  }
+ },
+ "rivet_001149_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1760.5617151882416,
+   "bounds": [
+    [
+     -7.824410676772489,
+     -7.824410676772489,
+     0.0
+    ],
+    [
+     7.824410676772489,
+     7.824410676772489,
+     46.7109858036397
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    25.05192131913616
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4027.387446217853
+  }
+ },
+ "rivet_001160_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 733.7363348967193,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     22.088788642911762
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    12.122447801701718
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1290.508328770459
+  }
+ },
+ "rivet_001362_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1775.4098725248004,
+   "bounds": [
+    [
+     -7.855025985495551,
+     -7.855025985495551,
+     0.0
+    ],
+    [
+     7.855025985495551,
+     7.855025985495551,
+     47.6309858036397
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    25.577872048300346
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4092.8912027514943
+  }
+ },
+ "rivet_001471_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 903.131010778281,
+   "bounds": [
+    [
+     -6.284020788396441,
+     0.0,
+     -6.284020788396441
+    ],
+    [
+     6.284020788396441,
+     28.828788642911764,
+     6.284020788396441
+    ]
+   ],
+   "centroid": [
+    0.0,
+    15.672064689474125,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1629.2976805335827
+  }
+ },
+ "rivet_001533_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 530.9134040074526,
+   "bounds": [
+    [
+     -4.7130155912973315,
+     -4.7130155912973315,
+     0.0
+    ],
+    [
+     4.7130155912973315,
+     4.7130155912973315,
+     22.83659148218382
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    12.385974016785385
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 721.7132746421095
+  }
+ },
+ "rivet_002021_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2125.4195241368147,
+   "bounds": [
+    [
+     -9.389292812126985,
+     -9.389292812126985,
+     0.0
+    ],
+    [
+     9.389292812126985,
+     9.389292812126985,
+     45.183182964367646
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    24.455004989528703
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 5729.957469861691
+  }
+ },
+ "rivet_002084_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 894.8372061728038,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     28.498788642911762
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.500027395004672
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1612.7100713226284
+  }
+ },
+ "rivet_002188_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 160.55006170769622,
+   "bounds": [
+    [
+     -3.129764270708996,
+     -3.129764270708996,
+     0.0
+    ],
+    [
+     3.129764270708996,
+     3.129764270708996,
+     9.044394321455881
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    4.963396291933562
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 136.61298383552014
+  }
+ },
+ "rivet_002201_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 287.6946452816157,
+   "bounds": [
+    [
+     -3.9122053383862445,
+     -3.9122053383862445,
+     0.0
+    ],
+    [
+     3.9122053383862445,
+     3.9122053383862445,
+     13.65049290181985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    7.469657086892138
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 312.86620138292574
+  }
+ },
+ "rivet_002556_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 856.0798746871781,
+   "bounds": [
+    [
+     -6.259528541417991,
+     -6.259528541417991,
+     0.0
+    ],
+    [
+     6.259528541417991,
+     6.259528541417991,
+     26.598788642911764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    14.46593940663864
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1520.6631263969475
+  }
+ },
+ "rivet_002822_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 520.8933774977496,
+   "bounds": [
+    [
+     -4.694646406063493,
+     -4.694646406063493,
+     0.0
+    ],
+    [
+     4.694646406063493,
+     4.694646406063493,
+     22.036591482183823
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    11.939078367963074
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 700.5524284280302
+  }
+ },
+ "rivet_002980_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2504.4146456448925,
+   "bounds": [
+    [
+     -9.42603118259466,
+     -9.42603118259466,
+     0.0
+    ],
+    [
+     9.42603118259466,
+     9.42603118259466,
+     55.77318296436764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    29.98338703307939
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 6915.989285982122
+  }
+ },
+ "rivet_003008_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 473.20569147609297,
+   "bounds": [
+    [
+     -3.9122053383862445,
+     0.0,
+     -3.9122053383862445
+    ],
+    [
+     3.9122053383862445,
+     25.46049290181985,
+     3.9122053383862445
+    ]
+   ],
+   "centroid": [
+    0.0,
+    13.603848500601078,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 544.7550091260223
+  }
+ },
+ "rivet_003023_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 704.3293184856092,
+   "bounds": [
+    [
+     -4.713015591297331,
+     0.0,
+     -4.713015591297331
+    ],
+    [
+     4.713015591297331,
+     32.03659148218382,
+     4.713015591297331
+    ]
+   ],
+   "centroid": [
+    0.0,
+    17.115453148046747,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 981.8371463593444
+  }
+ },
+ "rivet_003040_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1251.078058640664,
+   "bounds": [
+    [
+     -7.855025985495551,
+     -7.855025985495551,
+     0.0
+    ],
+    [
+     7.855025985495551,
+     7.855025985495551,
+     30.940985803639702
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    16.91956657386299
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2782.0616680411536
+  }
+ },
+ "rivet_003574_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1150.6885118811567,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     38.67878864291176
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    20.75652236440956
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2124.412682739334
+  }
+ },
+ "rivet_003579_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1863.0603075599556,
+   "bounds": [
+    [
+     -7.855025985495551,
+     0.0,
+     -7.855025985495551
+    ],
+    [
+     7.855025985495551,
+     50.4209858036397,
+     7.855025985495551
+    ]
+   ],
+   "centroid": [
+    0.0,
+    27.006663131129926,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4312.017290339381
+  }
+ },
+ "rivet_003918_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1471.8849447841774,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     51.45878864291176
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    27.268354498583825
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2766.805548545375
+  }
+ },
+ "rivet_004308_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 738.0089009056014,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     22.258788642911764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    12.21312991130866
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1299.0534607882232
+  }
+ },
+ "rivet_004416_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 565.9818825395032,
+   "bounds": [
+    [
+     -3.9275129927477757,
+     0.0,
+     -3.9275129927477757
+    ],
+    [
+     3.9275129927477757,
+     31.59049290181985,
+     3.9275129927477757
+    ]
+   ],
+   "centroid": [
+    0.0,
+    16.75284459899202,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 664.2731683543157
+  }
+ },
+ "rivet_004747_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 178.64563539237344,
+   "bounds": [
+    [
+     -3.129764270708996,
+     0.0,
+     -3.129764270708996
+    ],
+    [
+     3.129764270708996,
+     10.484394321455882,
+     3.129764270708996
+    ]
+   ],
+   "centroid": [
+    0.0,
+    5.7424713867820945,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 154.70855752019742
+  }
+ },
+ "rivet_004825_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1903.5041809265772,
+   "bounds": [
+    [
+     -7.824410676772489,
+     -7.824410676772489,
+     0.0
+    ],
+    [
+     7.824410676772489,
+     7.824410676772489,
+     51.260985803639706
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    27.381463447635507
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4384.743610563692
+  }
+ },
+ "rivet_004941_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1110.1718885095206,
+   "bounds": [
+    [
+     -6.259528541417993,
+     0.0,
+     -6.259528541417993
+    ],
+    [
+     6.259528541417993,
+     36.70878864291176,
+     6.259528541417993
+    ]
+   ],
+   "centroid": [
+    0.0,
+    19.702782593430904,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2028.8471540416335
+  }
+ },
+ "rivet_005105_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1182.8228261930788,
+   "bounds": [
+    [
+     -7.824410676772489,
+     -7.824410676772489,
+     0.0
+    ],
+    [
+     7.824410676772489,
+     7.824410676772489,
+     28.320985803639704
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.482711266925662
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2583.040223729946
+  }
+ },
+ "rivet_005257_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 182.16421916439396,
+   "bounds": [
+    [
+     -3.1297642707089954,
+     0.0,
+     -3.1297642707089954
+    ],
+    [
+     3.1297642707089954,
+     10.764394321455882,
+     3.1297642707089954
+    ]
+   ],
+   "centroid": [
+    0.0,
+    5.892389086668404,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 158.22714129221788
+  }
+ },
+ "rivet_005325_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1148.0338196029188,
+   "bounds": [
+    [
+     -7.855025985495551,
+     -7.855025985495551,
+     0.0
+    ],
+    [
+     7.855025985495551,
+     7.855025985495551,
+     27.660985803639704
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.179739409867539
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2524.4510704467907
+  }
+ },
+ "rivet_005376_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 519.7624041424572,
+   "bounds": [
+    [
+     -4.694646406063491,
+     -4.694646406063491,
+     0.0
+    ],
+    [
+     4.694646406063491,
+     4.694646406063491,
+     21.97659148218382
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    11.907867996341112
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 698.8559683950916
+  }
+ },
+ "rivet_005440_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 890.2604027582349,
+   "bounds": [
+    [
+     -6.259528541417991,
+     -6.259528541417991,
+     0.0
+    ],
+    [
+     6.259528541417991,
+     6.259528541417991,
+     27.958788642911763
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.177171680928563
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1589.0241825390613
+  }
+ },
+ "rivet_005517_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 604.2381765422382,
+   "bounds": [
+    [
+     -4.71301559129733,
+     -4.71301559129733,
+     0.0
+    ],
+    [
+     4.71301559129733,
+     4.71301559129733,
+     26.72659148218382
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    14.395604005780708
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 831.7004334442878
+  }
+ },
+ "rivet_005665_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 992.1009147279437,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     32.36878864291177
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    17.50942996921136
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1807.2374884329083
+  }
+ },
+ "rivet_005729_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 710.8969011868603,
+   "bounds": [
+    [
+     -4.694646406063493,
+     0.0,
+     -4.694646406063493
+    ],
+    [
+     4.694646406063493,
+     32.11659148218382,
+     4.694646406063493
+    ]
+   ],
+   "centroid": [
+    0.0,
+    17.123267866517985,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 985.5577139616964
+  }
+ },
+ "rivet_005909_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 585.7656117391303,
+   "bounds": [
+    [
+     -4.7130155912973315,
+     -4.7130155912973315,
+     0.0
+    ],
+    [
+     4.7130155912973315,
+     4.7130155912973315,
+     25.746591482183824
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    13.890988166932711
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 803.9915862396261
+  }
+ },
+ "rivet_005981_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 537.4809867087038,
+   "bounds": [
+    [
+     -4.694646406063493,
+     0.0,
+     -4.694646406063493
+    ],
+    [
+     4.694646406063493,
+     22.916591482183822,
+     4.694646406063493
+    ]
+   ],
+   "centroid": [
+    0.0,
+    12.396180096997417,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 725.4338422444615
+  }
+ },
+ "rivet_006149_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1800.453180049487,
+   "bounds": [
+    [
+     -9.389292812126985,
+     -9.389292812126985,
+     0.0
+    ],
+    [
+     9.389292812126985,
+     9.389292812126985,
+     36.56318296436764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    19.94502995220582
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4755.058437599708
+  }
+ },
+ "rivet_006164_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 256.18014208296955,
+   "bounds": [
+    [
+     -3.129764270708996,
+     0.0,
+     -3.129764270708996
+    ],
+    [
+     3.129764270708996,
+     16.65439432145588,
+     3.129764270708996
+    ]
+   ],
+   "centroid": [
+    0.0,
+    8.976365087276069,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 232.24306421079348
+  }
+ },
+ "rivet_006402_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 712.8232496834835,
+   "bounds": [
+    [
+     -6.259528541417992,
+     -6.259528541417992,
+     0.0
+    ],
+    [
+     6.259528541417992,
+     6.259528541417992,
+     20.898788642911764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    11.447399728620907
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1234.1498763895584
+  }
+ },
+ "rivet_006790_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2802.8725639569175,
+   "bounds": [
+    [
+     -9.389292812126985,
+     -9.389292812126985,
+     0.0
+    ],
+    [
+     9.389292812126985,
+     9.389292812126985,
+     63.153182964367645
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    33.69538159195994
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 7762.316589321999
+  }
+ },
+ "rivet_008280_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 334.845622128858,
+   "bounds": [
+    [
+     -3.129764270708996,
+     -3.129764270708996,
+     0.0
+    ],
+    [
+     3.129764270708996,
+     3.129764270708996,
+     22.91439432145588
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    12.18153554113482
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 310.908544256682
+  }
+ },
+ "rivet_008893_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 526.7665017047141,
+   "bounds": [
+    [
+     -4.713015591297331,
+     -4.713015591297331,
+     0.0
+    ],
+    [
+     4.713015591297331,
+     4.713015591297331,
+     22.61659148218382
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    12.271725192723439
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 715.4929211880014
+  }
+ },
+ "rivet_009146_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1517.8249512393324,
+   "bounds": [
+    [
+     -6.259528541417992,
+     -6.259528541417992,
+     0.0
+    ],
+    [
+     6.259528541417992,
+     6.259528541417992,
+     52.92878864291176
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    27.968765405346826
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2844.1532795012563
+  }
+ },
+ "rivet_010385_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1370.7727387424352,
+   "bounds": [
+    [
+     -7.855025985495551,
+     0.0,
+     -7.855025985495551
+    ],
+    [
+     7.855025985495551,
+     34.7509858036397,
+     7.855025985495551
+    ]
+   ],
+   "centroid": [
+    0.0,
+    18.91956864400112,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 3081.298368295582
+  }
+ },
+ "rivet_010403_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 748.009087403689,
+   "bounds": [
+    [
+     -6.259528541417991,
+     -6.259528541417991,
+     0.0
+    ],
+    [
+     6.259528541417991,
+     6.259528541417991,
+     22.298788642911763
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    12.195654148253348
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1304.5215518299694
+  }
+ },
+ "rivet_010410_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 230.55797352802674,
+   "bounds": [
+    [
+     -3.1420103941982207,
+     -3.1420103941982207,
+     0.0
+    ],
+    [
+     3.1420103941982207,
+     3.1420103941982207,
+     14.794394321455881
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    8.033869635878206
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 208.4374309001543
+  }
+ },
+ "rivet_010564_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 607.7898302960433,
+   "bounds": [
+    [
+     -4.694646406063493,
+     -4.694646406063493,
+     0.0
+    ],
+    [
+     4.694646406063493,
+     4.694646406063493,
+     26.646591482183823
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    14.32229675195736
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 830.8971076254709
+  }
+ },
+ "rivet_010574_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 279.3022640133904,
+   "bounds": [
+    [
+     -3.1297642707089963,
+     -3.1297642707089963,
+     0.0
+    ],
+    [
+     3.1297642707089963,
+     3.1297642707089963,
+     18.494394321455882
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    9.923265666403323
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 255.36518614121445
+  }
+ },
+ "rivet_010779_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 195.87479063239542,
+   "bounds": [
+    [
+     -3.1420103941982207,
+     -3.1420103941982207,
+     0.0
+    ],
+    [
+     3.1420103941982207,
+     3.1420103941982207,
+     12.034394321455881
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    6.587148030560706
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 173.75424800452296
+  }
+ },
+ "rivet_011142_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1928.372216682669,
+   "bounds": [
+    [
+     -9.426031182594663,
+     -9.426031182594663,
+     0.0
+    ],
+    [
+     9.426031182594663,
+     9.426031182594663,
+     40.49318296436765
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    22.071569977756145
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 5187.861999095452
+  }
+ },
+ "rivet_011343_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1219.8035502601322,
+   "bounds": [
+    [
+     -6.284020788396441,
+     0.0,
+     -6.284020788396441
+    ],
+    [
+     6.284020788396441,
+     41.42878864291176,
+     6.284020788396441
+    ]
+   ],
+   "centroid": [
+    0.0,
+    22.16357961999304,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2262.6427594972847
+  }
+ },
+ "rivet_011871_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 553.8801003604425,
+   "bounds": [
+    [
+     -4.694646406063493,
+     -4.694646406063493,
+     0.0
+    ],
+    [
+     4.694646406063493,
+     4.694646406063493,
+     23.786591482183823
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    12.846972097698357
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 750.0325127220697
+  }
+ },
+ "rivet_011968_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 340.00216296388567,
+   "bounds": [
+    [
+     -3.9122053383862445,
+     -3.9122053383862445,
+     0.0
+    ],
+    [
+     3.9122053383862445,
+     3.9122053383862445,
+     16.98049290181985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    9.227728067097736
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 378.2505984857633
+  }
+ },
+ "rivet_012202_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 666.6319158160413,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     19.418788642911764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    10.68718758548831
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1156.299490609103
+  }
+ },
+ "rivet_012593_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2684.616400254804,
+   "bounds": [
+    [
+     -9.426031182594661,
+     -9.426031182594661,
+     0.0
+    ],
+    [
+     9.426031182594661,
+     9.426031182594661,
+     60.55318296436764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    32.432547164708026
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 7456.594549811856
+  }
+ },
+ "rivet_012715_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 170.61638569753347,
+   "bounds": [
+    [
+     -3.1420103941982207,
+     -3.1420103941982207,
+     0.0
+    ],
+    [
+     3.1420103941982207,
+     3.1420103941982207,
+     10.02439432145588
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    5.513943240344345
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 148.495843069661
+  }
+ },
+ "rivet_012726_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 279.84066364764124,
+   "bounds": [
+    [
+     -3.9122053383862445,
+     -3.9122053383862445,
+     0.0
+    ],
+    [
+     3.9122053383862445,
+     3.9122053383862445,
+     13.15049290181985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    7.2022146475115685
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 303.0487243404576
+  }
+ },
+ "rivet_014043_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2348.9752573662645,
+   "bounds": [
+    [
+     -9.389292812126985,
+     -9.389292812126985,
+     0.0
+    ],
+    [
+     9.389292812126985,
+     9.389292812126985,
+     51.113182964367645
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    27.52220635813437
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 6400.6246695500395
+  }
+ },
+ "rivet_014128_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1649.0217979254644,
+   "bounds": [
+    [
+     -9.426031182594661,
+     0.0,
+     -9.426031182594661
+    ],
+    [
+     9.426031182594661,
+     33.083182964367644,
+     9.426031182594661
+    ]
+   ],
+   "centroid": [
+    0.0,
+    18.15698724089521,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4349.810742823838
+  }
+ },
+ "rivet_014345_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 901.5701363111582,
+   "bounds": [
+    [
+     -6.259528541417992,
+     -6.259528541417992,
+     0.0
+    ],
+    [
+     6.259528541417992,
+     6.259528541417992,
+     28.408788642911762
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.411922502498252
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1611.643649644908
+  }
+ },
+ "rivet_014717_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1047.842690262299,
+   "bounds": [
+    [
+     -6.259528541417991,
+     -6.259528541417991,
+     0.0
+    ],
+    [
+     6.259528541417991,
+     6.259528541417991,
+     34.228788642911766
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    18.427160406573854
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1904.1887575471892
+  }
+ },
+ "rivet_015087_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 292.2499546293209,
+   "bounds": [
+    [
+     -3.9122053383862445,
+     -3.9122053383862445,
+     0.0
+    ],
+    [
+     3.9122053383862445,
+     3.9122053383862445,
+     13.940492901819852
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    7.6242810948296125
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 318.56033806755727
+  }
+ },
+ "rivet_015098_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1629.418259767064,
+   "bounds": [
+    [
+     -9.42603118259466,
+     -9.42603118259466,
+     0.0
+    ],
+    [
+     9.42603118259466,
+     9.42603118259466,
+     32.56318296436764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    17.879205653423988
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4291.000128348637
+  }
+ },
+ "rivet_015134_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 802.0444810454335,
+   "bounds": [
+    [
+     -6.259528541417992,
+     -6.259528541417992,
+     0.0
+    ],
+    [
+     6.259528541417992,
+     6.259528541417992,
+     24.44878864291176
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    13.335398006764729
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1412.5923391134586
+  }
+ },
+ "rivet_015280_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1104.6798409833796,
+   "bounds": [
+    [
+     -7.855025985495551,
+     0.0,
+     -7.855025985495551
+    ],
+    [
+     7.855025985495551,
+     26.2809858036397,
+     7.855025985495551
+    ]
+   ],
+   "centroid": [
+    0.0,
+    14.441376556890255,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2416.066123897943
+  }
+ },
+ "rivet_015641_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1125.6458398977445,
+   "bounds": [
+    [
+     -7.824410676772489,
+     -7.824410676772489,
+     0.0
+    ],
+    [
+     7.824410676772489,
+     7.824410676772489,
+     26.500985803639704
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    14.511585926001846
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2440.0977579916107
+  }
+ },
+ "rivet_016134_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1143.2387587578473,
+   "bounds": [
+    [
+     -7.824410676772489,
+     0.0,
+     -7.824410676772489
+    ],
+    [
+     7.824410676772489,
+     27.060985803639703,
+     7.824410676772489
+    ]
+   ],
+   "centroid": [
+    0.0,
+    14.81114298359575,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2484.0800551418674
+  }
+ },
+ "rivet_016157_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 296.7827466656995,
+   "bounds": [
+    [
+     -3.1420103941982203,
+     -3.1420103941982203,
+     0.0
+    ],
+    [
+     3.1420103941982203,
+     3.1420103941982203,
+     20.06439432145588
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    10.749463977231892
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 274.6622040378271
+  }
+ },
+ "rivet_016497_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1308.773454209795,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     44.96878864291176
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    23.96950011298707
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2440.582567396611
+  }
+ },
+ "rivet_016575_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 929.7188064873228,
+   "bounds": [
+    [
+     -6.259528541417991,
+     -6.259528541417991,
+     0.0
+    ],
+    [
+     6.259528541417991,
+     6.259528541417991,
+     29.528788642911763
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.995042966365972
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1667.940989997237
+  }
+ },
+ "rivet_016768_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 456.497378561899,
+   "bounds": [
+    [
+     -3.9275129927477757,
+     0.0,
+     -3.9275129927477757
+    ],
+    [
+     3.9275129927477757,
+     24.62049290181985,
+     3.9275129927477757
+    ]
+   ],
+   "centroid": [
+    0.0,
+    13.201399932523708,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 527.4175383823103
+  }
+ },
+ "rivet_017278_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1495.090374120559,
+   "bounds": [
+    [
+     -9.389292812126985,
+     -9.389292812126985,
+     0.0
+    ],
+    [
+     9.389292812126985,
+     9.389292812126985,
+     28.46318296436764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.614557496196008
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 3838.970019812923
+  }
+ },
+ "rivet_017291_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 627.9886170033772,
+   "bounds": [
+    [
+     -4.713015591297331,
+     -4.713015591297331,
+     0.0
+    ],
+    [
+     4.713015591297331,
+     4.713015591297331,
+     27.986591482183822
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.043023570817875
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 867.3260941359963
+  }
+ },
+ "rivet_018316_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 307.7154891001921,
+   "bounds": [
+    [
+     -3.1420103941982207,
+     -3.1420103941982207,
+     0.0
+    ],
+    [
+     3.1420103941982207,
+     3.1420103941982207,
+     20.93439432145588
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    11.194174405423594
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 285.59494647231963
+  }
+ },
+ "rivet_018397_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1917.4098604670592,
+   "bounds": [
+    [
+     -7.855025985495551,
+     0.0,
+     -7.855025985495551
+    ],
+    [
+     7.855025985495551,
+     52.150985803639706,
+     7.855025985495551
+    ]
+   ],
+   "centroid": [
+    0.0,
+    27.890943709449267,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4447.891172607141
+  }
+ },
+ "rivet_018490_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 704.2995566143219,
+   "bounds": [
+    [
+     -4.694646406063493,
+     0.0,
+     -4.694646406063493
+    ],
+    [
+     4.694646406063493,
+     31.76659148218382,
+     4.694646406063493
+    ]
+   ],
+   "centroid": [
+    0.0,
+    16.944673001971108,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 975.6616971028885
+  }
+ },
+ "rivet_018570_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 513.5172852245537,
+   "bounds": [
+    [
+     -3.9275129927477757,
+     -3.9275129927477757,
+     0.0
+    ],
+    [
+     3.9275129927477757,
+     3.9275129927477757,
+     28.25049290181985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    15.05479513148262
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 598.6924217106288
+  }
+ },
+ "rivet_018635_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 412.3199353896866,
+   "bounds": [
+    [
+     -4.694646406063493,
+     0.0,
+     -4.694646406063493
+    ],
+    [
+     4.694646406063493,
+     16.27659148218382,
+     4.694646406063493
+    ]
+   ],
+   "centroid": [
+    0.0,
+    8.908055102954487,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 537.6922652659357
+  }
+ },
+ "rivet_018897_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1768.4089349828707,
+   "bounds": [
+    [
+     -9.389292812126985,
+     -9.389292812126985,
+     0.0
+    ],
+    [
+     9.389292812126985,
+     9.389292812126985,
+     35.71318296436764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    19.495777645034543
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4658.925702399859
+  }
+ },
+ "rivet_018980_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 217.4757205907433,
+   "bounds": [
+    [
+     -3.129764270708996,
+     0.0,
+     -3.129764270708996
+    ],
+    [
+     3.129764270708996,
+     13.574394321455882,
+     3.129764270708996
+    ]
+   ],
+   "centroid": [
+    0.0,
+    7.376951124202465,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 193.53864271856725
+  }
+ },
+ "rivet_019128_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1422.0692071579153,
+   "bounds": [
+    [
+     -6.259528541417992,
+     0.0,
+     -6.259528541417992
+    ],
+    [
+     6.259528541417992,
+     49.11878864291176,
+     6.259528541417992
+    ]
+   ],
+   "centroid": [
+    0.0,
+    26.035741955810728,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 2652.6417913384225
+  }
+ },
+ "rivet_019150_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 290.93544571771696,
+   "bounds": [
+    [
+     -3.9275129927477757,
+     -3.9275129927477757,
+     0.0
+    ],
+    [
+     3.9275129927477757,
+     3.9275129927477757,
+     14.080492901819852
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    7.723126488365955
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 320.4651223270829
+  }
+ },
+ "rivet_019395_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1835.89034518198,
+   "bounds": [
+    [
+     -9.389292812126985,
+     0.0,
+     -9.389292812126985
+    ],
+    [
+     9.389292812126985,
+     37.50318296436764,
+     9.389292812126985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    20.440733265046646,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4861.369932997186
+  }
+ },
+ "rivet_019422_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1628.6148237374705,
+   "bounds": [
+    [
+     -7.824410676772489,
+     -7.824410676772489,
+     0.0
+    ],
+    [
+     7.824410676772489,
+     7.824410676772489,
+     42.510985803639706
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    22.892217292477863
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 3697.5202175909244
+  }
+ },
+ "rivet_019680_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 583.6326732497743,
+   "bounds": [
+    [
+     -3.9122053383862445,
+     -3.9122053383862445,
+     0.0
+    ],
+    [
+     3.9122053383862445,
+     3.9122053383862445,
+     32.49049290181985
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    17.181362325506512
+   ],
+   "kind": "closed_form",
+   "note": "fillet of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 682.7887363431239
+  }
+ },
+ "rivet_019756_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 723.683238405232,
+   "bounds": [
+    [
+     -6.284020788396441,
+     -6.284020788396441,
+     0.0
+    ],
+    [
+     6.284020788396441,
+     6.284020788396441,
+     21.688788642911764
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    11.908776606450564
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 1270.4021357874844
+  }
+ },
+ "rivet_019956_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1864.3169446213915,
+   "bounds": [
+    [
+     -7.855025985495551,
+     0.0,
+     -7.855025985495551
+    ],
+    [
+     7.855025985495551,
+     50.4609858036397,
+     7.855025985495551
+    ]
+   ],
+   "centroid": [
+    0.0,
+    27.027122637256696,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "chamfer of the three rivet rims, by the meridian in rivet_closed_form",
+   "volume": 4315.1588829929715
+  }
+ },
  "shaft_collar_000067_s20260507": {
   "disagreement": "arris_bug",
   "evidence": {
@@ -23032,6 +26491,13 @@
   }
  },
  "shaft_collar_000245_s20260507": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_000264_s20260507": {
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
@@ -23059,7 +26525,21 @@
    "path": "tests/fixtures/regression/cq-cross-hole-bounds"
   }
  },
+ "shaft_collar_000653_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-fillets-overlap-on-a-face"
+  }
+ },
  "shaft_collar_000692_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_000733_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
@@ -23074,6 +26554,13 @@
   }
  },
  "shaft_collar_000958_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_001358_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
@@ -23141,6 +26628,13 @@
    "path": "tests/fixtures/regression/cq-cross-hole-bounds"
   }
  },
+ "shaft_collar_004395_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
  "shaft_collar_004399_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
@@ -23149,6 +26643,13 @@
   }
  },
  "shaft_collar_004549_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_004597_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
@@ -23203,6 +26704,13 @@
   }
  },
  "shaft_collar_005870_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_005873_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
@@ -23272,6 +26780,13 @@
    "path": "tests/fixtures/regression/cq-cross-hole-bounds"
   }
  },
+ "shaft_collar_008009_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
  "shaft_collar_009094_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
@@ -23284,6 +26799,13 @@
   "evidence": {
    "kind": "fixture",
    "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_009380_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-fillets-overlap-on-a-face"
   }
  },
  "shaft_collar_009682_s20260505": {
@@ -23348,6 +26870,13 @@
   }
  },
  "shaft_collar_011055_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_011081_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
@@ -23459,6 +26988,13 @@
    "path": "tests/fixtures/regression/cq-cross-hole-bounds"
   }
  },
+ "shaft_collar_015251_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
  "shaft_collar_015684_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
@@ -23493,7 +27029,7 @@
   }
  },
  "shaft_collar_016155_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
    "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
@@ -23521,7 +27057,7 @@
   }
  },
  "shaft_collar_017314_s20260505": {
-  "disagreement": "arris_bug",
+  "disagreement": "arris_refusal",
   "evidence": {
    "kind": "fixture",
    "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
@@ -23534,7 +27070,21 @@
    "path": "tests/fixtures/regression/cq-cross-hole-bounds"
   }
  },
+ "shaft_collar_017642_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
  "shaft_collar_017997_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-cross-hole-bounds"
+  }
+ },
+ "shaft_collar_018360_s20260505": {
   "disagreement": "arris_bug",
   "evidence": {
    "kind": "fixture",
@@ -30323,6 +33873,84 @@
    "volume": 57878.13052766177
   }
  },
+ "torus_link_004364_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 73358.72047,
+   "bounds": [
+    [
+     -103.9400001,
+     -21.5800001,
+     -103.9400001
+    ],
+    [
+     109.54,
+     21.5800001,
+     103.9400001
+    ]
+   ],
+   "centroid": [
+    -4.8e-07,
+    0.0,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 759868.9311
+  }
+ },
+ "torus_link_017596_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 44985.4978,
+   "bounds": [
+    [
+     -102.65,
+     -12.2600001,
+     -97.6600001
+    ],
+    [
+     102.65,
+     12.2600001,
+     97.6600001
+    ]
+   ],
+   "centroid": [
+    3e-08,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 255847.4265
+  }
+ },
+ "torus_link_019579_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 15710.91987,
+   "bounds": [
+    [
+     -66.3500001,
+     -6.2800001,
+     -66.3500001
+    ],
+    [
+     71.01,
+     6.2800001,
+     66.3500001
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 47634.47245
+  }
+ },
  "u_bolt_000008_s20260506": {
   "disagreement": "occt_wrong",
   "evidence": {
@@ -35813,6 +39441,13 @@
     82390.6166934,
     -1104.34002766
    ]
+  }
+ },
+ "worm_screw_001803_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-chamfers-overlap-on-a-face"
   }
  }
 }

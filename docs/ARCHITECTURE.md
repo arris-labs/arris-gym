@@ -844,19 +844,19 @@ and all 300 agree on arris 0.12.0. The chained cylinder fuses now build the
 100 `lobed_knob` parts that needed `arris_bug` verdicts on arris 0.11.1
 (`tests/fixtures/c1/README.md`).
 
-**The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset, arris 0.11.1,
-each figure over all programs) sit beside the baseline ADR-0014 set the
-target from (the C1 subset without verdicts). BenchCAD's 0.11.1 table uses
-both the historical C1 verdicts and its own.
+**The C2 tables** (`tests/fixtures/c2/<corpus>/`, today's subset on arris
+0.12.0, each figure over all programs) sit beside the baseline ADR-0014
+set the target from (the C1 subset without verdicts). Both corpora reuse
+the pinned oracle reports from the 0.11.1 replay.
 
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
 | reach | 14,150 (79.1%) | 1,871 | 968 (100%) | 0 |
-| agree (all programs) | 10,730 (59.9%) | 980 | 873 (90.2%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 3,750 / 1,778 / 391 | 16,383 / 174 / 0 | 0 / 75 / 1 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 1,249 | 0 | 19 | 0 |
-| unclassified (all outside the subset) | 0 | 363 | 0 | 0 |
+| agree (all programs) | 11,691 (65.3%) | 980 | 893 (92.3%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 3,749 / 770 / 321 | 16,383 / 174 / 0 | 0 / 56 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 1,367 | 0 | 19 | 0 |
+| unclassified (all) | 0 | 363 | 0 | 0 |
 | timeouts | 0 | 31 | 0 | 0 |
 | in-subset `cq_bug` | 0 | 717 | 0 | 0 |
 | in-subset `by_design` | 2 | 0 | 0 | 0 |
@@ -1031,6 +1031,13 @@ rows. The table digest is `cc8eb417…72fe`. The oracle rows and census
 digest reproduce unchanged. The CAD-Recode table also reproduces byte
 for byte at `fe2861b7…71cc`.
 
+The arris 0.12.0 replay adds 961 BenchCAD agreements at the same reach and
+with byte-identical oracle rows. The chained cylinder fuses build on all
+168 previously failing `lobed_knob` programs. The seam placement in
+ADR-0020 admits 90 `rivet` builds that agree with their closed forms.
+Counting outer shells under ADR-0016 resolves the count differences on
+25 `torus_link` compounds. The baseline README lists every changed class.
+
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
 workers now read `r` (ADR-0015): the oracle builds all 968, and with
@@ -1050,7 +1057,11 @@ cap edge (`regression/cq-sketch-post-tangent-to-cap`). A boundary integral
 of the planar and cylindrical faces resolves 18 measurement gaps in the
 oracle's default GProp integration (ADR-0006's amendment). The earlier
 crossing-cylinder verdict uses its closed form. The table's oracle rows
-match the committed bytes. CAD-Recode meets its fidelity target (ADR-0014).
+match the committed bytes. CAD-Recode meets its fidelity target (ADR-0014). On
+arris 0.12.0, 19 formerly refused builds and stem `239` (the checker failure)
+agree with the same oracle reports. CAD-Recode keeps reach 968/968, 19
+`occt_wrong` rows and zero unclassified rows, with table digest
+`7cc30ad7…6b92`.
 
 The oracle's 240 s corpus deadline covers the slowest measured oracle run.
 The arris run keeps its 30 s deadline. One double simplex sprocket with a

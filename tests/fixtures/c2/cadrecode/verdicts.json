@@ -51,13 +51,6 @@
    "volume": 255959.3091
   }
  },
- "239": {
-  "disagreement": "arris_bug",
-  "evidence": {
-   "kind": "fixture",
-   "path": "tests/fixtures/regression/cq-sketch-post-tangent-to-cap"
-  }
- },
  "330": {
   "disagreement": "occt_wrong",
   "evidence": {

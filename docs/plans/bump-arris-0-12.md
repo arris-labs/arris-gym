@@ -85,7 +85,7 @@ verification, **[3]** unproven design. Grades map to tiers.
   Check the new `cotter_pin` refusal causes and the `bearing_retainer_cap`
   checker failures against their fixtures. Add strict regression fixtures
   for any distinct failure and regenerate the supported verdicts.
-- [ ] Step 7 **[2] [conductor-run]**. Run `tools/cq_corpus.py` on BenchCAD
+- [x] Step 7 **[2] [conductor-run]**. Run `tools/cq_corpus.py` on BenchCAD
   and CAD-Recode from fresh work directories with pinned `--oracle-rows`.
   Review changed rows against 0.11.1 and refresh the C2 baselines,
   verdicts and assertions together using the checked verdicts from steps 5
@@ -164,4 +164,12 @@ versioning.
   overlapping rim blends. The 159 cotter pins refuse at the head union.
   The 24 retainer caps fail the checker at the plate union and cite its
   strict regression. See `tests/fixtures/c2/benchcad/failure-replay.md`.
+- Settled in step 7. Both corpus baselines reuse byte-identical oracle
+  files and meet the reach, timeout and classification thresholds. The
+  C2 fixture READMEs record the new digests and changes from 0.11.1.
+  Full verdict regeneration found seven more historical internal-error
+  verdicts whose current refusals match the overlapping-blend fixtures.
+  The checked failure list replaces those verdicts too.
+  The torus–box point contact builds two solids and agrees with the
+  closed form and the oracle (ADR-0005, ADR-0016).
 - ⚠ OPEN: Step 9 (human) authorizes pushing the plan branch for CI.

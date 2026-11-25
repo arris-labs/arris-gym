@@ -12,4 +12,16 @@ in `../arris/docs/ideas/fuse-contact-refusals.md`.
 
 Still failing as above on arris 0.11.1, the same words and numbers (plans/bump-arris-0-11 step 3, 2026-11-16).
 
-arris 0.12.0 builds the expected geometry.
+The step 7 replay on arris 0.12.0 builds the expected two solids, with volume
+67.21762640653616 against 67.21762640653614 from the closed form.
+`oracle.json` records the same program run on the pinned oracle. Both
+builds agree at the ADR-0005 tolerance.
+
+Moving the box centre from x = 5 to x = 4.5 gives one solid. For an
+independent volume check, at fixed y the torus has outer radius
+R(y) = 3 + sqrt(1 − y²) in the xz plane. The overlap is four times the
+integral of sqrt(R(y)² − z²) − 3.5 from z = 0 to
+min(1, sqrt(R(y)² − 3.5²)) and from y = 0 to sqrt(3)/2.
+Subtracting the overlap from 6π² + 8 gives 66.13564505605.
+The arris volume is 66.13564505371 (3.5e-11 relative difference) and
+the oracle volume is 66.13565097373 (8.9e-8 relative difference).

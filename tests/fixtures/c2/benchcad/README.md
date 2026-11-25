@@ -23,21 +23,70 @@ and shared under its [CC-BY-4.0 licence](https://creativecommons.org/licenses/by
 
 ## The table
 
-`fidelity.json.gz` is the `FidelityTable` of all 17,900 programs under `cq` (arris
-0.11.1) against the oracle (CadQuery 2.3.0,
-`cadquery-ocp` 7.9.3.0). It applies the historical C1 verdicts for the 100
-`lobed_knob` rows and its own (`verdicts.json`, below). `oracle.jsonl.gz` holds the oracle's rows
-(STEP text and wall-clock time left out); `arris-report.json` / `.md` the arris
-report; `reach-report.json` the `ReachReport` under today's `cq` subset. Written by
-`uv run --extra corpus tools/cq_corpus.py --corpus benchcad --verdicts
-.scratch/c1-verdicts-0.11.1.json
-tests/fixtures/c2/benchcad/verdicts.json
---oracle-rows tests/fixtures/c2/benchcad/oracle.jsonl.gz --workers 16` (network, the
-oracle environment; outside the gate), which saves its work in chunks and resumes.
-For a replay on 0.11.1, create `.scratch/` and recover the C1 verdicts with
-`git show cd03ce7:tests/fixtures/c1/verdicts.json > .scratch/c1-verdicts-0.11.1.json`.
-Pass a fresh `--work-dir` when re-running after a code or verdict change.
-No program text is committed. Each figure is over all 17,900 programs.
+`fidelity.json.gz` compares all 17,900 programs under `cq` on arris 0.12.0
+with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
+`arris-report.json` and `.md` describe the refusals and arris bugs.
+`reach-report.json` checks the table against the census and the current subset.
+
+Regenerate with the synced oracle environment and a fresh work directory
+(outside the gate):
+
+```sh
+root=tests/fixtures/c2/benchcad
+work=$(mktemp -d .scratch/benchcad-fidelity.XXXXXX)
+uv run --locked --extra corpus tools/cq_corpus.py --corpus benchcad \
+  --verdicts "$root/verdicts.json" --oracle-rows "$root/oracle.jsonl.gz" \
+  --out-dir "$work/out" --work-dir "$work/chunks" --workers 16
+```
+
+Reach is 14,150/17,900. Of all 17,900 programs, 11,691 agree and 6,209
+disagree. The disagreement classes are 321 `arris_bug`, 770
+`arris_refusal`, 2 `by_design`, 3,749 `cq_bug` and 1,367 `occt_wrong`.
+There are zero unclassified rows, timeouts and in-subset `cq_bug` rows.
+The one refusal outside the subset is `worm_screw_001803_s20260505`,
+which refuses a blend before reaching its unsupported form. The other
+3,749 programs outside the subset end `unsupported_api`. The two
+`by_design` rows remain the vertex blends from ADR-0025. arris ends `ok`
+on 13,349 programs, `arris_refusal` on 770 and `checker_fail` on 32.
+The oracle ends `ok` on 17,568 and `invalid` on 332.
+
+Table digest: `fccfdbeae6f1896cd9b047d654b5ddad36bd4bc5ab0b1143b776b1d0cec1ce72`.
+The replay's oracle file is byte-identical to its input
+(uncompressed SHA-256 `db298f073af368bc5a73f6856134cd0c8bcafa4bb3a9f6a7911de668fd49136b`).
+Sixteen `double_simplex_sprocket` programs timed out during concurrent
+verdict regeneration. The corpus tool retried those rows in isolation
+under the same 30 s deadline and reproduced the isolated replay's rows.
+
+### Changed classes since arris 0.11.1
+
+Of 17,900 rows, 15,162 change only in `versions.arris`. The outcome or
+disagreement class changes on 1,160 rows.
+
+| From 0.11.1 to 0.12.0 | Rows | Families and evidence |
+|---|---:|---|
+| `arris_bug` to agreement | 122 | The chained cylinder fuses build on 100 `lobed_knob` programs. Another 22 `bearing_retainer_cap` programs pass the checker. |
+| `arris_refusal` to agreement | 846 | Contact fuses now build on 231 `ball_knob`, 220 `hinge`, 81 `wall_anchor`, 68 more `lobed_knob`, 56 `threaded_adapter`, 8 `spur_gear`, 77 `torus_link` and 23 `bearing_retainer_cap`. Another 48 `dome_cap` and 32 `rivet` now revolve, and 2 `bellows` finish their blind cuts. The `torus_link` comparisons include 25 compounds whose outer-shell counts now match the oracle (ADR-0016). |
+| `arris_refusal` to `occt_wrong` | 118 | 90 `rivet` builds select the expected seams on all three revolve axes (ADR-0020). Their measures match the blended meridian closed form. The other 25 `dome_cap` and 3 `torus_link` have checked measure verdicts. |
+| `arris_refusal` to `arris_bug` | 58 | Closed forms confirm loose bounds on 40 `bellows` clipped rims and 11 `shaft_collar` cross holes. Another 7 `bearing_retainer_cap` now reach the plate union and fail the checker. |
+| Agreement to `arris_bug` | 2 | Two `bearing_retainer_cap` builds now fail the checker at the plate union. |
+| Agreement to `arris_refusal` | 5 | Two `bucket`, two `shaft_collar` and one `pipe_flange` refuse overlapping rim blends. The oracle remains `invalid`. |
+| `cq_bug` to `arris_refusal` | 1 | The outside-subset `worm_screw` refuses an overlapping rim blend against an `invalid` oracle. |
+| `arris_bug` to `arris_refusal` | 8 | Six `cam` and two `shaft_collar` programs now return typed refusals for overlapping rim blends. |
+
+See [measure checks](measure-replay.md) and [failure checks](failure-replay.md).
+The 159 `cotter_pin` rows remain `arris_refusal`. Their replacement
+verdicts identify self-contact or tangent faces at the head union.
+All 150 reached `torus_link` programs build. Of these, 147 agree and
+three are `occt_wrong`. The point-contact fixture checks the torus and box
+against the closed form and the oracle
+(`regression/cq-torus-box-point-contact`).
+
+### arris 0.11.1 and earlier
+
+The 0.11.1 table used the historical C1 verdicts for the 100
+`lobed_knob` rows (`cd03ce7:tests/fixtures/c1/verdicts.json`) alongside
+the corpus verdicts and generation arguments from `3f2455c`.
+
 The profiles lift re-run (plans/lift-rects-and-through-cuts step 7,
 2026-11-23), after `cutThruAll`, `center`, `rect` and `slot2D` were lifted
 (ADR-0024), ran all 17,900 programs from a fresh work directory against the
@@ -82,7 +131,7 @@ step 10, after the `YZ`, `XZ`, `ZX`, `origin=`, `workplane(offset=…)`, `circle
   `arris_bug` rows are the 100 `lobed_knob` verdicts, 37 `bearing_retainer_cap` (`checker_fail`:
   the `faces(sel).workplane().hole(d)` programs), 24 `shaft_collar` and 126 `clevis_pin` cross holes (both `regression/cq-cross-hole-bounds`, each row held to it by `check_bounds_cause`: `ok` on both sides, arris's box 1.4e-4 to 5e-3 past the oracle's; the `clevis_pin` rows are chamfered cylinders), 1 `shaft_collar` (`shaft_collar_016155`, arris's own `OpInternalError` on two rim chamfers wider together than their face, the oracle's shape `invalid`: `regression/cq-chamfers-overlap-on-a-face`) and 1 `spacer_ring` (`regression/cq-chamfer-slot-bounds`); the 845 `occt_wrong` are 202 `u_bolt`, 184 `j_hook`, 141 `t_pipe_fitting`, 126 `double_simplex_sprocket`, 82 `sprocket`, 33 `manifold_block`, 29 `pan_head_screw`, 25 `bellows`, 20 `connecting_rod`, 2 `spacer_ring` and 1 `shaft_collar`, each by a closed form (the edges-and-blends re-run's 257 are the sprockets, the screws, 16 chamfered `manifold_block`, 1 `connecting_rod`, 2 slotted `spacer_ring` and `shaft_collar_004924`, whose three cuts are one cylinder and which Open CASCADE builds 3.5e-7 off in volume, plans/lift-edges-and-blends steps 7c and 7d). No row is unclassified. Of the 199 rows that were, all outside the subset, 168 paired `unsupported_api` with an oracle `invalid` shape and are `cq_bug` by ADR-0006's amendment, and 31 were the sprocket timeouts, now `cq_bug` as above (7,695 + 168 + 31 = 7,894). The 1,449 in-subset refusals are 312 more than the lift-arrays-and-blind-cuts re-run's 1,137 (plans/lift-arrays-and-blind-cuts step 7), the figure the lift-edges-and-blends re-run raised and ADR-0022's re-run kept: the blends next to a boolean's edges and the revolves across their axis, as the arris report lists them (`ball_knob` 231, `hinge` 220, `pull_handle` 176, `cotter_pin` 159, `dome_cap` 159, `rivet` 122).
 
-Table digest: `cc8eb4176bdd0e0f220d9996f1145fe618b250012007de1c80908070a4c772fe`. Before the profiles lift it was `45ee27a1bc5736d26a1ca21954c438aef7d69cd04b6b45f4a9607ee9f469af7a`; before the ADR-0022 re-run it was `b6c949893c7f0647cf1394c13d0e057e7e759c0e10755f6455033150fa97ac32` (199 unclassified, 31 timeouts, `cq_bug` 7,695; the reach is the same 9,998); before ADR-0022 it was `5f33dadef00e40c581d9e9adc20e9b62730bb698b6ee698311c05ab7ee2b0584` (arris 0.11.1, plans/bump-arris-0-11 step 7: every row differs from 0.10.0's table, digest `6a6f857c4d42a2e5994e9296db3d8388023576f1f148e69f2f66b165d1856414`, in `versions.arris` alone). Oracle rows SHA-256 (uncompressed): `db298f073af368bc5a73f6856134cd0c8bcafa4bb3a9f6a7911de668fd49136b`. They differ from the previous rows (`e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, the C2 baseline's) in exactly the 31 `double_simplex_sprocket` rows, which timed out and now hold an `ok` report.
+0.11.1 table digest: `cc8eb4176bdd0e0f220d9996f1145fe618b250012007de1c80908070a4c772fe`. Before the profiles lift it was `45ee27a1bc5736d26a1ca21954c438aef7d69cd04b6b45f4a9607ee9f469af7a`; before the ADR-0022 re-run it was `b6c949893c7f0647cf1394c13d0e057e7e759c0e10755f6455033150fa97ac32` (199 unclassified, 31 timeouts, `cq_bug` 7,695; the reach is the same 9,998); before ADR-0022 it was `5f33dadef00e40c581d9e9adc20e9b62730bb698b6ee698311c05ab7ee2b0584` (arris 0.11.1, plans/bump-arris-0-11 step 7: every row differs from 0.10.0's table, digest `6a6f857c4d42a2e5994e9296db3d8388023576f1f148e69f2f66b165d1856414`, in `versions.arris` alone). Oracle rows SHA-256 (uncompressed): `db298f073af368bc5a73f6856134cd0c8bcafa4bb3a9f6a7911de668fd49136b`. They differ from the previous rows (`e992583501c771e2f52f07939a61b5b44ec5e8989f3f8204d9263b3044573157`, the C2 baseline's) in exactly the 31 `double_simplex_sprocket` rows, which timed out and now hold an `ok` report.
 
 The table before the repair of step 7c (a family-keyed `--arris-bug` had classed rows with no cause check; 290 `arris_bug`, 840 `occt_wrong`) had digest `8daf4d7c0be6dca9d1995c161563078213bd21257ece15a727817715329bbbac`.
 
@@ -149,4 +198,18 @@ same BenchCAD CC-BY-4.0 attribution linked above.
 
 ## Verdicts
 
-`verdicts.json` holds the verdicts of the rows no rule classes (ADR-0006), by stem: C1's 100 historical `lobed_knob` verdicts are in the 0.11.1 file described above. Written by `uv run --extra corpus tools/cq_closed_forms.py @tests/fixtures/c2/benchcad/verdicts.args` (the table, the oracle rows, the out file and every flag, one argument per line; plans/lift-cylinder step 5, plans/lift-face-selectors step 7c, plans/lift-holes-and-points step 7a, plans/lift-arrays-and-blind-cuts steps 6a and 6b, plans/lift-edges-and-blends steps 7c and 7d; a `--refusal` or `--arris-bug` takes a family or, winning over it, one stem; a row a family's `--arris-bug` would class is classed only if `check_bug_cause` finds its fixture's cause in it, else it stays unclassified, counted and named on stderr, and a row with a closed form of its own takes that), from the repository's root on the committed table (a row a verdict classes is read as one no rule classes; a row arris ended `unsupported_api` gets none), which checks each verdict with `compare` against both sides before writing it: 845 `occt_wrong` rows by their closed forms, where arris is within the ADR-0005 constants of the closed form and Open CASCADE is not: 64 `t_pipe_fitting` tees and 77 flanged ones with a `polarArray` of bolt holes (step 6a), 25 `bellows` (a revolved profile, holes cut blind through the flange and the rim, step 6b), 202 `u_bolt` and 184 `j_hook` half-torus hooks (the last 125 of them with the nut's prism under the box, plans/lift-extrude-both step 4), 17 `manifold_block` (bores crossing bores, the counterbores on the block's edge) and 15 `connecting_rod` (a cross hole into a ring's wall) by `part_measures` (fluxes through the boundary, each face's patch exact interval arithmetic along lines on it, plans/lift-holes-and-points step 7a), and the rows the edges and blends newly run: 82 `sprocket` and 126 `double_simplex_sprocket` (Open CASCADE's chamfer of the tooth outline takes less than the mitre, `sprocket_measures`, step 7b and 7d), 29 `pan_head_screw`, 16 chamfered `manifold_block` (a closed form with the chamfer's planes) and 1 more `connecting_rod`, 2 slotted `spacer_ring` (`slotted_ring_closed_form`, step 7c) and `shaft_collar_004924` (`collar_measures`: a chamfered collar with a tunnel cut through each wall, its three cuts one cylinder, Open CASCADE 3.5e-7 off in volume; step 7c's repair); four more `connecting_rod` rows after ADR-0022 (see above); 159 `cotter_pin` rows `arris_refusal` by `regression/cq-tangent-cylinders`; and 152 rows `arris_bug`: 151 `ok` on both sides with arris's box loose, which `check_bounds_cause` holds each row to (24 `shaft_collar` and 126 `clevis_pin` by `regression/cq-cross-hole-bounds`, `spacer_ring_008375` by `regression/cq-chamfer-slot-bounds`), and `shaft_collar_016155` (arris's `OpInternalError`, the oracle `invalid`) by `regression/cq-chamfers-overlap-on-a-face`. The profiles lift (plans/lift-rects-and-through-cuts step 7) adds the 579 verdicts above, with the new forms of `tools/cq_closed_forms.py` (rounds of straight edges in `part_measures`, `gear_measures`, `flanged_gear_closed_form`, `_rim_prism` for frames and nuts, the cam's bore into its boss), `--blended-boundary`, `--signed-solids` and `--by-design`; a stem's flag wins over its family's. The file holds 1,735 verdicts. Re-run on the committed table, it writes the committed file byte for byte. The 0.11.1 table uses both verdict files listed above.
+`verdicts.json` records the 1,934 checked verdicts used by the table
+(ADR-0006). `verdicts.args` includes the measured gaps and verified
+failures from the 0.12.0 replay. Stems in the failure checks take precedence
+over earlier family or stem flags. Regenerate from the repository root:
+
+```sh
+uv run --locked --extra corpus tools/cq_closed_forms.py \
+  @tests/fixtures/c2/benchcad/verdicts.args
+```
+
+The generator checks each verdict against both builds. The form families,
+deliberate differences and regression fixtures are specified by the
+arguments and `tools/cq_closed_forms.py`. The file includes all 90 rivet
+closed forms and replaces the historic cotter-pin and overlapping-chamfer
+verdicts with the checked failure causes.

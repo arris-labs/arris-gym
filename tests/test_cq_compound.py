@@ -155,6 +155,20 @@ def test_a_compound_with_a_sealed_cavity_agrees_with_the_recorded_oracle() -> No
     assert compare(old_result, report).outcome is FidelityOutcome.UNCLASSIFIED
 
 
+def test_a_torus_and_box_touching_at_one_point_agree_with_the_recorded_oracle() -> None:
+    slug = "cq-torus-box-point-contact"
+    case = next(c for c in fixture_cases.load("regression") if c.slug == slug)
+    result = fixture_cases.run(case)
+    assert fixture_cases.check(result, case.expected) == []
+    path = fixture_cases.ROOT / "regression" / slug / "oracle.json"
+    report = OracleReport.model_validate_json(path.read_text(encoding="utf-8"))
+    assert result.program_sha256 == report.program_sha256
+    assert result.measures is not None
+    assert report.measures is not None
+    assert result.measures.solids == report.measures.solids == 2
+    assert compare(result, report).outcome is FidelityOutcome.AGREE
+
+
 def test_a_compound_scores_against_itself_exactly_one() -> None:
     result = fixture_cases.run(_case("ok-compound-three-boxes"))
     assert result.body is not None

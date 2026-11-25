@@ -3,8 +3,8 @@
 `measure-replay.txt` lists the 79 remaining `ok` / `ok` disagreements after
 the solid-count check from ADR-0016. The source is the BenchCAD replay at
 revision `5919f578ab09ec283603a082fab07c7639ab56eb`, with the committed
-`oracle.jsonl.gz`. Use `measure-verdicts.json` as an additional `--verdicts`
-input for the full 0.12.0 baseline replay.
+`oracle.jsonl.gz`. The full 0.12.0 baseline includes these verdicts
+through the `--measure-replay` argument in `verdicts.args`.
 
 ```sh
 root=tests/fixtures/c2/benchcad

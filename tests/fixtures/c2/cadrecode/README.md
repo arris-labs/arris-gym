@@ -57,9 +57,9 @@ the library's code licence does not replace it.
 
 ## The table
 
-`fidelity.json.gz` compares all 968 programs under `cq` on arris 0.11.1
+`fidelity.json.gz` compares all 968 programs under `cq` on arris 0.12.0
 with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
-`arris-report.json` and `.md` carry the refusals and bug. `reach-report.json`
+`arris-report.json` and `.md` carry the refusals. `reach-report.json`
 checks this table against the census and the current subset.
 
 Regenerate with the synced oracle environment and a fresh work directory
@@ -73,23 +73,28 @@ uv run --locked --extra corpus tools/cq_corpus.py --corpus cadrecode \
   --out-dir "$work/out" --work-dir "$work/chunks"
 ```
 
-All counts are over the 968 programs. The sketch lift (ADR-0023) raises
-reach from 104 to **968**, meeting the CAD-Recode fidelity target (ADR-0014).
-All 873 agreements are two successful builds. The 95 disagreements are
-75 `arris_refusal`, one `arris_bug` and 19 `occt_wrong`. There are zero
-`cq_bug`, `by_design`, unclassified or timed-out rows. The oracle ends `ok`
-on all 968. arris ends `ok` on 892, `arris_refusal` on 75 and `checker_fail`
-on one.
+All counts are over the 968 programs. Reach is **968**, which meets the
+CAD-Recode fidelity target (ADR-0014). All 893 agreements are two
+successful builds. The 75 disagreements are 56 `arris_refusal` and 19
+`occt_wrong`. There are zero `arris_bug`, `cq_bug`, `by_design`,
+unclassified or timed-out rows. The oracle ends `ok` on all 968. arris
+ends `ok` on 912 and `arris_refusal` on 56.
 
-Table digest: `fe2861b7598b1d3e31651641cc00ff7c98f55c4a77394cded62125ebfadf71cc`.
-The previous table (reach 104) had digest
+Table digest: `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92`.
+On 0.11.1 the same subset had 873 agreements and digest
+`fe2861b7598b1d3e31651641cc00ff7c98f55c4a77394cded62125ebfadf71cc`.
+Nineteen formerly refused programs build and agree. The earlier refusals
+reported interior face contact on 15 programs and shells touching at an
+edge or vertex on four (`167`, `461`, `565`, `899`). Stem `239` also
+agrees. Its tangent posts previously left intersecting loops in the cap
+(`cq-sketch-post-tangent-to-cap`), and its verdict is retired. The 19
+`occt_wrong` verdicts still hold at the same tolerance. The oracle file
+is byte-equal to the committed input. Its uncompressed SHA-256 is
+`8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
+
+The sketch lift (ADR-0023) raised reach from 104 to 968. The last table
+at reach 104 had digest
 `e2bf586c6f8970875a98f631d1d2bb645ac69bbaf0f02532f61f8c8932107308`.
-The oracle file is byte-equal to the committed input. Its uncompressed
-SHA-256 is `8d28ce1199f0b98f0878bdd63789fcfed2ee2e2648178b9a7289b17f2c1f195f`.
-
-The rerun following the workplane profile and through-cut lift (ADR-0024)
-covered all 968 programs. The table and reach report were byte-identical
-to the committed files, with reach still 968/968 and the same table digest.
 
 ## Verdicts
 
@@ -99,9 +104,7 @@ cylindrical faces. The integral evaluates area and flux through the trim
 curves at two resolutions (Green's theorem and the divergence theorem).
 It uses the oracle's B-Rep and tight bounds and computes the measures
 independently of the oracle's default GProp integration. The comparator
-checks each verdict against both sides at the ADR-0005 tolerance. Stem
-`239` reproduces the intersecting cap loops in
-[`cq-sketch-post-tangent-to-cap`](../../regression/cq-sketch-post-tangent-to-cap/README.md).
+checks each verdict against both sides at the ADR-0005 tolerance.
 
 Regenerate the verdicts from the table with:
 
@@ -109,7 +112,7 @@ Regenerate the verdicts from the table with:
 root=tests/fixtures/c2/cadrecode
 uv run --locked --extra corpus tools/cq_closed_forms.py --corpus cadrecode \
   --table "$root/fidelity.json.gz" --oracle-rows "$root/oracle.jsonl.gz" \
-  --sketch-boundary --arris-bug 239=tests/fixtures/regression/cq-sketch-post-tangent-to-cap \
+  --sketch-boundary \
   --out "$root/verdicts.json"
 ```
 

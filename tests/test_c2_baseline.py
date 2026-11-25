@@ -31,6 +31,7 @@ from arris_gym.fidelity import (
     OracleReport,
     OracleStatus,
     ReachReport,
+    Verdict,
     reach_report,
 )
 
@@ -40,29 +41,29 @@ CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)
 FIGURES = {
     "benchcad": {
         "in_subset": 14_150,
-        "agree": 10_730,
+        "agree": 11_691,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 2,  # ADR-0025's corner patches
         "timed_out": 0,
         "classes": {
-            "arris_bug": 391,
-            "arris_refusal": 1_778,
+            "arris_bug": 321,
+            "arris_refusal": 770,
             "by_design": 2,
-            "cq_bug": 3_750,
-            "occt_wrong": 1_249,
+            "cq_bug": 3_749,
+            "occt_wrong": 1_367,
         },
         "unclassified": 0,
         "oracle_ok": 17_568,
     },
     "cadrecode": {
         "in_subset": 968,
-        "agree": 873,
+        "agree": 893,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 0,
         "timed_out": 0,
         "classes": {
-            "arris_bug": 1,
-            "arris_refusal": 75,
+            "arris_bug": 0,
+            "arris_refusal": 56,
             "by_design": 0,
             "cq_bug": 0,
             "occt_wrong": 19,
@@ -121,6 +122,16 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
     assert sum(table.outcomes.values()) == count
     assert sum(table.statuses.values()) == count
     assert table.digest in (C2 / corpus / "README.md").read_text("utf-8")
+    assert {entry.row.versions.arris for entry in table.entries} == {"0.12.0"}
+
+
+@pytest.mark.parametrize("corpus", sorted(CORPORA))
+def test_the_table_uses_every_committed_verdict(corpus: str) -> None:
+    table = table_of(corpus)
+    committed = json.loads((C2 / corpus / "verdicts.json").read_text("utf-8"))
+    assert {entry.name: entry.row.verdict for entry in table.entries if entry.row.verdict} == {
+        stem: Verdict.model_validate(verdict) for stem, verdict in committed.items()
+    }
 
 
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
@@ -165,26 +176,52 @@ def test_benchcad_by_design_rows_use_only_the_vertex_blend_exception() -> None:
 def test_benchcads_arris_bugs_are_verdict_families_and_checker_fail_caps() -> None:
     entries = table_of("benchcad").entries
     bugs = [e for e in entries if e.row.disagreement is DisagreementClass.ARRIS_BUG]
-    families = {e.name.rsplit("_", 2)[0] for e in bugs}
     want = {
-        "lobed_knob": 100,
-        "shaft_collar": 63,
-        "bearing_retainer_cap": 37,
+        "bellows": 40,
+        "shaft_collar": 72,
+        "bearing_retainer_cap": 24,
         "clevis_pin": 126,
         "piston": 56,
-        "cam": 7,
+        "cam": 1,
         "spacer_ring": 2,
     }
     assert Counter(e.name.rsplit("_", 2)[0] for e in bugs) == want
-    assert families == set(want)
-    # The other rows are ok/ok with a verdict; the 37
-    # bearing_retainer_cap rows are checker_fail rows the rule classes, with none.
     for e in bugs:
+        assert e.row.verdict is not None
         if e.name.startswith("bearing_retainer_cap"):
-            assert e.row.verdict is None
             assert e.row.status is Status.CHECKER_FAIL
-        else:
-            assert e.row.verdict is not None
+            assert e.row.verdict.evidence.kind == "fixture"
+            assert e.row.verdict.evidence.path == (
+                "tests/fixtures/regression/cq-retainer-plate-arc-loop-intersection"
+            )
+
+
+def test_benchcads_rivet_seams_and_torus_solids_resolve_replay_disagreements() -> None:
+    entries = table_of("benchcad").entries
+    rivets = [
+        e.row
+        for e in entries
+        if e.name.startswith("rivet_") and e.row.disagreement is DisagreementClass.OCCT_WRONG
+    ]
+    assert len(rivets) == 90
+    assert all(
+        row.status is Status.OK
+        and row.oracle_status is OracleStatus.OK
+        and row.verdict is not None
+        and row.verdict.evidence.kind == "closed_form"
+        for row in rivets
+    )
+
+    torus_links = [e.row for e in entries if e.name.startswith("torus_link_")]
+    assert len(torus_links) == 150
+    assert all(
+        row.status is Status.OK and row.oracle_status is OracleStatus.OK for row in torus_links
+    )
+    assert Counter(row.outcome for row in torus_links) == {
+        FidelityOutcome.AGREE: 147,
+        FidelityOutcome.DISAGREE: 3,
+    }
+    assert sum(row.disagreement is DisagreementClass.OCCT_WRONG for row in torus_links) == 3
 
 
 def test_benchcads_previously_refused_connecting_rods_build_on_both_kernels() -> None:
@@ -211,7 +248,7 @@ def test_cadrecodes_agreements_are_not_two_failures() -> None:
     table = table_of("cadrecode")
     assert table.oracle_statuses["no_result"] == 0
     agree = [e for e in table.entries if e.row.outcome is FidelityOutcome.AGREE]
-    assert len(agree) == 873
+    assert len(agree) == 893
     assert all(e.row.status is Status.OK and e.row.oracle_status is OracleStatus.OK for e in agree)
 
 
