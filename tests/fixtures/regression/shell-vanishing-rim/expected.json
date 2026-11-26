@@ -1,0 +1,13 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 198.39425099390857,
+    "area": 403.6391022698653,
+    "centroid": [0, 0, -1.1328399961517155],
+    "bounds": [[-5, -4, -3], [5, 4, 3]],
+    "shells": 2,
+    "genus": 0
+  },
+  "xfail": "arris 0.12.0 refuses the inward offset when the cavity closes below the selected opening"
+}

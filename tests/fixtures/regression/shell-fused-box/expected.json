@@ -1,0 +1,13 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 384,
+    "area": 820,
+    "centroid": [4, 0, -0.625],
+    "bounds": [[-5, -4, -3], [13, 4, 3]],
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "arris 0.12.0 cannot assemble a shell skin on the coplanar subdivisions of this union"
+}
