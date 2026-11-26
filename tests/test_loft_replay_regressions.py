@@ -8,8 +8,9 @@ from pathlib import Path
 import pytest
 
 import arris_gym as ag
+import cq_closed_forms as forms
 import fixture_cases
-from arris_gym.fidelity import ClosedForm, OracleReport, OracleStatus
+from arris_gym.fidelity import ClosedForm, OracleMeasures, OracleReport, OracleStatus
 from arris_gym.fidelity._agreement import figures_agree
 
 _ROOT = fixture_cases.ROOT / "regression"
@@ -17,7 +18,6 @@ _INTEGRAL_CASES = [
     ("oracle-draft-knob-overlapping-flutes", "oracle"),
     ("oracle-filleted-beam-bore", "oracle"),
     ("oracle-filleted-gusset-bore", "oracle"),
-    ("cq-propeller-hub-blade-measures", "candidate"),
 ]
 
 
@@ -63,6 +63,67 @@ def test_tangent_knob_cuts_receive_a_typed_refusal() -> None:
     assert result.status is ag.Status.ARRIS_REFUSAL
     assert result.refusal is not None
     assert result.refusal.kind == "OpDegenerateError"
+
+
+@pytest.mark.parametrize("side", ["candidate", "oracle"])
+def test_two_intersecting_flutes_match_the_construction(
+    side: str, request: pytest.FixtureRequest
+) -> None:
+    """Hold both kernels to the area and moments of the same exposed section arcs."""
+    directory = _ROOT / "cq-draft-knob-flute-measures"
+    program, oracle = _record(directory)
+    expected = ClosedForm.model_validate_json((directory / "expected.json").read_bytes())
+    exact = ClosedForm.model_validate(forms._knob_closed_form(program))
+    assert figures_agree(exact, expected)
+    measured: ag.Measures | OracleMeasures | None
+    if side == "candidate":
+        candidate = ag.run(program, dialect="cq")
+        assert candidate.status is ag.Status.OK
+        measured = candidate.measures
+    else:
+        assert oracle.status is OracleStatus.OK
+        measured = oracle.measures
+    assert measured is not None
+    assert measured.solids == 1
+    request.node.add_marker(
+        pytest.mark.xfail(
+            reason="The reported volume differs from the section integral.",
+            strict=True,
+            raises=AssertionError,
+        )
+    )
+    assert figures_agree(measured, exact)
+
+
+@pytest.mark.parametrize("side", ["candidate", "oracle"])
+def test_the_four_blade_union_matches_its_construction(
+    side: str, request: pytest.FixtureRequest
+) -> None:
+    """Use the placed hub and prism union as the reference for both kernels."""
+    directory = _ROOT / "cq-propeller-hub-blade-measures"
+    program, oracle = _record(directory)
+    form = forms.propeller_closed_form(program + "\n# Export\nshow_object(result)\n")
+    expected = ClosedForm.model_validate_json((directory / "expected.json").read_bytes())
+    assert figures_agree(ClosedForm.model_validate(form), expected)
+    measured: ag.Measures | OracleMeasures | None
+    if side == "candidate":
+        candidate = ag.run(program, dialect="cq")
+        assert candidate.status is ag.Status.OK
+        measured = candidate.measures
+    else:
+        assert oracle.status is OracleStatus.OK
+        measured = oracle.measures
+    assert measured is not None
+    assert measured.solids == 1
+    if side == "oracle":
+        request.node.add_marker(
+            pytest.mark.xfail(
+                reason="The oracle's volume differs from the construction integral.",
+                strict=True,
+                raises=AssertionError,
+            )
+        )
+    assert figures_agree(measured, expected)
 
 
 @pytest.mark.xfail(

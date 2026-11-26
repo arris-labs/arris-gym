@@ -19,6 +19,7 @@ import arris.build
 
 from arris_gym.cq._draft import disc_draft, rect_draft
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
+from arris_gym.cq._loft_limits import MAX_CURVED_SIDES
 from arris_gym.cq._selector import (
     AXIS_SELECTORS,
     NO_FACES,
@@ -103,10 +104,6 @@ _WIRE_TO_VECTOR = "Cannot convert object type '<class 'cadquery.occ_impl.shapes.
 
 _NO_SOLID = "Cannot find a solid on the stack or in the parent chain"
 _NO_WIRES = "No pending wires present"
-# Largest measured agreeing two-section loft with nonplanar sides under the
-# corpus deadline (lofts/runtime-contexts.json, `curved-side-limit`). The
-# sampled 144- and 196-sided gears time out after construction (ADR-0026).
-_MAX_LOFT_CURVED_SIDES = 48
 _Bounds = tuple[tuple[float, float, float], tuple[float, float, float]]
 _UV = tuple[float, float]
 _XYZ = tuple[float, float, float]
@@ -2104,10 +2101,10 @@ class Workplane:
             curved_sides = sum(
                 model.surface(face).kind != "plane" for face in model.faces(solid.body)
             )
-            if curved_sides > _MAX_LOFT_CURVED_SIDES:
+            if curved_sides > MAX_CURVED_SIDES:
                 # See over-curved-side-limit in lofts/runtime-contexts.json.
                 raise UnsupportedApi(
-                    f"Workplane.loft on more than {_MAX_LOFT_CURVED_SIDES} nonplanar side faces"
+                    f"Workplane.loft on more than {MAX_CURVED_SIDES} nonplanar side faces"
                 )
         result = self._combined(solid) if combine else self._derive(solid)
         return result._with_seams(None)._consume_wires()

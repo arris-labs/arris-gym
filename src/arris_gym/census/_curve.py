@@ -14,6 +14,7 @@ from arris_gym.census._reach import (
     Reach,
     _end_admitted,
     _foreign_admitted,
+    _loft_deferred,
     _missing_forms,
     reach,
 )
@@ -36,7 +37,8 @@ class ReachStep(BaseModel):
 class ReachCurve(BaseModel):
     """Initial reach and greedy admissions of forms, selectors and end forms.
 
-    Unknown receivers and foreign calls outside the admitted list stay fixed.
+    Unknown receivers, foreign calls outside the admitted list and deferred
+    contexts stay fixed.
     Counts never decrease or exceed the all-program denominator. Each
     `(kind, item)` is admitted once. The digest names canonical JSON excluding its own field.
     """
@@ -79,8 +81,12 @@ def _missing(program: ProgramCensus, subset: Subset) -> frozenset[Item]:
     return frozenset(items)
 
 
-def _unlockable(program: ProgramCensus) -> bool:
-    return not program.unknown and all(_foreign_admitted(call) for call, _ in program.foreign)
+def _unlockable(program: ProgramCensus, subset: Subset) -> bool:
+    return (
+        not program.unknown
+        and not _loft_deferred(program, subset)
+        and all(_foreign_admitted(call) for call, _ in program.foreign)
+    )
 
 
 def reach_curve(
@@ -95,8 +101,8 @@ def reach_curve(
     still unlock goes first, then by kind and key. So a corpus whose programs
     all need several items is bridged in the order its programs share them,
     not alphabetically. Items only blocked programs use (an unknown receiver,
-    a foreign call outside the admitted list) come last with zero gain: those
-    blockers never move. Unparsable programs stay in the denominator. Input
+    a foreign call outside the admitted list, a deferred context) come last
+    with zero gain. Unparsable programs stay in the denominator. Input
     order cannot move the curve or digest; duplicate stems raise ValueError.
 
     >>> from arris_gym.cq import subset
@@ -109,7 +115,7 @@ def reach_curve(
     initial = reach(rows, subset)
     parsed = [p for p in rows if isinstance(p, ProgramCensus)]
     remaining: set[Item] = set().union(*(_missing(p, subset) for p in parsed))
-    pending = Counter(m for p in parsed if _unlockable(p) and (m := _missing(p, subset)))
+    pending = Counter(m for p in parsed if _unlockable(p, subset) and (m := _missing(p, subset)))
     count = initial.in_subset
     steps: list[ReachStep] = []
     while remaining:

@@ -213,3 +213,23 @@ The signed-solids check compares the number of positive oracle solids
 with arris's solid count under ADR-0016. A sealed cavity adds a shell
 inside its material piece. A one-shell body establishes one solid, and
 a body with several shells needs a known count for the verdict.
+
+## Amendment (2026-11-26). A construction can expose errors on both sides
+
+When both kernels report measures outside ADR-0005 for the constructed
+geometry, either disagreement can be proved without exonerating the
+other kernel. For the three intersecting-flute knobs in the BenchCAD
+loft replay, use `arris_bug` with the regression that holds both
+kernels to the construction. The verdict generator verifies that the
+program has overlapping flutes and both reported volumes miss the
+independently integrated section geometry. The fixture retains both
+expected failures. The table carries one class per row, and the replay
+notes retain both discrepancies. The validation of `ClosedForm`
+verdicts continues to require agreement from the exonerated side.
+
+For the eight propellers whose oracle trim integrals could not settle
+the gap, the exposed circular arcs and straight segments of the placed
+hub and blade prisms yield independent construction measures.
+`tools/cq_closed_forms.py --propeller-construction STEM` compares each
+kernel to those measures. The candidate agrees on all eight, and the
+pinned oracle reports differ. Their verdicts use `ClosedForm`.

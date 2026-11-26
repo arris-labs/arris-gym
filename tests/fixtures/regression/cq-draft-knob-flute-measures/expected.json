@@ -1,0 +1,23 @@
+{
+  "kind": "closed_form",
+  "volume": 502.8169115254907,
+  "area": 906.1527533747491,
+  "centroid": [
+    5.12524356764768,
+    -0.0793732407273293,
+    0.012575260953984212
+  ],
+  "bounds": [
+    [
+      0.0,
+      -6.71,
+      -6.71
+    ],
+    [
+      16.93176137185305,
+      6.71,
+      6.71
+    ]
+  ],
+  "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py)."
+}

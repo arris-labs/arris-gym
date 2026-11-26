@@ -99,6 +99,7 @@ def c1_subset() -> cq.Subset:
             ),
         ),
         selectors=(),
+        defer_polygon_lofts=False,
         end_forms=("result = …", "show_object(…)"),
     )
 

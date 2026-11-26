@@ -18,7 +18,9 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Final, Self
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from arris_gym.census._loft import deferred_polygon_loft
 
 Counts = tuple[tuple[str, int], ...]
 """A count per key, sorted by key, each key once, each count at least 1."""
@@ -108,7 +110,9 @@ class ProgramCensus(_Frozen):
     `unknown` counts the callee text of each call whose receiver is `?`;
     `foreign` counts the calls (keyed as in `calls`) on `builtin` and on another
     module, which the ranking leaves out;
-    `end_form` is the program's last statement, normalised. Guarantees every
+    `end_form` is the program's last statement, normalised.
+    `deferred_polygon_loft` records a statically recognized literal chain
+    outside the pinned loft limits (ADR-0026). Guarantees every
     `Counts` sorted by key; refuses one that is not.
     """
 
@@ -119,6 +123,7 @@ class ProgramCensus(_Frozen):
     unknown: Counts
     foreign: Counts
     end_form: str
+    deferred_polygon_loft: bool = Field(default=False, exclude_if=lambda flag: not flag)
 
     @model_validator(mode="after")
     def _counts_sorted(self) -> Self:
@@ -465,11 +470,14 @@ def _count(stem: str, text: str, tree: ast.Module) -> ProgramCensus:
     selectors: Counter[str] = Counter()
     unknown: Counter[str] = Counter()
     foreign: Counter[str] = Counter()
+    deferred_loft = False
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
         name, is_unknown, is_foreign = _callee(program, node)
         calls[name] += 1
+        if name == "Workplane.loft" and isinstance(node.func, ast.Attribute):
+            deferred_loft |= deferred_polygon_loft(node.func.value, program.dotted)
         if is_foreign:
             foreign[name] += 1
         forms[_form(name, node)] += 1
@@ -487,4 +495,5 @@ def _count(stem: str, text: str, tree: ast.Module) -> ProgramCensus:
         unknown=_sorted(unknown),
         foreign=_sorted(foreign),
         end_form=_end_form(tree),
+        deferred_polygon_loft=deferred_loft,
     )

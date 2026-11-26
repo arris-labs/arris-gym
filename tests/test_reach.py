@@ -6,6 +6,7 @@ import doctest
 import gzip
 import hashlib
 import json
+import math
 from dataclasses import FrozenInstanceError, replace
 
 import pytest
@@ -23,6 +24,7 @@ from arris_gym.census import (
     _reach,
     census_program,
     reach,
+    reach_curve,
 )
 from arris_gym.cq import _subset
 
@@ -43,6 +45,41 @@ def test_a_reach_fixture_decides_the_static_rule(case: fixture_cases.Case) -> No
     assert got.in_subset == int(expected)
     assert got.stems == ((case.slug,) if expected else ())
     assert reach([census_program(p)], SUBSET) == got
+
+
+@pytest.mark.parametrize(
+    ("sides", "sections", "twisted", "deferred"),
+    [(48, 2, True, False), (49, 2, True, True), (52, 2, False, False), (4, 3, False, True)],
+)
+def test_literal_polygon_loft_limits_apply_to_text_and_saved_census(
+    sides: int, sections: int, twisted: bool, deferred: bool
+) -> None:
+    program_text = 'import cadquery as cad\nr = cad.Workplane("XY")'
+    for i in range(sections):
+        phase = math.pi / (2 * sides) if twisted and i else 0.0
+        outline = [
+            (math.cos(j * math.tau / sides + phase), math.sin(j * math.tau / sides + phase))
+            for j in range(sides)
+        ]
+        if i:
+            program_text += ".workplane(offset=2)"
+        program_text += f".polyline({outline!r}).close()"
+    p = program(program_text + ".loft()")
+    outcome = census_program(p)
+    assert isinstance(outcome, ProgramCensus)
+    assert outcome.deferred_polygon_loft is deferred
+    saved = ProgramCensus.model_validate_json(outcome.model_dump_json())
+    current = reach([p], SUBSET)
+    assert reach([saved], SUBSET) == current
+    assert current.stems == (() if deferred else ("p",))
+    assert reach([saved], replace(SUBSET, defer_polygon_lofts=False)).stems == ("p",)
+    smaller = replace(SUBSET, forms=tuple(f for f in SUBSET.forms if f.name != "Workplane.loft"))
+    last = reach_curve([saved], smaller).steps[-1]
+    assert (last.item, last.in_subset) == ("Workplane.loft()", int(not deferred))
+
+    # An offset whose value is unknown is left to the runtime check.
+    unknown_offset = program(p.text.replace("offset=2", "offset=height"))
+    assert reach([unknown_offset], SUBSET).stems == ("p",)
 
 
 @pytest.mark.parametrize(

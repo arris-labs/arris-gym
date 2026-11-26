@@ -15,7 +15,9 @@ and key. Seven forms reach 4,523/17,900 (25.27%); the first selector, `>Z`,
 is the fifteenth item; twenty-four reach 9,061/17,900 (50.62%) and all 57
 reach 17,900. Zero-gain items remain. `manifest.json` records the uncompressed rows' SHA-256 and the
 validated census and reach digests. Two independent census runs give equal
-bytes and digests.
+bytes and digests. The current census marks 392 deferred polygon lofts
+under ADR-0012. The annotated program rows regenerate with the same
+command. The committed reach curve retains its historical declarations.
 
 These counts and stems are adapted from [BenchCAD](https://huggingface.co/datasets/BenchCAD/BenchCAD)
 and shared under its [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/).

@@ -73,12 +73,15 @@ class Subset:
     Forms are sorted by name; duplicate declarations and selectors are
     refused. `show_object(…)` in `end_forms` also admits a named argument.
     This describes static reach, not successful execution: values and stack
-    context are not decided by a census. Collections are copied to tuples.
+    context are generally unresolved. `defer_polygon_lofts` applies the
+    literal-chain loft limits recorded by the census (ADR-0026). Collections
+    are copied to tuples.
     """
 
     forms: tuple[CensusForm, ...]
     selectors: tuple[str, ...] = ()
     end_forms: tuple[str, ...] = ("r = …", "result = …", "show_object(…)")
+    defer_polygon_lofts: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(
@@ -151,4 +154,4 @@ def subset() -> Subset:
             if isinstance(declared, CensusForm):
                 forms.append(declared)
                 forms.extend(getattr(method, "__census_alternatives__", ()))
-    return Subset(forms=tuple(forms), selectors=SELECTORS)
+    return Subset(forms=tuple(forms), selectors=SELECTORS, defer_polygon_lofts=True)

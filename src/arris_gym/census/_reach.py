@@ -63,10 +63,14 @@ def _end_admitted(end_form: str, subset: Subset) -> bool:
     )
 
 
+def _loft_deferred(program: ProgramCensus, subset: Subset) -> bool:
+    return subset.defer_polygon_lofts and program.deferred_polygon_loft
+
+
 def _eligible(program: ProgramCensus | Unparsable, subset: Subset) -> bool:
     if isinstance(program, Unparsable) or program.unknown:
         return False
-    if not _end_admitted(program.end_form, subset):
+    if _loft_deferred(program, subset) or not _end_admitted(program.end_form, subset):
         return False
     if any(selector not in subset.selectors for selector, _ in program.selectors):
         return False
@@ -97,7 +101,8 @@ def reach(programs: Iterable[CorpusProgram | ProgramCensus | Unparsable], subset
     Text is parsed, never run; precomputed census outcomes are also accepted.
     ADR-0012 requires admitted forms, selectors and end form, no unknown
     receiver, and foreign calls rooted in the fixed Python standard library
-    list or the interpreter's builtins. An unparsable program is outside.
+    list or the interpreter's builtins. Unparsable programs and contexts
+    deferred by the subset are outside.
     Input order cannot change the record. Duplicate stems raise ValueError.
 
     >>> from arris_gym.cq import subset

@@ -2154,3 +2154,146 @@ def test_measure_replay_covers_every_listed_stem_with_the_expected_evidence() ->
             v.disagreement.value == disagreement and v.evidence.kind == kind for v in entries
         )
     assert len(stems) == sum(count for count, _, _ in expected.values())
+
+
+@pytest.mark.parametrize(
+    ("plane", "cap", "foot"), [("XY", ">Z", "<Z"), ("XZ", "<Y", ">Y"), ("YZ", ">X", "<X")]
+)
+@pytest.mark.parametrize("flute", [1.5, 4.7])
+def test_drafted_knob_form_counts_blind_flutes_and_the_through_bore(
+    plane: str, cap: str, foot: str, flute: float
+) -> None:
+    program = f"""import cadquery as cq
+
+result = (
+    cq.Workplane("{plane}")
+    .circle(5)
+    .extrude(4, taper=15)
+    .faces("{cap}").workplane()
+    .circle(3.7)
+    .extrude(4, taper=-15)
+    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector({flute}, 0, 6), rotate=cq.Vector(0, 0, 0))
+            .cylinder(3, 0.6)
+    )
+    .cut(
+        cq.Workplane("{plane}")
+            .transformed(offset=cq.Vector({-flute}, 0, 6), rotate=cq.Vector(0, 0, 0))
+            .cylinder(3, 0.6)
+    )
+    .faces("{foot}").workplane()
+    .hole(2)
+)
+
+# Export
+show_object(result)
+"""
+    result = ag.run(program, dialect="cq")
+    assert result.status is ag.Status.OK, result.message
+    assert _agrees(result, cf._knob_closed_form(program)) == []
+
+
+def test_knob_form_integrates_the_union_of_overlapping_flutes() -> None:
+    program = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .circle(5)
+    .extrude(6)
+    .cut(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0.5, 0, 3), rotate=cq.Vector(0, 0, 0))
+            .cylinder(8, 1)
+    )
+    .cut(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(-0.5, 0, 3), rotate=cq.Vector(0, 0, 0))
+            .cylinder(8, 1)
+    )
+)
+
+# Export
+show_object(result)
+"""
+    closed = ClosedForm.model_validate(cf._knob_closed_form(program))
+    # Two unit discs a unit apart share two 120° segments. Each flute's
+    # exposed wall spans the remaining 240°.
+    lens = 2 * math.pi / 3 - math.sqrt(3) / 2
+    cap = 25 * math.pi - (2 * math.pi - lens)
+    assert closed.volume == pytest.approx(6 * cap)
+    assert closed.area == pytest.approx(2 * cap + 6 * (10 * math.pi + 8 * math.pi / 3))
+    assert closed.centroid == pytest.approx((0, 0, 3))
+    assert closed.bounds == ((-5, -5, 0), (5, 5, 6))
+    candidate = ag.run(program, dialect="cq")
+    assert candidate.status is ag.Status.OK, candidate.message
+    assert _agrees(candidate, closed.model_dump()) == []
+    with pytest.raises(ValueError, match="overlapping flute cuts require common end planes"):
+        cf._knob_closed_form(program.replace("-0.5, 0, 3", "-0.5, 0, 4"))
+
+
+def test_propeller_bounds_follow_the_bored_hub_and_the_placed_vertices() -> None:
+    program = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .cylinder(4, 2)
+    .faces(">Z").workplane()
+    .circle(1.5)
+    .workplane(offset=2)
+    .circle(0.5)
+    .loft(combine=True)
+    .faces(">Z").workplane()
+    .hole(2)
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 120))
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 0))
+            .polyline([[0, -3], [0, 3], [8, 0]])
+            .close()
+            .extrude(1)
+    )
+)
+
+# Export
+show_object(result)
+"""
+    low, high = cf._propeller_bounds(program)
+    assert low == pytest.approx((-4, -2, -2))
+    assert high == pytest.approx((3 * math.sqrt(3) / 2, 4 * math.sqrt(3), 3))
+    with pytest.raises(ValueError, match="only blade prism unions"):
+        cf._propeller_bounds(program.replace(".extrude(1)", ".extrude(1).faces('>Z')"))
+
+
+def test_propeller_construction_hides_a_blade_inside_the_hub() -> None:
+    program = """import cadquery as cq
+
+result = (
+    cq.Workplane("XY")
+    .cylinder(4, 2)
+    .faces(">Z").workplane()
+    .circle(1.5)
+    .workplane(offset=2)
+    .circle(0.5)
+    .loft(combine=True)
+    .union(
+        cq.Workplane("XY")
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(0, 0, 25))
+            .transformed(offset=cq.Vector(0, 0, 0), rotate=cq.Vector(30, 0, 0))
+            .polyline([[0, 0], [0.4, 0], [0, 0.4]])
+            .close()
+            .extrude(0.3)
+    )
+)
+
+# Export
+show_object(result)
+"""
+    form = ClosedForm.model_validate(cf.propeller_closed_form(program))
+    assert form.volume == pytest.approx(109 * math.pi / 6)
+    assert form.area == pytest.approx((22 + 2 * math.sqrt(5)) * math.pi)
+    assert form.centroid == pytest.approx((0, 0, 35 / 109))
+    assert form.bounds == ((-2, -2, -2), (2, 2, 4))
+    result = ag.run(program, dialect="cq")
+    assert result.status is ag.Status.OK, result.message
+    assert _agrees(result, form.model_dump()) == []

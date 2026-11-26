@@ -118,11 +118,13 @@ import math
 import multiprocessing
 import re
 import sys
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+from arris_gym.fidelity import VOLUME_REL
 
 if TYPE_CHECKING:
     from arris_gym import ExecResult
@@ -225,6 +227,12 @@ REFUSAL_CAUSES: dict[str, tuple[str, str, int]] = {
         "which has no corner to blend",
         3,
     ),
+    "cq-wing-nut-bore-fillet-corner": (
+        "OpDegenerateError",
+        "degenerate result: the corner at the edge's end is one the blend's "
+        "closed forms do not cover",
+        3,
+    ),
 }
 
 # What an `--arris-bug` bounds fixture stands for: arris's box loose past what ADR-0005's
@@ -239,6 +247,7 @@ BOUNDS_CAUSES: dict[str, tuple[float, int]] = {
     "cq-cross-hole-bounds": (CROSS_HOLE_REL, 2),
     "cq-through-side-bore-cylinder-bounds": (CROSS_HOLE_REL, 1),
     "cq-chamfer-slot-bounds": (1e-9, 2),  # VOLUME_REL and AREA_REL
+    "cq-mirrored-gusset-chamfer-bounds": (VOLUME_REL, 1),
 }
 
 # Programs run at once when the verdicts are checked.
@@ -2259,8 +2268,9 @@ def _lens(big: float, r: float, dist: float) -> tuple[float, float, float, float
     if dist + r <= big:
         return math.pi * r * r, math.pi * r * r * dist, 0.0, 2 * math.pi * r
     chord = (dist * dist + big * big - r * r) / (2 * dist)  # from the origin along the line
-    a1 = math.acos(chord / big)
-    a2 = math.acos((dist - chord) / r)
+    # A chord approached from a grazing intersection can round outside a disc.
+    a1 = math.acos(max(-1.0, min(1.0, chord / big)))
+    a2 = math.acos(max(-1.0, min(1.0, (dist - chord) / r)))
     area1 = big * big * (a1 - math.sin(a1) * math.cos(a1))
     area2 = r * r * (a2 - math.sin(a2) * math.cos(a2))
     moment = 2 / 3 * big**3 * math.sin(a1) ** 3 + area2 * dist - 2 / 3 * r**3 * math.sin(a2) ** 3
@@ -5093,7 +5103,7 @@ def check_bounds_cause(result: ExecResult, report: OracleReport, fixture: str) -
     differ by no more than the fixture allows.
     """
     from arris_gym import Status
-    from arris_gym.fidelity import BOUNDS_ABS, OracleStatus, measure_deltas
+    from arris_gym.fidelity import BOUNDS_ABS, CENTROID_DIAG, OracleStatus, measure_deltas
 
     name = Path(fixture).name
     if name not in BOUNDS_CAUSES:
@@ -5115,6 +5125,15 @@ def check_bounds_cause(result: ExecResult, report: OracleReport, fixture: str) -
         # A loose hull there extends past both extrema, in opposite directions.
         if oracle_lo[2] - lo[2] <= BOUNDS_ABS or hi[2] - oracle_hi[2] <= BOUNDS_ABS:
             raise ValueError("the box lacks both loose Z bounds of the side-bore fixture")
+    if name == "cq-mirrored-gusset-chamfer-bounds":
+        (lo, hi), (oracle_lo, oracle_hi) = result.measures.bounds, report.measures.bounds
+        inward = max(
+            max(a - b, d - c) for a, b, c, d in zip(lo, oracle_lo, hi, oracle_hi, strict=True)
+        )
+        if inward > BOUNDS_ABS:
+            raise ValueError("the candidate's bounds also clip the part")
+        if deltas.centroid > CENTROID_DIAG or result.measures.solids != report.measures.solids:
+            raise ValueError("the measures also differ in centroid or solid count")
     if deltas.volume > figures or deltas.area > figures:
         raise ValueError(
             f"volume {deltas.volume:.1e} or area {deltas.area:.1e} off beyond fixture {name!r}"
@@ -5332,6 +5351,95 @@ def _check_mid_collar(result: ExecResult, report: OracleReport, text: str) -> No
         raise ValueError("the box lacks the cross hole's two loose bounds")
 
 
+_PROP_HUB = re.compile(
+    rf'import cadquery as cq\n\nresult = \(\n    cq\.Workplane\("([XYZ]{{2}})"\)\n'
+    rf"    \.cylinder\({_NUMBER}, {_NUMBER}\)\n"
+    rf'    \.faces\("(>[XYZ])"\)\s*\.workplane\(\)\n'
+    rf"    \.circle\({_NUMBER}\)\n"
+    rf"    \.workplane\(offset={_NUMBER}\)\n"
+    rf"    \.circle\({_NUMBER}\)\n"
+    rf"    \.loft\(combine=True\)"
+    rf'(?:\n    \.faces\("\4"\)\s*\.workplane\(\)\n    \.hole\({_NUMBER}\))?'
+)
+_PROP_BLADE = re.compile(
+    rf'\s+\.union\(\s+cq\.Workplane\("([XYZ]{{2}})"\)\s+'
+    rf"\.transformed\(offset=cq\.Vector\(0, 0, {_NUMBER}\), "
+    rf"rotate=cq\.Vector\(0, 0, {_NUMBER}\)\)\s+"
+    rf"\.transformed\(offset=cq\.Vector\({_NUMBER}, 0, 0\), "
+    rf"rotate=cq\.Vector\({_NUMBER}, 0, 0\)\)\s+"
+    rf"\.polyline\((\[\[.*?\]\])\)\s+\.close\(\)\s+\.extrude\({_NUMBER}\)\s+\)"
+)
+
+
+def _propeller_bounds(text: str) -> Box:
+    """The exact box of a bored cylindrical hub and placed blade prisms."""
+    hub = _PROP_HUB.match(text)
+    if not hub or hub[1] not in _PLANES:
+        raise ValueError("expected a cylindrical propeller hub")
+    plane = hub[1]
+    depth, radius, base, rise, tip = map(float, (hub[2], hub[3], hub[5], hub[6], hub[7]))
+    bore = float(hub[8] or 0) / 2
+    x, y, normal = _PLANES[plane]
+    axis = _axis(normal)
+    if hub[4] != ">" + "XYZ"[axis] or not (0 < tip < base <= radius and 0 <= bore < base):
+        raise ValueError("expected an inward frustum on the positive hub cap")
+    if min(depth, rise) <= 0:
+        raise ValueError("expected positive hub heights")
+    # The hole takes the frustum's end off where its diameter falls below the bore.
+    lo, hi = [-radius] * 3, [radius] * 3
+    lo[axis] = -depth / 2
+    hi[axis] = depth / 2 + rise * min(1.0, (base - bore) / (base - tip))
+    tail = text[hub.end() :]
+    count = 0
+    while blade := _PROP_BLADE.match(tail):
+        if blade[1] != plane:
+            raise ValueError("a blade is not drawn on the hub's plane")
+        axial, azimuth, radial, pitch = map(float, blade.groups()[1:5])
+        outline = ast.literal_eval(blade[6])
+        thickness = float(blade[7])
+        if thickness <= 0:
+            raise ValueError("an empty blade prism has no box")
+        c, s = math.cos(math.radians(azimuth)), math.sin(math.radians(azimuth))
+        p, q = math.cos(math.radians(pitch)), math.sin(math.radians(pitch))
+        u = [c * a + s * b for a, b in zip(x, y, strict=True)]
+        v = [-s * a + c * b for a, b in zip(x, y, strict=True)]
+        for (a, b), w in itertools.product(outline, (0.0, thickness)):
+            for i in range(3):
+                coord = (
+                    (radial + a) * u[i]
+                    + (b * p - w * q) * v[i]
+                    + (axial + b * q + w * p) * normal[i]
+                )
+                lo[i], hi[i] = min(lo[i], coord), max(hi[i], coord)
+        count += 1
+        tail = tail[blade.end() :]
+    if not count or not re.fullmatch(r"\s*\)\s*# Export\s+show_object\(result\)\s*", tail):
+        raise ValueError("expected only blade prism unions after the bored hub")
+    return (lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2])
+
+
+def _check_propeller_bounds(result: ExecResult, report: OracleReport, text: str) -> None:
+    from arris_gym.fidelity import BOUNDS_ABS
+
+    assert result.measures is not None
+    assert report.measures is not None
+    bounds = _propeller_bounds(text)
+    if any(
+        abs(exact - oracle) > BOUNDS_ABS
+        for side, oracle_side in zip(bounds, report.measures.bounds, strict=True)
+        for exact, oracle in zip(side, oracle_side, strict=True)
+    ):
+        raise ValueError("the oracle bounds disagree with the union's exact box")
+    (lo, hi), (candidate_lo, candidate_hi) = bounds, result.measures.bounds
+    excess = [
+        gap
+        for a, b, c, d in zip(lo, candidate_lo, hi, candidate_hi, strict=True)
+        for gap in (a - b, d - c)
+    ]
+    if max(excess) <= BOUNDS_ABS or min(excess) < -BOUNDS_ABS:
+        raise ValueError("the candidate bounds lack an outward-only gap")
+
+
 def check_bug_cause(
     result: ExecResult, report: OracleReport, fixture: str, *, measure_program: str | None = None
 ) -> None:
@@ -5347,6 +5455,10 @@ def check_bug_cause(
             _check_clipped_rim(result, report, measure_program)
         elif name == "cq-cross-hole-bounds":
             _check_mid_collar(result, report, measure_program)
+        elif name == "cq-turned-blade-prism-bounds":
+            _check_propeller_bounds(result, report, measure_program)
+        elif name == "cq-mirrored-gusset-chamfer-bounds":
+            check_bounds_cause(result, report, fixture)
         else:
             raise ValueError(f"no measure replay check for fixture {name!r}")
     elif name in ("cq-chamfers-overlap-on-a-face", "cq-through-keyway-after-overlapping-chamfers"):
@@ -5459,8 +5571,806 @@ def _boundary_coordinates(point: Vec) -> Vec:
 
 _MEASURE_FIXTURES = {
     "bellows": "tests/fixtures/regression/cq-revolved-cone-notches-bounds",
+    "gusseted_bracket": "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds",
     "shaft_collar": "tests/fixtures/regression/cq-cross-hole-bounds",
+    "propeller": "tests/fixtures/regression/cq-turned-blade-prism-bounds",
 }
+
+
+# A drafted knob consists of coaxial frusta cut by parallel cylinders.
+_KNOB_STOCK = re.compile(
+    rf"    \.circle\({_NUMBER}\)\s+\.extrude\({_NUMBER}(?:, taper={_NUMBER})?\)"
+)
+_KNOB_CUT = re.compile(
+    rf'\s+\.cut\(\s+cq\.Workplane\("([XYZ]{{2}})"\)\s+'
+    rf"\.transformed\(offset=cq\.Vector\({_NUMBER}, {_NUMBER}, {_NUMBER}\), "
+    rf"rotate=cq\.Vector\(0, 0, 0\)\)\s+"
+    rf"\.cylinder\({_NUMBER}, {_NUMBER}\)\s+\)"
+)
+_KNOB_HOLE = re.compile(rf'\s+\.faces\("([<>][XYZ])"\)\.workplane\(\)\s+\.hole\({_NUMBER}\)')
+
+
+@dataclass(frozen=True)
+class _DraftBand:
+    low: float
+    high: float
+    base: float
+    top: float
+
+    @property
+    def slope(self) -> float:
+        return (self.top - self.base) / (self.high - self.low)
+
+    def radius(self, z: float) -> float:
+        return self.base + (z - self.low) * self.slope
+
+
+@dataclass(frozen=True)
+class _Flute:
+    u: float
+    v: float
+    low: float
+    high: float
+    radius: float
+
+    @property
+    def distance(self) -> float:
+        return math.hypot(self.u, self.v)
+
+    def lens(self, radius: float) -> tuple[float, float, float, float]:
+        if radius <= 0:
+            return 0.0, 0.0, 0.0, 0.0
+        if self.radius >= self.distance + radius:
+            return math.pi * radius**2, 0.0, 2 * math.pi * radius, 0.0
+        return _lens(radius, self.radius, self.distance)
+
+
+def _knob_geometry(text: str) -> tuple[Frame, list[_DraftBand], list[_Flute], float]:
+    plane_match = re.match(
+        r'import cadquery as cq\n\nresult = \(\n    cq\.Workplane\("([XYZ]{2})"\)\n', text
+    )
+    if plane_match is None or plane_match[1] not in _PLANES:
+        raise ValueError("expected a knob on a named plane")
+    plane = plane_match[1]
+    stock, cut, rest = text[plane_match.end() :].partition("\n    .cut(")
+    if not cut:
+        raise ValueError("expected knob flute cuts")
+    direction = _PLANES[plane][2]
+    axis = _axis(direction)
+    cap_side, foot_side = (">", "<") if direction[axis] > 0 else ("<", ">")
+    normal = cap_side + "XYZ"[axis]
+    stock_pieces = stock.split(f'\n    .faces("{normal}").workplane()\n')
+    bands = []
+    z = 0.0
+    for piece in stock_pieces:
+        match = _KNOB_STOCK.fullmatch(piece)
+        if match is None:
+            raise ValueError("expected coaxial circle extrusions on the stock's last cap")
+        radius, distance = map(float, match.groups()[:2])
+        degrees = float(match[3] or 0)
+        if not -90 < degrees < 90:
+            raise ValueError("expected a draft angle strictly between -90 and 90 degrees")
+        angle = math.radians(degrees)
+        height = distance * math.cos(angle)
+        top = radius - distance * math.sin(angle)
+        if min(radius, top, height) <= 0:
+            raise ValueError("expected a positive height and two nonempty caps")
+        bands.append(_DraftBand(z, z + height, radius, top))
+        z += height
+
+    tail = cut + rest
+    flutes = []
+    while match := _KNOB_CUT.match(tail):
+        if match[1] != plane:
+            raise ValueError("a flute is not on the stock's plane")
+        u, v, mid, height, radius = map(float, match.groups()[1:])
+        if min(height, radius) <= 0:
+            raise ValueError("a flute is empty")
+        flutes.append(_Flute(u, v, mid - height / 2, mid + height / 2, radius))
+        tail = tail[match.end() :]
+    bore = 0.0
+    if hole := _KNOB_HOLE.match(tail):
+        bore = float(hole[2]) / 2
+        if hole[1] != foot_side + "XYZ"[axis] or bore <= 0:
+            raise ValueError("expected a through bore from the stock's foot")
+        tail = tail[hole.end() :]
+    if not flutes or not re.fullmatch(r"\s*\)\s*# Export\s+show_object\(result\)\s*", tail):
+        raise ValueError("expected only parallel cylindrical flute cuts")
+    return ((0.0, 0.0, 0.0), *_PLANES[plane]), bands, flutes, bore
+
+
+def _above_bore(band: _DraftBand, bore: float) -> _DraftBand | None:
+    """The axial interval where a concentric bore leaves material in this band."""
+    if max(band.base, band.top) <= bore:
+        return None
+    if min(band.base, band.top) >= bore:
+        return band
+    cut = band.low + (bore - band.base) / band.slope
+    if band.slope > 0:
+        return _DraftBand(cut, band.high, bore, band.top)
+    return _DraftBand(band.low, cut, band.base, bore)
+
+
+def _knob_bounds(
+    frame: Frame,
+    bands: Sequence[_DraftBand],
+    flutes: Sequence[_Flute],
+    bore: float,
+    *,
+    overlapping: bool = False,
+) -> Box:
+    """The stock's box when every extreme survives the cuts."""
+    caps = [(band.low, band.base) for band in bands] + [(band.high, band.top) for band in bands]
+    peak = max(radius for _, radius in caps)
+    extremes = [
+        [(u * peak, v * peak, z) for z, r in caps if r == peak]
+        for u, v in ((1, 0), (-1, 0), (0, 1), (0, -1))
+    ]
+    for z, radius in ((bands[0].low, bands[0].base), (bands[-1].high, bands[-1].top)):
+        if overlapping:
+            # At a bore-clipped end the limiting circle must retain an exposed arc.
+            active = tuple(
+                dict.fromkeys(_Disc(f.u, f.v, f.radius) for f in flutes if f.low <= z <= f.high)
+            )
+            if radius > bore > 0:
+                active = tuple(dict.fromkeys((*active, _Disc(0.0, 0.0, bore))))
+            area, _, _, _, rim = _fluted_section(radius, active)
+            if (area if radius > bore else rim) <= 0:
+                raise ValueError("the cuts leave no area at a stock end")
+            continue
+        remaining = math.pi * (radius**2 - bore**2) - math.fsum(
+            flute.lens(radius)[0] - flute.lens(bore)[0]
+            for flute in flutes
+            if flute.low <= z <= flute.high
+        )
+        # A band clipped at R = bore has a limiting circle in place of a cap.
+        rim = 2 * math.pi * radius - math.fsum(
+            flute.lens(radius)[2] for flute in flutes if flute.low <= z <= flute.high
+        )
+        if remaining <= 0 and (radius > bore or rim <= 0):
+            raise ValueError("the cuts leave no area on a stock end")
+    for points in extremes:
+        if not any(
+            all(
+                not flute.low <= z <= flute.high
+                or math.hypot(u - flute.u, v - flute.v) > flute.radius
+                for flute in flutes
+            )
+            for u, v, z in points
+        ):
+            raise ValueError("a cut reaches a stock extreme")
+    corners = [
+        _at(frame, u, v, z)
+        for u, v, z in itertools.product(
+            (-peak, peak), (-peak, peak), (bands[0].low, bands[-1].high)
+        )
+    ]
+    x_coords, y_coords, z_coords = zip(*corners, strict=True)
+    return (
+        (min(x_coords), min(y_coords), min(z_coords)),
+        (max(x_coords), max(y_coords), max(z_coords)),
+    )
+
+
+def _knob_flute(
+    band: _DraftBand, flute: _Flute, bore: float
+) -> tuple[float, float, float, float, float]:
+    """Removed volume and first moments, with the net side-area change."""
+    lo, hi = max(band.low, flute.low), min(band.high, flute.high)
+    if lo >= hi:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
+    stations = [lo, hi]
+    slope = band.slope
+    if slope:
+        for radius in (abs(flute.distance - flute.radius), flute.distance + flute.radius):
+            z = band.low + (radius - band.base) / slope
+            if lo < z < hi:
+                stations.append(z)
+    intervals = tuple(itertools.pairwise(sorted(stations)))
+    lens = functools.cache(lambda z: flute.lens(band.radius(z)))
+    bore_area, bore_moment, bore_arc, covered_wall = flute.lens(bore)
+
+    def integral(f: Callable[[float], float]) -> float:
+        return math.fsum(tanh_sinh(f, a, b) for a, b in intervals)
+
+    volume = integral(lambda z: lens(z)[0] - bore_area)
+    axial = integral(lambda z: z * (lens(z)[0] - bore_area))
+    radial = integral(lambda z: lens(z)[1] - bore_moment)
+    slant = math.hypot(1, slope)
+    side_area = integral(lambda z: lens(z)[3] - slant * lens(z)[2] - bore_arc - covered_wall)
+    # A flute can stop inside a band. Its flat ends then face the void.
+    for z in (flute.low, flute.high):
+        if band.low < z < band.high:
+            side_area += lens(z)[0] - bore_area
+    u, v = (
+        (radial * flute.u / flute.distance, radial * flute.v / flute.distance)
+        if flute.distance
+        else (0.0, 0.0)
+    )
+    return volume, u, v, axial, side_area
+
+
+@dataclass(frozen=True)
+class _Disc:
+    x: float
+    y: float
+    radius: float
+
+    def contains(self, x: float, y: float) -> bool:
+        return math.hypot(x - self.x, y - self.y) <= self.radius
+
+    def crossings(self, other: _Disc) -> tuple[float, ...]:
+        """Polar angles on this circle where it meets the other circle."""
+        x, y = other.x - self.x, other.y - self.y
+        distance = math.hypot(x, y)
+        if not distance or not abs(self.radius - other.radius) <= distance <= (
+            self.radius + other.radius
+        ):
+            return ()
+        projection = (distance**2 + self.radius**2 - other.radius**2) / (2 * distance * self.radius)
+        center = math.atan2(y, x)
+        half = math.acos(max(-1.0, min(1.0, projection)))
+        return (center - half) % math.tau, (center + half) % math.tau
+
+    def flux(self, start: float, end: float) -> tuple[float, float, float, float]:
+        """Integrals of boundary length, area flux and the two first-moment fluxes."""
+        width = end - start
+        r, x, y = self.radius, self.x, self.y
+        s0, s1 = math.sin(start), math.sin(end)
+        c0, c1 = math.cos(start), math.cos(end)
+        # Green's theorem with x dy for area, x² dy/2 and -y² dx/2 for moments.
+        cos2 = width / 2 + (s1 * c1 - s0 * c0) / 2
+        sin2 = width - cos2
+        cos3 = (s1 - s1**3 / 3) - (s0 - s0**3 / 3)
+        sin3 = (c0 - c0**3 / 3) - (c1 - c1**3 / 3)
+        return (
+            r * width,
+            r * (x * (s1 - s0) + r * cos2),
+            r / 2 * (x * x * (s1 - s0) + 2 * x * r * cos2 + r * r * cos3),
+            r / 2 * (y * y * (c0 - c1) + 2 * y * r * sin2 + r * r * sin3),
+        )
+
+
+def _fluted_section(
+    radius: float, cutters: tuple[_Disc, ...], slant: float = 1.0
+) -> tuple[float, float, float, float, float]:
+    """Area, two moments, side area per unit height and exposed stock arc length."""
+    stock = _Disc(0.0, 0.0, radius)
+    if radius <= 0 or stock in cutters:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
+    terms = []
+    for circle in (stock, *cutters):
+        is_stock = circle is stock
+        neighbors = tuple(
+            disc
+            for disc in cutters
+            if disc is not circle
+            and math.hypot(disc.x - circle.x, disc.y - circle.y) <= disc.radius + circle.radius
+        )
+        if not is_stock and math.hypot(circle.x, circle.y) > radius + circle.radius:
+            continue
+        cuts = [0.0, math.tau]
+        for other in neighbors if is_stock else (*neighbors, stock):
+            cuts.extend(circle.crossings(other))
+        sign = 1 if is_stock else -1
+        for start, end in itertools.pairwise(sorted(cuts)):
+            if start == end:
+                continue
+            mid = (start + end) / 2
+            x = circle.x + circle.radius * math.cos(mid)
+            y = circle.y + circle.radius * math.sin(mid)
+            if (not is_stock and not stock.contains(x, y)) or any(
+                other.contains(x, y) for other in neighbors
+            ):
+                continue
+            length, area, mx, my = circle.flux(start, end)
+            terms.append(
+                (
+                    area * sign,
+                    mx * sign,
+                    my * sign,
+                    length * (slant if is_stock else 1),
+                    length if is_stock else 0.0,
+                )
+            )
+    if not terms:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
+    area, mx, my, side, rim = map(math.fsum, zip(*terms, strict=True))
+    return area, mx, my, side, rim
+
+
+def _knob_overlap_integrals(
+    bands: Sequence[_DraftBand], flutes: Sequence[_Flute], bore: float
+) -> tuple[float, float, float, float, float]:
+    """Integrate section arcs for intersecting flutes with common flat ends."""
+    (flute_low, flute_high), *other_spans = dict.fromkeys((f.low, f.high) for f in flutes)
+    if other_spans:
+        raise ValueError("overlapping flute cuts require common end planes")
+    hole = (_Disc(0.0, 0.0, bore),) if bore else ()
+    cutters = tuple(dict.fromkeys((*hole, *(_Disc(f.u, f.v, f.radius) for f in flutes))))
+    critical_radii: list[float] = []
+    for disc in cutters:
+        distance = math.hypot(disc.x, disc.y)
+        critical_radii.extend((abs(distance - disc.radius), distance + disc.radius))
+    for a, b in itertools.combinations(cutters, 2):
+        for angle in a.crossings(b):
+            critical_radii.append(
+                math.hypot(a.x + a.radius * math.cos(angle), a.y + a.radius * math.sin(angle))
+            )
+
+    # Split at stock transitions, cutter caps and every change of exposed arcs.
+    terms = []
+    caps: dict[float, float] = {}
+    for band in bands:
+        stations = {band.low, band.high}
+        stations.update(z for z in (flute_low, flute_high) if band.low < z < band.high)
+        if band.slope:
+            for radius in critical_radii:
+                if min(band.base, band.top) < radius < max(band.base, band.top):
+                    stations.add(band.low + (radius - band.base) / band.slope)
+        slant = math.hypot(1, band.slope)
+        for a, b in itertools.pairwise(sorted(stations)):
+            for z, weight in _nodes(a, b):
+                active = cutters if flute_low < z < flute_high else hole
+                area, mx, my, side, _ = _fluted_section(band.radius(z), active, slant)
+                terms.append(
+                    (weight * area, weight * mx, weight * my, weight * z * area, weight * side)
+                )
+        for z, radius, sign in ((band.low, band.base, 1), (band.high, band.top, -1)):
+            if z in (flute_low, flute_high):
+                raise ValueError("a flute endpoint coincides with a stock cap")
+            active = cutters if flute_low < z < flute_high else hole
+            caps[z] = caps.get(z, 0.0) + sign * _fluted_section(radius, active)[0]
+        for z in (flute_low, flute_high):
+            if band.low < z < band.high:
+                radius = band.radius(z)
+                caps[z] = _fluted_section(radius, hole)[0] - _fluted_section(radius, cutters)[0]
+
+    volume, mu, mv, mz, side = map(math.fsum, zip(*terms, strict=True))
+    return volume, mu, mv, mz, side + math.fsum(map(abs, caps.values()))
+
+
+def _overlapping_knob_form(
+    frame: Frame, bands: Sequence[_DraftBand], flutes: Sequence[_Flute], bore: float
+) -> dict[str, object]:
+    bounds = _knob_bounds(frame, bands, flutes, bore, overlapping=True)
+    volume, mu, mv, mz, area = _knob_overlap_integrals(bands, flutes, bore)
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": _at(frame, mu / volume, mv / volume, mz / volume),
+        "bounds": bounds,
+        "note": (
+            "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. "
+            "Integrate Green's theorem on the exposed circular arcs of each section "
+            "for its area and moments. Exposed arcs give the lateral areas, and "
+            "section differences give the flat caps (tools/cq_closed_forms.py)."
+        ),
+    }
+
+
+def _knob_flutes_overlap(flutes: Sequence[_Flute]) -> bool:
+    return any(
+        max(a.low, b.low) < min(a.high, b.high)
+        and math.hypot(a.u - b.u, a.v - b.v) <= a.radius + b.radius
+        for a, b in itertools.combinations(flutes, 2)
+    )
+
+
+def _knob_closed_form(text: str) -> dict[str, object]:
+    frame, stock, flutes, bore = _knob_geometry(text)
+    bands = [band for part in stock if (band := _above_bore(part, bore)) is not None]
+    if not bands:
+        raise ValueError("the bore consumes the stock")
+    if _knob_flutes_overlap(flutes):
+        return _overlapping_knob_form(frame, bands, flutes, bore)
+    bounds = _knob_bounds(frame, bands, flutes, bore)
+    area = volume = mu = mv = mz = 0.0
+    for band in bands:
+        a, b = band.base, band.top
+        height = band.high - band.low
+        vol = math.pi * height * (a * a + a * b + b * b) / 3
+        bore_volume = math.pi * bore**2 * height
+        volume += vol - bore_volume
+        mz += (vol - bore_volume) * band.low - bore_volume * height / 2
+        mz += math.pi * height**2 * (a * a + 2 * a * b + 3 * b * b) / 12
+        area += math.pi * (a + b) * math.hypot(height, b - a)
+        area += 2 * math.pi * bore * height
+        for flute in flutes:
+            removed, u, v, z, net_area = _knob_flute(band, flute, bore)
+            volume -= removed
+            mu -= u
+            mv -= v
+            mz -= z
+            area += net_area
+
+    risers = [(bands[0].low, 0.0, bands[0].base)]
+    for before, after in itertools.pairwise(bands):
+        if before.high == after.low:
+            risers.append((before.high, before.top, after.base))
+        else:
+            risers.extend(((before.high, before.top, 0.0), (after.low, 0.0, after.base)))
+    risers.append((bands[-1].high, bands[-1].top, 0.0))
+    for z, a, b in risers:
+        inner, outer = sorted((max(a, bore), max(b, bore)))
+        area += math.pi * (outer**2 - inner**2)
+        for flute in flutes:
+            if flute.distance < outer + flute.radius and any(
+                abs(z - end) <= PLACEMENT_TOL for end in (flute.low, flute.high)
+            ):
+                raise ValueError("a flute endpoint coincides with a stock cap")
+            if flute.low < z < flute.high:
+                area -= flute.lens(outer)[0] - flute.lens(inner)[0]
+
+    return {
+        "kind": "closed_form",
+        "volume": volume,
+        "area": area,
+        "centroid": _at(frame, mu / volume, mv / volume, mz / volume),
+        "bounds": bounds,
+        "note": (
+            "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular "
+            "lens and its first moments along the draft axis. The two lens arcs give the "
+            "stock surface removed and cutter wall exposed. At caps use the lens areas. "
+            "The cuts preserve every stock extreme (tools/cq_closed_forms.py)."
+        ),
+    }
+
+
+# The construction integrals meet ADR-0005 well above the integration error.
+# These settings control quadrature and the handling of roundoff in its geometry.
+_PROPELLER_RULES = (_legendre(12), _legendre(24))
+_PROPELLER_REFINEMENTS = (3e-12, 3e-13)
+_PROPELLER_INTEGRATION_DEPTH = 22
+_PROPELLER_PARALLEL = 1e-14
+_PROPELLER_STATION_ROUNDOFF = 1e-13
+_PROPELLER_DIGITS = 13
+
+
+@dataclass(frozen=True)
+class _BladePlane:
+    # The in-plane part of the outward normal has unit length.
+    x: float
+    y: float
+    z: float
+    offset: float
+
+    def at(self, z: float) -> tuple[float, float, float]:
+        return self.x, self.y, self.offset - z * self.z
+
+
+@dataclass(frozen=True)
+class _BladePrism:
+    faces: tuple[_BladePlane, ...]
+    stations: tuple[float, ...]
+    low: float
+    high: float
+
+
+def _blade_prism(blade: re.Match[str]) -> _BladePrism:
+    axial, azimuth, radial, pitch = map(float, blade.groups()[1:5])
+    outline: list[tuple[float, float]] = ast.literal_eval(blade[6])
+    height = float(blade[7])
+    c, s = math.cos(math.radians(azimuth)), math.sin(math.radians(azimuth))
+    p, q = math.cos(math.radians(pitch)), math.sin(math.radians(pitch))
+    u, v, w = (c, s, 0.0), (-s * p, c * p, q), (s * q, -c * q, p)
+
+    def lifted(nx: float, ny: float, nz: float, offset: float) -> _BladePlane:
+        x, y, z = (nx * a + ny * b + nz * d for a, b, d in zip(u, v, w, strict=True))
+        radial_norm = math.hypot(x, y)
+        if radial_norm < _PROPELLER_PARALLEL:
+            raise ValueError("expected pitched blades with nonhorizontal faces")
+        return _BladePlane(
+            x / radial_norm,
+            y / radial_norm,
+            z / radial_norm,
+            (offset + nx * radial + z * axial) / radial_norm,
+        )
+
+    # The average point is on the inner side of every convex outline edge.
+    mx, my = (math.fsum(xs) / len(outline) for xs in zip(*outline, strict=True))
+    faces = [lifted(0, 0, -1, 0), lifted(0, 0, 1, height)]
+    for a, b in itertools.pairwise((*outline, outline[0])):
+        x, y = b[1] - a[1], a[0] - b[0]
+        if x * (mx - a[0]) + y * (my - a[1]) > 0:
+            x, y = -x, -y
+        if any(x * (u - a[0]) + y * (v - a[1]) > PLACEMENT_TOL for u, v in outline):
+            raise ValueError("expected a convex blade outline")
+        faces.append(lifted(x, y, 0, x * a[0] + y * a[1]))
+    heights = tuple(axial + v * q + h * p for _, v in outline for h in (0.0, height))
+    return _BladePrism(tuple(faces), heights, min(heights), max(heights))
+
+
+def _blade_line_interval(
+    polygon: Sequence[Vec], x: float, y: float, dx: float, dy: float, skip: int = -1
+) -> tuple[float, float] | None:
+    """Clip a line in the section by all the planes other than its own."""
+    low, high = -math.inf, math.inf
+    for i, (a, b, offset) in enumerate(polygon):
+        if i == skip:
+            continue
+        step = a * dx + b * dy
+        slack = offset - a * x - b * y
+        if abs(step) < _PROPELLER_PARALLEL:
+            if slack < 0:
+                return None
+        elif step > 0:
+            high = min(high, slack / step)
+        else:
+            low = max(low, slack / step)
+    return (low, high) if low < high else None
+
+
+def _section_line_flux(
+    polygon: Sequence[Vec],
+    face: _BladePlane,
+    position: int,
+    outer: float,
+    inner: float,
+    neighbors: Sequence[Sequence[Vec]],
+) -> Iterator[tuple[float, float, float, float]]:
+    nx, ny, distance = polygon[position]
+    x, y = distance * nx, distance * ny
+    dx, dy = -ny, nx
+    full = _blade_line_interval(polygon, x, y, dx, dy, position)
+    if full is None:
+        return
+    spans = [full]
+    if outer > abs(distance):
+        extent = math.sqrt((outer - distance) * (outer + distance))
+        if inner > abs(distance):
+            hole = math.sqrt((inner - distance) * (inner + distance))
+            spans = _minus(_minus(spans, [(-extent, -hole)]), [(hole, extent)])
+        else:
+            spans = _minus(spans, [(-extent, extent)])
+    for neighbor in neighbors:
+        masked = _blade_line_interval(neighbor, x, y, dx, dy)
+        if masked is not None:
+            spans = _minus(spans, [masked])
+    for a, b in spans:
+        x0, x1 = x + a * dx, x + b * dx
+        y0, y1 = y + a * dy, y + b * dy
+        yield (
+            (x0 + x1) * (y1 - y0) / 2,
+            (x0 * x0 + x0 * x1 + x1 * x1) * (y1 - y0) / 6,
+            -(y0 * y0 + y0 * y1 + y1 * y1) * (x1 - x0) / 6,
+            (b - a) * math.hypot(1, face.z),
+        )
+
+
+def _section_hub_flux(
+    radius: float, scale: float, sign: int, polygons: Sequence[Sequence[Vec]]
+) -> Iterator[tuple[float, float, float, float]]:
+    if radius <= 0:
+        return
+    angles = [0.0, math.tau]
+    for polygon in polygons:
+        for nx, ny, distance in polygon:
+            if abs(distance) <= radius:
+                center, half = math.atan2(ny, nx), math.acos(distance / radius)
+                angles.extend(((center - half) % math.tau, (center + half) % math.tau))
+    disc = _Disc(0, 0, radius)
+    for a, b in itertools.pairwise(sorted(angles)):
+        if a == b:
+            continue
+        mid = (a + b) / 2
+        x, y = radius * math.cos(mid), radius * math.sin(mid)
+        if any(all(nx * x + ny * y <= d for nx, ny, d in polygon) for polygon in polygons):
+            continue
+        length, area, mx, my = disc.flux(a, b)
+        yield sign * area, sign * mx, sign * my, length * scale
+
+
+def _propeller_section(
+    z: float, outer: float, inner: float, slant: float, blades: Sequence[_BladePrism]
+) -> tuple[float, float, float, float]:
+    """Area, first moments and side area per unit height of the union section."""
+    active = [blade for blade in blades if blade.low <= z <= blade.high]
+    polygons = [tuple(face.at(z) for face in blade.faces) for blade in active]
+    terms: list[tuple[float, float, float, float]] = []
+    for i, (blade, polygon) in enumerate(zip(active, polygons, strict=True)):
+        neighbors = polygons[:i] + polygons[i + 1 :]
+        for k, face in enumerate(blade.faces):
+            terms.extend(_section_line_flux(polygon, face, k, outer, inner, neighbors))
+    terms.extend(_section_hub_flux(outer, slant, 1, polygons))
+    terms.extend(_section_hub_flux(inner, 1, -1, polygons))
+    if not terms:
+        return 0.0, 0.0, 0.0, 0.0
+    area, mx, my, side = map(math.fsum, zip(*terms, strict=True))
+    return area, mx, my, side
+
+
+def _quadratic_roots(a: float, b: float, c: float) -> tuple[float, ...]:
+    if abs(a) < _PROPELLER_PARALLEL:
+        return (-c / b,) if b else ()
+    discriminant = b * b - 4 * a * c
+    if discriminant < 0:
+        return ()
+    q = -(b + math.copysign(math.sqrt(discriminant), b)) / 2
+    return (q / a, c / q) if q else (0.0,)
+
+
+def _propeller_stations(
+    blades: Sequence[_BladePrism], bands: Sequence[_DraftBand], bore: float
+) -> Iterator[float]:
+    """Split where hub and blade boundaries can change the exposed section."""
+    lines = [(i, f) for i, blade in enumerate(blades) for f in blade.faces]
+
+    def inside(z: float, x: float, y: float, indices: Sequence[int]) -> bool:
+        return all(
+            f.x * x + f.y * y + f.z * z <= f.offset + PLACEMENT_TOL
+            for i in indices
+            for f in blades[i].faces
+        )
+
+    for band in bands:
+        yield band.low
+        yield band.high
+        for _, face in lines:
+            # Circle tangencies to a blade plane.
+            for radius, slope in ((band.base, band.slope), (bore, 0.0)):
+                if not radius:
+                    continue
+                for sign in (1, -1):
+                    rate = face.z + sign * slope
+                    if rate:
+                        z = (face.offset - sign * (radius - band.low * slope)) / rate
+                        if band.low < z < band.high:
+                            yield z
+    for blade in blades:
+        yield from blade.stations
+    for (i, a), (j, b) in itertools.combinations(lines, 2):
+        det = a.x * b.y - a.y * b.x
+        if abs(det) < _PROPELLER_PARALLEL:
+            continue
+        # The radial coordinates at the intersection of two planes are affine in z.
+        x0 = (a.offset * b.y - a.y * b.offset) / det
+        y0 = (a.x * b.offset - a.offset * b.x) / det
+        x1 = (-a.z * b.y + a.y * b.z) / det
+        y1 = (-a.x * b.z + a.z * b.x) / det
+        for k, c in lines:
+            rate = c.x * x1 + c.y * y1 + c.z
+            if abs(rate) >= _PROPELLER_PARALLEL:
+                z = (c.offset - c.x * x0 - c.y * y0) / rate
+                if inside(z, x0 + x1 * z, y0 + y1 * z, (i, j, k)):
+                    yield z
+        for band in bands:
+            for radius, slope in ((band.base, band.slope), (bore, 0.0)):
+                if not radius:
+                    continue
+                r0 = radius - band.low * slope
+                for z in _quadratic_roots(
+                    x1 * x1 + y1 * y1 - slope * slope,
+                    2 * (x0 * x1 + y0 * y1 - r0 * slope),
+                    x0 * x0 + y0 * y0 - r0 * r0,
+                ):
+                    if band.low < z < band.high and inside(z, x0 + x1 * z, y0 + y1 * z, (i, j)):
+                        yield z
+
+
+def _propeller_quadrature(
+    f: Callable[[float], tuple[float, ...]],
+    a: float,
+    b: float,
+    errors: Sequence[float],
+    depth: int = 0,
+) -> tuple[float, ...]:
+    mid, half = (a + b) / 2, (b - a) / 2
+    coarse, fine = (
+        tuple(
+            map(
+                math.fsum,
+                zip(
+                    *(
+                        tuple(half * w * value for value in f(mid + half * x))
+                        for x, w in zip(*rule, strict=True)
+                    ),
+                    strict=True,
+                ),
+            )
+        )
+        for rule in _PROPELLER_RULES
+    )
+    if all(abs(x - y) <= limit for x, y, limit in zip(coarse, fine, errors, strict=True)):
+        return fine
+    if depth == _PROPELLER_INTEGRATION_DEPTH:
+        raise ValueError("propeller section quadrature did not converge")
+    before = _propeller_quadrature(f, a, mid, errors, depth + 1)
+    after = _propeller_quadrature(f, mid, b, errors, depth + 1)
+    return tuple(x + y for x, y in zip(before, after, strict=True))
+
+
+def _propeller_integrals(
+    blades: Sequence[_BladePrism],
+    bands: Sequence[_DraftBand],
+    bore: float,
+    stations: Sequence[float],
+    errors: Sequence[float],
+) -> tuple[float, float, float, float, float]:
+    terms = []
+    for a, b in itertools.pairwise(stations):
+        if b - a < _PROPELLER_STATION_ROUNDOFF:
+            continue
+        mid = (a + b) / 2
+        band = next((band for band in bands if band.low < mid < band.high), None)
+
+        def integrand(z: float, band: _DraftBand | None = band) -> tuple[float, ...]:
+            outer = band.radius(z) if band else 0.0
+            inner = bore if band else 0.0
+            slant = math.hypot(1, band.slope) if band else 1.0
+            area, mx, my, side = _propeller_section(z, outer, inner, slant, blades)
+            return area, mx, my, z * area, side
+
+        terms.append(_propeller_quadrature(integrand, a, b, errors))
+    volume, mx, my, mz, area = map(math.fsum, zip(*terms, strict=True))
+    return volume, mx, my, mz, area
+
+
+def propeller_closed_form(text: str) -> dict[str, object]:
+    """Integrate the constructively placed hub and pitched blade prisms.
+
+    Clip the circular and straight section boundaries against every operand.
+    Green's theorem gives the cross-sectional areas and first moments. The
+    exposed boundary lengths give the lateral areas with the face slant
+    factors. Section differences at the hub risers give the flat faces.
+    """
+    from arris_gym.fidelity import ClosedForm
+    from arris_gym.fidelity._agreement import figures_agree
+
+    bounds = _propeller_bounds(text)
+    hub = _PROP_HUB.match(text)
+    assert hub is not None
+    depth, radius, base, rise, tip = map(float, (hub[2], hub[3], hub[5], hub[6], hub[7]))
+    bore = float(hub[8] or 0) / 2
+    blades = tuple(_blade_prism(m) for m in _PROP_BLADE.finditer(text[hub.end() :]))
+    first, last = -depth / 2, depth / 2
+    peak = last + rise * min(1.0, (base - bore) / (base - tip))
+    cap = max(tip, bore)
+    bands = (_DraftBand(first, last, radius, radius), _DraftBand(last, peak, base, cap))
+    stations = sorted(set(_propeller_stations(blades, bands, bore)))
+    vscale = radius * radius * depth
+    mscale = vscale * math.dist(*bounds)
+    scales = (vscale, mscale, mscale, mscale, radius * depth)
+    frame = ((0.0, 0.0, 0.0), *_PLANES[hub[1]])
+
+    def section_area(z: float, r: float) -> float:
+        outer, inner = (r, bore) if r > bore else (0.0, 0.0)
+        return _propeller_section(z, outer, inner, 1.0, blades)[0]
+
+    caps = math.fsum(
+        abs(section_area(z, a) - section_area(z, b))
+        for z, a, b in ((first, 0.0, radius), (last, radius, base), (peak, cap, 0.0))
+    )
+    note = (
+        "The placed blade prisms and bored hub are clipped in axial sections. "
+        "Green's theorem on exposed lines and circular arcs gives the section areas and "
+        "moments. The arc and segment lengths with face slant factors give the lateral areas. "
+        "Both quadratures agree (tools/cq_closed_forms.py)."
+    )
+
+    def integrate(factor: float) -> ClosedForm:
+        volume, mx, my, mz, area = _propeller_integrals(
+            blades, bands, bore, stations, tuple(factor * scale for scale in scales)
+        )
+        return ClosedForm(
+            volume=volume,
+            area=area + caps,
+            centroid=_at(frame, mx / volume, my / volume, mz / volume),
+            bounds=bounds,
+            note=note,
+        )
+
+    coarse, fine = map(integrate, _PROPELLER_REFINEMENTS)
+    if not figures_agree(coarse, fine):
+        raise ValueError("propeller construction integrals disagree")
+    return fine.model_copy(
+        update={
+            "volume": float(f"{fine.volume:.{_PROPELLER_DIGITS}g}"),
+            "area": float(f"{fine.area:.{_PROPELLER_DIGITS}g}"),
+            "centroid": _boundary_coordinates(fine.centroid),
+        }
+    ).model_dump(mode="json")
 
 
 def _measure_replay_verdicts(
@@ -5475,6 +6385,11 @@ def _measure_replay_verdicts(
             verdicts[stem] = {
                 "disagreement": "arris_bug",
                 "evidence": {"kind": "fixture", "path": _MEASURE_FIXTURES[family]},
+            }
+        elif family == "knob":
+            verdicts[stem] = {
+                "disagreement": "occt_wrong",
+                "evidence": _knob_closed_form(texts[stem]),
             }
         elif family == "dome_cap":
             verdicts[stem] = {
@@ -5495,11 +6410,13 @@ def _measure_replay_verdicts(
 
 
 _RETAINER_FIXTURE = "cq-retainer-plate-arc-loop-intersection"
+_WING_INTERNAL_FIXTURE = "cq-wing-fillet-missing-trim-edge"
 _FAILURE_REPLAY_ENTITIES = {
     "cq-chamfers-overlap-on-a-face": ("e", "e", "f"),
     "cq-cotter-pin-self-contact": ("v", "v"),
     "cq-cotter-pin-tangent-faces": ("f", "f"),
     "cq-fillets-overlap-on-a-face": ("e", "e", "f"),
+    "cq-wing-nut-bore-fillet-corner": ("e", "e", "v"),
 }
 
 
@@ -5524,6 +6441,18 @@ def _failure_replay_verdict(
         ):
             raise ValueError("the row lacks the retainer plate's self-intersecting loops")
         disagreement = "arris_bug"
+    elif slug == _WING_INTERNAL_FIXTURE:
+        if (
+            result.status is not Status.ARRIS_REFUSAL
+            or report.status is not OracleStatus.INVALID
+            or result.refusal is None
+            or result.refusal.kind != "OpInternalError"
+            or result.refusal.message
+            != "kernel bug: the corner edge through the trim point was not found"
+            or result.refusal.entities
+        ):
+            raise ValueError("the row lacks the wing fillet's missing trim edge failure")
+        disagreement = "arris_bug"
     else:
         if slug not in _FAILURE_REPLAY_ENTITIES:
             raise ValueError(f"no failure replay check for fixture {slug!r}")
@@ -5546,6 +6475,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     import arris_gym as ag
     from arris_gym.census import benchcad, cadrecode
     from arris_gym.fidelity import (
+        ClosedForm,
         FidelityOutcome,
         FidelityTable,
         OracleReport,
@@ -5553,6 +6483,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         Verdict,
         compare,
     )
+    from arris_gym.fidelity._agreement import figures_agree
+    from cq_corpus import TIMEOUT
 
     parser = argparse.ArgumentParser(description=__doc__, fromfile_prefix_chars="@")
     parser.add_argument("--corpus", choices=("benchcad", "cadrecode"), default="benchcad")
@@ -5603,6 +6535,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="class a stem occt_wrong by the boundary integral with conical and toroidal faces",
     )
     parser.add_argument(
+        "--propeller-construction",
+        action="append",
+        default=[],
+        metavar="STEM",
+        help="class a propeller occt_wrong from its placed hub and blade geometry",
+    )
+    parser.add_argument(
+        "--boundary-subdivisions",
+        type=int,
+        nargs=2,
+        metavar=("COARSE", "FINE"),
+        help="trim subdivisions for both boundary integrations",
+    )
+    parser.add_argument(
         "--signed-solids",
         action="append",
         default=[],
@@ -5617,6 +6563,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="class a stem by_design by this doc anchor (a vertex blend's corner patch)",
     )
     args = parser.parse_args(argv)
+    boundary_subdivisions = None
+    if args.boundary_subdivisions is not None:
+        coarse, fine = args.boundary_subdivisions
+        if not 0 < coarse < fine:
+            parser.error("--boundary-subdivisions requires positive, increasing counts")
+        boundary_subdivisions = (coarse, fine)
     if args.sketch_boundary and args.corpus != "cadrecode":
         parser.error("--sketch-boundary requires --corpus cadrecode")
     measure_stems: frozenset[str] = frozenset()
@@ -5640,7 +6592,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not failures:
             parser.error("--failure-replay requires at least one entry")
     if args.table is None and (
-        (not measure_stems and not failures)
+        (
+            not measure_stems
+            and not failures
+            and not args.boundary
+            and not args.blended_boundary
+            and not args.propeller_construction
+        )
         or args.refusal
         or args.arris_bug
         or args.sketch_boundary
@@ -5649,7 +6607,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     refusals = dict(item.split("=", 1) for item in args.refusal)
     arris_bugs = dict(item.split("=", 1) for item in args.arris_bug)
     designs = dict(item.split("=", 1) for item in args.by_design)
-    explicit = frozenset([*args.boundary, *args.blended_boundary, *args.signed_solids, *designs])
+    propeller_stems = frozenset(args.propeller_construction)
+    other_explicit = [*args.boundary, *args.blended_boundary, *args.signed_solids, *designs]
+    if len(propeller_stems) != len(args.propeller_construction) or propeller_stems.intersection(
+        other_explicit
+    ):
+        parser.error("a propeller construction stem has more than one evidence selection")
+    explicit = propeller_stems.union(other_explicit)
     if measure_stems & explicit:
         parser.error("a measure replay stem is also specified by another option")
     if failures.keys() & (explicit | measure_stems):
@@ -5663,12 +6627,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.table is not None
         else {}
     )
-    if not measure_stems <= texts.keys():
-        parser.error(f"unknown measure replay stems: {sorted(measure_stems - texts.keys())}")
+    checked_measures = measure_stems | propeller_stems
+    if not checked_measures <= texts.keys():
+        parser.error(f"unknown measure replay stems: {sorted(checked_measures - texts.keys())}")
     if unknown_failures := failures.keys() - texts.keys():
         parser.error(f"unknown failure replay stems: {sorted(unknown_failures)}")
     try:
         verdicts.update(_measure_replay_verdicts(sorted(measure_stems), texts))
+        for stem in sorted(propeller_stems):
+            verdicts[stem] = {
+                "disagreement": "occt_wrong",
+                "evidence": propeller_closed_form(texts[stem]),
+            }
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1
@@ -5676,7 +6646,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     alias = "\nr = result\n" if args.corpus == "benchcad" else ""
     for stems, blends in ((args.boundary, False), (args.blended_boundary, True)):
         if stems:
-            forms = sketch_boundary_forms([texts[stem] + alias for stem in stems], blends=blends)
+            forms = sketch_boundary_forms(
+                [texts[stem] + alias for stem in stems],
+                blends=blends,
+                subdivisions=boundary_subdivisions,
+            )
             for stem, boundary_form in zip(stems, forms, strict=True):
                 verdicts[stem] = {"disagreement": "occt_wrong", "evidence": boundary_form}
     if args.signed_solids:
@@ -5697,7 +6671,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             and entry.row.status is ag.Status.OK
             and (entry.row.outcome is FidelityOutcome.UNCLASSIFIED or entry.row.verdict is not None)
         ]
-        forms = sketch_boundary_forms([texts[stem] for stem in sketch_stems])
+        forms = sketch_boundary_forms(
+            [texts[stem] for stem in sketch_stems], subdivisions=boundary_subdivisions
+        )
         for stem, boundary_form in zip(sketch_stems, forms, strict=True):
             verdicts[stem] = {"disagreement": "occt_wrong", "evidence": boundary_form}
     reports = {}
@@ -5706,24 +6682,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         reports[row["stem"]] = OracleReport.model_validate(row["report"])
     stems = sorted(verdicts.keys() | failures.keys())
     with ag.Sandbox() as sandbox:
-        results = sandbox.run_many([texts[s] for s in stems], dialect="cq", workers=WORKERS)
+        results = sandbox.run_many(
+            [texts[s] for s in stems], dialect="cq", timeout=TIMEOUT, workers=WORKERS
+        )
     refused = []
     not_its_cause = []
     for stem, result in zip(stems, results, strict=True):
         try:
+            report = reports[stem]
+            if result.program_sha256 != report.program_sha256:
+                raise ValueError("the pinned oracle report is for a different program")
             if stem in failures:
-                verdicts[stem] = _failure_replay_verdict(result, reports[stem], failures[stem])
-                compare(result, reports[stem], Verdict.model_validate(verdicts[stem]))
+                verdicts[stem] = _failure_replay_verdict(result, report, failures[stem])
+                compare(result, report, Verdict.model_validate(verdicts[stem]))
                 continue
             evidence = verdicts[stem]["evidence"]
             if verdicts[stem]["disagreement"] == "arris_refusal" and isinstance(evidence, dict):
                 check_refusal_cause(result.refusal, str(evidence["path"]))
             if verdicts[stem]["disagreement"] == "by_design":
-                check_by_design_cause(result, reports[stem])
-            if stem in measure_stems:
-                if result.program_sha256 != reports[stem].program_sha256:
-                    raise ValueError("the pinned oracle report is for a different program")
-                report = reports[stem]
+                check_by_design_cause(result, report)
+            if stem in checked_measures:
                 if (
                     result.status is not ag.Status.OK
                     or report.status is not OracleStatus.OK
@@ -5737,16 +6715,34 @@ def main(argv: Sequence[str] | None = None) -> int:
                     )
                 if verdicts[stem]["disagreement"] == "arris_bug" and isinstance(evidence, dict):
                     check_bug_cause(
-                        result, reports[stem], str(evidence["path"]), measure_program=texts[stem]
+                        result, report, str(evidence["path"]), measure_program=texts[stem]
                     )
+                if stem.startswith("knob_"):
+                    form = ClosedForm.model_validate(evidence)
+                    if not figures_agree(result.measures, form):
+                        verdicts[stem]["disagreement"] = "arris_bug"
+                        if not figures_agree(report.measures, form):
+                            _, _, flutes, _ = _knob_geometry(texts[stem])
+                            if not _knob_flutes_overlap(flutes) or any(
+                                abs(measured - form.volume)
+                                <= VOLUME_REL * max(measured, form.volume)
+                                for measured in (result.measures.volume, report.measures.volume)
+                            ):
+                                raise ValueError(
+                                    "the knob lacks the two intersecting-flute volume gaps"
+                                )
+                            verdicts[stem]["evidence"] = {
+                                "kind": "fixture",
+                                "path": "tests/fixtures/regression/cq-draft-knob-flute-measures",
+                            }
             elif verdicts[stem]["disagreement"] == "arris_bug" and isinstance(evidence, dict):
                 try:
-                    check_bug_cause(result, reports[stem], str(evidence["path"]))
+                    check_bug_cause(result, report, str(evidence["path"]))
                 except ValueError as error:  # counted, never labelled: the row stays as it is
                     not_its_cause.append(f"{stem}: {error}")
                     del verdicts[stem]
                     continue
-            compare(result, reports[stem], Verdict.model_validate(verdicts[stem]))
+            compare(result, report, Verdict.model_validate(verdicts[stem]))
         except ValueError as error:
             refused.append(f"{stem}: {error}")
     if not_its_cause:

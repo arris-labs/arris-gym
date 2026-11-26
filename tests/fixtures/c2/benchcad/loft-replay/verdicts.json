@@ -1,0 +1,4693 @@
+{
+ "gusseted_bracket_000041_s20260507": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds"
+  }
+ },
+ "gusseted_bracket_009604_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds"
+  }
+ },
+ "gusseted_bracket_016486_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds"
+  }
+ },
+ "gusseted_bracket_019565_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds"
+  }
+ },
+ "i_beam_000007_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 302804.6855,
+   "bounds": [
+    [
+     -39.6350001,
+     -1e-07,
+     -1e-07
+    ],
+    [
+     39.6350001,
+     154.6800001,
+     483.36
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    77.32909622,
+    242.31539214
+   ],
+   "kind": "closed_form",
+   "note": "Exact v antiderivatives of the area and flux on planar and cylindrical faces, integrated along the trims (Green's theorem); both quadratures agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py --sketch-boundary",
+   "volume": 871072.212
+  }
+ },
+ "i_beam_000138_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2566814.282,
+   "bounds": [
+    [
+     -71.5400001,
+     -1e-07,
+     -1e-07
+    ],
+    [
+     71.5400001,
+     286.1600001,
+     2265.43
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    143.05160193,
+    1133.50080981
+   ],
+   "kind": "closed_form",
+   "note": "Exact v antiderivatives of the area and flux on planar and cylindrical faces, integrated along the trims (Green's theorem); both quadratures agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py --sketch-boundary",
+   "volume": 11946052.71
+  }
+ },
+ "i_beam_004429_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 613224.912,
+   "bounds": [
+    [
+     -42.4550001,
+     -1e-07,
+     -1e-07
+    ],
+    [
+     42.4550001,
+     162.8300001,
+     930.47
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    81.40664361,
+    465.90676819
+   ],
+   "kind": "closed_form",
+   "note": "Exact v antiderivatives of the area and flux on planar and cylindrical faces, integrated along the trims (Green's theorem); both quadratures agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py --sketch-boundary",
+   "volume": 2008971.38
+  }
+ },
+ "knob_000063_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1180.570230330851,
+   "bounds": [
+    [
+     0.0,
+     -8.75,
+     -8.75
+    ],
+    [
+     22.8099357524623,
+     8.75,
+     8.75
+    ]
+   ],
+   "centroid": [
+    8.645423079169465,
+    1.737340808679075e-18,
+    2.6060112130186123e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2044.9146540808422
+  }
+ },
+ "knob_000071_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1738.6976359896994,
+   "bounds": [
+    [
+     0.0,
+     -10.56,
+     -10.56
+    ],
+    [
+     28.11335855712317,
+     10.56,
+     10.56
+    ]
+   ],
+   "centroid": [
+    10.59666364182947,
+    6.433388456442714e-06,
+    -2.9215203451310063e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 3694.8635714892944
+  }
+ },
+ "knob_000156_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 408.5633944856122,
+   "bounds": [
+    [
+     0.0,
+     -5.21,
+     -5.21
+    ],
+    [
+     13.263099750181448,
+     5.21,
+     5.21
+    ]
+   ],
+   "centroid": [
+    4.776648000604669,
+    9.925214024793338e-19,
+    9.925214024793338e-19
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 447.435399116554
+  }
+ },
+ "knob_000213_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 617.0165236451173,
+   "bounds": [
+    [
+     0.0,
+     -6.25,
+     -6.25
+    ],
+    [
+     17.10960660836838,
+     6.25,
+     6.25
+    ]
+   ],
+   "centroid": [
+    6.287816699780436,
+    -2.1358913254616696e-18,
+    1.0679456627308348e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 831.670047171662
+  }
+ },
+ "knob_000213_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2736.2083301456423,
+   "bounds": [
+    [
+     0.0,
+     -11.21,
+     -11.21
+    ],
+    [
+     30.99149297948521,
+     11.21,
+     11.21
+    ]
+   ],
+   "centroid": [
+    8.699566030343307,
+    2.4521427871893665e-18,
+    -3.67821418078405e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2897.640135281521
+  }
+ },
+ "knob_000226_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1124.9931903319944,
+   "bounds": [
+    [
+     -8.35,
+     -8.35,
+     0.0
+    ],
+    [
+     8.35,
+     8.35,
+     22.642221658645603
+    ]
+   ],
+   "centroid": [
+    8.211552367627547e-06,
+    -3.931330714871343e-05,
+    8.64059349271143
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1793.5117076426532
+  }
+ },
+ "knob_000240_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 769.9252968015082,
+   "bounds": [
+    [
+     -7.05,
+     -7.05,
+     0.0
+    ],
+    [
+     7.05,
+     7.05,
+     17.756880291164922
+    ]
+   ],
+   "centroid": [
+    3.674462050829341e-18,
+    -5.511693076244011e-18,
+    6.463593539030049
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 966.8663411556092
+  }
+ },
+ "knob_000244_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 28851.79572094494,
+   "bounds": [
+    [
+     0.0,
+     -38.47,
+     -38.47
+    ],
+    [
+     102.83139493627209,
+     38.47,
+     38.47
+    ]
+   ],
+   "centroid": [
+    34.932146804581976,
+    -5.958730459365474e-18,
+    -2.3834921837461895e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 152632.29440819134
+  }
+ },
+ "knob_000264_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6143.297514042045,
+   "bounds": [
+    [
+     0.0,
+     -19.93,
+     -19.93
+    ],
+    [
+     53.17578725798359,
+     19.93,
+     19.93
+    ]
+   ],
+   "centroid": [
+    19.989739947341505,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 25447.69180531974
+  }
+ },
+ "knob_000274_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 20580.58405202287,
+   "bounds": [
+    [
+     0.0,
+     -32.55,
+     -32.55
+    ],
+    [
+     87.50292033246434,
+     32.55,
+     32.55
+    ]
+   ],
+   "centroid": [
+    28.987807926446507,
+    0.0,
+    -1.1450536481122087e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 99285.16267254874
+  }
+ },
+ "knob_000349_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 804.6006550301629,
+   "bounds": [
+    [
+     0.0,
+     -7.1,
+     -7.1
+    ],
+    [
+     19.350546631540247,
+     7.1,
+     7.1
+    ]
+   ],
+   "centroid": [
+    7.184415460710693,
+    6.685897705245434e-06,
+    -3.158463811179273e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1158.2157175010418
+  }
+ },
+ "knob_000367_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1796.4888747431257,
+   "bounds": [
+    [
+     -9.38,
+     -9.38,
+     0.0
+    ],
+    [
+     9.38,
+     9.38,
+     24.40511300525717
+    ]
+   ],
+   "centroid": [
+    -1.634142797368372e-16,
+    5.503770036673558e-17,
+    6.996100383958
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 1442.3206917870175
+  }
+ },
+ "knob_000379_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1637.4587632564094,
+   "bounds": [
+    [
+     0.0,
+     -10.28,
+     -10.28
+    ],
+    [
+     27.40143713315372,
+     10.28,
+     10.28
+    ]
+   ],
+   "centroid": [
+    10.362957756800864,
+    0.0,
+    -1.025739652044601e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 3463.56277805864
+  }
+ },
+ "knob_000410_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3726.1273555566722,
+   "bounds": [
+    [
+     0.0,
+     -13.62,
+     -13.62
+    ],
+    [
+     36.737781721754885,
+     13.62,
+     13.62
+    ]
+   ],
+   "centroid": [
+    11.343793681572938,
+    -3.8888164541409505e-16,
+    -3.7986068379505585e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 6349.200285629043
+  }
+ },
+ "knob_000493_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 499.6780301407276,
+   "bounds": [
+    [
+     0.0,
+     -5.77,
+     -5.77
+    ],
+    [
+     14.628942194222653,
+     5.77,
+     5.77
+    ]
+   ],
+   "centroid": [
+    5.335857988788572,
+    0.0,
+    3.0377983535773604e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 584.7513997459324
+  }
+ },
+ "knob_000507_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2720.299765399934,
+   "bounds": [
+    [
+     0.0,
+     -13.27,
+     -13.27
+    ],
+    [
+     35.82729911842391,
+     13.27,
+     13.27
+    ]
+   ],
+   "centroid": [
+    13.106853287673204,
+    0.0,
+    8.828293271453012e-19
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 8048.47226878718
+  }
+ },
+ "knob_000530_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 22639.739397449222,
+   "bounds": [
+    [
+     0.0,
+     -33.67,
+     -33.67
+    ],
+    [
+     91.65122349758194,
+     33.67,
+     33.67
+    ]
+   ],
+   "centroid": [
+    31.43561374224654,
+    9.177634084403786e-18,
+    1.8355268168807572e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 99099.03722556318
+  }
+ },
+ "knob_000538_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 10840.282209056171,
+   "bounds": [
+    [
+     0.0,
+     -23.72,
+     -23.72
+    ],
+    [
+     64.44508062308437,
+     23.72,
+     23.72
+    ]
+   ],
+   "centroid": [
+    21.742982779065937,
+    -5.07670973866909e-16,
+    6.025512551886104e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 36905.61286729719
+  }
+ },
+ "knob_000548_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 866.1381567018153,
+   "bounds": [
+    [
+     0.0,
+     -7.38,
+     -7.38
+    ],
+    [
+     20.106971434671557,
+     7.38,
+     7.38
+    ]
+   ],
+   "centroid": [
+    7.5997830392944445,
+    -2.73399069280062e-18,
+    -1.36699534640031e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1299.460780227165
+  }
+ },
+ "knob_000569_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5811.788145035767,
+   "bounds": [
+    [
+     -19.39,
+     -19.39,
+     0.0
+    ],
+    [
+     19.39,
+     19.39,
+     51.78915209739929
+    ]
+   ],
+   "centroid": [
+    2.40411882833996e-18,
+    -2.40411882833996e-18,
+    19.380388386060535
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 23644.180225508364
+  }
+ },
+ "knob_000578_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2684.1071384759834,
+   "bounds": [
+    [
+     -11.17,
+     -11.17,
+     0.0
+    ],
+    [
+     11.17,
+     11.17,
+     29.675468971454592
+    ]
+   ],
+   "centroid": [
+    0.0,
+    2.9919285117176176e-18,
+    8.205263727559785
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2374.8653518201513
+  }
+ },
+ "knob_000606_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5861.124054806132,
+   "bounds": [
+    [
+     0.0,
+     -19.52,
+     -19.52
+    ],
+    [
+     52.11810708558934,
+     19.52,
+     19.52
+    ]
+   ],
+   "centroid": [
+    19.656952846678234,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 24202.316843151377
+  }
+ },
+ "knob_000609_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 7561.384062650487,
+   "bounds": [
+    [
+     -22.14,
+     -22.14,
+     0.0
+    ],
+    [
+     22.14,
+     22.14,
+     58.85269420055049
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    22.70853464856068
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 34072.30102559114
+  }
+ },
+ "knob_000611_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1366.261957991794,
+   "bounds": [
+    [
+     0.0,
+     -9.43,
+     -9.43
+    ],
+    [
+     25.20815164091332,
+     9.43,
+     9.43
+    ]
+   ],
+   "centroid": [
+    9.43682842480453,
+    0.0,
+    2.5782760684290137e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2755.8830664438724
+  }
+ },
+ "knob_000652_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 554.5314062847808,
+   "bounds": [
+    [
+     -6.07,
+     -6.07,
+     0.0
+    ],
+    [
+     6.07,
+     6.07,
+     15.36167957202435
+    ]
+   ],
+   "centroid": [
+    2.6511817250023698e-18,
+    2.6511817250023698e-18,
+    5.653364790138344
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 670.0245489202226
+  }
+ },
+ "knob_000687_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 13678.60227366458,
+   "bounds": [
+    [
+     -26.35,
+     -26.35,
+     0.0
+    ],
+    [
+     26.35,
+     26.35,
+     71.31970698276851
+    ]
+   ],
+   "centroid": [
+    9.271586780521271e-18,
+    -1.1589483475651587e-17,
+    24.877594991249403
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 49047.4135281617
+  }
+ },
+ "knob_000705_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 443.6528887415056,
+   "bounds": [
+    [
+     0.0,
+     -5.4,
+     -5.4
+    ],
+    [
+     13.73308480772867,
+     5.4,
+     5.4
+    ]
+   ],
+   "centroid": [
+    4.828489818412081,
+    6.690657095863834e-06,
+    -3.2895090165926486e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 481.2747945494956
+  }
+ },
+ "knob_000731_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 20244.486971779777,
+   "bounds": [
+    [
+     0.0,
+     -31.88,
+     -31.88
+    ],
+    [
+     86.9338584341591,
+     31.88,
+     31.88
+    ]
+   ],
+   "centroid": [
+    29.548925577259283,
+    -1.0573043030770709e-17,
+    -3.4362389850004804e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 86020.14567859295
+  }
+ },
+ "knob_000762_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5618.579923353571,
+   "bounds": [
+    [
+     -19.03,
+     -19.03,
+     0.0
+    ],
+    [
+     19.03,
+     19.03,
+     50.709238004002074
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    19.813533989300783
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 21353.27540585013
+  }
+ },
+ "knob_000779_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4608.18728823624,
+   "bounds": [
+    [
+     -15.09,
+     -15.09,
+     0.0
+    ],
+    [
+     15.09,
+     15.09,
+     40.547098427876904
+    ]
+   ],
+   "centroid": [
+    7.061613778350643e-06,
+    -3.1792405214279594e-05,
+    13.228037967495286
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 8416.852846877422
+  }
+ },
+ "knob_000813_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8725.086675794142,
+   "bounds": [
+    [
+     0.0,
+     -21.13,
+     -21.13
+    ],
+    [
+     57.64305892234941,
+     21.13,
+     21.13
+    ]
+   ],
+   "centroid": [
+    19.43510024567249,
+    -6.156353975178372e-18,
+    -1.026058995863062e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 27699.87841342134
+  }
+ },
+ "knob_000845_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 25689.629255374173,
+   "bounds": [
+    [
+     0.0,
+     -36.66,
+     -36.66
+    ],
+    [
+     98.15197256527955,
+     36.66,
+     36.66
+    ]
+   ],
+   "centroid": [
+    32.546557726897305,
+    -8.468587737780401e-16,
+    -5.502858528715692e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 133323.60430190663
+  }
+ },
+ "knob_000876_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1301.0391664598926,
+   "bounds": [
+    [
+     -7.72,
+     -7.72,
+     0.0
+    ],
+    [
+     7.72,
+     7.72,
+     20.98590044458372
+    ]
+   ],
+   "centroid": [
+    1.5071633905149762e-05,
+    -7.159008370781589e-05,
+    5.345288817772243
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 729.8471281907307
+  }
+ },
+ "knob_000898_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4300.076197270602,
+   "bounds": [
+    [
+     0.0,
+     -16.58,
+     -16.58
+    ],
+    [
+     44.410213396084366,
+     16.58,
+     16.58
+    ]
+   ],
+   "centroid": [
+    16.69091560865394,
+    -7.850429666798617e-18,
+    3.9252148333993084e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 14481.607064442016
+  }
+ },
+ "knob_000907_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8197.92307341961,
+   "bounds": [
+    [
+     -22.97,
+     -22.97,
+     0.0
+    ],
+    [
+     22.97,
+     22.97,
+     60.94079922623158
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -1.2178971451618935e-17,
+    23.470095440701822
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 37338.73198512303
+  }
+ },
+ "knob_000910_s20260506": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-draft-knob-flute-measures"
+  }
+ },
+ "knob_000952_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 723.733681588819,
+   "bounds": [
+    [
+     -6.78,
+     -6.78,
+     0.0
+    ],
+    [
+     6.78,
+     6.78,
+     18.502932096427248
+    ]
+   ],
+   "centroid": [
+    1.7038450708759514e-18,
+    1.7038450708759514e-18,
+    6.963597419847265
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1042.5577241521264
+  }
+ },
+ "knob_000958_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4616.145153993214,
+   "bounds": [
+    [
+     -17.17,
+     -17.17,
+     0.0
+    ],
+    [
+     17.17,
+     17.17,
+     45.910403169981166
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.788205085964518e-18,
+    17.346916484651487
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 15893.98758200823
+  }
+ },
+ "knob_000961_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4255.724220834041,
+   "bounds": [
+    [
+     0.0,
+     -14.58,
+     -14.58
+    ],
+    [
+     39.22960268943771,
+     14.58,
+     14.58
+    ]
+   ],
+   "centroid": [
+    12.198408880892107,
+    -3.810927681193632e-16,
+    3.265320018190942e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 7518.576688311716
+  }
+ },
+ "knob_000970_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3594.660934337305,
+   "bounds": [
+    [
+     0.0,
+     -13.37,
+     -13.37
+    ],
+    [
+     36.08163476003455,
+     13.37,
+     13.37
+    ]
+   ],
+   "centroid": [
+    11.10260415865708,
+    -3.4764060788619445e-16,
+    -2.771938174073909e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 6054.940366506124
+  }
+ },
+ "knob_000990_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1609.4156136741653,
+   "bounds": [
+    [
+     0.0,
+     -10.09,
+     -10.09
+    ],
+    [
+     27.982465044613228,
+     10.09,
+     10.09
+    ]
+   ],
+   "centroid": [
+    10.184741415473827,
+    -4.83070489600021e-19,
+    1.449211468800063e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 3677.22077345495
+  }
+ },
+ "knob_000992_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2349.154470651477,
+   "bounds": [
+    [
+     0.0,
+     -12.2,
+     -12.2
+    ],
+    [
+     33.59819860835877,
+     12.2,
+     12.2
+    ]
+   ],
+   "centroid": [
+    12.65223553630663,
+    0.0,
+    2.3238833938018905e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 6115.132434400221
+  }
+ },
+ "knob_001052_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 25049.297219490127,
+   "bounds": [
+    [
+     -35.91,
+     -35.91,
+     0.0
+    ],
+    [
+     35.91,
+     35.91,
+     96.20425460051983
+    ]
+   ],
+   "centroid": [
+    -7.115275497200012e-18,
+    -1.778818874300003e-18,
+    32.33709729737243
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 127822.83723670723
+  }
+ },
+ "knob_001095_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1181.9937354772615,
+   "bounds": [
+    [
+     0.0,
+     -8.74,
+     -8.74
+    ],
+    [
+     23.424518628182714,
+     8.74,
+     8.74
+    ]
+   ],
+   "centroid": [
+    8.558801656390223,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2228.4269062233934
+  }
+ },
+ "knob_001120_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 967.6057031958951,
+   "bounds": [
+    [
+     -6.65,
+     -6.65,
+     0.0
+    ],
+    [
+     6.65,
+     6.65,
+     18.173472163354017
+    ]
+   ],
+   "centroid": [
+    3.0324143982903043e-16,
+    -7.968032798318599e-17,
+    4.220054567244027
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 497.9955129143308
+  }
+ },
+ "knob_001132_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 568.3149949404301,
+   "bounds": [
+    [
+     0.0,
+     -5.23,
+     -5.23
+    ],
+    [
+     13.301481364036825,
+     5.23,
+     5.23
+    ]
+   ],
+   "centroid": [
+    3.0210789724512837,
+    1.8225331166355367e-18,
+    -4.5563327915888424e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 243.66592068838102
+  }
+ },
+ "knob_001141_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 563.0094808286427,
+   "bounds": [
+    [
+     0.0,
+     -6.07,
+     -6.07
+    ],
+    [
+     15.37167957202435,
+     6.07,
+     6.07
+    ]
+   ],
+   "centroid": [
+    5.479266754806271,
+    7.558075613116373e-06,
+    -3.8397409511149293e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 652.5509452916641
+  }
+ },
+ "knob_001142_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 666.608560223428,
+   "bounds": [
+    [
+     0.0,
+     -6.61,
+     -6.61
+    ],
+    [
+     16.685884032526694,
+     6.61,
+     6.61
+    ]
+   ],
+   "centroid": [
+    6.127764495163593,
+    0.0,
+    -2.141293252102082e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 829.5719596820389
+  }
+ },
+ "knob_001167_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1764.1339862064226,
+   "bounds": [
+    [
+     -9.18,
+     -9.18,
+     0.0
+    ],
+    [
+     9.18,
+     9.18,
+     23.90596440398187
+    ]
+   ],
+   "centroid": [
+    -1.521134507264461e-17,
+    -1.647895716203166e-17,
+    7.097982182251687
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1401.34103664095
+  }
+ },
+ "knob_001193_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 679.5128352917131,
+   "bounds": [
+    [
+     -6.67,
+     -6.67,
+     0.0
+    ],
+    [
+     6.67,
+     6.67,
+     17.56929415893946
+    ]
+   ],
+   "centroid": [
+    1.3412989481619189e-18,
+    -8.941992987746126e-19,
+    6.396310341372381
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 993.266736976043
+  }
+ },
+ "knob_001208_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 16146.758460732897,
+   "bounds": [
+    [
+     0.0,
+     -28.74,
+     -28.74
+    ],
+    [
+     77.52427222752671,
+     28.74,
+     28.74
+    ]
+   ],
+   "centroid": [
+    28.036789724742633,
+    8.630318135153433e-06,
+    -3.9232628766900104e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 62698.13790552099
+  }
+ },
+ "knob_001210_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1086.778334911666,
+   "bounds": [
+    [
+     0.0,
+     -8.38,
+     -8.38
+    ],
+    [
+     22.48007078665464,
+     8.38,
+     8.38
+    ]
+   ],
+   "centroid": [
+    8.146842425773714,
+    4.325960370830849e-06,
+    -1.903143831281997e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1989.3210157573203
+  }
+ },
+ "knob_001250_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2803.9911229051654,
+   "bounds": [
+    [
+     -13.45,
+     -13.45,
+     0.0
+    ],
+    [
+     13.45,
+     13.45,
+     36.30274640741267
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -8.542109213310469e-19,
+    13.247113701973353
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 8318.118137062913
+  }
+ },
+ "knob_001334_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1274.308986565748,
+   "bounds": [
+    [
+     0.0,
+     -9.11,
+     -9.11
+    ],
+    [
+     24.37368871949829,
+     9.11,
+     9.11
+    ]
+   ],
+   "centroid": [
+    9.07113948951529,
+    -1.415580801600956e-18,
+    -1.415580801600956e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2509.721574905895
+  }
+ },
+ "knob_001336_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2604.9211086690943,
+   "bounds": [
+    [
+     -12.87,
+     -12.87,
+     0.0
+    ],
+    [
+     12.87,
+     12.87,
+     35.388518724884015
+    ]
+   ],
+   "centroid": [
+    0.0,
+    4.0002754679801966e-18,
+    13.533076270670993
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 7104.938061866671
+  }
+ },
+ "knob_001348_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5991.029277722929,
+   "bounds": [
+    [
+     0.0,
+     -19.64,
+     -19.64
+    ],
+    [
+     52.41207525412006,
+     19.64,
+     19.64
+    ]
+   ],
+   "centroid": [
+    19.517453833892443,
+    -4.675073168191021e-18,
+    4.675073168191021e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 24317.659559883672
+  }
+ },
+ "knob_001365_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1038.3482589839182,
+   "bounds": [
+    [
+     -7.04,
+     -7.04,
+     0.0
+    ],
+    [
+     7.04,
+     7.04,
+     17.71688029116492
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    4.029546417220944
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 481.28469252978687
+  }
+ },
+ "knob_001376_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4449.973404481519,
+   "bounds": [
+    [
+     -16.86,
+     -16.86,
+     0.0
+    ],
+    [
+     16.86,
+     16.86,
+     45.13787627042857
+    ]
+   ],
+   "centroid": [
+    6.451218988095072e-06,
+    -2.929036283740895e-05,
+    17.002866107160134
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 15145.526314636563
+  }
+ },
+ "knob_001396_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 643.7051167270447,
+   "bounds": [
+    [
+     0.0,
+     -6.53,
+     -6.53
+    ],
+    [
+     16.482548666389306,
+     6.53,
+     6.53
+    ]
+   ],
+   "centroid": [
+    6.132743003673806,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 813.1502954258762
+  }
+ },
+ "knob_001405_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 413.0971857823614,
+   "bounds": [
+    [
+     -5.22,
+     -5.22,
+     0.0
+    ],
+    [
+     5.22,
+     5.22,
+     13.304760896780927
+    ]
+   ],
+   "centroid": [
+    -9.98078966260307e-19,
+    1.996157932520614e-18,
+    4.717123708896659
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 444.9439622137479
+  }
+ },
+ "knob_001415_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 14884.125179247416,
+   "bounds": [
+    [
+     0.0,
+     -27.5,
+     -27.5
+    ],
+    [
+     75.39328972194788,
+     27.5,
+     27.5
+    ]
+   ],
+   "centroid": [
+    25.472113696776713,
+    5.4898356885862216e-06,
+    -2.4530820851054226e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 59450.434265943
+  }
+ },
+ "knob_001418_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4109.482174529495,
+   "bounds": [
+    [
+     -13.66,
+     -13.66,
+     0.0
+    ],
+    [
+     13.66,
+     13.66,
+     37.49620060600458
+    ]
+   ],
+   "centroid": [
+    -6.1264074067806976e-18,
+    1.5316018516951744e-18,
+    10.612516126459063
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 4639.213089052306
+  }
+ },
+ "knob_001488_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4317.517385636766,
+   "bounds": [
+    [
+     -16.76,
+     -16.76,
+     0.0
+    ],
+    [
+     16.76,
+     16.76,
+     44.98493740436102
+    ]
+   ],
+   "centroid": [
+    1.7705394249138967e-18,
+    1.7705394249138967e-18,
+    16.474730322153025
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 16052.570776155513
+  }
+ },
+ "knob_001502_s20260506": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-draft-knob-flute-measures"
+  }
+ },
+ "knob_001541_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 7752.867306573142,
+   "bounds": [
+    [
+     0.0,
+     -22.35,
+     -22.35
+    ],
+    [
+     59.35935007338185,
+     22.35,
+     22.35
+    ]
+   ],
+   "centroid": [
+    22.76442559170887,
+    0.0,
+    6.557302312713316e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 34674.88070549978
+  }
+ },
+ "knob_001601_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5556.143743339899,
+   "bounds": [
+    [
+     -18.86,
+     -18.86,
+     0.0
+    ],
+    [
+     18.86,
+     18.86,
+     50.27274884175789
+    ]
+   ],
+   "centroid": [
+    5.5049042736030015e-18,
+    1.1009808547206003e-17,
+    19.447106501084342
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 20651.919101802498
+  }
+ },
+ "knob_001610_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5480.096725179053,
+   "bounds": [
+    [
+     0.0,
+     -18.74,
+     -18.74
+    ],
+    [
+     49.942714384344036,
+     18.74,
+     18.74
+    ]
+   ],
+   "centroid": [
+    19.299522403511478,
+    0.0,
+    -1.4006891260279037e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 20291.233009713396
+  }
+ },
+ "knob_001630_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1672.1749829481869,
+   "bounds": [
+    [
+     0.0,
+     -10.29,
+     -10.29
+    ],
+    [
+     28.521540674483372,
+     10.29,
+     10.29
+    ]
+   ],
+   "centroid": [
+    10.417857392384628,
+    -9.16854201607834e-19,
+    5.959552310450921e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 3874.894909758076
+  }
+ },
+ "knob_001632_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1440.542111877948,
+   "bounds": [
+    [
+     0.0,
+     -9.63,
+     -9.63
+    ],
+    [
+     25.74009723546542,
+     9.63,
+     9.63
+    ]
+   ],
+   "centroid": [
+    9.561744332076566,
+    5.4478314199965795e-06,
+    -2.4539865835372356e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2889.3122733579617
+  }
+ },
+ "knob_001701_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4847.060402429489,
+   "bounds": [
+    [
+     -15.47,
+     -15.47,
+     0.0
+    ],
+    [
+     15.47,
+     15.47,
+     41.53356516887964
+    ]
+   ],
+   "centroid": [
+    7.440909921312564e-06,
+    -3.3582910687916684e-05,
+    13.615321291445651
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 8973.590497366504
+  }
+ },
+ "knob_001732_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6337.640967161563,
+   "bounds": [
+    [
+     0.0,
+     -20.29,
+     -20.29
+    ],
+    [
+     54.10309109080089,
+     20.29,
+     20.29
+    ]
+   ],
+   "centroid": [
+    20.54445157838036,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 26871.66353760386
+  }
+ },
+ "knob_001755_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 41594.577245894994,
+   "bounds": [
+    [
+     0.0,
+     -46.61,
+     -46.61
+    ],
+    [
+     123.70089272936721,
+     46.61,
+     46.61
+    ]
+   ],
+   "centroid": [
+    42.52171972376537,
+    -8.523331339905441e-16,
+    -1.8634869860984335e-16
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 247141.40172919718
+  }
+ },
+ "knob_001781_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3005.651853004035,
+   "bounds": [
+    [
+     0.0,
+     -11.87,
+     -11.87
+    ],
+    [
+     31.455437421673317,
+     11.87,
+     11.87
+    ]
+   ],
+   "centroid": [
+    9.230200522612408,
+    1.3504224280240243e-05,
+    -6.169324716188214e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2836.7098862583553
+  }
+ },
+ "knob_001784_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1555.0219800382754,
+   "bounds": [
+    [
+     -8.59,
+     -8.59,
+     0.0
+    ],
+    [
+     8.59,
+     8.59,
+     23.046887367519226
+    ]
+   ],
+   "centroid": [
+    -1.8993755214254379e-16,
+    3.1386246092449835e-17,
+    5.941304358525526
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 1241.8625506694873
+  }
+ },
+ "knob_001829_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 16873.018892209537,
+   "bounds": [
+    [
+     0.0,
+     -29.58,
+     -29.58
+    ],
+    [
+     79.70974285426607,
+     29.58,
+     29.58
+    ]
+   ],
+   "centroid": [
+    27.783962379339748,
+    -5.253594322770408e-16,
+    1.2337229779336521e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 65221.75388315066
+  }
+ },
+ "knob_001882_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2752.236693741064,
+   "bounds": [
+    [
+     -13.15,
+     -13.15,
+     0.0
+    ],
+    [
+     13.15,
+     13.15,
+     36.14549305032021
+    ]
+   ],
+   "centroid": [
+    6.166928897763557e-06,
+    -2.7553886091939767e-05,
+    13.714388210873963
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 7457.207971803019
+  }
+ },
+ "knob_001905_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 644.1930685861865,
+   "bounds": [
+    [
+     -6.48,
+     -6.48,
+     0.0
+    ],
+    [
+     6.48,
+     6.48,
+     16.36552721603293
+    ]
+   ],
+   "centroid": [
+    4.593264724908167e-18,
+    8.038213268589292e-18,
+    5.882349802817342
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 773.4615554672891
+  }
+ },
+ "knob_001906_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1596.3855381073618,
+   "bounds": [
+    [
+     -10.05,
+     -10.05,
+     0.0
+    ],
+    [
+     10.05,
+     10.05,
+     27.868446022001223
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.4649109238814265e-18,
+    10.140138739337942
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 3637.8119866024695
+  }
+ },
+ "knob_001983_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5269.071577593115,
+   "bounds": [
+    [
+     -18.44,
+     -18.44,
+     0.0
+    ],
+    [
+     18.44,
+     18.44,
+     49.19756873194379
+    ]
+   ],
+   "centroid": [
+    5.803546130787816e-18,
+    2.901773065393908e-18,
+    19.111781398843785
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 19589.202042955647
+  }
+ },
+ "knob_001997_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 534.5636538935189,
+   "bounds": [
+    [
+     0.0,
+     -5.92,
+     -5.92
+    ],
+    [
+     14.997285427248277,
+     5.92,
+     5.92
+    ]
+   ],
+   "centroid": [
+    5.332477723222013,
+    7.283364210368149e-06,
+    -3.684127423726203e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 611.8498479661405
+  }
+ },
+ "knob_002006_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2803.4874853642045,
+   "bounds": [
+    [
+     -13.45,
+     -13.45,
+     0.0
+    ],
+    [
+     13.45,
+     13.45,
+     36.29274640741267
+    ]
+   ],
+   "centroid": [
+    1.7087440465005806e-18,
+    -2.563116069750871e-18,
+    13.242828214061815
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 8316.549657805743
+  }
+ },
+ "knob_002007_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8862.809939571758,
+   "bounds": [
+    [
+     -23.86,
+     -23.86,
+     0.0
+    ],
+    [
+     23.86,
+     23.86,
+     63.226980528587895
+    ]
+   ],
+   "centroid": [
+    -5.491473191530915e-18,
+    0.0,
+    24.509962830705987
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 41404.85940892753
+  }
+ },
+ "knob_002035_s20260506": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "area": 875.7454669052169,
+   "bounds": [
+    [
+     0.0,
+     -6.71,
+     -6.71
+    ],
+    [
+     16.93176137185305,
+     6.71,
+     6.71
+    ]
+   ],
+   "centroid": [
+    3.2704787905293697,
+    -1.7161039427825893e-16,
+    4.904938563472578e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 405.86783438616186
+  }
+ },
+ "knob_002057_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2584.893568277198,
+   "bounds": [
+    [
+     0.0,
+     -12.75,
+     -12.75
+    ],
+    [
+     35.089921242046124,
+     12.75,
+     12.75
+    ]
+   ],
+   "centroid": [
+    13.247005499801997,
+    4.139114239590624e-18,
+    -4.139114239590624e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 6866.616330264669
+  }
+ },
+ "knob_002067_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3891.1563689387854,
+   "bounds": [
+    [
+     0.0,
+     -15.83,
+     -15.83
+    ],
+    [
+     42.46247214052184,
+     15.83,
+     15.83
+    ]
+   ],
+   "centroid": [
+    15.95424473677816,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 12869.637460984399
+  }
+ },
+ "knob_002078_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8505.310881618758,
+   "bounds": [
+    [
+     -20.86,
+     -20.86,
+     0.0
+    ],
+    [
+     20.86,
+     20.86,
+     56.919202144496715
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.0612344133790411e-18,
+    19.142383045493215
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 26781.74498686618
+  }
+ },
+ "knob_002084_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 9671.887059789004,
+   "bounds": [
+    [
+     -22.31,
+     -22.31,
+     0.0
+    ],
+    [
+     22.31,
+     22.31,
+     60.74742393196129
+    ]
+   ],
+   "centroid": [
+    -1.0593376198440472e-17,
+    1.7655626997400787e-18,
+    20.966799584407916
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 32195.638744053864
+  }
+ },
+ "knob_002089_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1905.69089855203,
+   "bounds": [
+    [
+     -9.52,
+     -9.52,
+     0.0
+    ],
+    [
+     9.52,
+     9.52,
+     25.442433567126077
+    ]
+   ],
+   "centroid": [
+    -1.9062420803096715e-16,
+    -7.143174470986155e-17,
+    6.599145485641327
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 1582.3841473228624
+  }
+ },
+ "knob_002091_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1374.1992530212353,
+   "bounds": [
+    [
+     -9.45,
+     -9.45,
+     0.0
+    ],
+    [
+     9.45,
+     9.45,
+     24.578104838245633
+    ]
+   ],
+   "centroid": [
+    -2.7995851427760363e-18,
+    1.3997925713880181e-18,
+    9.506907475588392
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2538.0286704034093
+  }
+ },
+ "knob_002106_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5634.508837194582,
+   "bounds": [
+    [
+     0.0,
+     -19.14,
+     -19.14
+    ],
+    [
+     51.15781544316687,
+     19.14,
+     19.14
+    ]
+   ],
+   "centroid": [
+    19.225063395266293,
+    0.0,
+    4.9509268073039085e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 22962.73852279502
+  }
+ },
+ "knob_002135_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1134.3653091883648,
+   "bounds": [
+    [
+     -8.38,
+     -8.38,
+     0.0
+    ],
+    [
+     8.38,
+     8.38,
+     22.722649694899253
+    ]
+   ],
+   "centroid": [
+    3.9261948386641006e-18,
+    -7.852389677328201e-18,
+    8.672388923804466
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1809.7490444510504
+  }
+ },
+ "knob_002137_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1334.661482615605,
+   "bounds": [
+    [
+     0.0,
+     -7.78,
+     -7.78
+    ],
+    [
+     21.129467440581074,
+     7.78,
+     7.78
+    ]
+   ],
+   "centroid": [
+    4.8897456368062056,
+    2.531343514464128e-16,
+    1.0226724926213107e-16
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 710.5608902426587
+  }
+ },
+ "knob_002138_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5856.617166253914,
+   "bounds": [
+    [
+     -17.13,
+     -17.13,
+     0.0
+    ],
+    [
+     17.13,
+     17.13,
+     45.95672401082507
+    ]
+   ],
+   "centroid": [
+    5.6235568993600875e-06,
+    -2.490400362028986e-05,
+    14.898458140405374
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 13076.782118140376
+  }
+ },
+ "knob_002179_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5042.754577579941,
+   "bounds": [
+    [
+     -17.93,
+     -17.93,
+     0.0
+    ],
+    [
+     17.93,
+     17.93,
+     47.865831122316834
+    ]
+   ],
+   "centroid": [
+    7.0408371436892105e-06,
+    -3.20208386443225e-05,
+    18.22770056202066
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 17869.041186639814
+  }
+ },
+ "knob_002194_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 981.8627387987963,
+   "bounds": [
+    [
+     -6.92,
+     -6.92,
+     0.0
+    ],
+    [
+     6.92,
+     6.92,
+     18.209385217600925
+    ]
+   ],
+   "centroid": [
+    -1.6223552527593666e-16,
+    -3.793535455739296e-17,
+    5.051216163780304
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 691.5828439826346
+  }
+ },
+ "knob_002201_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 544.179286918657,
+   "bounds": [
+    [
+     -6.01,
+     -6.01,
+     0.0
+    ],
+    [
+     6.01,
+     6.01,
+     15.237764916914
+    ]
+   ],
+   "centroid": [
+    2.714353523596488e-18,
+    1.357176761798244e-18,
+    5.60643855043608
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 654.4309073810687
+  }
+ },
+ "knob_002260_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 700.9922186206439,
+   "bounds": [
+    [
+     -5.94,
+     -5.94,
+     0.0
+    ],
+    [
+     5.94,
+     5.94,
+     15.04026408863701
+    ]
+   ],
+   "centroid": [
+    -1.2000581923575682e-16,
+    8.104271784636231e-18,
+    3.0699124942745706
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 313.54803304848275
+  }
+ },
+ "knob_002273_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 16751.517832758527,
+   "bounds": [
+    [
+     0.0,
+     -29.26,
+     -29.26
+    ],
+    [
+     78.87988759471224,
+     29.26,
+     29.26
+    ]
+   ],
+   "centroid": [
+    28.6157366197159,
+    8.826840668539925e-06,
+    -4.0225236670360625e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 65754.66978084815
+  }
+ },
+ "knob_002287_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5732.552439437634,
+   "bounds": [
+    [
+     -16.9,
+     -16.9,
+     0.0
+    ],
+    [
+     16.9,
+     16.9,
+     45.36641367602387
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -3.4059657578388172e-18,
+    14.43255033613268
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 12517.026645816191
+  }
+ },
+ "knob_002307_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2058.120823911429,
+   "bounds": [
+    [
+     -11.55,
+     -11.55,
+     0.0
+    ],
+    [
+     11.55,
+     11.55,
+     30.630721112368786
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    11.903054683321626
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 4774.732406567619
+  }
+ },
+ "knob_002309_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2151.0381986555467,
+   "bounds": [
+    [
+     -11.65,
+     -11.65,
+     0.0
+    ],
+    [
+     11.65,
+     11.65,
+     32.16190820635168
+    ]
+   ],
+   "centroid": [
+    -1.319552243912632e-18,
+    -1.319552243912632e-18,
+    11.948382990288394
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 5384.7260617226875
+  }
+ },
+ "knob_002330_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 775.026073027704,
+   "bounds": [
+    [
+     -7.13,
+     -7.13,
+     0.0
+    ],
+    [
+     7.13,
+     7.13,
+     18.74176084166544
+    ]
+   ],
+   "centroid": [
+    -7.476982717747235e-19,
+    7.476982717747235e-19,
+    6.907200821704121
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1187.8834728238178
+  }
+ },
+ "knob_002332_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17047.977416724912,
+   "bounds": [
+    [
+     0.0,
+     -29.72,
+     -29.72
+    ],
+    [
+     80.08606026203528,
+     29.72,
+     29.72
+    ]
+   ],
+   "centroid": [
+    27.95203707031093,
+    -5.572126209129456e-16,
+    3.8399977891024475e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 66068.54266742559
+  }
+ },
+ "knob_002349_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 610.0931555569744,
+   "bounds": [
+    [
+     0.0,
+     -6.31,
+     -6.31
+    ],
+    [
+     15.965745117940127,
+     6.31,
+     6.31
+    ]
+   ],
+   "centroid": [
+    5.720792327280811,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 722.280353608162
+  }
+ },
+ "knob_002354_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 26250.925164218083,
+   "bounds": [
+    [
+     -37.05,
+     -37.05,
+     0.0
+    ],
+    [
+     37.05,
+     37.05,
+     99.14486736255857
+    ]
+   ],
+   "centroid": [
+    -8.778528198208847e-16,
+    -2.8313824104576004e-17,
+    32.94687716225858
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 137037.88561932778
+  }
+ },
+ "knob_002355_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1048.8402450086305,
+   "bounds": [
+    [
+     0.0,
+     -6.95,
+     -6.95
+    ],
+    [
+     18.96520604454037,
+     6.95,
+     6.95
+    ]
+   ],
+   "centroid": [
+    4.741981236779197,
+    -3.129534629979326e-18,
+    -3.129534629979326e-18
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 567.6105394021428
+  }
+ },
+ "knob_002362_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1432.4631953381358,
+   "bounds": [
+    [
+     -8.23,
+     -8.23,
+     0.0
+    ],
+    [
+     8.23,
+     8.23,
+     22.10167322345065
+    ]
+   ],
+   "centroid": [
+    -1.7856492361905938e-16,
+    4.4835675066589814e-17,
+    5.6860603854404195
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 1120.6081916572916
+  }
+ },
+ "knob_002376_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 431.27660880818746,
+   "bounds": [
+    [
+     -5.34,
+     -5.34,
+     0.0
+    ],
+    [
+     5.34,
+     5.34,
+     13.5831181242744
+    ]
+   ],
+   "centroid": [
+    -1.8807634271538948e-18,
+    -9.403817135769474e-19,
+    4.8415679883679825
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 472.2435617775597
+  }
+ },
+ "knob_002386_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1441.5592765111767,
+   "bounds": [
+    [
+     -9.66,
+     -9.66,
+     0.0
+    ],
+    [
+     9.66,
+     9.66,
+     25.793309062653105
+    ]
+   ],
+   "centroid": [
+    -1.2155159785747677e-18,
+    0.0,
+    9.634014116603032
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2922.80294247236
+  }
+ },
+ "knob_002449_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2212.0229810090063,
+   "bounds": [
+    [
+     0.0,
+     -11.88,
+     -11.88
+    ],
+    [
+     31.491804289851196,
+     11.88,
+     11.88
+    ]
+   ],
+   "centroid": [
+    12.099761298803944,
+    7.563298870165564e-06,
+    -3.4557343039168836e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 5074.4575363111
+  }
+ },
+ "knob_002472_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6807.059727113332,
+   "bounds": [
+    [
+     -18.4,
+     -18.4,
+     0.0
+    ],
+    [
+     18.4,
+     18.4,
+     49.24563093640887
+    ]
+   ],
+   "centroid": [
+    -3.660060125633918e-18,
+    1.0980180376901755e-17,
+    15.86740657549786
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 15530.733624481865
+  }
+ },
+ "knob_002503_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 695.5010576783045,
+   "bounds": [
+    [
+     0.0,
+     -6.61,
+     -6.61
+    ],
+    [
+     18.081924982792184,
+     6.61,
+     6.61
+    ]
+   ],
+   "centroid": [
+    6.636693818140603,
+    1.8535927017234548e-18,
+    9.267963508617274e-19
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 958.3318049043941
+  }
+ },
+ "knob_003857_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 753.5246054454957,
+   "bounds": [
+    [
+     0.0,
+     -7.02,
+     -7.02
+    ],
+    [
+     18.443199565075886,
+     7.02,
+     7.02
+    ]
+   ],
+   "centroid": [
+    6.738372147280322,
+    4.622476333531526e-06,
+    -2.0525141241601084e-05
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1133.0674024991374
+  }
+ },
+ "knob_004435_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 25764.714506803775,
+   "bounds": [
+    [
+     0.0,
+     -35.87,
+     -35.87
+    ],
+    [
+     97.40320310755132,
+     35.87,
+     35.87
+    ]
+   ],
+   "centroid": [
+    33.787510963149145,
+    -1.5570193161151528e-17,
+    -2.3355289741727294e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 116825.10195726622
+  }
+ },
+ "knob_004546_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1447.7724606215995,
+   "bounds": [
+    [
+     0.0,
+     -8.37,
+     -8.37
+    ],
+    [
+     21.859122253967357,
+     8.37,
+     8.37
+    ]
+   ],
+   "centroid": [
+    6.596376579152212,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1135.2797306155103
+  }
+ },
+ "knob_004583_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3025.8970341227077,
+   "bounds": [
+    [
+     -13.86,
+     -13.86,
+     0.0
+    ],
+    [
+     13.86,
+     13.86,
+     38.02310435498178
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.6323613908981627e-18,
+    14.742462532564288
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 8705.703770280223
+  }
+ },
+ "knob_004663_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1032.0179128020475,
+   "bounds": [
+    [
+     -8.17,
+     -8.17,
+     0.0
+    ],
+    [
+     8.17,
+     8.17,
+     21.965703736463997
+    ]
+   ],
+   "centroid": [
+    -4.750615517202311e-19,
+    -9.501231034404622e-19,
+    7.971765939071992
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1869.6070361492507
+  }
+ },
+ "knob_004807_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4484.258143979849,
+   "bounds": [
+    [
+     0.0,
+     -16.93,
+     -16.93
+    ],
+    [
+     45.286111409810445,
+     16.93,
+     16.93
+    ]
+   ],
+   "centroid": [
+    17.08094759512836,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 15309.672644978817
+  }
+ },
+ "knob_004880_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1179.8587233934106,
+   "bounds": [
+    [
+     -7.54,
+     -7.54,
+     0.0
+    ],
+    [
+     7.54,
+     7.54,
+     19.77079215267831
+    ]
+   ],
+   "centroid": [
+    4.112696191253685e-18,
+    -5.140870239067106e-18,
+    5.695573366963868
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 863.8405351593736
+  }
+ },
+ "knob_004904_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-draft-knob-flute-measures"
+  }
+ },
+ "knob_004936_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 473.59379641870123,
+   "bounds": [
+    [
+     0.0,
+     -5.6,
+     -5.6
+    ],
+    [
+     14.207056277199513,
+     5.6,
+     5.6
+    ]
+   ],
+   "centroid": [
+    5.085443848404285,
+    -1.6627019855817023e-18,
+    -8.313509927908511e-19
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 534.177758493139
+  }
+ },
+ "knob_004982_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2709.126189990662,
+   "bounds": [
+    [
+     -13.05,
+     -13.05,
+     0.0
+    ],
+    [
+     13.05,
+     13.05,
+     35.88012833880498
+    ]
+   ],
+   "centroid": [
+    1.9460923012753005e-18,
+    9.730461506376502e-19,
+    13.589111881388927
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 7302.251134691525
+  }
+ },
+ "knob_004994_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8457.630614383284,
+   "bounds": [
+    [
+     -23.4,
+     -23.4,
+     0.0
+    ],
+    [
+     23.4,
+     23.4,
+     62.065871954698665
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    24.172153056368202
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 39610.56488721287
+  }
+ },
+ "knob_005201_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5061.410705460981,
+   "bounds": [
+    [
+     -18.02,
+     -18.02,
+     0.0
+    ],
+    [
+     18.02,
+     18.02,
+     48.09566965505986
+    ]
+   ],
+   "centroid": [
+    -9.344649322526659e-18,
+    -3.114883107508886e-18,
+    18.469937601010145
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 18248.97336396944
+  }
+ },
+ "knob_005230_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6825.983889775919,
+   "bounds": [
+    [
+     -20.93,
+     -20.93,
+     0.0
+    ],
+    [
+     20.93,
+     20.93,
+     55.75164636996604
+    ]
+   ],
+   "centroid": [
+    6.316688785645289e-06,
+    -2.8635745752147287e-05,
+    20.986240814674897
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 28853.996532077894
+  }
+ },
+ "knob_005254_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 673.3203003979585,
+   "bounds": [
+    [
+     0.0,
+     -6.64,
+     -6.64
+    ],
+    [
+     17.497295853764594,
+     6.64,
+     6.64
+    ]
+   ],
+   "centroid": [
+    6.366747177296903,
+    -4.522132361328452e-19,
+    9.044264722656905e-19
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 982.0349657337406
+  }
+ },
+ "knob_005662_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 30871.3922273959,
+   "bounds": [
+    [
+     -40.18,
+     -40.18,
+     0.0
+    ],
+    [
+     40.18,
+     40.18,
+     107.2249430972105
+    ]
+   ],
+   "centroid": [
+    -8.3433071872247325e-16,
+    -5.379187917643441e-17,
+    36.006567135118544
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 168563.34925070603
+  }
+ },
+ "knob_005805_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1084.3784445597312,
+   "bounds": [
+    [
+     -8.44,
+     -8.44,
+     0.0
+    ],
+    [
+     8.44,
+     8.44,
+     22.042877136479262
+    ]
+   ],
+   "centroid": [
+    1.889184703078624e-18,
+    1.889184703078624e-18,
+    8.426295044765444
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1880.55390931918
+  }
+ },
+ "knob_006018_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 23870.031140169154,
+   "bounds": [
+    [
+     -35.16,
+     -35.16,
+     0.0
+    ],
+    [
+     35.16,
+     35.16,
+     94.28974449504621
+    ]
+   ],
+   "centroid": [
+    5.4021373760324485e-06,
+    -2.409913328518741e-05,
+    32.094239023125866
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 122358.8866090527
+  }
+ },
+ "knob_006103_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "area": 577.8768800433022,
+   "bounds": [
+    [
+     0.0,
+     -5.37,
+     -5.37
+    ],
+    [
+     14.30148461623039,
+     5.37,
+     5.37
+    ]
+   ],
+   "centroid": [
+    2.822443427521244,
+    -2.2477469710011656e-17,
+    8.197373102588222e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 235.7017096287031
+  }
+ },
+ "knob_006309_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8509.039035734455,
+   "bounds": [
+    [
+     -20.74,
+     -20.74,
+     0.0
+    ],
+    [
+     20.74,
+     20.74,
+     55.24454560597745
+    ]
+   ],
+   "centroid": [
+    -5.201238106005572e-16,
+    6.779914851627769e-17,
+    17.771234615112864
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 20752.754243650517
+  }
+ },
+ "knob_006414_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 521.8195864691492,
+   "bounds": [
+    [
+     -5.74,
+     -5.74,
+     0.0
+    ],
+    [
+     5.74,
+     5.74,
+     15.755669987474562
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    5.703936025043773
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 662.0784832031597
+  }
+ },
+ "knob_006886_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4611.607069949968,
+   "bounds": [
+    [
+     -17.3,
+     -17.3,
+     0.0
+    ],
+    [
+     17.3,
+     17.3,
+     46.38121472933739
+    ]
+   ],
+   "centroid": [
+    -1.6332187181562818e-18,
+    3.2664374363125636e-18,
+    16.99247881890212
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 17402.26775167559
+  }
+ },
+ "knob_006934_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 929.8684468971085,
+   "bounds": [
+    [
+     -7.67,
+     -7.67,
+     0.0
+    ],
+    [
+     7.67,
+     7.67,
+     20.848692823760015
+    ]
+   ],
+   "centroid": [
+    2.4448975463270377e-18,
+    2.4448975463270377e-18,
+    8.001468578238011
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 1453.1135196800913
+  }
+ },
+ "knob_007218_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 499.7808045788308,
+   "bounds": [
+    [
+     -4.89,
+     -4.89,
+     0.0
+    ],
+    [
+     4.89,
+     4.89,
+     12.482831637055604
+    ]
+   ],
+   "centroid": [
+    1.1471094466431599e-05,
+    -5.4613004532181075e-05,
+    2.8552752114931046
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 207.94738045899237
+  }
+ },
+ "knob_007418_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6037.322421345491,
+   "bounds": [
+    [
+     -17.35,
+     -17.35,
+     0.0
+    ],
+    [
+     17.35,
+     17.35,
+     46.509955398131154
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.06286993138934e-17,
+    14.84992920226556
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 13370.266949433933
+  }
+ },
+ "knob_007632_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17861.97336662685,
+   "bounds": [
+    [
+     0.0,
+     -30.33,
+     -30.33
+    ],
+    [
+     82.86204299212855,
+     30.33,
+     30.33
+    ]
+   ],
+   "centroid": [
+    27.444356146876835,
+    -7.433536108071155e-16,
+    1.343551601470753e-16
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 74714.00936761529
+  }
+ },
+ "knob_007797_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3648.427330666156,
+   "bounds": [
+    [
+     -13.43,
+     -13.43,
+     0.0
+    ],
+    [
+     13.43,
+     13.43,
+     36.235954878805394
+    ]
+   ],
+   "centroid": [
+    -2.2734051013998206e-18,
+    -4.546810202799641e-18,
+    11.56679465642694
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 6250.911773907716
+  }
+ },
+ "knob_008328_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 15229.961618308625,
+   "bounds": [
+    [
+     -28.11,
+     -28.11,
+     0.0
+    ],
+    [
+     28.11,
+     28.11,
+     75.89495140041086
+    ]
+   ],
+   "centroid": [
+    -6.232836063174102e-16,
+    -6.183400810345581e-18,
+    26.246599075747458
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 57156.48164439719
+  }
+ },
+ "knob_008402_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1254.2626254376107,
+   "bounds": [
+    [
+     -9.0,
+     -9.0,
+     0.0
+    ],
+    [
+     9.0,
+     9.0,
+     24.110322231265272
+    ]
+   ],
+   "centroid": [
+    2.9485191329875224e-18,
+    -3.6856489162344025e-18,
+    8.847762318920504
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 2409.8291505409306
+  }
+ },
+ "knob_008436_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2812.4936800478727,
+   "bounds": [
+    [
+     -11.37,
+     -11.37,
+     0.0
+    ],
+    [
+     11.37,
+     11.37,
+     31.400750997710105
+    ]
+   ],
+   "centroid": [
+    7.853068001594657e-06,
+    -3.475930380037109e-05,
+    8.837409396010793
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 3002.771658832761
+  }
+ },
+ "knob_008512_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4469.764633568338,
+   "bounds": [
+    [
+     0.0,
+     -14.29,
+     -14.29
+    ],
+    [
+     39.14565902768012,
+     14.29,
+     14.29
+    ]
+   ],
+   "centroid": [
+    10.731137773713716,
+    -3.115901133440348e-16,
+    4.0336693030379207e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 5066.03744832685
+  }
+ },
+ "knob_008648_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 860.422070198804,
+   "bounds": [
+    [
+     -6.4,
+     -6.4,
+     0.0
+    ],
+    [
+     6.4,
+     6.4,
+     17.51513141125907
+    ]
+   ],
+   "centroid": [
+    -2.0099086585200163e-16,
+    1.0069354735452382e-17,
+    3.8873945245000856
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 447.3523708483004
+  }
+ },
+ "knob_008689_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 507.20687829760607,
+   "bounds": [
+    [
+     -5.04,
+     -5.04,
+     0.0
+    ],
+    [
+     5.04,
+     5.04,
+     12.840736948954156
+    ]
+   ],
+   "centroid": [
+    -1.62058719776513e-16,
+    3.809841295341885e-17,
+    2.6496747085388797
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 215.01545612808624
+  }
+ },
+ "knob_008738_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 454.02334627543394,
+   "bounds": [
+    [
+     -4.77,
+     -4.77,
+     0.0
+    ],
+    [
+     4.77,
+     4.77,
+     12.754751783799755
+    ]
+   ],
+   "centroid": [
+    -1.8799019160949354e-16,
+    -3.8971082108617124e-17,
+    2.537225978344142
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 180.10087159890475
+  }
+ },
+ "knob_008771_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 1118.0267953931755,
+   "bounds": [
+    [
+     -7.13,
+     -7.13,
+     0.0
+    ],
+    [
+     7.13,
+     7.13,
+     19.447050182444492
+    ]
+   ],
+   "centroid": [
+    5.251896756945971e-16,
+    -1.1691147009695876e-16,
+    4.471992270238611
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 582.1418931169223
+  }
+ },
+ "knob_008775_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5372.144993995427,
+   "bounds": [
+    [
+     -16.4,
+     -16.4,
+     0.0
+    ],
+    [
+     16.4,
+     16.4,
+     44.04897062024869
+    ]
+   ],
+   "centroid": [
+    5.318674066653601e-06,
+    -2.328095756736035e-05,
+    14.154098427687195
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 11686.026778851205
+  }
+ },
+ "knob_012851_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5351.247535244957,
+   "bounds": [
+    [
+     -16.18,
+     -16.18,
+     0.0
+    ],
+    [
+     16.18,
+     16.18,
+     43.37023034507659
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1.0039258790688701e-17,
+    13.999795137174475
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta with disjoint parallel flute cuts. Integrate each circular lens and its first moments along the draft axis. The two lens arcs give the stock surface removed and cutter wall exposed. At caps use the lens areas. The cuts preserve every stock extreme (tools/cq_closed_forms.py).",
+   "volume": 9908.69795075677
+  }
+ },
+ "knob_015033_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2189.2187860049767,
+   "bounds": [
+    [
+     0.0,
+     -10.21,
+     -10.21
+    ],
+    [
+     27.209344849726147,
+     10.21,
+     10.21
+    ]
+   ],
+   "centroid": [
+    7.078422047085551,
+    -2.9314871943166257e-16,
+    1.4450604709947427e-17
+   ],
+   "kind": "closed_form",
+   "note": "Coaxial frusta cut by a concentric bore and intersecting parallel flutes. Integrate Green's theorem on the exposed circular arcs of each section for its area and moments. Exposed arcs give the lateral areas, and section differences give the flat caps (tools/cq_closed_forms.py).",
+   "volume": 1867.1121452757363
+  }
+ },
+ "propeller_000111_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_000368_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_000571_s20260507": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_000607_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_001153_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 10724.88069,
+   "bounds": [
+    [
+     -9.515,
+     -47.987,
+     -47.987
+    ],
+    [
+     17.94095262,
+     47.987,
+     47.987
+    ]
+   ],
+   "centroid": [
+    5.80140898,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 32325.87276
+  }
+ },
+ "propeller_001170_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_002138_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_002251_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_002397_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_002511_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 11666.71666816,
+   "bounds": [
+    [
+     -9.325,
+     -60.178,
+     -60.178
+    ],
+    [
+     17.878990419294478,
+     60.178,
+     60.178
+    ]
+   ],
+   "centroid": [
+    4.09900478,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 32397.20805649
+  }
+ },
+ "propeller_003334_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_004461_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 2704.79595363,
+   "bounds": [
+    [
+     -5.345,
+     -22.959,
+     -22.959
+    ],
+    [
+     10.67722707593158,
+     22.959,
+     22.959
+    ]
+   ],
+   "centroid": [
+    2.57106867,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 3946.630137306
+  }
+ },
+ "propeller_005615_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_005824_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_006027_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_006224_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3577.887002,
+   "bounds": [
+    [
+     -32.486,
+     -10.51840974,
+     -32.486
+    ],
+    [
+     32.486,
+     11.63970209,
+     32.486
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -1.7120075,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 6393.546422
+  }
+ },
+ "propeller_006740_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_007476_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_007771_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_008183_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_009713_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_009952_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_010178_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_010599_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6184.550838,
+   "bounds": [
+    [
+     -40.279,
+     -11.40392822,
+     -40.279
+    ],
+    [
+     40.279,
+     11.24376404,
+     40.279
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -2.66562953,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 12946.85698
+  }
+ },
+ "propeller_011139_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_011622_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_012254_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_012667_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_012692_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_012763_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_012866_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_012902_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 12220.20743278,
+   "bounds": [
+    [
+     -6.05,
+     -56.559,
+     -56.559
+    ],
+    [
+     14.690571176457896,
+     56.559,
+     56.559
+    ]
+   ],
+   "centroid": [
+    3.98532204,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 36907.10244598
+  }
+ },
+ "propeller_012951_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 20858.69904223,
+   "bounds": [
+    [
+     -11.4,
+     -98.275,
+     -98.275
+    ],
+    [
+     19.044160257826995,
+     98.275,
+     98.275
+    ]
+   ],
+   "centroid": [
+    6.0249292,
+    -0.0,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 75597.32373365
+  }
+ },
+ "propeller_013267_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 3416.052564124,
+   "bounds": [
+    [
+     -5.66,
+     -46.905,
+     -12.55
+    ],
+    [
+     9.478565557840659,
+     46.905,
+     12.55
+    ]
+   ],
+   "centroid": [
+    1.80093235,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 8067.198404126
+  }
+ },
+ "propeller_013320_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_014427_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_014472_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_014638_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_015126_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_015552_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_016859_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_016935_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_017084_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4086.898794,
+   "bounds": [
+    [
+     -6.645,
+     -30.238,
+     -30.238
+    ],
+    [
+     11.73042862,
+     30.238,
+     30.238
+    ]
+   ],
+   "centroid": [
+    3.89143113,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 8001.124313
+  }
+ },
+ "propeller_017159_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_017174_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 4160.93867,
+   "bounds": [
+    [
+     -42.266,
+     -11.77868138,
+     -11.42
+    ],
+    [
+     42.266,
+     10.2850001,
+     11.42
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -2.39548575,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 10442.3292
+  }
+ },
+ "propeller_017179_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_017265_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_017418_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 21764.57756966,
+   "bounds": [
+    [
+     -12.865,
+     -74.369,
+     -74.369
+    ],
+    [
+     25.62389024215669,
+     74.369,
+     74.369
+    ]
+   ],
+   "centroid": [
+    7.65643453,
+    -0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 100021.1114931
+  }
+ },
+ "propeller_017762_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 8407.365971646,
+   "bounds": [
+    [
+     -55.601,
+     -55.601,
+     -8.33
+    ],
+    [
+     55.601,
+     55.601,
+     15.81
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    -0.0,
+    4.52903142
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 22025.94766164
+  }
+ },
+ "propeller_017780_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_017962_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_018350_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 6436.525226,
+   "bounds": [
+    [
+     -42.925,
+     -42.925,
+     -7.085
+    ],
+    [
+     42.925,
+     42.925,
+     13.85469004
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    0.0,
+    4.09733882
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 14806.67545
+  }
+ },
+ "propeller_018603_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "propeller_019164_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5317.02829908,
+   "bounds": [
+    [
+     -40.199999999999996,
+     -40.199999999999996,
+     -5.48
+    ],
+    [
+     40.199999999999996,
+     40.199999999999996,
+     10.259266812757387
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    0.0,
+    1.83563997
+   ],
+   "kind": "closed_form",
+   "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py).",
+   "volume": 11098.92703779
+  }
+ },
+ "propeller_019173_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 12390.52614,
+   "bounds": [
+    [
+     -9.51,
+     -48.036,
+     -48.036
+    ],
+    [
+     18.69087496,
+     48.036,
+     48.036
+    ]
+   ],
+   "centroid": [
+    6.00378313,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 53537.74105
+  }
+ },
+ "propeller_019949_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-turned-blade-prism-bounds"
+  }
+ },
+ "wing_nut_000078_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_000668_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_000812_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_004009_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_005641_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_007196_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_007942_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_014761_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_015269_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_016023_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_016440_s20260505": {
+  "disagreement": "arris_bug",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-fillet-missing-trim-edge"
+  }
+ },
+ "wing_nut_016937_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ },
+ "wing_nut_018848_s20260505": {
+  "disagreement": "arris_refusal",
+  "evidence": {
+   "kind": "fixture",
+   "path": "tests/fixtures/regression/cq-wing-nut-bore-fillet-corner"
+  }
+ }
+}

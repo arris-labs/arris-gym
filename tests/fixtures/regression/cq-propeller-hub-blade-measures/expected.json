@@ -1,11 +1,11 @@
 {
   "kind": "closed_form",
-  "volume": 36907.10239,
-  "area": 12220.20742,
+  "volume": 36907.10244598,
+  "area": 12220.20743278,
   "centroid": [
     3.98532204,
     -0.0,
-    -0.0
+    0.0
   ],
   "bounds": [
     [
@@ -14,10 +14,10 @@
       -56.559
     ],
     [
-      14.69057118,
+      14.690571176457896,
       56.559,
       56.559
     ]
   ],
-  "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py"
+  "note": "The placed blade prisms and bored hub are clipped in axial sections. Green's theorem on exposed lines and circular arcs gives the section areas and moments. The arc and segment lengths with face slant factors give the lateral areas. Both quadratures agree (tools/cq_closed_forms.py)."
 }

@@ -1,0 +1,54 @@
+{
+ "gusseted_bracket_011520_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 5374.692241,
+   "bounds": [
+    [
+     -30.3600001,
+     -1e-07,
+     -1e-07
+    ],
+    [
+     30.3600001,
+     30.3600001,
+     18.79
+    ]
+   ],
+   "centroid": [
+    -0.14205061,
+    11.00422759,
+    9.5297053
+   ],
+   "kind": "closed_form",
+   "note": "Exact v antiderivatives of the area and flux on planar and cylindrical faces, integrated along the trims (Green's theorem); both quadratures agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py --sketch-boundary",
+   "volume": 20055.89426
+  }
+ },
+ "knob_000989_s20260506": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 675.2895149,
+   "bounds": [
+    [
+     -5.67,
+     -5.67,
+     0.0
+    ],
+    [
+     5.67,
+     5.67,
+     15.07636046
+    ]
+   ],
+   "centroid": [
+    1.91e-05,
+    -9.296e-05,
+    3.21523917
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 274.7072758
+  }
+ }
+}

@@ -16,6 +16,7 @@ import gzip
 import hashlib
 import json
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -111,11 +112,25 @@ def table_of(corpus: str) -> FidelityTable:
     )
 
 
-@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 15_718)])
+@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 15_326)])
 def test_current_subset_reach_over_the_committed_census(corpus: str, expected: int) -> None:
     measured = reach(census_rows(corpus), cq.subset())
     assert measured.programs == CORPORA[corpus][1]
     assert measured.in_subset == expected
+
+
+def test_benchcad_polygon_loft_deferral_matches_the_measured_gear_contexts() -> None:
+    rows = census_rows("benchcad")
+    current = cq.subset()
+    historical = replace(current, defer_polygon_lofts=False)
+    excluded = set(reach(rows, historical).stems) - set(reach(rows, current).stems)
+    assert Counter(stem.rsplit("_", 2)[0] for stem in excluded) == {
+        "bevel_gear": 189,
+        "helical_gear": 203,
+    }
+    assert {
+        row.stem for row in rows if isinstance(row, ProgramCensus) and row.deferred_polygon_loft
+    } == excluded
 
 
 @pytest.mark.parametrize("corpus", sorted(CORPORA))

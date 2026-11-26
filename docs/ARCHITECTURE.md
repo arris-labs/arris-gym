@@ -166,7 +166,10 @@ none of them (ADR-0003).
   outcomes. A program must parse, match every non-foreign API form, use only
   admitted selectors and end forms, and have no unknown receiver. Foreign
   calls must belong to the fixed Python builtins or standard-library roots
-  in `census/_foreign.py`. Unparsable programs stay in the denominator;
+  in `census/_foreign.py`. The current subset defers literal polygon
+  lofts beyond the limits in ADR-0026. The per-program census records
+  the recognized chain without running it. Unparsable and deferred
+  programs stay in the denominator;
   duplicate stems are refused. The C1 slice has reach 300/300, checked
   offline from `tests/fixtures/c1/reach-programs.jsonl.gz`.
 - **Reach curve.** `census.reach_curve(programs, subset)` returns a frozen

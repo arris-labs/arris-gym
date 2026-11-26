@@ -5,6 +5,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- Static CadQuery reach excludes literal polygon lofts with more than
+  two sections or with more than 48 nonplanar sides in every possible
+  section pairing. Fidelity continues to count every program.
+
 - In the CadQuery dialect, `mirrorY()` reflects an open outline with
   joined endpoints on the workplane's y axis. The closed profile keeps
   its lines and circular arcs for extrusion and cutting. Newly supported
@@ -366,6 +370,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   census outcomes. Static membership does not promise execution success.
 
 ### Breaking
+
+- Census rows can carry `deferred_polygon_loft`, and `cq.subset()`
+  exposes `defer_polygon_lofts`. Update strict census readers and
+  regenerate saved subset and reach snapshots where these limits apply.
 
 - `Workplane.extrude` adds the keyword-only `taper` parameter.
   Regenerate saved `cq.subset()` snapshots and handle execution results

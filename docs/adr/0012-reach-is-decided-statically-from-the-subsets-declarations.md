@@ -108,3 +108,30 @@ returns zero counts. No fraction is defined at denominator zero.
 - **Admit all foreign calls or import them to check.** The former promises
   arbitrary installed packages; the latter executes untrusted imports
   outside a program worker and depends on the caller's environment.
+
+## Amendment (2026-11-26). Static deferral for literal polygon lofts
+
+The current subset excludes the literal polygon lofts whose context the
+census can decide under ADR-0026. The recognizer walks a direct chain from
+`cadquery.Workplane` through literal `polyline(...).close()` sections
+separated by nonzero literal `workplane(offset=…)` calls. It excludes
+chains with more than two sections and two-section chains for which
+every cyclic pairing and winding has more than 48 nonparallel paired
+edges. The sections are in parallel planes, so a pair of nonparallel
+edges contributes a nonplanar side. The test uses a conservative
+angular margin above the pinned kernel's tolerance. A different chain
+or an indeterminate pairing still reaches the ordinary runtime check.
+
+`ProgramCensus.deferred_polygon_loft` records this fact and defaults to
+false for saved census rows that predate it. The live `cq.Subset` sets
+`defer_polygon_lofts` to true. A caller's declaration can leave it false
+to reproduce historical calculations. Reach curves treat a deferred
+context as fixed, like an unknown receiver. Both reach and the curve
+keep every program in the denominator. The recognizer uses the parsed
+source alone. Neither family names nor runtime statuses enter the rule.
+
+This excludes 189 bevel gears and 203 helical gears in the pinned
+BenchCAD corpus. The other 17,508 program census records serialize as
+before. Reach is 15,326 of 17,900 on BenchCAD and 968 of 968 on
+CAD-Recode. Fidelity still counts the 392 rows with their existing
+`unsupported_api` outcomes and `cq_bug` classes.

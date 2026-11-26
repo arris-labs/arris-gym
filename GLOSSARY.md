@@ -224,7 +224,8 @@ _Avoid_: signature, overload
 The calls and API forms `cq` implements, grown in the knee's bundle order
 (ADR-0014); a call
 outside it ends `unsupported_api` naming it (ADR-0007). `cq.Subset` exposes
-its declarations, selectors and end forms as frozen data (ADR-0012).
+its declarations, selectors, end forms and whether to defer polygon lofts
+as frozen data (ADR-0012).
 _Avoid_: coverage
 
 **Subset declaration**:
@@ -362,9 +363,9 @@ _Avoid_: fidelity result
 
 **In-subset program**:
 A parsable corpus program whose forms, selectors and end form are admitted,
-with no unknown receiver and only admitted foreign calls; decided statically
-from the census, never by running it (ADR-0012). Membership does not promise
-successful execution or a particular argument value or stack context.
+with no unknown receiver, only admitted foreign calls and no deferred
+literal polygon loft. Membership is decided statically from the census
+(ADR-0012) and does not promise successful execution.
 
 **Reach**:
 The share of a corpus's programs that are in-subset, over all its programs: a

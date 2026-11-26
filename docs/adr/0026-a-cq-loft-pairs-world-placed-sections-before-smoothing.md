@@ -208,3 +208,15 @@ the tilted cone and on the triangular and twisted polygon lofts. The
 strict regressions record both the closed forms and the oracle reports.
 These are kernel measure gaps and keep their desired bounds under
 ADR-0005.
+
+## Amendment (2026-11-26). Defer the measured gear contexts
+
+The full BenchCAD replay reaches the curved-side guard on 189 bevel
+gears and 110 two-section helical gears, and the three-section guard on
+93 helical gears. Their oracle reports are valid. The timing prefixes
+and the three-section regressions above establish the two kernel limits.
+The approved deferral puts these literal chains outside static reach
+under ADR-0012's amendment, with all 392 fidelity rows retained. This
+leaves 15,326 of 17,900 programs in-subset, above ADR-0014's target of
+15,215. The kernel work is recorded in
+`../arris/docs/ideas/benchcad-loft-interpolation-and-body-check.md`.

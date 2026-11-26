@@ -1,0 +1,13 @@
+wing_nut_000078_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_000668_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_000812_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_004009_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_005641_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_007196_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_007942_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_014761_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_015269_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_016023_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_016440_s20260505=cq-wing-fillet-missing-trim-edge
+wing_nut_016937_s20260505=cq-wing-nut-bore-fillet-corner
+wing_nut_018848_s20260505=cq-wing-nut-bore-fillet-corner

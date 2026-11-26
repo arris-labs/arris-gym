@@ -7,8 +7,9 @@
 ## Goal
 
 Complete bundle 5 by lifting `loft(combine=bool)`, `extrude(num; taper=num)`
-and `mirrorY()` on arris 0.12.0. The committed census projects 15,718 of
-17,900 BenchCAD programs in-subset, above the 15,215 target. Verify fidelity
+and `mirrorY()` on arris 0.12.0. With the gear loft deferral settled in
+Step 7, the census puts 15,326 of 17,900 BenchCAD programs in-subset,
+above the 15,215 target. Verify fidelity
 on both full corpora with zero in-subset `cq_bug`, unclassified rows or timeouts.
 
 ## Non-goals
@@ -25,7 +26,11 @@ with `both=`, and solid mirroring belong to other API forms.
   `Workplane.extrude(self, distance: float, both: bool = False, *, taper: float = 0.0) -> Workplane`.
   `loft()` uses the same default as `loft(combine=True)`. Declare the forms
   through `census_form`. Match the `both=` and `taper=` keyword sets
-  independently in runtime and static checks. No result types or imports change.
+  independently in runtime and static checks. No execution result types or
+  imports change.
+- `ProgramCensus.deferred_polygon_loft` and `Subset.defer_polygon_lofts`
+  record and apply the literal-chain exclusions in the amendment to
+  ADR-0012. Historical declarations retain their original reach.
 - `workplane(offset=…)` and `transformed(…)` carry a single closed disc,
   rectangle or polygon/path wire in its original world placement. Reuse the
   ordered `_carried` representation from ADR-0024. Preserve the active plane,
@@ -100,7 +105,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   `--oracle-rows`. Diff the full table from the 0.12.0 baseline. Reproduce
   each new failure cause using a stem slice, shrink it with `inspect` and
   record the desired outcome in a regression fixture.
-- [ ] Step 7 **[3]**. Resolve the replay's `cq_bug` and unclassified rows.
+- [x] Step 7 **[3]**. Resolve the replay's `cq_bug` and unclassified rows.
   Check analytic rows by closed form and freeform gaps by independent boundary
   integration or a second oracle under ADR-0006. Bind verdicts to evidence,
   check representative stems and record kernel limits in the arris report.
@@ -118,7 +123,8 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   `(0, 1.5, 2)` in local coordinates). Each is `ok` with one solid. Check
   area, bounds and placement as well as the three `hypothesis` properties.
 - Each lift checks live reach in `test_c2_baseline.py` (15,142 after loft,
-  15,453 after taper, 15,718 after mirror). Check the historical committed
+  15,453 after taper, 15,718 after mirror, 15,326 after the approved gear
+  deferral). Check the historical committed
   report with its pre-lift declarations from Step 3 until Step 8 replaces it.
 - Run `uv run --locked --extra corpus tools/cq_corpus.py` per corpus using
   its fixture README arguments. Check 17,900 and 968 rows, zero unclassified,
@@ -157,11 +163,12 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   144- and 196-sided gears now reach a typed refusal, as does the
   three-section interpolation case. Their static reach and acceptance
   stay in force for replay and resolution.
-- ⚠ OPEN: Agent, Steps 3 and 7. Which gear lofts can meet the corpus
-  deadline and fidelity criteria? Verify before enabling a path that
-  depends on the missing interpolation or performance capabilities.
-  Continue the independent lifts and bring any change to C2 scope to the
-  human.
+- **Settled, Step 7 (ADR-0012 and ADR-0026).** The replay confirmed 299 gear lofts hit the
+  curved-side guard and 93 hit the three-section guard. The measured
+  prefixes and the interpolation regressions block a lift on arris
+  0.12.0. The human approved deferring these contexts. Literal polygon
+  chains excluded by the census account for exactly the 392 gear rows.
+  Static reach is 15,326/17,900, above the 15,215 target.
 - **Settled, Step 4 (ADR-0027).** CadQuery takes a slant length for nonzero
   taper. Use its sine and cosine projections. Circles form cones, inward
   rectangles have planar sides, and outward rectangles have rounded corners.
@@ -175,5 +182,29 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   Merge straight joins across the axis for the cleaned prism. A loft
   through the simplified wire refuses because the oracle keeps those
   vertices in its loft.
-- ⚠ OPEN: Agent, Step 7. Which freeform disagreements need independent
-  measures, and which need a second oracle? Keep ADR-0005's tolerance.
+- **Settled, Step 7 (ADR-0006).** Integrating the placed blade prisms and
+  hub gives independent measures for the eight propellers whose oracle
+  trims were inconclusive. The four-blade regression uses the constructed
+  geometry as its expected result and keeps the earlier trim integral
+  alongside it. On three intersecting-flute knobs the construction
+  establishes a volume gap on both sides. Their `arris_bug` verdict cites
+  the regression that checks both gaps. ADR-0005's tolerance stands.
+
+## Replay evidence for Steps 6 and 7
+
+The 17,900-program replay used the committed oracle bytes and retained
+static reach at 15,718. Before new verdicts it gave 12,523 agreements,
+392 in-subset `cq_bug` rows (189 bevel gears and 203 helical gears),
+227 unclassified rows and three candidate timeouts in
+`double_simplex_sprocket`. Its table digest was
+`e0ffad652b48c94541d96ef30e1606b15851991c4886598710561e087ccb0feb`.
+A one-worker replay recovered two sprockets at 30 s, and a separate
+isolated run recovered the third, `double_simplex_sprocket_011623_s20260505`,
+at the same deadline. The full replay still records its three timeouts.
+The verdict files record separately checked analytic, boundary-integral
+and regression evidence for the new rows.
+The Step 7 replay of the 1,568 affected stems checks all 227 new verdicts,
+pins the same oracle rows and records zero unclassified rows, zero
+timeouts and zero in-subset `cq_bug` rows. Its digest is
+`eebe8e17988287db6e6000202b74e52a439b7db638915a8291c3445a86b39a96`.
+Step 8 checks both full corpora from fresh work directories.
