@@ -251,6 +251,8 @@ puts the new solid on the stack, fused with the nearest stock by default
 in the plane where it was drawn (ADR-0028).
 `edges` puts a **stack of edges** on it, the solid's, the stacked faces' or
 the stacked edges' own, which `fillet` and `chamfer` blend (ADR-0020).
+`shell` uses only faces on this stack as openings and puts the hollowed
+solid on its result's stack (ADR-0029).
 
 **Sketch**:
 A mutable `cq` value on a workplane's plane, with an ordered fold of

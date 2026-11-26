@@ -53,7 +53,8 @@ def c1_subset() -> cq.Subset:
     `Workplane.rarray`, `Workplane.polarArray`, `Workplane.cutBlind`;
     plans/lift-edges-and-blends' forms: `Workplane.edges`, `Workplane.fillet`,
     `Workplane.chamfer`, `Workplane.sketch` and `Sketch.*` (ADR-0023),
-    `Workplane.loft` (ADR-0026) and `Workplane.mirrorY` (ADR-0028).
+    `Workplane.loft` (ADR-0026), `Workplane.mirrorY` (ADR-0028) and
+    `Workplane.shell` (ADR-0029).
 
     A frozen record, never widened to admit a lifted form: `reach.json` is the
     C1 curve and `test_committed_benchcad_curve_repeats_offline` holds it.
@@ -95,6 +96,7 @@ def c1_subset() -> cq.Subset:
                     "Workplane.polygon",
                     "Workplane.loft",
                     "Workplane.mirrorY",
+                    "Workplane.shell",
                 )
             ),
         ),

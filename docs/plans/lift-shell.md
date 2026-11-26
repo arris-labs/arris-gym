@@ -64,7 +64,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   inward box, adjacent and empty openings, and an outward box to check
   joins and topology. Probe compounds and failure outcomes. Commit the
   numerical fixtures and ADR-0029, with reduced regressions for gaps.
-- [ ] Step 2 **[2]**. Add the decorated method, runnable docstring and
+- [x] Step 2 **[2]**. Add the decorated method, runnable docstring and
   fixtures for the verified semantics, wrong forms and missing stock. Add
   a `hypothesis` property over inward box dimensions, thickness, named
   planes and branch reuse. Check 15,656/17,900 and the exact new stem counts
@@ -130,3 +130,8 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
 - ⚠ OPEN: The agent decides in Step 4 whether any follow-on differences
   belong to `cq`, arris or the oracle. Use the reduced cases and verified
   measures to decide without changing ADR-0005's agreement tolerance.
+- Settled in Step 2. CadQuery retains pending wires after a shell. The
+  subset refuses a visible pending wire or drawn path, where replacing
+  the stack would discard it. The
+  [blind-cut regression](../../tests/fixtures/regression/shell-pending-wire/)
+  keeps the expected geometry.

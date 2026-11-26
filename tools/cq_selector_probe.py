@@ -380,6 +380,7 @@ def before_subset() -> Subset:
         "Workplane.rect",
         "Workplane.slot2D",
         "Workplane.loft",
+        "Workplane.shell",
     }
     # Taper was lifted later on a call name the original bundle already used.
     extrude = CensusForm("Workplane.extrude", (("num",),), (("both", ("bool",)),))

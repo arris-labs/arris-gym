@@ -340,7 +340,7 @@ the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Its
 `Workplane("ZX")`, each with an optional `origin=`, `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
 axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces
-the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `pushPoints`,
+the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `shell`, `pushPoints`,
 `rarray`, `polarArray`, `hole` (a diameter, with `depth=`), `cboreHole`,
 `cskHole`, `cutBlind`, `cutThruAll`, `center`, `box`, `cylinder`, `sphere`,
 `circle`, `rect`, `slot2D`, `polygon`, `extrude`, `loft`, `union`, `cut`, `moveTo`,
@@ -350,6 +350,18 @@ the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `pushPoints`,
 `fillet` and `chamfer` blend selected edges, or every edge of the stacked
 faces or solid, in one call that skips seams (ADR-0020). `cutBlind` cuts
 pending profiles in one call (ADR-0019).
+
+`shell(thickness)` takes one positional number and uses the nearest solid
+in the chain. Only selected faces on the current stack supply openings.
+A negative thickness offsets convex planar stock inward and leaves a
+sealed cavity when there are no openings. It also offsets a full circular
+cylinder with one end open. The result holds one solid on the caller's
+plane. The caller's branch retains its selection. Outward arc joins,
+unverified inward joins, explicit join arguments and a visible pending
+wire or drawn path end `unsupported_api`.
+Missing stock and stock with multiple boundary shells end `runtime`. The
+kernel reports zero, non-finite and infeasible thicknesses (ADR-0029).
+
 For verified full revolves of a cylinder or rivet profile on a plane
 with exact world axis directions, `edges` ranks the seams in the original
 drawing plane. The placement applies to the revolved solid and selections

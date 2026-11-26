@@ -1,6 +1,8 @@
 # Shell probes
 
-The programs run through the `arris` dialect. Each `oracle.py` has a report
+The offset probes run through the `arris` dialect. The `cq` shell tests
+reuse the closed forms and run the supported call through the sandbox.
+Each `oracle.py` has a report
 from CadQuery 2.3.0 with OCCT 7.9.3.0. The gate reads those reports offline.
 Replay them through the oracle worker using the synced environment.
 
@@ -25,6 +27,9 @@ right and top faces subtracts a 9 × 6 × 5 cavity centred at (0.5, 0, 0.5).
 With no open face the subtracted box is 8 × 6 × 4, centred at the origin.
 The surface area sums the surviving exterior, cavity and rim faces.
 Selecting edges also makes the sealed cavity in CadQuery.
+`parent-selection` checks that an intervening `workplane()` clears the
+opening selection. In `adjacent-selected` a square box turned 45° around
+Z gives two tied faces under `>X`, both of which become openings.
 
 The through bore removes a one-unit-high cylinder from the open box's
 floor. Its two radius-1 disks have the same total area as the

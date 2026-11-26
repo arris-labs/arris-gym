@@ -1,0 +1,16 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 286.4292036732051,
+    "area": 587.1415926535898,
+    "centroid": [0, 0, -0.015081178327103885],
+    "bounds": [[-5, -4, -3], [5, 4, 3]],
+    "faces": 14,
+    "shells": 2,
+    "solids": 1,
+    "genus": 0,
+    "face_kinds": [["cylinder", 1], ["plane", 13]]
+  },
+  "xfail": "CadQuery keeps the pending wire for the following cut"
+}

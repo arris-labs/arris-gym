@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, use `faces(selector).shell(-thickness)` to hollow
+  convex planar stock or open a circular cylinder at a flat end. Calling
+  `shell(-thickness)` on convex planar stock without selected faces creates
+  a sealed cavity.
+
 - Static CadQuery reach excludes literal polygon lofts with more than
   two sections or with more than 48 nonplanar sides in every possible
   section pairing. Fidelity continues to count every program.

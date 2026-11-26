@@ -480,6 +480,42 @@ def _what(selected: Faces | Edges) -> str:
     return "faces" if isinstance(selected, Faces) else "edges"
 
 
+def _sharp_inward_shell(solid: arris.build.Solid, openings: Sequence[arris.Face]) -> bool:
+    """Certify the stock shapes whose inward arc joins stay sharp (ADR-0029)."""
+    model, body = solid.model, solid.body
+    faces = model.faces(body)
+    surfaces = [model.surface(face) for face in faces]
+    curves = [model.curve(edge) for edge in model.edges(body)]
+    if all(curve.kind == "line" for curve in curves):
+        points = [model.point(vertex) for vertex in model.vertices(body)]
+        # Each plane must support the whole stock on its inward side.
+        for surface in surfaces:
+            origin, normal = surface.origin, surface.normal
+            if surface.kind != "plane" or origin is None or normal is None:
+                return False
+            if any(dot(sub(point, origin), normal) > model.tolerance for point in points):
+                return False
+        return True
+    # A full cylinder with one flat end selected. A partial cylinder, a
+    # developable wall trimmed at an angle, and a ring need separate evidence.
+    if len(openings) != 1 or len(faces) != 3 or len(curves) != 3:
+        return False
+    caps = [face for face, surface in zip(faces, surfaces, strict=True) if surface.kind == "plane"]
+    if len(caps) != 2 or openings[0] not in caps:
+        return False
+    side, surface = next(
+        (face, surface) for face, surface in zip(faces, surfaces, strict=True) if face not in caps
+    )
+    axis = surface.axis
+    if surface.kind != "cylinder" or side.reversed or axis is None:
+        return False
+    rims = [curve for curve in curves if curve.kind == "circle" and curve.start == curve.end]
+    return len(rims) == 2 and all(
+        rim.axis is not None and math.hypot(*cross(rim.axis, axis)) <= model.angular_tolerance
+        for rim in rims
+    )
+
+
 def _uv(point: object, refusal: str) -> tuple[float, float]:
     """A drawn point as plane coordinates: two numbers, else outside the subset.
 
@@ -1183,6 +1219,48 @@ class Workplane:
             "Chamfer requires that edges be selected",
             lambda solid, edges, value: solid.chamfer(edges, value),
         )
+
+    @census_form("Workplane.shell", [("num",)])
+    def shell(self, thickness: float) -> Workplane:
+        """Offset the nearest solid inward, opening the faces on this stack (ADR-0029).
+
+        A negative thickness hollows convex planar stock or a circular cylinder
+        opened at a flat end. With no selected faces, convex planar stock gains
+        a sealed cavity. The result stacks one solid on this plane, and the
+        caller's selection remains available on its own branch.
+        Raises `ValueError` for missing stock and `RuntimeError` for stock with
+        multiple boundary shells. The kernel validates zero, non-finite and
+        infeasible inward thicknesses. Outward arc joins, stock without verified
+        join equivalence, explicit join arguments and a visible pending wire
+        or drawn path raise `UnsupportedApi` (see `shell-pending-wire`).
+
+        >>> import arris_gym.cq as cq
+        >>> cup = cq.Workplane("XY").box(10, 8, 6).faces(">Z").shell(-1)
+        >>> round(cup._solids()[0].measure().volume, 6)
+        240.0
+        """
+        base = self._base_solid()
+        if base is None:
+            raise ValueError(_NO_SOLID)
+        if len(base.model.shells(base.body)) != 1:
+            raise RuntimeError("BRep_API: command not done")
+        if self._visible_wires() or any(
+            isinstance(obj, _Path) and obj.segments for obj in self._stack
+        ):
+            raise UnsupportedApi("Workplane.shell on a pending wire or drawn path")
+        openings = [
+            face
+            for selected in self._stack
+            if isinstance(selected, Faces)
+            for group in selected.groups
+            for face in group
+        ]
+        if math.isfinite(thickness) and thickness != 0:
+            if thickness > 0:
+                raise UnsupportedApi("Workplane.shell with outward arc joins")
+            if not _sharp_inward_shell(base, openings):
+                raise UnsupportedApi("Workplane.shell on stock without verified inward joins")
+        return self._derive(base.shell(openings, abs(thickness)))
 
     @census_form("Workplane.pushPoints", [("list",)])
     def pushPoints(self, pntList: Sequence[object]) -> Workplane:

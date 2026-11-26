@@ -117,11 +117,31 @@ def table_of(corpus: str) -> FidelityTable:
     )
 
 
-@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 15_326)])
+def pre_shell_subset() -> cq.Subset:
+    """Bundle 5 declarations used to generate the committed fidelity tables."""
+    current = cq.subset()
+    return replace(
+        current, forms=tuple(form for form in current.forms if form.name != "Workplane.shell")
+    )
+
+
+@pytest.mark.parametrize(("corpus", "expected"), [("cadrecode", 968), ("benchcad", 15_656)])
 def test_current_subset_reach_over_the_committed_census(corpus: str, expected: int) -> None:
     measured = reach(census_rows(corpus), cq.subset())
     assert measured.programs == CORPORA[corpus][1]
     assert measured.in_subset == expected
+
+
+def test_shell_reach_adds_only_the_enclosures_and_trays() -> None:
+    rows = census_rows("benchcad")
+    previous = set(reach(rows, pre_shell_subset()).stems)
+    current = set(reach(rows, cq.subset()).stems)
+    assert len(previous) == 15_326
+    assert previous <= current
+    assert Counter(stem.rsplit("_", 2)[0] for stem in current - previous) == {
+        "enclosure": 174,
+        "sheet_metal_tray": 156,
+    }
 
 
 def test_benchcad_polygon_loft_deferral_matches_the_measured_gear_contexts() -> None:
@@ -174,7 +194,7 @@ def test_the_committed_reach_report_matches_the_table_and_census(corpus: str) ->
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
     rows = census_rows(corpus)
-    assert reach_report(table, rows, cq.subset()) == committed
+    assert reach_report(table, rows, pre_shell_subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, rows, fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]

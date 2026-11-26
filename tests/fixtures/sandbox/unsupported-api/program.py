@@ -1,3 +1,3 @@
 from arris_gym.cq import UnsupportedApi
 
-raise UnsupportedApi("Workplane.shell")
+raise UnsupportedApi("Workplane.text")
