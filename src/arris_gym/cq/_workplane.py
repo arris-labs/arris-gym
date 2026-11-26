@@ -19,7 +19,7 @@ import arris.build
 
 from arris_gym.cq._draft import disc_draft, rect_draft
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
-from arris_gym.cq._loft_limits import MAX_CURVED_SIDES
+from arris_gym.cq._profile_limits import CLOSE_GAP, MAX_CURVED_SIDES
 from arris_gym.cq._selector import (
     AXIS_SELECTORS,
     NO_FACES,
@@ -82,10 +82,6 @@ _CSK_ANGLES = (-180.0, 360.0)
 # From this angle up, to the top of `_CSK_ANGLES`, the cone's height is
 # negative, as it is below zero (the oracle's "negative or null height").
 _CSK_NO_HEIGHT = 180.0
-# CadQuery's `close` adds a segment back to the path's first point only when
-# the gap is wider than this, its numerical-error threshold (`cq.py`); a
-# narrower gap is no segment. In plane units.
-_CLOSE_GAP = 1e-6
 # Effective CadQuery 2.3.0 / OCCT 7.9.3 endpoint gap for mirrorY's
 # line wires in plane units (ADR-0028, mirror-y-join-limit).
 _MIRROR_JOIN_GAP = 1e-7
@@ -2358,7 +2354,7 @@ class Workplane:
         """The pending path closed back to its start: a sketch on the stack.
 
         A straight segment back to the first point is added unless the path
-        ends within CadQuery's `_CLOSE_GAP` of it, in which case its last
+        ends within CadQuery's closing tolerance, in which case its last
         segment, a line or an arc, ends exactly at the first point. Raises
         `ValueError` (CadQuery's words, `runtime`) when nothing has been
         drawn; a path the kernel cannot close (a single segment) ends in the
@@ -2378,7 +2374,7 @@ class Workplane:
             raise ValueError("No start point specified - cannot close")
         segments = last.segments
         (u0, v0), (u1, v1) = last.start, last.end
-        if math.hypot(u1 - u0, v1 - v0) <= _CLOSE_GAP:
+        if math.hypot(u1 - u0, v1 - v0) <= CLOSE_GAP:
             # The last segment, a line or an arc, ends exactly at the start.
             segments = (*segments[:-1], segments[-1].ending_at(last.start))
         else:

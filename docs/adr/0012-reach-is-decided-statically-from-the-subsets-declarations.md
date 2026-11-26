@@ -135,3 +135,11 @@ BenchCAD corpus. The other 17,508 program census records serialize as
 before. Reach is 15,326 of 17,900 on BenchCAD and 968 of 968 on
 CAD-Recode. Fidelity still counts the 392 rows with their existing
 `unsupported_api` outcomes and `cq_bug` classes.
+
+## Amendment (2026-11-26). Count sides after closing the outline
+
+The static proof uses the same closing tolerance as `Workplane.close()`.
+An endpoint within 1e-6 drawing units of the start shares the start vertex.
+Counting it as a separate vertex can exclude a supported loft with 48
+nonplanar sides. The reach test covers that boundary with two literal
+48-sided outlines whose final points are within the closing tolerance.

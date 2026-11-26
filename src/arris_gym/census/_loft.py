@@ -6,7 +6,7 @@ import ast
 import math
 from collections.abc import Callable, Sequence
 
-from arris_gym.cq._loft_limits import MAX_CURVED_SIDES
+from arris_gym.cq._profile_limits import CLOSE_GAP, MAX_CURVED_SIDES
 
 _Point = tuple[float, float]
 # Conservative lower bound on the sine of the angle between nonparallel
@@ -43,8 +43,10 @@ def _polygon(node: ast.expr) -> tuple[_Point, ...] | None:
         if x is None or y is None:
             return None
         points.append((x, y))
-    if len(points) > 1 and points[0] == points[-1]:
-        points.pop()
+    if len(points) > 1:
+        (u0, v0), (u1, v1) = points[0], points[-1]
+        if math.hypot(u1 - u0, v1 - v0) <= CLOSE_GAP:
+            points.pop()
     return tuple(points) if len(points) >= 3 else None
 
 

@@ -82,6 +82,27 @@ def test_literal_polygon_loft_limits_apply_to_text_and_saved_census(
     assert reach([unknown_offset], SUBSET).stems == ("p",)
 
 
+def test_literal_loft_reach_counts_the_edges_after_close_snaps_the_endpoint() -> None:
+    sections = []
+    for phase, end_gap_y in ((0.0, 1e-7), (0.025, 2e-7)):
+        outline = [
+            (math.cos(i * math.tau / 48 + phase), math.sin(i * math.tau / 48 + phase))
+            for i in range(48)
+        ]
+        x, y = outline[0]
+        outline.append((x + 1e-7, y + end_gap_y))
+        sections.append(f".polyline({outline!r}).close()")
+    p = program(
+        'import cadquery as cq\nr = cq.Workplane("XY")'
+        + ".workplane(offset=2)".join(sections)
+        + ".loft()"
+    )
+    outcome = census_program(p)
+    assert isinstance(outcome, ProgramCensus)
+    assert not outcome.deferred_polygon_loft
+    assert reach([p], SUBSET).stems == ("p",)
+
+
 @pytest.mark.parametrize(
     ("form", "admitted"),
     [
