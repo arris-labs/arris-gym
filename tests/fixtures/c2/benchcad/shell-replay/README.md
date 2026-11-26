@@ -57,5 +57,50 @@ remeasured oracle STEP both match its closed form.
 
 The 62 complete oracle STEP exports, read with `arris_gym.read_target`,
 all agree with their corresponding arris-built bodies under ADR-0005,
-including the solid count. Step 4 binds any verdicts to row evidence under
-ADR-0006.
+including the solid count.
+
+## Checked verdicts
+
+`verdicts.json` records 62 `occt_wrong` verdicts under ADR-0006. Independent
+boundary integrals with 32 and 64 trim subdivisions settle 48 trays
+using `--shell-boundary`. This mode writes rounded zero coordinates
+as positive zero because the sign of the oracle's residual can vary.
+The integrals disagree with arris on the 11 enclosures and agree within
+ADR-0005 with both reports on three trays. Section integrals from
+construction settle those 14 rows. The enclosure sections integrate the
+four mitred floor fillets and subtract any bore array. The tray sections
+integrate the rim offsets, subtract the floor bores and any through-cut
+slots, and integrate the circular segments where the bores clip the
+inner rim chamfer. The relative candidate volume errors against the
+14 constructed forms stay below 1.22e-12. Each pinned oracle report exceeds
+ADR-0005 against its evidence. The generator verifies the program
+digest against the pinned report and checks each verdict with `compare`.
+
+Regenerate the verdicts and the checked slice from the repository root
+with a synced oracle environment.
+
+```sh
+root=tests/fixtures/c2/benchcad
+work=$(mktemp -d .scratch/shell-verdicts.XXXXXX)
+uv run --locked --extra corpus tools/cq_closed_forms.py \
+  @"$root/shell-replay/verdicts.args" --oracle-rows "$root/oracle.jsonl.gz" \
+  --out "$work/verdicts.json"
+cmp "$work/verdicts.json" "$root/shell-replay/verdicts.json"
+uv run --locked --extra corpus tools/cq_corpus.py --corpus benchcad \
+  --slice "$root/shell-replay/stems.txt" --oracle-rows "$root/oracle.jsonl.gz" \
+  --verdicts "$work/verdicts.json" \
+  --out-dir "$work/out" --work-dir "$work/chunks" --workers 12
+cmp "$work/out/arris-report.md" "$root/shell-replay/arris-report.md"
+```
+
+The checked replay has 268 agreements, 11 enclosure and 51 tray
+`occt_wrong` rows, and zero unclassified rows, `cq_bug` rows and timeouts.
+Separate replays of the 11 enclosures and 51 trays with verdicts give
+the same classifications. The oracle rows reproduce the pre-verdict
+slice bytes. The fidelity table digest is
+`0b2a5168e0ad461f2bd11e35df3ed49ac1fead90dc4448ff5c030374f9ba5dc6`.
+
+The [generated arris report](arris-report.md) counts zero kernel refusals
+and zero arris bugs in the slice. The separate outward and reentrant
+arc-join limits remain demonstrated by the
+[sharp and arc shell probes](../../../shells/README.md) under ADR-0029.

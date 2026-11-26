@@ -1,0 +1,1614 @@
+{
+ "enclosure_001465_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 39572.83315054754,
+   "bounds": [
+    [
+     -72.835,
+     -38.51,
+     -10.53
+    ],
+    [
+     72.835,
+     38.51,
+     10.53
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    -0.0,
+    -4.929957006122742
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 42437.53639200635
+  }
+ },
+ "enclosure_001852_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 14362.634960368985,
+   "bounds": [
+    [
+     -9.28,
+     -32.07,
+     -25.595
+    ],
+    [
+     9.28,
+     32.07,
+     25.595
+    ]
+   ],
+   "centroid": [
+    -3.4086907488828913,
+    -0.0,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 12591.944501536278
+  }
+ },
+ "enclosure_002158_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 47620.659572078446,
+   "bounds": [
+    [
+     -7.605,
+     -93.355,
+     -43.27
+    ],
+    [
+     7.605,
+     93.355,
+     43.27
+    ]
+   ],
+   "centroid": [
+    -4.383415709891979,
+    -0.0,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 39773.1314543812
+  }
+ },
+ "enclosure_007292_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 38503.47212700619,
+   "bounds": [
+    [
+     -9.745,
+     -72.695,
+     -39.43
+    ],
+    [
+     9.745,
+     72.695,
+     39.43
+    ]
+   ],
+   "centroid": [
+    -4.535830919743612,
+    -0.0,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 52337.98444874613
+  }
+ },
+ "enclosure_009959_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 77898.74012569418,
+   "bounds": [
+    [
+     -95.14,
+     -9.755,
+     -70.41
+    ],
+    [
+     95.14,
+     9.755,
+     70.41
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -5.976169664501746,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 61562.53367008663
+  }
+ },
+ "enclosure_012567_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 75072.18305894082,
+   "bounds": [
+    [
+     -13.27,
+     -91.02,
+     -61.94
+    ],
+    [
+     13.27,
+     91.02,
+     61.94
+    ]
+   ],
+   "centroid": [
+    -6.770717906863403,
+    -0.0,
+    -0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 95619.45076127374
+  }
+ },
+ "enclosure_014905_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 18509.90280319182,
+   "bounds": [
+    [
+     -55.04,
+     -6.27,
+     -25.335
+    ],
+    [
+     55.04,
+     6.27,
+     25.335
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -3.10267798153195,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 13559.527926418546
+  }
+ },
+ "enclosure_017072_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 9751.953011434907,
+   "bounds": [
+    [
+     -36.445,
+     -18.705,
+     -5.465
+    ],
+    [
+     36.445,
+     18.705,
+     5.465
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    -0.0,
+    -2.3734288403328843
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 7092.5627148026615
+  }
+ },
+ "enclosure_017138_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 31944.52585562282,
+   "bounds": [
+    [
+     -73.775,
+     -8.785,
+     -31.095
+    ],
+    [
+     73.775,
+     8.785,
+     31.095
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -4.230121507624537,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 28144.12686691983
+  }
+ },
+ "enclosure_017933_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 75024.29106755627,
+   "bounds": [
+    [
+     -93.245,
+     -72.065,
+     -8.77
+    ],
+    [
+     93.245,
+     72.065,
+     8.77
+    ]
+   ],
+   "centroid": [
+    -0.0,
+    -0.0,
+    -5.35632071802064
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 73835.78799856045
+  }
+ },
+ "enclosure_019557_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 58778.98000332416,
+   "bounds": [
+    [
+     -72.59,
+     -8.585,
+     -69.965
+    ],
+    [
+     72.59,
+     8.585,
+     69.965
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -5.149094880913949,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 49223.54259237866
+  }
+ },
+ "sheet_metal_tray_000130_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 61272.6626176982,
+   "bounds": [
+    [
+     -117.985,
+     -19.515,
+     -20.77
+    ],
+    [
+     117.985,
+     19.515,
+     20.77
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -4.414511796330445,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 111585.61485963209
+  }
+ },
+ "sheet_metal_tray_000257_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 17973.10889,
+   "bounds": [
+    [
+     -28.08,
+     -23.505,
+     -16.41
+    ],
+    [
+     28.08,
+     23.505,
+     16.41
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    -3.28541965
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 16271.78439
+  }
+ },
+ "sheet_metal_tray_000377_s20260507": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 40953.43031538694,
+   "bounds": [
+    [
+     -18.16,
+     -58.355,
+     -33.225
+    ],
+    [
+     18.16,
+     58.355,
+     33.225
+    ]
+   ],
+   "centroid": [
+    -5.396034957443767,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 60637.04246787177
+  }
+ },
+ "sheet_metal_tray_000468_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 128831.7112,
+   "bounds": [
+    [
+     -24.195,
+     -101.05,
+     -76.045
+    ],
+    [
+     24.195,
+     101.05,
+     76.045
+    ]
+   ],
+   "centroid": [
+    -10.59426655,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 117284.7974
+  }
+ },
+ "sheet_metal_tray_001163_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 40803.90179,
+   "bounds": [
+    [
+     -41.565,
+     -13.085,
+     -60.655
+    ],
+    [
+     41.565,
+     13.085,
+     60.655
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -4.56761109,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 62895.72088
+  }
+ },
+ "sheet_metal_tray_001521_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 81822.30086,
+   "bounds": [
+    [
+     -24.585,
+     -80.305,
+     -50.27
+    ],
+    [
+     24.585,
+     80.305,
+     50.27
+    ]
+   ],
+   "centroid": [
+    -8.20598317,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 125210.8365
+  }
+ },
+ "sheet_metal_tray_001753_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 33218.14783,
+   "bounds": [
+    [
+     -56.83,
+     -18.07,
+     -24.315
+    ],
+    [
+     56.83,
+     18.07,
+     24.315
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -3.96815988,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 43814.22078
+  }
+ },
+ "sheet_metal_tray_002277_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 92605.54612022465,
+   "bounds": [
+    [
+     -47.75,
+     -29.455,
+     -85.765
+    ],
+    [
+     47.75,
+     29.455,
+     85.765
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -6.258003854914839,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Section integrals of the open shell and its fillets or chamfers, with floor bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+   "volume": 205290.43787002395
+  }
+ },
+ "sheet_metal_tray_002374_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 60554.94682,
+   "bounds": [
+    [
+     -54.7,
+     -17.525,
+     -64.24
+    ],
+    [
+     54.7,
+     17.525,
+     64.24
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -7.1655587,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 55288.004
+  }
+ },
+ "sheet_metal_tray_004514_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 71175.68507,
+   "bounds": [
+    [
+     -21.99,
+     -63.975,
+     -57.605
+    ],
+    [
+     21.99,
+     63.975,
+     57.605
+    ]
+   ],
+   "centroid": [
+    -7.97150819,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 83046.78933
+  }
+ },
+ "sheet_metal_tray_004680_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 34108.91876,
+   "bounds": [
+    [
+     -48.07,
+     -9.88,
+     -51.49
+    ],
+    [
+     48.07,
+     9.88,
+     51.49
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -4.16225077,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 43135.2127
+  }
+ },
+ "sheet_metal_tray_005121_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 22785.42327,
+   "bounds": [
+    [
+     -7.825,
+     -84.175,
+     -15.91
+    ],
+    [
+     7.825,
+     84.175,
+     15.91
+    ]
+   ],
+   "centroid": [
+    -2.67274379,
+    1e-08,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 23769.22547
+  }
+ },
+ "sheet_metal_tray_005586_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 34092.90802,
+   "bounds": [
+    [
+     -59.62,
+     -38.575,
+     -11.58
+    ],
+    [
+     59.62,
+     38.575,
+     11.58
+    ]
+   ],
+   "centroid": [
+    -1e-08,
+    0.0,
+    -4.18757151
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 37826.45421
+  }
+ },
+ "sheet_metal_tray_006244_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 20359.86515,
+   "bounds": [
+    [
+     -21.965,
+     -23.65,
+     -24.295
+    ],
+    [
+     21.965,
+     23.65,
+     24.295
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    -2.12512192
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 36353.36945
+  }
+ },
+ "sheet_metal_tray_006289_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 19533.4446,
+   "bounds": [
+    [
+     -19.725,
+     -12.225,
+     -45.825
+    ],
+    [
+     19.725,
+     12.225,
+     45.825
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -3.61038188,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 17691.36424
+  }
+ },
+ "sheet_metal_tray_006330_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 54423.72788,
+   "bounds": [
+    [
+     -36.775,
+     -30.965,
+     -47.225
+    ],
+    [
+     36.775,
+     30.965,
+     47.225
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -6.89041186,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 50771.29187
+  }
+ },
+ "sheet_metal_tray_007572_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 35185.65846,
+   "bounds": [
+    [
+     -70.765,
+     -31.67,
+     -11.05
+    ],
+    [
+     70.765,
+     31.67,
+     11.05
+    ]
+   ],
+   "centroid": [
+    -1e-08,
+    0.0,
+    -4.22148593
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 46714.41794
+  }
+ },
+ "sheet_metal_tray_007676_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 19291.63992,
+   "bounds": [
+    [
+     -72.065,
+     -8.48,
+     -13.95
+    ],
+    [
+     72.065,
+     8.48,
+     13.95
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -2.40195692,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 21779.36234
+  }
+ },
+ "sheet_metal_tray_007710_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 24050.79012,
+   "bounds": [
+    [
+     -52.475,
+     -7.25,
+     -35.985
+    ],
+    [
+     52.475,
+     7.25,
+     35.985
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -3.49520581,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 16831.81073
+  }
+ },
+ "sheet_metal_tray_007883_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 59566.5594,
+   "bounds": [
+    [
+     -103.305,
+     -25.155,
+     -19.47
+    ],
+    [
+     103.305,
+     25.155,
+     19.47
+    ]
+   ],
+   "centroid": [
+    -1e-08,
+    0.0,
+    -5.52523793
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 78570.39858
+  }
+ },
+ "sheet_metal_tray_008432_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 126540.5249,
+   "bounds": [
+    [
+     -100.135,
+     -31.645,
+     -60.175
+    ],
+    [
+     100.135,
+     31.645,
+     60.175
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -9.87358949,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 282507.6081
+  }
+ },
+ "sheet_metal_tray_008876_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 78445.86043,
+   "bounds": [
+    [
+     -94.33,
+     -15.28,
+     -58.095
+    ],
+    [
+     94.33,
+     15.28,
+     58.095
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -7.17954195,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 67880.77163
+  }
+ },
+ "sheet_metal_tray_008982_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 37941.31201,
+   "bounds": [
+    [
+     -72.185,
+     -42.87,
+     -7.33
+    ],
+    [
+     72.185,
+     42.87,
+     7.33
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1e-08,
+    -4.0837529
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 27670.35251
+  }
+ },
+ "sheet_metal_tray_009374_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 15595.39093,
+   "bounds": [
+    [
+     -23.13,
+     -11.22,
+     -34.59
+    ],
+    [
+     23.13,
+     11.22,
+     34.59
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -2.73150612,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 15895.87695
+  }
+ },
+ "sheet_metal_tray_009460_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 39491.51881,
+   "bounds": [
+    [
+     -13.82,
+     -72.81,
+     -30.29
+    ],
+    [
+     13.82,
+     72.81,
+     30.29
+    ]
+   ],
+   "centroid": [
+    -4.93406251,
+    -1e-08,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 52307.40237
+  }
+ },
+ "sheet_metal_tray_009491_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 25622.30339,
+   "bounds": [
+    [
+     -24.55,
+     -12.485,
+     -60.695
+    ],
+    [
+     24.55,
+     12.485,
+     60.695
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -3.28080916,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 17073.65331
+  }
+ },
+ "sheet_metal_tray_009759_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 27739.78673,
+   "bounds": [
+    [
+     -37.86,
+     -49.725,
+     -9.85
+    ],
+    [
+     37.86,
+     49.725,
+     9.85
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    -3.89442424
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 30155.69723
+  }
+ },
+ "sheet_metal_tray_009782_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 32528.36478,
+   "bounds": [
+    [
+     -49.69,
+     -35.76,
+     -13.93
+    ],
+    [
+     49.69,
+     35.76,
+     13.93
+    ]
+   ],
+   "centroid": [
+    -1e-08,
+    0.0,
+    -4.93263273
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 39134.6171
+  }
+ },
+ "sheet_metal_tray_010016_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 36775.54392,
+   "bounds": [
+    [
+     -74.815,
+     -38.67,
+     -7.71
+    ],
+    [
+     74.815,
+     38.67,
+     7.71
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1e-08,
+    -4.04566539
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 31479.8139
+  }
+ },
+ "sheet_metal_tray_010040_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 21215.26723,
+   "bounds": [
+    [
+     -58.985,
+     -10.595,
+     -18.53
+    ],
+    [
+     58.985,
+     10.595,
+     18.53
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -3.1877456,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 26159.49329
+  }
+ },
+ "sheet_metal_tray_010471_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 64917.77984,
+   "bounds": [
+    [
+     -24.085,
+     -46.7,
+     -63.08
+    ],
+    [
+     24.085,
+     46.7,
+     63.08
+    ]
+   ],
+   "centroid": [
+    -7.85634255,
+    -1e-08,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 48167.00367
+  }
+ },
+ "sheet_metal_tray_011505_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 41164.27255,
+   "bounds": [
+    [
+     -84.79,
+     -7.96,
+     -38.37
+    ],
+    [
+     84.79,
+     7.96,
+     38.37
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -4.052626,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 43894.06027
+  }
+ },
+ "sheet_metal_tray_011544_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 64978.74825,
+   "bounds": [
+    [
+     -89.46,
+     -32.265,
+     -22.47
+    ],
+    [
+     89.46,
+     32.265,
+     22.47
+    ]
+   ],
+   "centroid": [
+    -1e-08,
+    0.0,
+    -6.04300951
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 99381.92753
+  }
+ },
+ "sheet_metal_tray_011640_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 41000.24113,
+   "bounds": [
+    [
+     -41.945,
+     -22.07,
+     -42.8
+    ],
+    [
+     41.945,
+     22.07,
+     42.8
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -4.5108042,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 47400.56198
+  }
+ },
+ "sheet_metal_tray_013004_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 39640.02632,
+   "bounds": [
+    [
+     -58.915,
+     -19.87,
+     -27.465
+    ],
+    [
+     58.915,
+     19.87,
+     27.465
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -5.50493077,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 37647.99266
+  }
+ },
+ "sheet_metal_tray_013217_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 13520.95441,
+   "bounds": [
+    [
+     -13.445,
+     -31.71,
+     -15.22
+    ],
+    [
+     13.445,
+     31.71,
+     15.22
+    ]
+   ],
+   "centroid": [
+    -3.01950357,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 10716.28033
+  }
+ },
+ "sheet_metal_tray_013400_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 88127.47941,
+   "bounds": [
+    [
+     -115.4,
+     -27.355,
+     -29.27
+    ],
+    [
+     115.4,
+     27.355,
+     29.27
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -5.84838016,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 175363.5803
+  }
+ },
+ "sheet_metal_tray_013440_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 68134.31619,
+   "bounds": [
+    [
+     -13.085,
+     -100.025,
+     -47.535
+    ],
+    [
+     13.085,
+     100.025,
+     47.535
+    ]
+   ],
+   "centroid": [
+    -6.07050638,
+    -1e-08,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 87493.0656
+  }
+ },
+ "sheet_metal_tray_014616_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 25928.44978,
+   "bounds": [
+    [
+     -11.915,
+     -37.57,
+     -39.175
+    ],
+    [
+     11.915,
+     37.57,
+     39.175
+    ]
+   ],
+   "centroid": [
+    -4.64272285,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 18618.7616
+  }
+ },
+ "sheet_metal_tray_015316_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 52323.28844,
+   "bounds": [
+    [
+     -25.195,
+     -81.745,
+     -19.33
+    ],
+    [
+     25.195,
+     81.745,
+     19.33
+    ]
+   ],
+   "centroid": [
+    -5.01549177,
+    0.0,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 53857.54127
+  }
+ },
+ "sheet_metal_tray_015723_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 60112.43867,
+   "bounds": [
+    [
+     -59.57,
+     -19.085,
+     -60.34
+    ],
+    [
+     59.57,
+     19.085,
+     60.34
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -6.68206097,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 41382.34099
+  }
+ },
+ "sheet_metal_tray_015850_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 74967.05587,
+   "bounds": [
+    [
+     -65.185,
+     -19.505,
+     -69.975
+    ],
+    [
+     65.185,
+     19.505,
+     69.975
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -7.50475449,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 68846.42224
+  }
+ },
+ "sheet_metal_tray_017715_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 47390.09382,
+   "bounds": [
+    [
+     -23.795,
+     -87.045,
+     -20.555
+    ],
+    [
+     23.795,
+     87.045,
+     20.555
+    ]
+   ],
+   "centroid": [
+    0.0,
+    1e-08,
+    -3.00409607
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 67945.21769
+  }
+ },
+ "sheet_metal_tray_017786_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 35654.78859,
+   "bounds": [
+    [
+     -48.445,
+     -27.785,
+     -19.035
+    ],
+    [
+     48.445,
+     27.785,
+     19.035
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -3.4206866,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 62260.75021
+  }
+ },
+ "sheet_metal_tray_018870_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 76820.59293,
+   "bounds": [
+    [
+     -112.705,
+     -18.815,
+     -37.45
+    ],
+    [
+     112.705,
+     18.815,
+     37.45
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -6.4115513,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 104883.6485
+  }
+ },
+ "sheet_metal_tray_019257_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 51492.47716,
+   "bounds": [
+    [
+     -74.68,
+     -5.855,
+     -66.425
+    ],
+    [
+     74.68,
+     5.855,
+     66.425
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -3.72749586,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 33948.57056
+  }
+ },
+ "sheet_metal_tray_019434_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 20054.12045,
+   "bounds": [
+    [
+     -71.515,
+     -6.21,
+     -19.73
+    ],
+    [
+     71.515,
+     6.21,
+     19.73
+    ]
+   ],
+   "centroid": [
+    1e-08,
+    -2.65627732,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 16826.77526
+  }
+ },
+ "sheet_metal_tray_019458_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 60427.89115,
+   "bounds": [
+    [
+     -61.43,
+     -17.465,
+     -57.34
+    ],
+    [
+     61.43,
+     17.465,
+     57.34
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -7.00445764,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 72544.04882
+  }
+ },
+ "sheet_metal_tray_019463_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 18432.01987,
+   "bounds": [
+    [
+     -18.795,
+     -21.09,
+     -27.235
+    ],
+    [
+     18.795,
+     21.09,
+     27.235
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -2.73435951,
+    0.0
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 13638.57039
+  }
+ },
+ "sheet_metal_tray_019606_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 38446.00034,
+   "bounds": [
+    [
+     -30.21,
+     -12.71,
+     -73.96
+    ],
+    [
+     30.21,
+     12.71,
+     73.96
+    ]
+   ],
+   "centroid": [
+    0.0,
+    -5.06375629,
+    -1e-08
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 32977.89469
+  }
+ },
+ "sheet_metal_tray_019609_s20260505": {
+  "disagreement": "occt_wrong",
+  "evidence": {
+   "area": 52623.59428,
+   "bounds": [
+    [
+     -60.165,
+     -56.525,
+     -14.785
+    ],
+    [
+     60.165,
+     56.525,
+     14.785
+    ]
+   ],
+   "centroid": [
+    0.0,
+    0.0,
+    -5.40822647
+   ],
+   "kind": "closed_form",
+   "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py",
+   "volume": 88671.91707
+  }
+ }
+}

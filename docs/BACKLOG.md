@@ -93,7 +93,7 @@ A defect a run measured, one block each:
   Remeasuring their oracle STEP exports agrees with all 62 arris builds.
 - State: strict regressions `oracle-shell-floor-fillet`,
   `oracle-shell-chamfered-rim-volume` and `oracle-shell-tray-through-cut`.
-  Row verdicts are due in step 4 of [lift-shell](plans/lift-shell.md).
+  All 62 rows have checked `occt_wrong` verdicts under ADR-0006.
 
 ### draft-bounds-and-short-sections
 - What: oblique draft bounds enclose more than the trimmed geometry. Drafts

@@ -8,7 +8,8 @@ and writes one `Verdict` per stem that the row's measures can test:
 
     uv run --extra corpus tools/cq_closed_forms.py --table T --oracle-rows O --out V.json \
         [--refusal FAMILY=FIXTURE ...] [--arris-bug FAMILY=FIXTURE ...] \
-        [--blended-boundary STEM ...] [--signed-solids STEM ...] [--by-design STEM=ANCHOR ...]
+        [--blended-boundary STEM ...] [--shell-boundary STEM ...] [--shell-construction STEM ...] \
+        [--signed-solids STEM ...] [--by-design STEM=ANCHOR ...]
 
 or with its arguments in a file, one per line: `tools/cq_closed_forms.py @FILE` (BenchCAD's
 are `tests/fixtures/c2/benchcad/verdicts.args`; a later `--table` or `--out` wins).
@@ -5498,13 +5499,15 @@ def sketch_boundary_forms(
     blends: bool = False,
     subdivisions: tuple[int, int] | None = None,
     workers: int = WORKERS,
+    canonical_zero: bool = False,
 ) -> list[dict[str, object]]:
     """Integrate the planar and cylindrical faces of a part's boundary.
 
     Run in oracle workers and raise if the two quadratures do not converge
     within the fidelity tolerance. With `blends`, also integrate conical and
     toroidal faces. The integral uses the B-Rep's trim curves and no kernel mass
-    properties.
+    properties. With `canonical_zero`, store rounded zero coordinates as
+    positive zero regardless of the sign of the quadrature's residual.
     """
     from numpy.polynomial.legendre import leggauss
 
@@ -5549,10 +5552,10 @@ def sketch_boundary_forms(
             ClosedForm(
                 volume=volume,
                 area=area,
-                centroid=_boundary_coordinates(b.centroid),
+                centroid=_boundary_coordinates(b.centroid, canonical_zero=canonical_zero),
                 bounds=(
-                    _boundary_coordinates(b.bounds[0]),
-                    _boundary_coordinates(b.bounds[1]),
+                    _boundary_coordinates(b.bounds[0], canonical_zero=canonical_zero),
+                    _boundary_coordinates(b.bounds[1], canonical_zero=canonical_zero),
                 ),
                 note=note,
             ).model_dump(mode="json")
@@ -5560,13 +5563,9 @@ def sketch_boundary_forms(
     return forms
 
 
-def _boundary_coordinates(point: Vec) -> Vec:
-    x, y, z = point
-    return (
-        round(x, _BOUNDARY_COORDINATE_PLACES),
-        round(y, _BOUNDARY_COORDINATE_PLACES),
-        round(z, _BOUNDARY_COORDINATE_PLACES),
-    )
+def _boundary_coordinates(point: Vec, *, canonical_zero: bool = False) -> Vec:
+    x, y, z = (round(value, _BOUNDARY_COORDINATE_PLACES) for value in point)
+    return (x + 0.0, y + 0.0, z + 0.0) if canonical_zero else (x, y, z)
 
 
 _MEASURE_FIXTURES = {
@@ -6373,6 +6372,252 @@ def propeller_closed_form(text: str) -> dict[str, object]:
     ).model_dump(mode="json")
 
 
+def _shell_numbers(values: Sequence[object], count: int) -> tuple[float, ...]:
+    if len(values) != count or not all(type(value) in (int, float) for value in values):
+        raise ValueError("expected numeric shell construction arguments")
+    return tuple(float(str(value)) for value in values)
+
+
+def _shell_points(value: object) -> list[tuple[float, float]]:
+    if not isinstance(value, list) or not value:
+        raise ValueError("expected shell cutter points")
+    points = []
+    for point in value:
+        if not isinstance(point, tuple):
+            raise ValueError("expected a shell cutter point pair")
+        x, y = _shell_numbers(point, 2)
+        points.append((x, y))
+    return points
+
+
+def _shell_prism(length: float, width: float, height: float, rim: float) -> Vec:
+    """Volume, first moment in depth from the opening, and lateral area."""
+    if not 0.0 <= rim < min(length / 2, width / 2, height):
+        raise ValueError("shell rim reaches another face")
+    perimeter = 2 * (length + width)
+    volume = length * width * height - perimeter * rim**2 / 2 + 4 * rim**3 / 3
+    moment = length * width * height**2 / 2 - perimeter * rim**3 / 6 + rim**4 / 3
+    area = perimeter * (height - rim) + math.sqrt(2) * (perimeter * rim - 4 * rim**2)
+    return volume, moment, area
+
+
+def _shell_floor_round(length: float, width: float, r: float) -> Vec:
+    """Removed volume, moment above the floor, and change in surface area."""
+    # At height u above the floor, each side moves in by
+    # s = r - sqrt(r**2 - (r - u)**2). Integrate the area loss 2(L+W)s - 4s**2.
+    perimeter = 2 * (length + width)
+    integral_s = 1 - math.pi / 4
+    integral_s2 = 5 / 3 - math.pi / 2
+    volume = perimeter * r**2 * integral_s - 4 * r**3 * integral_s2
+    moment = perimeter * r**3 * (integral_s - 1 / 6) - 4 * r**4 * (integral_s2 - 1 / 12)
+    floor_delta = (length - 2 * r) * (width - 2 * r) - length * width
+    side_delta = perimeter * r * (math.pi / 2 - 1) - 8 * r**2 * (math.pi / 2 - 1)
+    return volume, moment, floor_delta + side_delta
+
+
+def _shell_rim_bore(r: float, a: float) -> tuple[float, float, float, float]:
+    """Volume, axial moment in the disc, squared depth integral and area change.
+
+    The bore clips one 45-degree inner chamfer. For disc coordinates u > a,
+    the cut reaches u - a below the opening, and removes both a top and a
+    slanted patch. The exposed cylinder follows the corresponding circular arc.
+    """
+    angle = math.acos(a / r)
+    chord = math.sqrt(r**2 - a**2)
+    cap = r**2 * angle - a * chord
+    first = 2 * chord**3 / 3
+    second = r**4 / 4 * (angle - math.sin(4 * angle) / 4)
+    lateral = 2 * r * (chord - a * angle)
+    return (
+        first - a * cap,
+        second - a * first,
+        second - 2 * a * first + a**2 * cap,
+        lateral - (1 + math.sqrt(2)) * cap,
+    )
+
+
+def shell_closed_form(text: str) -> dict[str, object]:
+    """Integrate a centred open box with a rim chamfer or floor fillet and disjoint cuts.
+
+    Raise ValueError if the call chain or cutter layout falls outside that construction.
+    """
+    from arris_gym.fidelity import ClosedForm
+
+    calls = _chain(text)
+    if any(call.keywords for _, call in calls):
+        raise ValueError("shell construction requires positional calls")
+    steps = [(name, _literals(call)) for name, call in calls]
+    match steps:
+        case [("Workplane", (("XY" | "XZ" | "YZ") as plane,)), ("box", dimensions), *rest]:
+            length, width, height = _shell_numbers(dimensions, 3)
+        case _:
+            raise ValueError("shell construction requires a centred box")
+    axis = {"XY": "Z", "XZ": "Y", "YZ": "X"}[plane]
+    top, bottom = (f">{axis}",), (f"<{axis}",)
+    rim = radius = 0.0
+    match rest:
+        case [("edges", edge), ("chamfer", chamfer), ("faces", face), ("shell", shell), *cuts] if (
+            edge == face == top
+        ):
+            (rim,) = _shell_numbers(chamfer, 1)
+            if rim <= 0:
+                raise ValueError("expected a positive rim chamfer")
+        case [
+            ("faces", face),
+            ("shell", shell),
+            ("faces", floor),
+            ("edges", edge),
+            ("fillet", fillet),
+            *cuts,
+        ] if face == top and floor == edge == bottom:
+            (radius,) = _shell_numbers(fillet, 1)
+            if radius <= 0:
+                raise ValueError("expected a positive floor fillet")
+        case _:
+            raise ValueError("expected an open shell with a rim chamfer or a floor fillet")
+    (thickness,) = _shell_numbers(shell, 1)
+    t = -thickness
+    if not radius < t < min(length / 2, width / 2, height):
+        raise ValueError("shell floor fillets and wall offsets must fit")
+    inner_length, inner_width = length - 2 * t, width - 2 * t
+    inner_rim = rim + (math.sqrt(2) - 1) * t if rim else 0.0
+    outer_v, outer_m, outer_a = _shell_prism(length, width, height, rim)
+    inner_v, inner_m, inner_a = _shell_prism(inner_length, inner_width, height - t, inner_rim)
+    rim_area = (length - 2 * rim) * (width - 2 * rim) - (
+        (inner_length - 2 * inner_rim) * (inner_width - 2 * inner_rim)
+    )
+    volume = outer_v - inner_v
+    moment_h = volume * height / 2 - outer_m + inner_m
+    area = outer_a + inner_a + length * width + inner_length * inner_width + rim_area
+    if radius:
+        removed, moment, area_delta = _shell_floor_round(length, width, radius)
+        volume -= removed
+        moment_h -= moment - removed * height / 2
+        area += area_delta
+
+    slots: list[tuple[str, tuple[object, ...]]]
+    match cuts:
+        case []:
+            bores, slots, bore_r = [], [], 0.0
+        case [
+            ("faces", floor),
+            ("workplane", ()),
+            ("pushPoints", (points,)),
+            ("hole", bore),
+            *slots,
+        ] if floor == bottom:
+            bores = _shell_points(points)
+            (diameter,) = _shell_numbers(bore, 1)
+            bore_r = diameter / 2
+        case [("faces", floor), ("workplane", ()), ("rarray", array), ("hole", bore)] if (
+            floor == bottom
+        ):
+            dx, dy, nx, ny = _shell_numbers(array, 4)
+            if dx <= 0 or dy <= 0 or not (nx.is_integer() and ny.is_integer() and min(nx, ny) > 0):
+                raise ValueError("expected a rectangular floor bore array")
+            bores = [
+                ((i - (nx - 1) / 2) * dx, (j - (ny - 1) / 2) * dy)
+                for i in range(int(nx))
+                for j in range(int(ny))
+            ]
+            slots = []
+            (diameter,) = _shell_numbers(bore, 1)
+            bore_r = diameter / 2
+        case _:
+            raise ValueError("expected bores from the outside floor")
+    # On the bottom workplane of a YZ box, local +x points along world -Y.
+    if plane == "YZ":
+        bores = [(-x, y) for x, y in bores]
+    if bores and (
+        bore_r <= 0
+        or any(
+            abs(x) + bore_r >= min(inner_length / 2, length / 2 - rim)
+            or abs(y) + bore_r >= min(inner_width / 2, width / 2 - rim)
+            for x, y in bores
+        )
+        or any(math.dist(a, b) <= 2 * bore_r for a, b in itertools.combinations(bores, 2))
+    ):
+        raise ValueError("floor bores must fit and stay disjoint")
+    bore_v = math.pi * bore_r**2 * t
+    volume -= bore_v * len(bores)
+    moment_h -= bore_v * len(bores) * (t - height) / 2
+    moment_x = -bore_v * math.fsum(x for x, _ in bores)
+    moment_y = -bore_v * math.fsum(y for _, y in bores)
+    area += 2 * math.pi * bore_r * (t - bore_r) * len(bores)
+    rim_limits = (inner_length / 2 - inner_rim, inner_width / 2 - inner_rim)
+    for x, y in bores:
+        hits = [
+            (axis, sign, gap)
+            for axis, (coord, limit) in enumerate(zip((x, y), rim_limits, strict=True))
+            for sign in (-1, 1)
+            if (gap := limit - sign * coord) < bore_r
+        ]
+        if not hits:
+            continue
+        if len(hits) != 1 or hits[0][2] <= -bore_r:
+            raise ValueError("a floor bore must clip at most one inner chamfer in a disc segment")
+        axis_index, sign, gap = hits[0]
+        removed, first, depth2, area_delta = _shell_rim_bore(bore_r, gap)
+        volume -= removed
+        moment_x -= x * removed + (sign * first if axis_index == 0 else 0)
+        moment_y -= y * removed + (sign * first if axis_index == 1 else 0)
+        moment_h -= (height * removed - depth2) / 2
+        area += area_delta
+
+    if slots:
+        if plane != "XZ" or not rim:
+            raise ValueError("expected through-slots along Z on an XZ tray")
+        match slots:
+            case [
+                ("faces", (">Z",)),
+                ("workplane", ()),
+                ("pushPoints", (points,)),
+                ("rect", rectangle),
+                ("cutThruAll", ()),
+            ]:
+                centres = _shell_points(points)
+                span, tall = _shell_numbers(rectangle, 2)
+            case _:
+                raise ValueError("expected rectangular slots passing through both walls")
+        if (
+            span <= 0
+            or tall <= 0
+            or any(
+                abs(x - other_x) <= span
+                for (x, _), (other_x, _) in itertools.combinations(centres, 2)
+            )
+        ):
+            raise ValueError("slots must have positive dimensions and stay disjoint")
+        for x, y in centres:
+            # Project the previous floor workplane's origin onto the side face.
+            depth = y + tall / 2
+            if (
+                not t < depth < min(tall, height - inner_rim)
+                or abs(x) + span / 2 >= inner_length / 2
+            ):
+                raise ValueError("slots must cross the full floor and clear the rim and end walls")
+            if any(abs(x - bore_x) <= span / 2 + bore_r for bore_x, _ in bores):
+                raise ValueError("slots through the floor must clear the bores")
+            floor_v = span * width * t
+            walls_v = 2 * span * t * (depth - t)
+            removed = floor_v + walls_v
+            volume -= removed
+            moment_x -= x * removed
+            moment_h -= (floor_v * (t - height) + walls_v * (depth + t - height)) / 2
+            area += 2 * removed / span - span * (2 * width + 4 * depth - 6 * t)
+
+    half = (length / 2, width / 2, height / 2)
+    signed_h = -moment_h if plane == "XZ" else moment_h
+    return ClosedForm(
+        volume=volume,
+        area=area,
+        centroid=to_global(plane, (moment_x / volume, moment_y / volume, signed_h / volume)),
+        bounds=box_to_global(plane, ((-half[0], -half[1], -half[2]), half)),
+        note="Section integrals of the open shell and its fillets or chamfers, with floor "
+        "bores and through-slots subtracted. tools/cq_closed_forms.py --shell-construction",
+    ).model_dump(mode="json")
+
+
 def _measure_replay_verdicts(
     stems: Sequence[str], texts: dict[str, str]
 ) -> dict[str, dict[str, object]]:
@@ -6542,6 +6787,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="class a propeller occt_wrong from its placed hub and blade geometry",
     )
     parser.add_argument(
+        "--shell-boundary",
+        action="append",
+        default=[],
+        metavar="STEM",
+        help="class a shell measure gap occt_wrong by its blended boundary integral",
+    )
+    parser.add_argument(
+        "--shell-construction",
+        action="append",
+        default=[],
+        metavar="STEM",
+        help="class a shell occt_wrong from the stock, offsets and cuts",
+    )
+    parser.add_argument(
         "--boundary-subdivisions",
         type=int,
         nargs=2,
@@ -6598,6 +6857,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             and not args.boundary
             and not args.blended_boundary
             and not args.propeller_construction
+            and not args.shell_construction
+            and not args.shell_boundary
         )
         or args.refusal
         or args.arris_bug
@@ -6608,12 +6869,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     arris_bugs = dict(item.split("=", 1) for item in args.arris_bug)
     designs = dict(item.split("=", 1) for item in args.by_design)
     propeller_stems = frozenset(args.propeller_construction)
+    shell_evidence = [*args.shell_construction, *args.shell_boundary]
+    shell_stems = frozenset(shell_evidence)
     other_explicit = [*args.boundary, *args.blended_boundary, *args.signed_solids, *designs]
     if len(propeller_stems) != len(args.propeller_construction) or propeller_stems.intersection(
         other_explicit
     ):
         parser.error("a propeller construction stem has more than one evidence selection")
-    explicit = propeller_stems.union(other_explicit)
+    if len(shell_stems) != len(shell_evidence) or shell_stems.intersection(
+        propeller_stems.union(other_explicit)
+    ):
+        parser.error("a shell construction stem has more than one evidence selection")
+    explicit = propeller_stems.union(shell_stems, other_explicit)
     if measure_stems & explicit:
         parser.error("a measure replay stem is also specified by another option")
     if failures.keys() & (explicit | measure_stems):
@@ -6627,7 +6894,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.table is not None
         else {}
     )
-    checked_measures = measure_stems | propeller_stems
+    checked_measures = measure_stems | propeller_stems | shell_stems
     if not checked_measures <= texts.keys():
         parser.error(f"unknown measure replay stems: {sorted(checked_measures - texts.keys())}")
     if unknown_failures := failures.keys() - texts.keys():
@@ -6639,17 +6906,27 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "disagreement": "occt_wrong",
                 "evidence": propeller_closed_form(texts[stem]),
             }
+        for stem in sorted(args.shell_construction):
+            verdicts[stem] = {
+                "disagreement": "occt_wrong",
+                "evidence": shell_closed_form(texts[stem]),
+            }
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1
     # The probes read the result as `r`, CAD-Recode's name; BenchCAD's is `result`.
     alias = "\nr = result\n" if args.corpus == "benchcad" else ""
-    for stems, blends in ((args.boundary, False), (args.blended_boundary, True)):
+    for stems, blends, canonical_zero in (
+        (args.boundary, False, False),
+        (args.blended_boundary, True, False),
+        (args.shell_boundary, True, True),
+    ):
         if stems:
             forms = sketch_boundary_forms(
                 [texts[stem] + alias for stem in stems],
                 blends=blends,
                 subdivisions=boundary_subdivisions,
+                canonical_zero=canonical_zero,
             )
             for stem, boundary_form in zip(stems, forms, strict=True):
                 verdicts[stem] = {"disagreement": "occt_wrong", "evidence": boundary_form}

@@ -49,6 +49,11 @@ arris bump, changes to scoring, and C2's cross-architecture digest check.
   Update the form count in `cq/_subset.py`'s doctest. Exclude the new form
   from `c1_subset()` and check the committed C2 reach report with the
   pre-lift subset until Step 5 replaces the report.
+- `tools/cq_closed_forms.py --shell-construction STEM` derives the measures
+  of a filleted enclosure or chamfered tray from its stock, offsets and
+  cuts. `--shell-boundary STEM` uses the blended boundary integral and
+  writes rounded zeros as positive zero. The generator checks each
+  verdict against both builds and the pinned program digest.
 
 ## Steps
 
@@ -76,7 +81,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   Reduce new failure causes with `inspect`. Commit strict `xfail` fixtures
   with the desired outcomes and record which causes each fixture explains.
   [Replay evidence](../../tests/fixtures/c2/benchcad/shell-replay/README.md)
-- [ ] Step 4 **[3]**. Resolve the new `cq_bug` and unclassified rows. Check
+- [x] Step 4 **[3]**. Resolve the new `cq_bug` and unclassified rows. Check
   disputed measures by construction, independent boundary integration or
   a second oracle under ADR-0006. Bind verdicts to the evidence, test
   affected stems in small slices and record kernel limits in the arris report.
@@ -128,9 +133,11 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   with oracle volume discrepancies reproduced by a reduced regression.
   Preserve the 330-stem replay and classify supported verdicts in Step 4
   with the closed-form evidence. The agreement tolerance stays in force.
-- ⚠ OPEN: The agent decides in Step 4 whether any follow-on differences
-  belong to `cq`, arris or the oracle. Use the reduced cases and verified
-  measures to decide without changing ADR-0005's agreement tolerance.
+- Settled in Step 4. The slice has 62 `occt_wrong` verdicts under ADR-0006.
+  Forty-eight tray boundary integrals pass the existing tolerance checks.
+  Section integrals from construction settle the other three trays and
+  all 11 enclosures. The [slice arris report](../../tests/fixtures/c2/benchcad/shell-replay/arris-report.md)
+  has zero refusals and zero bugs on 330 programs.
 - Settled in Step 2. CadQuery retains pending wires after a shell. The
   subset refuses a visible pending wire or drawn path, where replacing
   the stack would discard it. The

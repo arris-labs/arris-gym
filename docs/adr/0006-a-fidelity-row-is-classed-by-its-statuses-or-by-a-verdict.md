@@ -233,3 +233,20 @@ hub and blade prisms yield independent construction measures.
 `tools/cq_closed_forms.py --propeller-construction STEM` compares each
 kernel to those measures. The candidate agrees on all eight, and the
 pinned oracle reports differ. Their verdicts use `ClosedForm`.
+
+## Evidence for the BenchCAD shell replay (2026-11-26)
+
+Independent trim integration settles 48 chamfered tray measurement gaps.
+The trim integrals for 11 filleted enclosures exceed ADR-0005 against
+arris, and the integrals for three other trays fall inside tolerance
+against both reports. Use the stock and cuts to derive the measures
+for these 14 rows. The enclosure floor fillets meet at their bisectors,
+and the trays' through-bores can also cut a circular segment into the
+inner rim chamfer. A tray's rectangular through-cut can remove a floor
+strip and a strip from each of two opposite walls.
+
+`tools/cq_closed_forms.py --shell-construction STEM` works out these
+section integrals and checks the resulting `ClosedForm` against both
+reports. Each of the 62 verdicts passes ADR-0005 against arris and exceeds
+it against the pinned oracle. The [shell replay](../../tests/fixtures/c2/benchcad/shell-replay/README.md)
+records the runs and reduced cases.
