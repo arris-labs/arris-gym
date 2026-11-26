@@ -213,6 +213,12 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   source); the subset raises `ValueError`, so the program ends `runtime` as
   the oracle's does.
 
+- CadQuery 2.3.0's [`Workplane.shell`](https://github.com/CadQuery/cadquery/blob/2.3.0/cadquery/cq.py#L1201-L1234)
+  and [solid shell](https://github.com/CadQuery/cadquery/blob/2.3.0/cadquery/occ_impl/shapes.py#L2697-L2753)
+  establish which stock and openings are used, the sign of thickness,
+  the default arc join and the sealed cavity for an empty face list.
+  ADR-0029 and `tests/fixtures/shells/` record the pinned behaviour.
+
 ## Benchmark scorers read
 
 Read to reproduce the field's metrics in `src/arris_gym/reward/_field.py`;

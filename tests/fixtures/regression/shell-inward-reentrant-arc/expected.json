@@ -1,0 +1,40 @@
+{
+  "dialect": "arris",
+  "status": "ok",
+  "measures": {
+    "volume": 186.92699081698726,
+    "area": 405.85398163397446,
+    "centroid": [
+      3.405293659407883,
+      3.405293659407883,
+      2.729645759712761
+    ],
+    "bounds": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        8,
+        8,
+        6
+      ]
+    ],
+    "faces": 16,
+    "shells": 1,
+    "solids": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        1
+      ],
+      [
+        "plane",
+        15
+      ]
+    ]
+  },
+  "xfail": "arris shell uses a sharp inward join at the reentrant corner"
+}

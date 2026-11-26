@@ -1,0 +1,12 @@
+{
+  "status": "runtime",
+  "message": "OCP.OCP.StdFail.StdFail_NotDone: gce_MakePln::Value() - no result",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "4f6b3958f8d2a568c030d89d6b64e2d72a2e88715059c054cb551b1b31d8c2ce",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}

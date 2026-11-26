@@ -1,0 +1,12 @@
+{
+  "dialect": "arris",
+  "status": "arris_refusal",
+  "message": "degenerate result: the offset would make the edge or face vanish or turn inside out (+e0)",
+  "refusal": {
+    "kind": "OpDegenerateError",
+    "message": "degenerate result: the offset would make the edge or face vanish or turn inside out (+e0)",
+    "entities": [
+      "+e0"
+    ]
+  }
+}

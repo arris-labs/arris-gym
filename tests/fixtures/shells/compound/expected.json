@@ -1,0 +1,35 @@
+{
+  "dialect": "arris",
+  "status": "ok",
+  "measures": {
+    "volume": 480,
+    "area": 1032,
+    "centroid": [
+      7,
+      0,
+      -0.5
+    ],
+    "bounds": [
+      [
+        -5,
+        -4,
+        -3
+      ],
+      [
+        19,
+        4,
+        3
+      ]
+    ],
+    "faces": 22,
+    "shells": 2,
+    "solids": 2,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "plane",
+        22
+      ]
+    ]
+  }
+}

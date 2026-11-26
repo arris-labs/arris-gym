@@ -45,3 +45,4 @@ training cycle starts from.
 | [0026](0026-a-cq-loft-pairs-world-placed-sections-before-smoothing.md) | A `cq` loft pairs world-placed sections before smoothing | accepted |
 | [0027](0027-a-cq-draft-uses-slant-length-and-offset-sections.md) | A `cq` draft uses slant length and offset sections | accepted |
 | [0028](0028-a-cq-mirror-joins-a-half-outline-in-its-drawing-plane.md) | A `cq` mirror joins a half outline in its drawing plane | accepted |
+| [0029](0029-a-cq-shell-uses-sharp-offsets-where-arc-joins-stay-sharp.md) | A `cq` shell uses sharp offsets where arc joins stay sharp | accepted |

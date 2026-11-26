@@ -1,0 +1,22 @@
+{
+  "volume": 137.80186386367382,
+  "area": 569.8111831820431,
+  "centroid": [
+    0,
+    0,
+    -0.5567829883312236
+  ],
+  "bounds": [
+    [
+      -5,
+      -4,
+      -3
+    ],
+    [
+      5,
+      4,
+      3
+    ]
+  ],
+  "note": "Integrate the two rectangular sections as in tests/fixtures/shells/README.md."
+}

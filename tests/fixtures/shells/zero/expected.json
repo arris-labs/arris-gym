@@ -1,0 +1,12 @@
+{
+  "dialect": "arris",
+  "status": "arris_refusal",
+  "message": "degenerate result: thickness must be positive, not 0 (+b0)",
+  "refusal": {
+    "kind": "OpDegenerateError",
+    "message": "degenerate result: thickness must be positive, not 0 (+b0)",
+    "entities": [
+      "Body(model=0, index=0, generation=0)"
+    ]
+  }
+}

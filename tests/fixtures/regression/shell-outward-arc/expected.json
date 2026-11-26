@@ -1,0 +1,44 @@
+{
+  "dialect": "arris",
+  "status": "ok",
+  "measures": {
+    "volume": 345.2182849062401,
+    "area": 731.6725575684632,
+    "centroid": [
+      0,
+      0,
+      -1.1120256426213486
+    ],
+    "bounds": [
+      [
+        -6,
+        -5,
+        -4
+      ],
+      [
+        6,
+        5,
+        3
+      ]
+    ],
+    "faces": 23,
+    "shells": 1,
+    "solids": 1,
+    "genus": 0,
+    "face_kinds": [
+      [
+        "cylinder",
+        8
+      ],
+      [
+        "plane",
+        11
+      ],
+      [
+        "sphere",
+        4
+      ]
+    ]
+  },
+  "xfail": "arris shell uses sharp outward joins"
+}
