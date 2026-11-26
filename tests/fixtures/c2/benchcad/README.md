@@ -79,6 +79,9 @@ other fidelity row is byte-identical to the pre-lift table's row.
 The [loft replay evidence](loft-replay/README.md) gives the basis of the
 227 explicit verdicts.
 
+The [shell replay](shell-replay/README.md) records the 330 newly reached
+stems and their measurement gaps ahead of the next full table.
+
 ### arris 0.12.0 before lofts, tapers and mirrors
 
 The pre-lift replay uses the declarations pinned in

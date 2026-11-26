@@ -138,10 +138,13 @@ def test_shell_reach_adds_only_the_enclosures_and_trays() -> None:
     current = set(reach(rows, cq.subset()).stems)
     assert len(previous) == 15_326
     assert previous <= current
-    assert Counter(stem.rsplit("_", 2)[0] for stem in current - previous) == {
+    added = current - previous
+    assert Counter(stem.rsplit("_", 2)[0] for stem in added) == {
         "enclosure": 174,
         "sheet_metal_tray": 156,
     }
+    slice_path = C2 / "benchcad" / "shell-replay" / "stems.txt"
+    assert slice_path.read_text().splitlines() == sorted(added)
 
 
 def test_benchcad_polygon_loft_deferral_matches_the_measured_gear_contexts() -> None:

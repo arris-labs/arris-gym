@@ -78,6 +78,23 @@ A defect a run measured, one block each:
 - State: raw | measured | regression/<slug> | fixed
 ```
 
+### oracle-shell-measures
+
+- What: the oracle's reported measures differ from the construction after
+  enclosure floor fillets and after chamfered tray shelling or through-cuts.
+- Where: CadQuery 2.3.0 and Open CASCADE 7.9.3.0 mass properties as reported
+  by `tools/oracle/worker.py`.
+- Seen: the 330 BenchCAD shell stems at `8f2be71`, corpus revision
+  `5919f578ab09ec283603a082fab07c7639ab56eb`, including
+  `enclosure_001465_s20260505` and `sheet_metal_tray_017786_s20260505`.
+- Reproduce: the command and operation counts in the
+  [shell replay](../tests/fixtures/c2/benchcad/shell-replay/README.md).
+- Measured: 11 enclosure and 51 tray rows exceed the agreement tolerance.
+  Remeasuring their oracle STEP exports agrees with all 62 arris builds.
+- State: strict regressions `oracle-shell-floor-fillet`,
+  `oracle-shell-chamfered-rim-volume` and `oracle-shell-tray-through-cut`.
+  Row verdicts are due in step 4 of [lift-shell](plans/lift-shell.md).
+
 ### draft-bounds-and-short-sections
 - What: oblique draft bounds enclose more than the trimmed geometry. Drafts
   with a very short wedge or cap edge can fail section validation.

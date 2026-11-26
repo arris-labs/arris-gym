@@ -1,0 +1,22 @@
+{
+  "volume": 61199.67989405608,
+  "area": 34603.287837275406,
+  "centroid": [
+    -0.025452767416096336,
+    -3.0151609623407545,
+    0
+  ],
+  "bounds": [
+    [
+      -48.445,
+      -27.785,
+      -19.035
+    ],
+    [
+      48.445,
+      27.785,
+      19.035
+    ]
+  ],
+  "note": "Integrate the chamfered sections and subtract the floor bore and the slot through the floor and two walls."
+}

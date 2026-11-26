@@ -69,12 +69,13 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   a `hypothesis` property over inward box dimensions, thickness, named
   planes and branch reuse. Check 15,656/17,900 and the exact new stem counts
   in `test_c2_baseline.py`. Move the affected examples in this commit.
-- [ ] Step 3 **[2] [conductor-run]**. Replay the 330 newly admitted stems
+- [x] Step 3 **[2] [conductor-run]**. Replay the 330 newly admitted stems
   with `tools/cq_corpus.py --slice` and the pinned `--oracle-rows`. Keep the
   counts for enclosure fillets and bore arrays, and tray rim chamfers,
   floor holes and through-cut slots, including all 101 pre-shell chamfers.
   Reduce new failure causes with `inspect`. Commit strict `xfail` fixtures
   with the desired outcomes and record which causes each fixture explains.
+  [Replay evidence](../../tests/fixtures/c2/benchcad/shell-replay/README.md)
 - [ ] Step 4 **[3]**. Resolve the new `cq_bug` and unclassified rows. Check
   disputed measures by construction, independent boundary integration or
   a second oracle under ADR-0006. Bind verdicts to the evidence, test

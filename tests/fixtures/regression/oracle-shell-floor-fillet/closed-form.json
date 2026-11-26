@@ -1,0 +1,22 @@
+{
+  "volume": 42469.286112761685,
+  "area": 39529.12574275448,
+  "centroid": [
+    0,
+    0,
+    -4.93332120461818
+  ],
+  "bounds": [
+    [
+      -72.835,
+      -38.51,
+      -10.53
+    ],
+    [
+      72.835,
+      38.51,
+      10.53
+    ]
+  ],
+  "note": "Integrate rectangular sections through the fillet and subtract the unchanged cavity."
+}
