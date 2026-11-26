@@ -236,7 +236,18 @@ A defect a run measured, one block each:
 - Seen: ADR-0026 (2026-11-26), BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`
 - Reproduce: run the completed `propeller_000111_s20260505`, `wing_nut_000008_s20260505` and `wing_nut_000078_s20260505` and compare the pinned oracle rows
 - Measured: the propeller's bounds differ by 9.69; the wing nut oracle reports `ok` and `invalid` respectively; the loft-only controls agree
-- State: measured; reduce after the lift and classify on the replay evidence
+- State: reduced in `regression/cq-turned-blade-prism-bounds` and
+  `regression/cq-wing-nut-bore-fillet-corner`. Full-program verdicts are
+  tracked in the [replay diagnosis](../tests/fixtures/c2/benchcad/loft-replay/diagnosis.md).
+
+### filleted-beam-bore-arrangement
+
+- What. A through bore in a filleted I-beam fails the kernel's face arrangement.
+- Where. arris 0.12.0 via `Workplane.hole` after the flange fillet.
+- Seen. `i_beam_008928_s20260505` and `i_beam_010860_s20260505` in BenchCAD
+  at revision `5919f578ab09ec283603a082fab07c7639ab56eb`.
+- State. `regression/cq-filleted-beam-through-bore` retains the desired
+  one solid. Removing the fillet lets the bore build.
 
 ### loft-bounds-too-wide
 - What: the bounds are wider than the extreme points of the lofted solid

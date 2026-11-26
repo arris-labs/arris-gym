@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "solids": 1
+  },
+  "xfail": "The kernel's face arrangement fails while boring the filleted flange."
+}

@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "xfail": "The kernel refuses the selected fillet at the corner where the wing meets the bored hub.",
+  "measures": {
+    "solids": 1
+  }
+}

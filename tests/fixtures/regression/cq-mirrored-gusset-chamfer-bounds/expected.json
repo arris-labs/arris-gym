@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 403.37609725162457,
+    "area": 396.9572266329533,
+    "centroid": [
+      3.9560756916145627,
+      0,
+      2.491506567032315
+    ],
+    "bounds": [
+      [
+        0,
+        -6,
+        0
+      ],
+      [
+        8,
+        6,
+        6
+      ]
+    ],
+    "solids": 1,
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "The chamfered solid's Y bounds extend past the original prism."
+}

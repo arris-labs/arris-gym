@@ -96,7 +96,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   Verify a half outline with axis endpoints, a reflected arc and the oracle's
   outcome for unjoinable endpoints. Record the rule in an ADR and add a
   `hypothesis` property over reflected half outlines, extrusion height and planes.
-- [ ] Step 6 **[2] [conductor-run]**. Replay BenchCAD against the pinned
+- [x] Step 6 **[2] [conductor-run]**. Replay BenchCAD against the pinned
   `--oracle-rows`. Diff the full table from the 0.12.0 baseline. Reproduce
   each new failure cause using a stem slice, shrink it with `inspect` and
   record the desired outcome in a regression fixture.

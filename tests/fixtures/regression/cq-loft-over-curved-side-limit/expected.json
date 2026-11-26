@@ -1,0 +1,8 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "solids": 1
+  },
+  "xfail": "The two-section loft refuses a 49-sided twisted polygon."
+}

@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 48,
+    "area": 94.17601498127013,
+    "centroid": [
+      -0.9810890677796863,
+      -0.9135454576426009,
+      2.512769398296403
+    ],
+    "bounds": [
+      [
+        -4.0,
+        -3.0473008445126024,
+        -1.3703181864639014
+      ],
+      [
+        3.0779492525984136,
+        1.2202099292274007,
+        7.334939873351309
+      ]
+    ],
+    "solids": 1,
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "The rotated blade prism's bounds exceed the extrema of its six vertices."
+}

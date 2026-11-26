@@ -1,0 +1,23 @@
+{
+  "kind": "closed_form",
+  "volume": 36907.10239,
+  "area": 12220.20742,
+  "centroid": [
+    3.98532204,
+    -0.0,
+    -0.0
+  ],
+  "bounds": [
+    [
+      -6.05,
+      -56.559,
+      -56.559
+    ],
+    [
+      14.69057118,
+      56.559,
+      56.559
+    ]
+  ],
+  "note": "Green's theorem along planar, cylindrical, conical and toroidal trim curves. The flux primitives on cones and tori use Gauss-Legendre quadrature. Both trim resolutions agree. Tight bounds from AddOptimal. tools/cq_closed_forms.py"
+}

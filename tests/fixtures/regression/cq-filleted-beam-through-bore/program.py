@@ -1,0 +1,20 @@
+import cadquery as cq
+
+result = (
+    cq.Workplane("XZ")
+    .moveTo(0.0, 0.0)
+    .lineTo(88.825, 0.0)
+    .lineTo(88.825, 12.67)
+    .lineTo(4.205, 12.67)
+    .lineTo(4.205, 342.63)
+    .lineTo(88.825, 342.63)
+    .lineTo(88.825, 355.3)
+    .lineTo(0.0, 355.3)
+    .mirrorY()
+    .extrude(3434.59)
+    .edges("<Z")
+    .fillet(2.37)
+    .faces(">Z")
+    .workplane()
+    .hole(5.92)
+)

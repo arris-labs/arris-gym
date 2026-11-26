@@ -1,0 +1,12 @@
+{
+  "status": "runtime",
+  "message": "OCP.OCP.Standard.Standard_ConstructionError: Geom_TrimmedCurve::parameters out of range",
+  "measures": null,
+  "step_sha256": null,
+  "program_sha256": "4d0d82335cdb2d6cbb7a53c26bea9bb8bf9668204e9d6d2ce8e2209e0fe92853",
+  "versions": {
+    "cadquery": "2.3.0",
+    "ocp": "7.9.3.0",
+    "python": "3.12.3"
+  }
+}
