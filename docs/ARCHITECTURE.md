@@ -353,14 +353,20 @@ pending profiles in one call (ADR-0019).
 
 `shell(thickness)` takes one positional number and uses the nearest solid
 in the chain. Only selected faces on the current stack supply openings.
-A negative thickness offsets convex planar stock inward and leaves a
-sealed cavity when there are no openings. It also offsets a full circular
-cylinder with one end open. The result holds one solid on the caller's
-plane. The caller's branch retains its selection. Outward arc joins,
-unverified inward joins, explicit join arguments and a visible pending
-wire or drawn path end `unsupported_api`.
-Missing stock and stock with multiple boundary shells end `runtime`. The
-kernel reports zero, non-finite and infeasible thicknesses (ADR-0029).
+Each selected group contributes its constituent kernel faces in order.
+A negative thickness requests an inward offset on convex planar stock
+or a full circular cylinder with one flat end selected. A planar shell
+with an empty opening list has a sealed cavity. The result holds one
+solid on the caller's plane and keeps the caller as parent. Its
+selectors use the new solid, and the caller's branch retains its
+original selection. Outward arc joins, unverified inward joins,
+explicit join arguments and a visible pending wire or drawn path end
+`unsupported_api`. Missing stock and stock with multiple boundary
+shells end `runtime`. The kernel validates zero and non-finite
+thickness and decides whether it can build the offset. Its refusals
+are verbatim (ADR-0029). The pinned wheel can refuse stock with
+coplanar subdivisions or a cavity that closes below the rim.
+[Backlog findings](BACKLOG.md#inward-shell-offset-limits)
 
 For verified full revolves of a cylinder or rivet profile on a plane
 with exact world axis directions, `edges` ranks the seams in the original
@@ -368,7 +374,7 @@ drawing plane. The placement applies to the revolved solid and selections
 on it (ADR-0020, amendment of 2026-11-24).
 The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
 `arc`, `close`, `assemble` and `finalize` (ADR-0023).
-STEP export waits for its bundle in C2's order.
+CadQuery STEP export ends `unsupported_api`.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
 kind of argument the census never writes ends `unsupported_api` naming the
 form. A program's result is the last `show_object` argument, else
@@ -1127,10 +1133,13 @@ Both kernels build the 330 newly reached programs. Agreement rises by
 268 to 12,791. The other 62 programs have checked `occt_wrong` verdicts
 from section or boundary integrals under ADR-0006. The full replay
 reproduces the pinned oracle bytes and every fidelity row outside the
-330 shell stems. CAD-Recode has 893 agreements and reproduces its table
-and reports at `7cc30ad7…6b92`. Both corpora meet ADR-0014's reach target
-and have zero timeouts, unclassified rows and in-subset `cq_bug` rows.
-The fixture READMEs record the full digests and class changes.
+330 shell stems. The BenchCAD table digest is `bde03cc9…00ff`.
+CAD-Recode has 893 agreements and reproduces its table and reports
+at `7cc30ad7…6b92`. Both corpora meet ADR-0014's reach target and
+have zero timeouts, unclassified rows and in-subset `cq_bug` rows.
+The fixture READMEs record the full digests and class changes for
+[BenchCAD](../tests/fixtures/c2/benchcad/README.md#the-table) and
+[CAD-Recode](../tests/fixtures/c2/cadrecode/README.md#the-table).
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

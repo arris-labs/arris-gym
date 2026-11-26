@@ -8,7 +8,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - In the CadQuery dialect, use `faces(selector).shell(-thickness)` to hollow
   convex planar stock or open a circular cylinder at a flat end. Calling
   `shell(-thickness)` on convex planar stock without selected faces creates
-  a sealed cavity.
+  a sealed cavity. Outward arc joins and unverified inward joins return
+  `unsupported_api`. Newly supported programs receive geometry-based
+  scores under reward version 1.
 
 - Static CadQuery reach excludes literal polygon lofts with more than
   two sections or with more than 48 nonplanar sides in every possible
@@ -376,6 +378,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   census outcomes. Static membership does not promise execution success.
 
 ### Breaking
+
+- `cq.subset()` declares `Workplane.shell(thickness: float) -> Workplane`.
+  Regenerate saved subset snapshots and handle shell outcomes where a
+  caller expected `unsupported_api`.
 
 - Census rows can carry `deferred_polygon_loft`, and `cq.subset()`
   exposes `defer_polygon_lofts`. Update strict census readers and

@@ -34,9 +34,10 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
   sections on each branch (ADR-0026). Plane changes on slots, nested
   profiles, multiple visible wires and open paths end `unsupported_api`.
   Other limits include `moveTo`, `union` and `cut` on a visible pending
-  wire, `box` on a drawn path, sketch or solid, `circle` on an unsupported
-  stack and `polyline` with fewer than two points. Lift these in the knee's
-  bundle order where written.
+  wire, `shell` on a visible pending wire or drawn path, `box` on a
+  drawn path, sketch or solid, `circle` on an unsupported stack and
+  `polyline` with fewer than two points. Lift these in the knee's bundle
+  order where written.
 - A target read from a STEP is exactly one solid (ADR-0011), so a re-scored corpus whose oracle builds a compound (827 BenchCAD oracle `ok` reports hold 2 to 9 solids) gets a `runtime` target; decide how a compound target is read before BenchCAD is re-scored beyond the slice (ADR-0016)
 - `FIXTURE_DEADLINE` (60 s, `tests/fixture_cases.py`) hides a fixture's slowdown up to 12x past `run`'s 5 s default that users get: record each `ok` fixture's runtime or assert a bound so a speed regression shows; and `tests/test_regression.py` would run a future `timeout` regression fixture to 60 s five times, not to `TIMEOUT_DEADLINE`
 - `cq`'s `workplane()` on a compound puts the plane at arris's centroid, while CadQuery uses Open CASCADE's `Center()`, which can be wrong for a compound (`cq/ok-compound-occt-centroid`): the two planes differ in that construction; add a fixture with a closed form if a corpus program reaches it
@@ -59,6 +60,7 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
   writes those contexts. The oracle observations are in ADR-0027.
 - Preserve the axis vertices of `mirrorY()` sections for lofting when a corpus writes that combination (ADR-0028).
 - Revisit the 392 deferred gear lofts when arris exposes explicit section parameters and checks lofts with many curved sides within the corpus deadline (ADR-0012 and ADR-0026).
+- Revisit the default outward and inward reentrant shell joins when arris offers arc joins (ADR-0029, consumer request in `../arris/docs/ideas/arc-joins-for-shell-offsets.md`).
 - File the two arris refusals of `regression/cq-cut-blind-after-a-filled-pocket` and `regression/cq-cut-blind-across-a-split-end-face` (a tool flush with a face split by an edge it crosses, `OpDegenerateError`) in `../arris/docs/ideas/`: both READMEs say "not yet reported"
 - Investigate the three-way rectangular overlap in `regression/rects-three-way-overlap`, where arris refuses the union and the oracle builds an invalid part. No in-subset BenchCAD row shows it. The consumer report is `../arris/docs/ideas/fuse-three-overlapping-boxes.md`.
 - Profile `double_simplex_sprocket_009154_s20260505`, which takes 29.6 s of the 30 s sandbox deadline when run alone. The consumer report is `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
@@ -94,6 +96,23 @@ A defect a run measured, one block each:
 - State: strict regressions `oracle-shell-floor-fillet`,
   `oracle-shell-chamfered-rim-volume` and `oracle-shell-tray-through-cut`.
   All 62 rows have checked `occt_wrong` verdicts under ADR-0006.
+
+### inward-shell-offset-limits
+
+- What: arris refuses inward shell offsets on a fused box with coplanar
+  subdivisions and on a chamfered box whose cavity closes below the
+  selected face.
+- Where: arris 0.12.0, `Solid.shell`.
+- Seen: the `lift-shell` review at `74949a6`. The two constructions
+  are outside the 330 BenchCAD shell stems.
+- Reproduce: `uv run --locked pytest --runxfail tests/test_regression.py -k 'shell-fused-box or shell-vanishing-rim'`.
+- Measured: the fused box gives `OpInternalError` where the oracle
+  builds an open shell of volume 384 and area 820. The chamfered box
+  gives `OpDegenerateError` where the oracle builds a sealed cavity
+  in a solid of volume 198.3942509939 with two shells.
+- State: strict regressions `shell-fused-box` and `shell-vanishing-rim`.
+  The consumer report is
+  `../arris/docs/ideas/shell-offsets-across-subdivisions-and-closing-rims.md`.
 
 ### draft-bounds-and-short-sections
 - What: oblique draft bounds enclose more than the trimmed geometry. Drafts

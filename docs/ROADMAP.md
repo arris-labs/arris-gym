@@ -123,13 +123,14 @@ training.
 
 **Status (2026-11-27).** Bundle 5 and the shell lift are complete. Reach is
 15,656/17,900 (87.5%) on BenchCAD and 968/968 on CAD-Recode with arris 0.12.0,
-meeting both reach targets (ADR-0014). Agreements total 12,791 and 893 respectively. The two
-BenchCAD `by_design` rows are the corner patches under ADR-0025. Both
-corpora have zero unclassified rows, timeouts and in-subset `cq_bug` rows.
-The C1 rescore has 300 successful rows with exact IoU of 1.0 and the same digest
-at 2 and 16 workers and in CI on x86-64 and aarch64. `shell(num)` adds
-330 BenchCAD programs (ADR-0029). The C2 tables still need a matching digest
-on x86-64 and aarch64.
+meeting both reach targets (ADR-0014). Agreements total 12,791 and 893
+respectively. Both corpora have zero unclassified rows, timeouts and
+in-subset `cq_bug` rows. The two BenchCAD `by_design` rows are the corner
+patches under ADR-0025. `shell(num)` adds 330 BenchCAD programs
+(ADR-0029). The C1 rescore has 300 successful rows with exact IoU of 1.0
+and the same digest at 2 and 16 workers and in CI on x86-64 and aarch64.
+The remaining C2 acceptance check is to match both x86-64 fidelity table
+digests on aarch64.
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified
@@ -140,9 +141,10 @@ before the subset grows: T = 85% on BenchCAD, 100% on CAD-Recode (ADR-0014).
 **In:**
 - the fidelity target, by ADR;
 - the CAD-Recode validation split pinned by revision, and a census over it;
-- the `cq` forms the two censuses rank next, in the knee's bundle order only: selectors,
+- the `cq` forms the two censuses rank next in the knee's bundle order: selectors,
   `hole`, `chamfer`, `fillet`, the bare `cq.Workplane()` and `centered=False`
-  (the backlog's open `cq` lines); each lifted form a fixture by construction;
+  (the backlog's open `cq` lines), plus `shell(num)` from the BenchCAD tail.
+  Each lifted form has a fixture by construction.
 - the fidelity table over both corpora, every disagreement classed;
 - the arris rows (the 100 `lobed_knob` refusals, the split-face `interference`
   refusals) filed, and the fidelity table re-run on each `arris` bump.

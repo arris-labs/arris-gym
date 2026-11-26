@@ -36,11 +36,11 @@ unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
 (ADR-0008 to ADR-0010); `arris-gym rescore benchcad` re-scores the slice
 against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **0.1.0 published** (2026-11-10).
-**C2:** Bundle 5 and the shell lift reach 15,656/17,900 on BenchCAD
-(12,791 agreements) and 968/968 on CAD-Recode (893 agreements) on arris 0.12.0,
+**C2:** The subset reaches 15,656/17,900 on BenchCAD (12,791 agreements)
+and 968/968 on CAD-Recode (893 agreements) on arris 0.12.0,
 with zero in-subset `cq_bug` rows, unclassified rows and timeouts.
-**Next:** Retire the shell plan. The C2 cross-architecture digest check
-remains (`docs/ROADMAP.md`).
+**Next:** Match both C2 fidelity digests on x86-64 and aarch64
+(`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code
 
