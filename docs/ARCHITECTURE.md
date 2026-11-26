@@ -474,8 +474,21 @@ ADR-0005); a negative distance is the same prism, `both=False` is
 plain `extrude`. A zero distance, `both` or not, ends `runtime`
 (`ValueError`), where CadQuery raises `Standard_ConstructionError`; `both` on
 a stack with no pending sketch is `No pending wires present` on both sides.
-`extrude`'s other keywords and `extrude(d, True)` (CadQuery's second positional
-argument is `combine`) stay `unsupported_api`.
+`extrude(d, True)` (CadQuery's second positional argument is `combine`)
+and the `combine=`, `clean=` and `until=` keywords end `unsupported_api`.
+
+`extrude(distance, taper=angle)` drafts a single pending circle or rectangle
+and fuses it with the nearest stock. For a nonzero angle in degrees strictly
+between −90 and 90, the signed distance is a slant length. With the angle
+converted to radians, the axial cap offset is `distance * cos(angle)`.
+The inset per side is `abs(distance) * sin(angle)`. A negative inset
+expands the profile and rounds a rectangle's corners. An inward draft
+can end at an apex or ridge.
+Angles outside the open interval, nonfinite inputs and unverified profile
+contexts end `unsupported_api`. Inner wires, zero slant length and a
+nonpositive circle radius end `runtime`. Zero taper uses the straight
+sweep. The subset declares `taper=` and `both=` independently and refuses
+a call giving both (ADR-0027).
 
 `sketch()` on an empty stack returns a mutable sketch attached to a new
 workplane on the same plane. `push` replaces its plane-local selection
@@ -578,7 +591,8 @@ sections. Slots, nested profiles, multiple wires on the visible stack and
 open paths raise `unsupported_api` on either plane change.
 
 `extrude` and `cutBlind` accept one section carried across a plane change
-when its normal agrees with the active plane's. `cutThruAll` uses the
+when its normal agrees with the active plane's. Nonzero taper uses this
+context for circles and rectangles. `cutThruAll` uses the
 section's normal even if the active plane is tilted. `revolve` reads its
 axis in the active plane's coordinates and requires it to lie in the
 section's drawing plane. These calls consume the sections on the result

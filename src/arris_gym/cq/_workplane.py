@@ -17,6 +17,7 @@ from typing import Concatenate, NoReturn
 import arris
 import arris.build
 
+from arris_gym.cq._draft import disc_draft, rect_draft
 from arris_gym.cq._forms import census_form, numbers_of, shape_of
 from arris_gym.cq._selector import (
     AXIS_SELECTORS,
@@ -29,6 +30,7 @@ from arris_gym.cq._selector import (
     Seam,
     edges_of_faces,
     edges_of_solid,
+    edges_of_unified_solid,
     plane_on_faces,
     seams_of,
     select_edges,
@@ -540,6 +542,7 @@ class Workplane:
         "_parent",
         "_plane",
         "_revolve_seams",
+        "_rounded_draft",
         "_seams",
         "_stack",
         "_through_plane",
@@ -551,6 +554,8 @@ class Workplane:
     _carried: tuple[_PendingWire, ...]
     _through_plane: arris.build.Workplane | None
     _revolve_seams: RevolveSeams | None
+    # The rounded draft's cap is split into the faces of its analytic pieces.
+    _rounded_draft: arris.build.Solid | None
     # Where Open CASCADE puts the seam of each cylinder this chain built, or
     # one of its operands did; `None` once a call made a seam no record places
     # (ADR-0020 rule 2, amended). `edges` reads it.
@@ -574,6 +579,7 @@ class Workplane:
         object.__setattr__(self, "_carried", ())
         object.__setattr__(self, "_seams", ())
         object.__setattr__(self, "_revolve_seams", None)
+        object.__setattr__(self, "_rounded_draft", None)
         object.__setattr__(self, "_through_plane", None)
 
     def _derive(self, *objects: object) -> Workplane:
@@ -585,6 +591,7 @@ class Workplane:
         object.__setattr__(child, "_carried", self._carried)
         object.__setattr__(child, "_seams", self._seams)
         object.__setattr__(child, "_revolve_seams", self._revolve_seams)
+        object.__setattr__(child, "_rounded_draft", self._rounded_draft)
         object.__setattr__(child, "_through_plane", self._through_plane)
         return child
 
@@ -1051,11 +1058,13 @@ class Workplane:
         solids = self._solids()
         if solids:
             (solid,) = solids
+            candidates, fragments = self._edge_candidates(solid)
             kept = select_edges(
                 solid,
-                edges_of_solid(solid),
+                candidates,
                 selector,
                 self._seams,
+                fragments=fragments,
                 revolve=self._revolve_seams,
             )
             return self._derive(Edges(solid, kept))
@@ -1070,6 +1079,14 @@ class Workplane:
             "Workplane.edges on "
             + ("an empty stack" if not self._stack else "a stack that holds no solid")
         )
+
+    def _edge_candidates(
+        self, solid: arris.build.Solid
+    ) -> tuple[tuple[arris.Edge, ...], frozenset[int]]:
+        """Exclude seams between the analytic pieces of a rounded draft."""
+        if solid is self._rounded_draft:
+            return edges_of_unified_solid(solid)
+        return edges_of_solid(solid), frozenset()
 
     def _blended(
         self,
@@ -1093,14 +1110,16 @@ class Workplane:
         for o in self._stack:
             if isinstance(o, Edges):
                 candidates = o.edges
-            elif isinstance(o, Faces):
+                continue
+            if isinstance(o, Faces):
                 candidates, fragments = edges_of_faces(o.solid, o.groups)
-                if fragments:
-                    raise UnsupportedApi(f"{form} on a split unified face boundary")
             elif isinstance(o, arris.build.Solid):
-                candidates = edges_of_solid(o)
+                candidates, fragments = self._edge_candidates(o)
             else:
                 self._refuse_pending(form)
+                continue
+            if fragments:
+                raise UnsupportedApi(f"{form} on a split unified face boundary")
         if not candidates:
             raise ValueError(none_selected)
         model = base.model
@@ -1929,9 +1948,14 @@ class Workplane:
             raise UnsupportedApi("Workplane.sketch on a non-empty stack")
         return Sketch(self)
 
-    @census_form("Workplane.extrude", [("num",)], keywords={"both": ("bool",)})
+    @census_form(
+        "Workplane.extrude",
+        [("num",)],
+        keywords={"both": ("bool",)},
+        keyword_alternatives=({"taper": ("num",)},),
+    )
     @_one_sided_sketch_extrusion
-    def extrude(self, distance: float, both: bool = False) -> Workplane:
+    def extrude(self, distance: float, both: bool = False, *, taper: float = 0.0) -> Workplane:
         """The pending sketch extruded `distance` along the plane's normal.
 
         The solid grows from the plane, not about it, and is fused with the
@@ -1951,6 +1975,15 @@ class Workplane:
         After a plane change, extrusion accepts one pending section with
         the same normal as the active plane (ADR-0026).
 
+        A nonzero `taper` between -90 and 90 degrees drafts one circle or
+        rectangle. The signed `distance` is the slant length. Positive
+        taper shrinks the profile and negative taper expands it, rounding
+        a rectangle's corners. A shrinking draft ends at collapse if it
+        reaches that point. Inner wires, zero slant length and a nonpositive
+        circle radius raise `ValueError`. `taper=0` uses the straight
+        extrusion. Giving both keywords raises `UnsupportedApi`, as do a
+        zero rectangle dimension and other nonzero taper contexts (ADR-0027).
+
         >>> import arris_gym.cq as cq
         >>> wp = cq.Workplane("XY").circle(1).extrude(2)
         >>> round(wp._solids()[0].measure().centroid[2], 9)
@@ -1958,7 +1991,13 @@ class Workplane:
         >>> wp = cq.Workplane("XY").circle(1).extrude(2, both=True)
         >>> round(wp._solids()[0].measure().centroid[2], 9)
         0.0
+        >>> angle = math.degrees(math.atan(1 / 3))
+        >>> wp = cq.Workplane("XY").circle(2).extrude(math.sqrt(10), taper=angle)
+        >>> round(wp._solids()[0].measure().volume / math.pi, 9)
+        7.0
         """
+        if taper != 0:
+            return self._tapered_extrusion(distance, taper)
         if len(self._stack) == 1 and isinstance(self._stack[0], Sketch):
             return self._combined(self._stack[0]._extrusion(distance))._with_seams(None)
         form = "Workplane.extrude"
@@ -1980,6 +2019,41 @@ class Workplane:
             tool = sketch.extrude(distance, both=both)
             result = result._combined(tool)._with_seams(seams_of(tool, sketch.plane.x))
         return result._consume_wires()
+
+    def _tapered_extrusion(self, distance: float, taper: float) -> Workplane:
+        """Consume a single drafted profile and fuse it with the chain's stock."""
+        form = "Workplane.extrude(taper=num)"
+        self._refuse_sketch(form)
+        sketches = self._sweep_sketches(form)
+        if any(sketch.holes for sketch in sketches):
+            raise ValueError("Inner wires not allowed with tapered extrusion")
+        if len(sketches) != 1 or not isinstance(sketches[0], _Disc | _Rect):
+            raise UnsupportedApi(f"{form} requires one circle or rectangle")
+        sketch = sketches[0]
+        if isinstance(sketch, _Disc) and sketch.radius <= 0:
+            raise ValueError(f"{form} requires a positive circle radius")
+        if isinstance(sketch, _Rect) and min(sketch.width, sketch.height) == 0:
+            raise UnsupportedApi(f"{form} on a rectangle with a zero dimension")
+        if distance == 0:
+            raise ValueError(f"{form} with a zero slant length")
+        if not -90 < taper < 90:
+            raise UnsupportedApi(f"{form} outside the open angle range from -90 to 90 degrees")
+        if not math.isfinite(distance):
+            raise UnsupportedApi(f"{form} with a nonfinite slant length")
+
+        angle = taper * _RADIANS_PER_DEGREE
+        height = distance * math.cos(angle)
+        inset = abs(distance) * math.sin(angle)
+        frame = sketch.plane
+        plane = arris.build.Workplane(frame.point(*sketch.center), frame.x, frame.y, frame.z)
+        if isinstance(sketch, _Disc):
+            solid = disc_draft(plane, sketch.radius, height, inset)
+        else:
+            solid = rect_draft(sketch, plane, sketch.width, sketch.height, height, inset)
+        result = self._combined(solid)._with_seams(None)._consume_wires()
+        if isinstance(sketch, _Rect) and inset < 0:
+            object.__setattr__(result, "_rounded_draft", result._solids()[0])
+        return result
 
     @census_form("Workplane.loft", keywords={"combine": ("bool",)})
     def loft(self, *, combine: bool = True) -> Workplane:

@@ -743,7 +743,7 @@ OUTSIDE_FORMS: list[tuple[str, Callable[[], object]]] = [
     ("Workplane.transformed(origin=call)", lambda: BOXED.transformed(origin=cq.Vector(0, 0, 0))),  # type: ignore[call-arg]
     ("Workplane.circle(num; clean=bool)", lambda: BOXED.circle(1, clean=True)),  # type: ignore[call-arg]
     ("Workplane.circle(radius=num)", lambda: BOXED.circle(radius=1)),
-    ("Workplane.extrude(num; taper=num)", lambda: PATH.extrude(1, taper=5)),  # type: ignore[call-arg]
+    ("Workplane.extrude(num; both=bool, taper=num)", lambda: PATH.extrude(1, both=False, taper=5)),
     ("Workplane.extrude(num, bool)", lambda: PATH.extrude(1, True)),
     ("Workplane.moveTo(num)", lambda: BOXED.moveTo(1)),
     ("Workplane.moveTo()", lambda: BOXED.moveTo()),
@@ -846,7 +846,7 @@ def test_the_form_check_runs_before_the_stack_is_looked_at() -> None:
     # An empty stack would be a ValueError for `extrude`; a wrong form is
     # unsupported first, so the model reads which one.
     with pytest.raises(cq.UnsupportedApi):
-        cq.Workplane("XY").extrude(1, taper=5)  # type: ignore[call-arg]
+        cq.Workplane("XY").extrude(1, both=True, taper=5)
 
 
 def test_the_docstring_examples_of_the_form_checks_run() -> None:
@@ -903,7 +903,7 @@ BAD_CALLS: list[Callable[[cq.Workplane], object]] = [
     lambda wp: wp.box(1, 2, 3, centered=False),  # type: ignore[call-arg]
     lambda wp: wp.box(1, 2),  # type: ignore[call-arg]
     lambda wp: wp.circle(1, 2),  # type: ignore[call-arg]
-    lambda wp: wp.extrude(1, taper=5),  # type: ignore[call-arg]
+    lambda wp: wp.extrude(1, both=True, taper=5),
     lambda wp: wp.extrude("1"),  # type: ignore[arg-type]
     lambda wp: wp.transformed((0, 0, 1)),  # type: ignore[arg-type]
     lambda wp: wp.transformed(offset=(0, 0, 1)),  # type: ignore[arg-type]

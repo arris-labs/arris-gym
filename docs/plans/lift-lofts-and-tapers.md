@@ -61,7 +61,8 @@ Affected examples and fixtures by step
   and message) and the `UnsupportedApi` message assertion in `test_outcome.py`.
 - Step 4 replaces `taper=5` in `tests/test_cq.py`'s wrong-form table,
   form-before-stack test and `BAD_CALLS`, and updates the reach expectations
-  in `test_reach.py` and `test_cq_extrude_both.py`. The census-only `taper=None`
+  in `test_reach.py` and `test_cq_extrude_both.py`. Keep the extrusion
+  declaration in the historical selector probe fixed. The census-only `taper=None`
   example and `cutThruAll(taper=2)` still describe other forms. Update
   §Dialects' extrusion and pending-wire text in the corresponding lift commits.
 
@@ -87,7 +88,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   and a later `faces(">Z").workplane()`. Add a frustum property over radii,
   heights and frames. Pin the declarations for the historical C2 table.
   Filter new forms out of `c1_subset()` as each lift lands.
-- [ ] Step 4 **[3]**. Verify taper sign, cap height, collapse and inner-wire
+- [x] Step 4 **[3]**. Verify taper sign, cap height, collapse and inner-wire
   behaviour on the oracle and record the decision in an ADR. Lift `taper=`,
   check both signs of height and angle, stock fusion, zero equivalence and
   wrong forms. Add `hypothesis` checks for circular and rectangular drafts.
@@ -161,8 +162,13 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   depends on the missing interpolation or performance capabilities.
   Continue the independent lifts and bring any change to C2 scope to the
   human.
-- ⚠ OPEN: Agent, Step 4. Which signed drafts and limiting inputs need
-  distinct constructions? Any new numeric threshold is measured by Step 4.
+- **Settled, Step 4 (ADR-0027).** CadQuery takes a slant length for nonzero
+  taper. Use its sine and cosine projections. Circles form cones, inward
+  rectangles have planar sides, and outward rectangles have rounded corners.
+  Circular collapse agrees at the apex. For rectangular collapse use the
+  exact ridge or pyramid and retain the oracle gap in strict regressions.
+  The closed-form acceptance fixtures use slant lengths √10 and √5 for
+  axial heights 3 and 2.
 - ⚠ OPEN: Agent, Step 5. When does the oracle join reflected endpoints?
   Any join tolerance is measured by Step 5.
 - ⚠ OPEN: Agent, Step 7. Which freeform disagreements need independent

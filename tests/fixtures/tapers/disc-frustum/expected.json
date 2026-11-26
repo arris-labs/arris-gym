@@ -1,0 +1,39 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "solids": 1,
+    "shells": 1,
+    "genus": 0,
+    "volume": 21.991148575128552,
+    "area": 45.511728065337266,
+    "centroid": [
+      0,
+      0,
+      1.1785714285714286
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        0
+      ],
+      [
+        2,
+        2,
+        3
+      ]
+    ],
+    "faces": 3,
+    "face_kinds": [
+      [
+        "cone",
+        1
+      ],
+      [
+        "plane",
+        2
+      ]
+    ]
+  }
+}

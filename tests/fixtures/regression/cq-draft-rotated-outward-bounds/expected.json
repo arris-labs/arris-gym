@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "solids": 1,
+    "shells": 1,
+    "genus": 0,
+    "volume": 40.09439510239319,
+    "area": 79.47135906962758,
+    "centroid": [
+      0,
+      0,
+      1.1425102985908926
+    ],
+    "bounds": [
+      [
+        -3.482050807568877,
+        -3.299038105676658,
+        0
+      ],
+      [
+        3.482050807568877,
+        3.299038105676658,
+        2
+      ]
+    ]
+  },
+  "xfail": "The rounded draft has conservative bounds wider than the rotated offset sections."
+}

@@ -145,7 +145,7 @@ def test_both_is_distance_to_each_side_of_the_plane(
         assert fixture_cases.close(measures.bounds[1][k], max(low[k], high[k]))
 
 
-def test_reach_reads_the_declared_keyword_only() -> None:
+def test_reach_reads_both_and_taper_as_independent_keyword_forms() -> None:
     def written(call: str) -> CorpusProgram:
         text = f"import cadquery as cq\nresult = cq.Workplane('XY').circle(1).{call}"
         return CorpusProgram(stem=call, family="f", text=text)
@@ -155,11 +155,12 @@ def test_reach_reads_the_declared_keyword_only() -> None:
         [
             written("extrude(2, both=True)"),
             written("extrude(2, taper=5)"),
+            written("extrude(2, both=True, taper=5)"),
             written("extrude(2, True)"),
         ],
         cq.subset(),
     )
-    assert report.stems == ("extrude(2, both=True)",)
+    assert report.stems == ("extrude(2, both=True)", "extrude(2, taper=5)")
     refused = ag.run(
         "import cadquery as cq\nresult = cq.Workplane('XY').circle(1).extrude(2, True)",
         dialect="cq",

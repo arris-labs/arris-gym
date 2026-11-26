@@ -256,6 +256,12 @@ placed regions, a selection of plane-local points, and free edges.
 A closed profile in the world frame where it was drawn, passed to a loft
 in drawing order (ADR-0026).
 
+**Draft**:
+An extrusion whose sections offset the drawing profile as the sides
+slope. In `cq`, the **slant length** is the length along a drafted side
+before any collapse. Its projection along the drawing normal is the
+axial height (ADR-0027).
+
 **Edge key**:
 What an axis selector ranks an edge by: its centre of mass along the axis,
 exact on a line, a circle and an arc, bounded on a seam whose face's axis

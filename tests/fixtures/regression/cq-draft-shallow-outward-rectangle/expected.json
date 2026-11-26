@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "solids": 1,
+    "shells": 1,
+    "genus": 0,
+    "volume": 24.000000000048868,
+    "area": 52.0000000000708,
+    "centroid": [
+      0,
+      0,
+      1.0000000000006788
+    ],
+    "bounds": [
+      [
+        -2.0000000000034905,
+        -1.5000000000034908,
+        0
+      ],
+      [
+        2.0000000000034905,
+        1.5000000000034908,
+        2
+      ]
+    ]
+  },
+  "xfail": "The outward wedges have edges shorter than the kernel tolerance."
+}

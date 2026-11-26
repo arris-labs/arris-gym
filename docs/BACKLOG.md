@@ -54,6 +54,9 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `cq`'s `polygon(2, d)` ends `runtime` where CadQuery 2.3.0 builds a zero-volume solid its checker passes (`ok`): an in-subset `cq_bug` (ADR-0012), held by `regression/cq-polygon-two-sides` (strict `xfail`); the census cannot see a literal, so the form cannot leave the subset for it alone: build the out-and-back prism in `cq`, and ask arris (`../arris/docs/ideas/`) if the kernel refuses a zero-volume solid (plans/lift-polygon step 2)
 - `faces` with a plane name (`"XY"`, `"YZ"`, `"XZ"`): 332 BenchCAD programs (`circlip` 182, `snap_clip` 150) all unlocked by it; CadQuery's `DirectionSelector` on a diagonal, not one of the knee's 35 items (plans/lift-edges-and-blends, non-goals)
 - `pushPoints` of `Vector` or `Location`, `cboreHole` and `cskHole` with `depth=` or `clean=`, `hole` with a positional depth, `rarray(center=)`, `polarArray(fill=, rotate=)`, `cutBlind(clean=, both=, taper=)` and `cutBlind` up to a face: lifted when a corpus program writes them
+- Extend nonzero `extrude(taper=)` to pending arrays, polygons, slots, paths,
+  finalized sketches or a carried wire with a different normal when a corpus
+  writes those contexts. The oracle observations are in ADR-0027.
 - File the two arris refusals of `regression/cq-cut-blind-after-a-filled-pocket` and `regression/cq-cut-blind-across-a-split-end-face` (a tool flush with a face split by an edge it crosses, `OpDegenerateError`) in `../arris/docs/ideas/`: both READMEs say "not yet reported"
 - Investigate the three-way rectangular overlap in `regression/rects-three-way-overlap`, where arris refuses the union and the oracle builds an invalid part. No in-subset BenchCAD row shows it. The consumer report is `../arris/docs/ideas/fuse-three-overlapping-boxes.md`.
 - Profile `double_simplex_sprocket_009154_s20260505`, which takes 29.6 s of the 30 s sandbox deadline when run alone. The consumer report is `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
@@ -72,6 +75,20 @@ A defect a run measured, one block each:
 - Measured: the numbers
 - State: raw | measured | regression/<slug> | fixed
 ```
+
+### draft-bounds-and-short-sections
+- What: oblique draft bounds enclose more than the trimmed geometry. Drafts
+  with a very short wedge or cap edge can fail section validation.
+- Where: arris 0.12.0 `bounds`, `Sketch.revolve`, `Sketch.loft` and
+  `Sketch.extrude`, through `Workplane.extrude(taper=)` (ADR-0027).
+- Seen: oracle and closed-form comparisons on 2026-11-26, ADR-0027.
+- Reproduce: `uv run --locked pytest --runxfail tests/test_regression.py -k cq-draft`.
+- Measured: largest bound excesses of about 0.01745 for a tilted cone,
+  0.03280 for a tilted 4 × 3 inward draft and 0.36603 for an in-plane
+  rotated outward draft. A cap or wedge below the kernel's tolerance
+  produces its typed refusal.
+- State: strict regressions. Reported in
+  `../arris/docs/ideas/analytic-draft-bounds-and-short-sections.md`.
 
 ### union-coplanar-third-operand
 - What: arris refuses a chained `fuse` whose third operand shares an end plane with the first two's union (`OpDegenerateError`, "the faces touch along a curve interior to both result faces"); the n-ary `fuse` builds it

@@ -46,7 +46,7 @@ def c1_subset() -> cq.Subset:
     `Workplane.threePointArc` (plans/lift-three-point-arc),
     `Workplane.sphere` (plans/lift-sphere) and `Workplane.polygon`
     (plans/lift-polygon), and `Workplane.extrude`'s `both=`
-    (plans/lift-extrude-both), `Workplane.faces` with the six axis selectors
+    (plans/lift-extrude-both) and `taper=` (ADR-0027), `Workplane.faces` with the six axis selectors
     (plans/lift-face-selectors), `Workplane.hole`, and
     plans/lift-holes-and-points' forms: `Workplane.pushPoints`, `Workplane.cboreHole`,
     `Workplane.cskHole`; plans/lift-arrays-and-blind-cuts' forms:
@@ -58,43 +58,44 @@ def c1_subset() -> cq.Subset:
     A frozen record, never widened to admit a lifted form: `reach.json` is the
     C1 curve and `test_committed_benchcad_curve_repeats_offline` holds it.
     """
-    constructor = cq.CensusForm("cq.Workplane", (("str",),))
-    extrude = cq.CensusForm("Workplane.extrude", (("num",),))
+    live = cq.subset()
     return replace(
-        cq.subset(),
-        forms=tuple(
-            constructor
-            if form.name == "cq.Workplane"
-            else extrude
-            if form.name == "Workplane.extrude"
-            else form
-            for form in cq.subset().forms
-            if not form.name.startswith("Sketch.")
-            and form.name
-            not in (
-                "Workplane.sketch",
-                "Workplane.faces",
-                "Workplane.hole",
-                "Workplane.pushPoints",
-                "Workplane.cboreHole",
-                "Workplane.cskHole",
-                "Workplane.rarray",
-                "Workplane.polarArray",
-                "Workplane.cutBlind",
-                "Workplane.cutThruAll",
-                "Workplane.center",
-                "Workplane.rect",
-                "Workplane.slot2D",
-                "Workplane.edges",
-                "Workplane.fillet",
-                "Workplane.chamfer",
-                "Workplane.workplane",
-                "Workplane.cylinder",
-                "Workplane.threePointArc",
-                "Workplane.sphere",
-                "Workplane.polygon",
-                "Workplane.loft",
-            )
+        live,
+        forms=(
+            cq.CensusForm("cq.Workplane", (("str",),)),
+            cq.CensusForm("Workplane.extrude", (("num",),)),
+            *(
+                form
+                for form in live.forms
+                if not form.name.startswith("Sketch.")
+                and form.name
+                not in (
+                    "cq.Workplane",
+                    "Workplane.extrude",
+                    "Workplane.sketch",
+                    "Workplane.faces",
+                    "Workplane.hole",
+                    "Workplane.pushPoints",
+                    "Workplane.cboreHole",
+                    "Workplane.cskHole",
+                    "Workplane.rarray",
+                    "Workplane.polarArray",
+                    "Workplane.cutBlind",
+                    "Workplane.cutThruAll",
+                    "Workplane.center",
+                    "Workplane.rect",
+                    "Workplane.slot2D",
+                    "Workplane.edges",
+                    "Workplane.fillet",
+                    "Workplane.chamfer",
+                    "Workplane.workplane",
+                    "Workplane.cylinder",
+                    "Workplane.threePointArc",
+                    "Workplane.sphere",
+                    "Workplane.polygon",
+                    "Workplane.loft",
+                )
+            ),
         ),
         selectors=(),
         end_forms=("result = …", "show_object(…)"),

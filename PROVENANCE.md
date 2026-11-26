@@ -196,6 +196,12 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   constructed comparisons. `PlaneOfWire` and `ComputeOrigin` in
   `BRepFill/BRepFill_CompatibleWires.cxx` use each wire's length-weighted
   centre of mass and compare starts in both directions.
+- `Workplane._extrude` and `Solid.extrudeLinear` (`cadquery/cq.py`,
+  `cadquery/occ_impl/shapes.py`), and Open CASCADE 7.9.3
+  `LocOpe/LocOpe_DPrism.cxx`: the inner-wire error, sign of the sweep along
+  the face normal and sine and cosine projections of its slant length.
+  The analytic constructions and the oracle runs are in ADR-0027 and
+  `tests/fixtures/tapers/`.
 - `Workplane.box` with a negative dimension: CadQuery 2.3.0 ends in Open
   CASCADE's `Standard_DomainError` (observed by running it, not read in its
   source); the subset raises `ValueError`, so the program ends `runtime` as

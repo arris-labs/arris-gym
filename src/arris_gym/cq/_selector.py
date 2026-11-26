@@ -405,6 +405,14 @@ def edges_of_faces(
     return tuple(found.values()), frozenset(fragments)
 
 
+def edges_of_unified_solid(
+    solid: arris.build.Solid,
+) -> tuple[tuple[arris.Edge, ...], frozenset[int]]:
+    """Edges after unifying the coplanar pieces of a drafted solid (ADR-0027)."""
+    model = solid.model
+    return edges_of_faces(solid, _face_groups(model, model.faces(solid.body)))
+
+
 def _may_join(model: arris.Model, a: arris.Edge, b: arris.Edge) -> bool:
     """Whether boundary edges meeting at a vertex may be on the same curve."""
     p, q = model.curve(a), model.curve(b)

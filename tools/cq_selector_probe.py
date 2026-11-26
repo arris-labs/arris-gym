@@ -13,8 +13,8 @@ status and message.
 Two sets are probed:
 
 - `--corpus`: the BenchCAD programs (the `[corpus]` extra and its Hugging Face
-  cache or the network) that `cq.subset()` plus `faces(str)`, `hole(num)` and the
-  six axis selectors admits and `cq.subset()` does not (plans/lift-face-selectors);
+  cache or the network) admitted by adding `faces(str)`, `hole(num)` and the
+  six axis selectors to the subset before that bundle (ADR-0017).
   `--range START:STOP` probes a slice of them, sorted by stem, into
   `--work-dir/part-START.json`, so each run fits one foreground call;
 - `--constructed`: the named constructions in `CONSTRUCTED`, own programs whose
@@ -361,11 +361,7 @@ _LATER_SELECTORS = ("|X", "|Y", "|Z", ">Z or <Z")
 
 
 def before_subset() -> Subset:
-    """`cq.subset()` less the bundle's forms and selectors: the subset it was planned against.
-
-    The plan lifted them, so today's subset holds them; the 950 are the programs
-    they admitted, which is what this subtracts to read them again.
-    """
+    """The subset before the face selector bundle that admitted the 950 programs."""
     today = subset()
     # Forms added in later bundles admit programs outside the original 950.
     # Remove them from both sides of the historical reach comparison.
@@ -385,9 +381,11 @@ def before_subset() -> Subset:
         "Workplane.slot2D",
         "Workplane.loft",
     }
-    named = {form.name for form in BUNDLE} | later
+    # Taper was lifted later on a call name the original bundle already used.
+    extrude = CensusForm("Workplane.extrude", (("num",),), (("both", ("bool",)),))
+    named = {form.name for form in BUNDLE} | later | {extrude.name}
     return Subset(
-        forms=tuple(form for form in today.forms if form.name not in named),
+        forms=(extrude, *(form for form in today.forms if form.name not in named)),
         selectors=tuple(sorted(set(today.selectors) - set(SELECTORS) - set(_LATER_SELECTORS))),
         end_forms=today.end_forms,
     )

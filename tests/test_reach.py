@@ -80,7 +80,11 @@ def test_a_reach_fixture_decides_the_static_rule(case: fixture_cases.Case) -> No
         ("Workplane.extrude(*list)", False),
         ("Workplane.extrude(**dict)", False),
         ("Workplane.extrude(num; both=bool)", True),
-        ("Workplane.extrude(num; taper=num)", False),
+        ("Workplane.extrude(num; taper=num)", True),
+        ("Workplane.extrude(num; taper=name)", True),
+        ("Workplane.extrude(num; taper=bool)", False),
+        ("Workplane.extrude(num; taper=none)", False),
+        ("Workplane.extrude(num; both=bool, taper=num)", False),
         ("Workplane.extrude(num)ignored", False),
         ("Workplane.extrude(num", False),
         ("Workplane.extrude", False),
@@ -194,6 +198,11 @@ VALUES = {
 @st.composite
 def declared_programs(draw: st.DrawFn) -> tuple[CorpusProgram, cq.CensusForm]:
     chosen = draw(st.lists(st.sampled_from(SUBSET.forms), min_size=1, max_size=12))
+    removed = draw(st.sampled_from(chosen))
+    shared_default = any(
+        other != removed and (other.name, other.positional) == (removed.name, removed.positional)
+        for other in SUBSET.forms
+    )
     lines = ["import cadquery as cq", "dimension = 2", "wp = cq.Workplane('XY')"]
     if any(form.name.startswith("Sketch.") for form in chosen):
         lines.append("sk = wp.sketch()")
@@ -209,12 +218,12 @@ def declared_programs(draw: st.DrawFn) -> tuple[CorpusProgram, cq.CensusForm]:
         args += [
             f"{key}={VALUES[draw(st.sampled_from((*kinds, 'name', 'expr')))]}"
             for key, kinds in declaration.keywords
-            if draw(st.booleans())
+            if (declaration == removed and shared_default) or draw(st.booleans())
         ]
         callee = declaration.name.replace("Workplane.", "wp.").replace("Sketch.", "sk.")
         lines.append(f"{callee}({', '.join(args)})")
     lines.append("result = wp")
-    return program("\n".join(lines)), draw(st.sampled_from(chosen))
+    return program("\n".join(lines)), removed
 
 
 @given(declared_programs())
@@ -225,6 +234,14 @@ def test_declared_forms_are_in_subset_and_removing_one_excludes_the_program(
     assert reach([p], SUBSET).in_subset == 1
     reduced = replace(SUBSET, forms=tuple(f for f in SUBSET.forms if f != removed))
     assert reach([p], reduced).in_subset == 0
+
+
+def test_plain_extrude_reaches_through_either_keyword_declaration() -> None:
+    """Both optional keyword sets also admit the call with no keywords."""
+    forms = [form for form in SUBSET.forms if form.name == "Workplane.extrude"]
+    assert len(forms) == 2
+    for form in forms:
+        assert replace(SUBSET, forms=(form,)).admits("Workplane.extrude(num)")
 
 
 @given(st.lists(st.tuples(st.booleans(), st.text(max_size=40)), max_size=10))

@@ -5,6 +5,14 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, `extrude(distance, taper=angle)` drafts a
+  circle or rectangle and joins it to stock. Positive angles shrink the
+  profile and negative angles expand it, rounding rectangular corners.
+  For nonzero taper, `distance` is the slant length. Use `taper=0` for
+  the straight extrusion. Inner wires end `runtime`. Giving both
+  `taper=` and `both=` ends `unsupported_api`. Newly supported programs
+  receive geometry-based scores under reward version 1.
+
 - In the CadQuery dialect, `loft()` builds a smooth solid through two
   coaxial circles or matching straight-sided sections. It joins the solid
   to stock by default. Use `loft(combine=False)` to keep the new solid separate.
@@ -237,7 +245,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
   grows `distance` to each side of its plane, one prism of height
   `2 * |distance|`, fused with or cut from the chain's solid as `extrude`'s
   is. `both=False` is plain `extrude`; the other keywords (`combine`,
-  `clean`, `taper`, `until`) and `extrude(distance, True)`, whose second
+  `clean`, `until`) and `extrude(distance, True)`, whose second
   argument is CadQuery's `combine`, still end `unsupported_api`. A zero
   distance, with or without `both`, ends `runtime`, as CadQuery's does.
 
@@ -354,6 +362,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ### Breaking
 
+- `Workplane.extrude` adds the keyword-only `taper` parameter.
+  Regenerate saved `cq.subset()` snapshots and handle execution results
+  for the new form where a caller previously expected `unsupported_api`.
 - Serialized `Measures` and `dump_text` include `solids`, which can be
   `None` when the count is unavailable. Accept the new field in readers
   and regenerate saved execution digests.

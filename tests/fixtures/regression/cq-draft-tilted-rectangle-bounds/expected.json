@@ -1,0 +1,36 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "solids": 1,
+    "shells": 1,
+    "genus": 0,
+    "volume": 14.726110018679341,
+    "area": 38.822758148718755,
+    "centroid": [
+      0,
+      -0.013712166765142305,
+      0.7855695078495772
+    ],
+    "bounds": [
+      [
+        -2.0,
+        -1.499771542734587,
+        -0.026178609655925267
+      ],
+      [
+        2.0,
+        1.499771542734587,
+        1.893339462650329
+      ]
+    ],
+    "faces": 6,
+    "face_kinds": [
+      [
+        "plane",
+        6
+      ]
+    ]
+  },
+  "xfail": "The tilted planar draft has conservative bounds wider than its extreme vertices."
+}

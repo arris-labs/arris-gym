@@ -1,0 +1,29 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "solids": 1,
+    "shells": 1,
+    "genus": 0,
+    "volume": 10.666666666666666,
+    "area": 38.62741699796952,
+    "centroid": [
+      0,
+      0,
+      0.5
+    ],
+    "bounds": [
+      [
+        -2,
+        -2,
+        0
+      ],
+      [
+        2,
+        2,
+        1.99999999
+      ]
+    ]
+  },
+  "xfail": "A square cap just short of collapse is below the kernel tolerance."
+}
