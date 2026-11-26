@@ -854,6 +854,19 @@ carries another program's SHA-256 or a STEP text whose recomputed hash is not
 its `step_sha256` is a `crash`. `tools/oracle_run.py` runs a list of programs
 and writes `oracle.jsonl` in submission order.
 
+C2's cross-architecture fidelity comparison runs
+`tools/cq_corpus.py --corpus CORPUS --replay-oracle-rows FILE` with the
+corpus's committed oracle reports. Both architectures use the same
+versions (including oracle Python 3.12.3), STEP hashes and full-precision
+measures. Replay needs no oracle environment. Each selected stem requires
+one answered report with the matching program SHA-256, family, revision
+and licence. Distinct stems may share a hash. With `--slice FILE`, either
+corpus can replay a selection from its full pinned report file.
+
+For live comparison, `--oracle-rows FILE` probes the local oracle's versions,
+reuses matching reports by program SHA-256 and runs the oracle for the
+remaining programs. The two options are mutually exclusive.
+
 The STEP text (`step_text` in the frame, `OracleReport.step`) is what the
 re-scored table reads as a target (ADR-0011). The worker blanks the two
 things in it that change from run to run, `FILE_NAME`'s timestamp and the

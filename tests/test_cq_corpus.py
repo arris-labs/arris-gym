@@ -4,14 +4,23 @@ except for its timed-out rows, which are run again (a timeout is never cached). 
 
 from __future__ import annotations
 
+import gzip
 import pathlib
 from collections.abc import Sequence
 from typing import Any
 
+import pytest
+
 import cq_corpus
 import oracle_run
 from arris_gym.census import CorpusProgram
-from arris_gym.fidelity import OracleReport, OracleStatus, OracleVersions
+from arris_gym.fidelity import (
+    FidelityTable,
+    OracleReport,
+    OracleStatus,
+    OracleVersions,
+    program_sha256,
+)
 from arris_gym.sandbox._zygote import BACKSTOP
 from test_fidelity_table import entries
 
@@ -86,6 +95,116 @@ def test_a_saved_row_is_reused_only_from_this_oracle_and_never_a_timeout(
     read = cq_corpus.read_oracle(path)
     assert read == {r.program_sha256: r for r in saved}
     assert list(cq_corpus.reusable(read, V1)) == ["a" * 64]
+
+
+@pytest.fixture
+def replay_input(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+) -> tuple[list[dict[str, object]], list[str], pathlib.Path]:
+    programs = [CorpusProgram(stem=s, family="validation", text="x =") for s in "abc"]
+    sha = program_sha256(programs[0].text)
+    reports = [
+        OracleReport(
+            status=OracleStatus.SYNTAX,
+            message=f"pinned {p.stem}",
+            measures=None,
+            step_sha256=None,
+            program_sha256=sha,
+            versions=V2 if p.stem == "b" else V1,
+        )
+        for p in programs
+    ]
+    monkeypatch.setattr(cq_corpus, "load", lambda _: (programs, "source", "L", "R"))
+    monkeypatch.setattr(oracle_run, "PYTHON", tmp_path / "missing-oracle-python")
+    path = tmp_path / "oracle.jsonl.gz"
+    argv = [
+        "--corpus",
+        "cadrecode",
+        "--replay-oracle-rows",
+        str(path),
+        "--out-dir",
+        str(tmp_path / "out"),
+        "--workers",
+        "1",
+    ]
+    return cq_corpus.rows(programs, reports, "L", "R"), argv, path
+
+
+def test_replay_preserves_reports_by_stem_without_an_oracle_environment(
+    replay_input: tuple[list[dict[str, object]], list[str], pathlib.Path],
+) -> None:
+    rows, argv, path = replay_input
+    path.write_bytes(cq_corpus.gz(oracle_run.rows_text(rows)))
+    assert cq_corpus.main(argv) == 0
+    out = path.parent / "out"
+    assert (out / "oracle.jsonl.gz").read_bytes() == path.read_bytes()
+    table_path = out / "fidelity.json.gz"
+    table = FidelityTable.from_json(gzip.decompress(table_path.read_bytes()).decode("utf-8"))
+    assert table.programs == 3
+    assert [entry.row.oracle_versions for entry in table.entries] == [V1, V2, V1]
+
+    selection = path.parent / "slice.txt"
+    selection.write_text("a\nc\n", encoding="utf-8")
+    work = path.parent / "slice-work"
+    assert cq_corpus.main([*argv, "--slice", str(selection), "--work-dir", str(work)]) == 0
+    assert (out / "oracle.jsonl.gz").read_bytes() == cq_corpus.gz(
+        oracle_run.rows_text([rows[0], rows[2]])
+    )
+
+    report = OracleReport.model_validate(rows[1]["report"])
+    rows[1]["report"] = report.model_copy(update={"versions": V1}).model_dump(
+        mode="json", exclude={"step", "seconds"}
+    )
+    path.write_bytes(cq_corpus.gz(oracle_run.rows_text(rows)))
+    with pytest.raises(ValueError, match="does not match the pinned oracle rows"):
+        cq_corpus.main(argv)
+
+
+@pytest.mark.parametrize(
+    ("issue", "error"),
+    [
+        ("missing", "1 missing replay reports, starting with b"),
+        ("duplicate", "b: duplicate replay report"),
+        ("timeout", "b: unanswered replay report"),
+        ("crash", "b: unanswered replay report"),
+        ("family", "b: replay family does not match"),
+        ("licence", "b: replay licence does not match"),
+        ("revision", "b: replay revision does not match"),
+        ("sha", "b: replay program SHA-256 does not match"),
+    ],
+)
+def test_replay_rejects_bad_reports_before_running(
+    replay_input: tuple[list[dict[str, object]], list[str], pathlib.Path],
+    issue: str,
+    error: str,
+) -> None:
+    rows, argv, path = replay_input
+    if issue == "missing":
+        del rows[1]
+    elif issue == "duplicate":
+        rows.append(rows[1])
+    elif issue in ("timeout", "crash", "sha"):
+        report = OracleReport.model_validate(rows[1]["report"]).model_dump(mode="json")
+        if issue == "sha":
+            report["program_sha256"] = "0" * 64
+        else:
+            report.update(status=issue, versions=None)
+        rows[1]["report"] = report
+    else:
+        rows[1][issue] = "wrong"
+    path.write_bytes(cq_corpus.gz(oracle_run.rows_text(rows)))
+    with pytest.raises(ValueError, match=error):
+        cq_corpus.main(argv)
+    assert not (path.parent / "out").exists()
+
+
+def test_replay_cannot_be_combined_with_live_reuse(tmp_path: pathlib.Path) -> None:
+    path = str(tmp_path / "oracle.jsonl.gz")
+    with pytest.raises(SystemExit) as stopped:
+        cq_corpus.main(
+            ["--corpus", "benchcad", "--oracle-rows", path, "--replay-oracle-rows", path]
+        )
+    assert stopped.value.code == 2
 
 
 def test_the_oracle_deadline_is_a_measured_multiple_and_inside_a_zygotes_lifetime() -> None:

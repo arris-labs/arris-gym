@@ -3,10 +3,9 @@
 
 Generalises `cq_slice.py` and `oracle_run.py` to `--corpus benchcad|cadrecode`
 (the `[corpus]` extra, the Hugging Face cache or the network, and
-`uv sync --project tools/oracle`; outside the gate). Every corpus program runs in
-the sandbox under `dialect="cq"` and on an oracle zygote (ADR-0013); each pair
-is compared (`fidelity.compare`, no verdicts: a row the rule cannot class is
-counted unclassified, never worked here). Written under `--out-dir` (default
+`uv sync --project tools/oracle` for live oracle runs; outside the gate).
+Every selected program runs in the sandbox under `dialect="cq"`. The tool
+compares each result with its oracle report. Written under `--out-dir` (default
 `tests/fixtures/c2/<corpus>/`), gzipped with `mtime=0`:
 
 - `fidelity.json.gz`: the `FidelityTable` (names, SHA-256s, measures, licence);
@@ -17,12 +16,16 @@ counted unclassified, never worked here). Written under `--out-dir` (default
 No program text is written. Work is saved in chunks under `--work-dir` and a
 run with `--budget` stops between chunks (exit 3); run it again to resume.
 `--verdicts FILE...` classes rows by stem (C1's and a corpus's own).
-`--slice FILE` restricts BenchCAD to a slice's stems. `--oracle-rows FILE` (a
+`--slice FILE` restricts either corpus to a slice's stems. `--oracle-rows FILE` (a
 committed `oracle.jsonl.gz`) reuses each row whose program SHA-256 matches and
 whose versions are those of the oracle this run probes, and runs the oracle only
 on the rest: a change to `cq` alone re-runs `cq` alone. The oracle's bytes vary
 from run to run (BACKLOG `oracle-nondeterministic-step`), so a re-run would only
 draw them again.
+
+`--replay-oracle-rows FILE` compares against the pinned reports with no live
+oracle. It requires one answered report per selected stem, from the same
+program SHA-256, family, licence and revision.
 """
 
 from __future__ import annotations
@@ -34,6 +37,7 @@ import pathlib
 import sys
 import time
 from collections.abc import Callable, Mapping, Sequence
+from functools import partial
 from typing import Any
 
 import arris_gym as ag
@@ -49,6 +53,7 @@ from arris_gym.fidelity import (
     arris_rows,
     compare,
     fidelity_table,
+    program_sha256,
     reach_report,
 )
 
@@ -121,6 +126,39 @@ def read_oracle(path: pathlib.Path) -> dict[str, OracleReport]:
     return reports
 
 
+def _read_replay(
+    path: pathlib.Path, programs: Sequence[CorpusProgram], licence: str, revision: str
+) -> dict[str, OracleReport]:
+    selected = {p.stem: p for p in programs}
+    reports: dict[str, OracleReport] = {}
+    with gzip.open(path, "rt", encoding="utf-8") as stream:
+        for line in stream:
+            row = json.loads(line)
+            stem = row["stem"]
+            if stem not in selected:
+                continue
+            if stem in reports:
+                raise ValueError(f"{stem}: duplicate replay report")
+            program = selected[stem]
+            for field, expected in (
+                ("family", program.family),
+                ("licence", licence),
+                ("revision", revision),
+            ):
+                if row.get(field) != expected:
+                    raise ValueError(f"{stem}: replay {field} does not match the corpus")
+            report = OracleReport.model_validate(row["report"])
+            if report.program_sha256 != program_sha256(program.text):
+                raise ValueError(f"{stem}: replay program SHA-256 does not match the corpus")
+            if report.versions is None:
+                raise ValueError(f"{stem}: unanswered replay report ({report.status.value})")
+            reports[stem] = report
+    missing = sorted(selected.keys() - reports.keys())
+    if missing:
+        raise ValueError(f"{len(missing)} missing replay reports, starting with {missing[0]}")
+    return reports
+
+
 def reusable(
     saved: Mapping[str, OracleReport], versions: OracleVersions
 ) -> dict[str, OracleReport]:
@@ -172,19 +210,26 @@ def run_programs(
     pin: tuple[str, str, str],
     verdicts: dict[str, Verdict],
     known: Mapping[str, OracleReport],
+    replay: Mapping[str, OracleReport] | None = None,
 ) -> dict[str, Any]:
-    """Run `part` under cq and, for the programs `known` lacks, on the oracle; its entries
-    and oracle rows, as a chunk's body."""
+    """Run `part` under cq and return the entries and oracle rows for a chunk.
+
+    Use pinned `replay` reports by stem when provided. Otherwise use `known`
+    reports by SHA-256 and run the oracle for the missing programs.
+    """
     source, licence, revision = pin
     texts = [p.text for p in part]
     with ag.Sandbox() as sandbox:
         results = sandbox.run_many(texts, dialect="cq", timeout=args.timeout, workers=args.workers)
-    reports = merge_reports(
-        texts,
-        [r.program_sha256 for r in results],
-        known,
-        lambda ts: oracle_run.run_many(ts, timeout=args.oracle_timeout, workers=args.workers),
-    )
+    if replay is None:
+        reports = merge_reports(
+            texts,
+            [r.program_sha256 for r in results],
+            known,
+            lambda ts: oracle_run.run_many(ts, timeout=args.oracle_timeout, workers=args.workers),
+        )
+    else:
+        reports = [replay[p.stem] for p in part]
     entries = []
     for program, result, report in zip(part, results, reports, strict=True):
         if result.program_sha256 != report.program_sha256:
@@ -195,24 +240,6 @@ def run_programs(
         "entries": [e.model_dump(mode="json") for e in entries],
         "oracle": rows(part, reports, licence, revision),
     }
-
-
-def run_chunk(
-    part: Sequence[CorpusProgram],
-    path: pathlib.Path,
-    args: argparse.Namespace,
-    pin: tuple[str, str, str],
-    verdicts: dict[str, Verdict],
-    known: Mapping[str, OracleReport],
-) -> None:
-    """Run `part` under cq and on the oracle and save its entries and oracle rows at `path`.
-
-    A saved chunk is not rerun, so a corpus run is resumable and its pieces each fit a
-    short foreground call; the rows are the same bytes either way. The exception is a
-    program whose saved row timed out on either side: `retry_timeouts` runs it again.
-    """
-    body = run_programs(part, args, pin, verdicts, known)
-    path.write_bytes(gz(json.dumps(body, sort_keys=True)))
 
 
 def retry_timeouts(
@@ -240,7 +267,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     """Run the corpus and write the rows; print the counts and digests to stderr."""
     parser = argparse.ArgumentParser(description="Run a whole corpus under cq and on the oracle.")
     parser.add_argument("--corpus", choices=("benchcad", "cadrecode"), required=True)
-    parser.add_argument("--slice", type=pathlib.Path, help="BenchCAD stems to run, one per line")
+    parser.add_argument("--slice", type=pathlib.Path, help="corpus stems to run, one per line")
     parser.add_argument(
         "--verdicts",
         type=pathlib.Path,
@@ -255,8 +282,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--budget", type=float, help="stop starting chunks after this many seconds")
     parser.add_argument("--work-dir", type=pathlib.Path, help="saved chunks; default OUT/.work")
     parser.add_argument("--workers", type=int, default=oracle_run.DEFAULT_WORKERS)
-    parser.add_argument(
+    oracle_input = parser.add_mutually_exclusive_group()
+    oracle_input.add_argument(
         "--oracle-rows", type=pathlib.Path, help="a committed oracle.jsonl.gz whose rows to reuse"
+    )
+    oracle_input.add_argument(
+        "--replay-oracle-rows",
+        type=pathlib.Path,
+        help="require pinned reports from oracle.jsonl.gz for every selected stem",
     )
     args = parser.parse_args(argv)
 
@@ -269,9 +302,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     out_dir = args.out_dir or C2 / args.corpus
     verdicts = read_verdict_files(args.verdicts, [p.stem for p in programs])
     known: dict[str, OracleReport] = {}
+    replay = None
     if args.oracle_rows is not None:
         known = reusable(read_oracle(args.oracle_rows), oracle_versions(args))
         print(f"reusing {len(known)} oracle rows of {args.oracle_rows}", file=sys.stderr)
+    elif args.replay_oracle_rows is not None:
+        replay = _read_replay(args.replay_oracle_rows, programs, licence, revision)
+        print(f"replaying {len(replay)} oracle rows of {args.replay_oracle_rows}", file=sys.stderr)
+    run_part = partial(
+        run_programs,
+        args=args,
+        pin=(source, licence, revision),
+        verdicts=verdicts,
+        known=known,
+        replay=replay,
+    )
     work = args.work_dir or out_dir / ".work"
     work.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
@@ -296,13 +341,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 done = len(list(work.glob("chunk-*.json.gz")))
                 print(f"budget spent: {done} chunks done; run again to resume", file=sys.stderr)
                 return RESUME
-            run_chunk(part, chunk, args, (source, licence, revision), verdicts, known)
+            chunk.write_bytes(gz(json.dumps(run_part(part), sort_keys=True)))
         data = json.loads(gzip.decompress(chunk.read_bytes()))
-        data, rerun = retry_timeouts(
-            part,
-            data,
-            lambda ps: run_programs(ps, args, (source, licence, revision), verdicts, known),
-        )
+        if replay is not None and data["oracle"] != rows(
+            part, [replay[p.stem] for p in part], licence, revision
+        ):
+            raise ValueError(f"{chunk} does not match the pinned oracle rows: remove the work dir")
+        data, rerun = retry_timeouts(part, data, run_part)
         if rerun:
             chunk.write_bytes(gz(json.dumps(data, sort_keys=True)))
         saved = [TableEntry.model_validate(e) for e in data["entries"]]
