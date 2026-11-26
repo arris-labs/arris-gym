@@ -44,3 +44,4 @@ training cycle starts from.
 | [0025](0025-a-vertex-blends-corner-patch-is-each-kernels-own.md) | A vertex blend's corner patch is each kernel's own | accepted |
 | [0026](0026-a-cq-loft-pairs-world-placed-sections-before-smoothing.md) | A `cq` loft pairs world-placed sections before smoothing | accepted |
 | [0027](0027-a-cq-draft-uses-slant-length-and-offset-sections.md) | A `cq` draft uses slant length and offset sections | accepted |
+| [0028](0028-a-cq-mirror-joins-a-half-outline-in-its-drawing-plane.md) | A `cq` mirror joins a half outline in its drawing plane | accepted |

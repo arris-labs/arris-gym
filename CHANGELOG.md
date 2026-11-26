@@ -5,6 +5,11 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- In the CadQuery dialect, `mirrorY()` reflects an open outline with
+  joined endpoints on the workplane's y axis. The closed profile keeps
+  its lines and circular arcs for extrusion and cutting. Newly supported
+  builds receive geometry-based scores under reward version 1.
+
 - In the CadQuery dialect, `extrude(distance, taper=angle)` drafts a
   circle or rectangle and joins it to stock. Positive angles shrink the
   profile and negative angles expand it, rounding rectangular corners.

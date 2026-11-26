@@ -246,6 +246,30 @@ A defect a run measured, one block each:
 - Measured: X min is near −1.25 for the triangle against −1, Y max is near 1.99969549 for the cone against 1.98224298, and the twisted polygon's largest bound gap is 0.27602
 - State: strict regressions with closed-form bounds and recorded oracle evidence; filed in `../arris/docs/ideas/loft-tight-bounds.md`
 
+### mirrored-arc-bounds
+
+- What. Extruding a profile of arcs rotated in its plane leaves bounds wider than the circular extrema.
+- Where. arris 0.12.0 on a `Loop.path` of two arcs followed by extrusion.
+- Seen. ADR-0028, 2026-11-26.
+- Reproduce. `uv run pytest --runxfail tests/test_regression.py -k arris-mirror-y`.
+- Measured. The maximum excess is 0.47914 for the two major arcs and 0.73205 for the two semicircles.
+- State. Strict regressions with exact bounds and recorded oracle reports. Filed in `../arris/docs/ideas/extruded-arc-profile-bounds.md`.
+
+### mirror-y-touch-and-near-joins
+
+- What. A path touching the axis between its ends creates a loop that the kernel refuses. Near-axis sloped lines and arcs need a join that preserves the supporting curves and their measures.
+- Seen. ADR-0028, 2026-11-26.
+- Reproduce. `regression/cq-mirror-y-pinch` and `arc-gap` and `sloped-gap` in `tests/fixtures/mirrors/contexts.json`.
+- State. The touch case is a strict regression. The near-axis cases remain typed refusals with recorded oracle reports.
+
+### mirrored-benchcad-follow-on-measures
+
+- What. One sampled gusset and one sampled I-beam agree through extrusion and have measure gaps after their later blends and bores.
+- Seen. ADR-0028, 2026-11-26, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`.
+- Reproduce. Compare the shared prefixes and full programs of `gusseted_bracket_000041_s20260507` and `i_beam_000007_s20260505`.
+- Measured. The gusset has a bounds excess of 0.26641 after drilling. The I-beam has a relative volume gap of 1.29e-9.
+- State. Measured for reduction in the replay.
+
 ## Rejected
 
 - The working name `arris-zero`: it suggested R1-Zero, pure RL with no supervised fine-tuning, which is not the plan (SEED.md §2)

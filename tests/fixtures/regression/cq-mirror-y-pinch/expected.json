@@ -1,0 +1,28 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 32,
+    "area": 93.25483399593904,
+    "centroid": [
+      0,
+      2,
+      2
+    ],
+    "bounds": [
+      [
+        -2,
+        0,
+        0
+      ],
+      [
+        2,
+        4,
+        4
+      ]
+    ],
+    "shells": 2,
+    "genus": 0
+  },
+  "xfail": "The two triangular prisms meet on an edge where the joined loop touches the axis."
+}

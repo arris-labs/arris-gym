@@ -1,0 +1,28 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 50.26548245743669,
+    "area": 75.39822368615503,
+    "centroid": [
+      3,
+      4,
+      7
+    ],
+    "bounds": [
+      [
+        1,
+        2,
+        5
+      ],
+      [
+        5,
+        6,
+        9
+      ]
+    ],
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "The two swept semicircles have conservative bounds beyond the radius."
+}

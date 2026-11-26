@@ -45,7 +45,7 @@ with `both=`, and solid mirroring belong to other API forms.
 - `mirrorY()` reflects pending edges in local x about the workplane's y axis.
   Join the original and reflected paths in deterministic order, preserving
   arcs and reusing the existing closed-profile route. Prove endpoint rules
-  for the half outlines of `gusseted_bracket` and `i_beam`.
+  for the half outlines of `gusseted_bracket` and `i_beam` (ADR-0028).
 
 Affected examples and fixtures by step
 
@@ -92,7 +92,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   behaviour on the oracle and record the decision in an ADR. Lift `taper=`,
   check both signs of height and angle, stock fusion, zero equivalence and
   wrong forms. Add `hypothesis` checks for circular and rectangular drafts.
-- [ ] Step 5 **[3]**. Lift `mirrorY()` using the oracle's wire-joining rule.
+- [x] Step 5 **[3]**. Lift `mirrorY()` using the oracle's wire-joining rule.
   Verify a half outline with axis endpoints, a reflected arc and the oracle's
   outcome for unjoinable endpoints. Record the rule in an ADR and add a
   `hypothesis` property over reflected half outlines, extrusion height and planes.
@@ -169,7 +169,11 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   exact ridge or pyramid and retain the oracle gap in strict regressions.
   The closed-form acceptance fixtures use slant lengths √10 and √5 for
   axial heights 3 and 2.
-- ⚠ OPEN: Agent, Step 5. When does the oracle join reflected endpoints?
-  Any join tolerance is measured by Step 5.
+- **Settled, Step 5 (ADR-0028).** The oracle joins line-wire endpoints
+  at a reflected gap of 1e-7. Snap horizontal ends to the axis within
+  that limit. Curved or sloped ends already on the axis join exactly.
+  Merge straight joins across the axis for the cleaned prism. A loft
+  through the simplified wire refuses because the oracle keeps those
+  vertices in its loft.
 - ⚠ OPEN: Agent, Step 7. Which freeform disagreements need independent
   measures, and which need a second oracle? Keep ADR-0005's tolerance.

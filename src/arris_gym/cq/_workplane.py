@@ -85,6 +85,9 @@ _CSK_NO_HEIGHT = 180.0
 # the gap is wider than this, its numerical-error threshold (`cq.py`); a
 # narrower gap is no segment. In plane units.
 _CLOSE_GAP = 1e-6
+# Effective CadQuery 2.3.0 / OCCT 7.9.3 endpoint gap for mirrorY's
+# line wires in plane units (ADR-0028, mirror-y-join-limit).
+_MIRROR_JOIN_GAP = 1e-7
 # `arris`'s `bounds` is a conservative box, wider than the body by this much on
 # every side (measured on boxes of 1 to 40,000 and a cylinder: 2e-7, absolute).
 # CadQuery's `largestDimension` is the diagonal of the tight box, so `hole`
@@ -96,6 +99,7 @@ _BOUNDS_PAD = 2e-7
 _FULL_TURN_TOLERANCE = 1e-6
 _ZERO = Vector(0, 0, 0)
 _SKETCH_TO_VECTOR = "Cannot convert object type '<class 'cadquery.sketch.Sketch'>' to vector"
+_WIRE_TO_VECTOR = "Cannot convert object type '<class 'cadquery.occ_impl.shapes.Wire'>' to vector"
 
 _NO_SOLID = "Cannot find a solid on the stack or in the parent chain"
 _NO_WIRES = "No pending wires present"
@@ -340,6 +344,10 @@ class _ClosedPath(arris.build.Sketch):
     vertices: tuple[_UV, ...] | None
 
 
+class _MirroredPath(_ClosedPath):
+    """A joined profile whose straight seams are simplified for sweeping."""
+
+
 def _polygon_vertices(sketch: arris.build.Sketch) -> tuple[_UV, ...] | None:
     """The start of each straight edge in drawing order, for a loft section."""
     if isinstance(sketch, _Rect):
@@ -404,6 +412,10 @@ def _loft_sections(
     first: arris.build.Sketch, second: arris.build.Sketch
 ) -> tuple[arris.build.Sketch, arris.build.Sketch]:
     """Align the two verified section kinds for the pinned smooth loft."""
+    if isinstance(first, _MirroredPath):
+        # The oracle loft retains the axis vertices of the joined wire.
+        # See loft-after-mirror in mirrors/contexts.json.
+        raise UnsupportedApi("Workplane.loft on a mirrored path")
     if isinstance(first, _Disc) and isinstance(second, _Disc):
         model = arris.build.default_model()
         delta = sub(second.plane.point(*second.center), first.plane.point(*first.center))
@@ -775,6 +787,8 @@ class Workplane:
             return last
         if isinstance(last, Sketch):
             raise RuntimeError(_SKETCH_TO_VECTOR)
+        if isinstance(last, _MirroredPath):
+            raise RuntimeError(_WIRE_TO_VECTOR)
         kind = "Sketch" if isinstance(last, arris.build.Sketch) else type(last).__name__
         raise RuntimeError(f"Cannot convert object type '{kind}' to vector")
 
@@ -2361,6 +2375,8 @@ class Workplane:
         last = self._stack[-1] if self._stack else None
         if isinstance(last, Sketch):
             raise RuntimeError(_SKETCH_TO_VECTOR)
+        if isinstance(last, _MirroredPath):
+            raise RuntimeError(_WIRE_TO_VECTOR)
         if not isinstance(last, _Path) or not last.segments:
             raise ValueError("No start point specified - cannot close")
         segments = last.segments
@@ -2370,8 +2386,93 @@ class Workplane:
             segments = (*segments[:-1], segments[-1].ending_at(last.start))
         else:
             segments = (*segments, _Segment(last.start))
-        loop = arris.Loop.path(last.start, [segment.built() for segment in segments])
-        profile_u = [last.start[0]]
+        return self._closed_path(last.start, segments)
+
+    @census_form("Workplane.mirrorY")
+    def mirrorY(self) -> Workplane:
+        """Reflect one open path about the workplane's local y axis and join it.
+
+        Both endpoints must meet their reflections. Horizontal end
+        segments can join across the measured gap (ADR-0028). The
+        closed profile preserves straight lines and circular arcs.
+        The original path stays available on its branch.
+
+        Raises `ValueError` when nothing was drawn or the two paths stay
+        separate. A single joined endpoint or other pending geometry
+        raises `UnsupportedApi`.
+
+        >>> import arris_gym.cq as cq
+        >>> half = cq.Workplane("XY").polyline([(0, 0), (2, 0), (2, 3), (0, 3)])
+        >>> round(half.mirrorY().extrude(4)._solids()[0].measure().volume, 9)
+        48.0
+        """
+        form = "Workplane.mirrorY"
+        path = self._stack[0] if len(self._stack) == 1 else None
+        if self._carried:
+            raise UnsupportedApi(f"{form} with carried wires")
+        if not self._stack or (isinstance(path, _Path) and not path.segments):
+            raise ValueError(_NO_WIRES)
+        if not isinstance(path, _Path):
+            raise UnsupportedApi(f"{form} requires a single open path")
+
+        u0, v0 = path.start
+        u1, v1 = path.end
+        if math.dist(path.start, path.end) <= _MIRROR_JOIN_GAP or (
+            math.hypot(u0 + u1, v0 - v1) <= _MIRROR_JOIN_GAP
+        ):
+            raise UnsupportedApi(f"{form} requires two distinct endpoints on the y axis")
+        joins_start = 2 * abs(u0) <= _MIRROR_JOIN_GAP
+        joins_end = 2 * abs(u1) <= _MIRROR_JOIN_GAP
+        if not joins_start and not joins_end:
+            raise ValueError("Cannot build face(s): outer wire is not closed")
+        if not (joins_start and joins_end):
+            raise UnsupportedApi(f"{form} joins only one endpoint")
+
+        segments = path.segments
+        first, last = segments[0], segments[-1]
+        last_start = segments[-2].to if len(segments) > 1 else path.start
+        if (u0 != 0 and (first.via is not None or first.to[1] != v0)) or (
+            u1 != 0 and (last.via is not None or last_start[1] != v1)
+        ):
+            raise UnsupportedApi(f"{form} cannot snap a curved or sloped end to the y axis")
+
+        # The closed boundary excludes straight runs on the mirror axis.
+        # Here only exact on-axis segments are duplicates of their reflections.
+        lo, hi = 0, len(segments)
+        if u0 == 0:
+            while lo < hi and segments[lo].via is None and segments[lo].to[0] == 0:
+                v0 = segments[lo].to[1]
+                lo += 1
+        if u1 == 0:
+            while hi - lo > 1 and segments[hi - 1].via is None and segments[hi - 2].to[0] == 0:
+                v1 = segments[hi - 2].to[1]
+                hi -= 1
+        segments = segments[lo:hi]
+        if not segments or v0 == v1:
+            raise UnsupportedApi(f"{form} requires an open outline leaving the y axis")
+
+        start = (0.0, v0)
+        forward = (*segments[:-1], segments[-1].ending_at((0.0, v1)))
+        starts = (start, *(segment.to for segment in forward[:-1]))
+        reflected = tuple(
+            _Segment((-u, v), None if segment.via is None else (-segment.via[0], segment.via[1]))
+            for (u, v), segment in zip(reversed(starts), reversed(forward), strict=True)
+        )
+        # A horizontal line and its reflection form one edge across the axis.
+        # Keep the same side face and blend edges as CadQuery's cleaned prism.
+        if forward[0].via is None and forward[0].to[1] == v0:
+            start = reflected[-2].to
+            reflected = reflected[:-1]
+        if forward[-1].via is None and starts[-1][1] == v1:
+            forward = forward[:-1]
+        return self._closed_path(start, forward + reflected, _MirroredPath)
+
+    def _closed_path(
+        self, start: _UV, segments: tuple[_Segment, ...], kind: type[_ClosedPath] = _ClosedPath
+    ) -> Workplane:
+        """Put a joined path on the stack as a closed profile in the active frame."""
+        loop = arris.Loop.path(start, [segment.built() for segment in segments])
+        profile_u = [start[0]]
         profile_u.extend(
             point[0]
             for segment in segments
@@ -2380,11 +2481,9 @@ class Workplane:
         )
         vertices = None
         if all(segment.via is None for segment in segments):
-            vertices = (last.start, *(segment.to for segment in segments[:-1]))
+            vertices = (start, *(segment.to for segment in segments[:-1]))
         return self._derive(
-            _ClosedPath(
-                self._plane, loop, u_range=(min(profile_u), max(profile_u)), vertices=vertices
-            )
+            kind(self._plane, loop, u_range=(min(profile_u), max(profile_u)), vertices=vertices)
         )
 
     @census_form("Workplane.revolve", [("num",), ("tuple",), ("tuple",)])

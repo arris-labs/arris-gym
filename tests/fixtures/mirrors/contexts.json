@@ -1,0 +1,2040 @@
+{
+  "arc-gap": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"YZ\", origin=(3, 4, 5)).moveTo(0, -2).threePointArc((1, 0), (5e-8, 2)).mirrorY().extrude(-3)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 16.773570218267583,
+        "area": 39.00123610284297,
+        "centroid": [
+          1.5,
+          4.000000000000001,
+          5.000000000864722
+        ],
+        "bounds": [
+          [
+            0.0,
+            3.0,
+            3.0
+          ],
+          [
+            3.0,
+            5.0,
+            7.0
+          ]
+        ],
+        "faces": 4,
+        "solids": 1
+      },
+      "step_sha256": "7147df680418a8942919e803b91d874dfa17094ec791e9ae6aca3d5c61a18ab4",
+      "program_sha256": "e869a4f9096a1bec758ba5080b8e11fbc677172dfa2fbd35a37ce11389b5c330",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "arc-loose": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).threePointArc((2, 1), (1, 3)).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 39.41592653589794,
+        "area": 61.44631633113337,
+        "centroid": [
+          6.876093581428063e-17,
+          1.3689193145831258,
+          2.0
+        ],
+        "bounds": [
+          [
+            -2.08113883008419,
+            -0.08113883008418976,
+            0.0
+          ],
+          [
+            2.08113883008419,
+            3.0,
+            4.0
+          ]
+        ],
+        "faces": 4,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "520ff59447507bb8022412e1bdf28769fb9ec065bb5079761d91a2da9144807e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "axis-only": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(0, 2).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 0.0,
+        "area": 16.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            4.0
+          ]
+        ],
+        "faces": 4,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "a3fbb129b1cf0b2b3ded04be98e6023eb2de9d472c01ab64ca5ef53a467db2bb",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "blind-cut-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().cutBlind(-2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 360.0,
+        "area": 348.0,
+        "centroid": [
+          3.442944232181746e-17,
+          -0.09999999999999992,
+          -0.1333333333333335
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            4.0,
+            4.0,
+            3.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "97b9a4b2bc3a599c9c5c1bf7e4f6a66f07df8c8a7d1a81a91f71e4b51b80eceb",
+      "program_sha256": "d49679c6fb92c97b598ea1cc867a184b2177dc513a9ed9ff304eb468f03e8687",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "both-above-join-limit": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(5.000005e-08, 0).lineTo(2, 0).lineTo(2, 3).lineTo(5.000005e-08, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: Cannot build face(s): outer wire is not closed",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "61f368711a3b145ba18aec7d322b0be53bb34333314cd603f5d1699101fd4e27",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "both-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(2, both=True)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 48.0,
+        "area": 80.0,
+        "centroid": [
+          0.0,
+          1.5,
+          3.469446951953614e-18
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            -2.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "5cb3a144783a08e6b40e3fe24819cbc9bbeecbf6591f116f4b43fe6ee3c85dd6",
+      "program_sha256": "b3fbaed72c5f0698f28de668bb6af9fc28aaba6b5d1782433b0a67a45e275e82",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "bottom-loft-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().loft()\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: More than one wire is required",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "e35ddf5ee8472394fb18fba8979b5bb40b4c5b9468a6a253b74ae33d60d6ea82",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "box-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().box(1, 1, 1)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 0.9999999999999998,
+        "area": 6.0,
+        "centroid": [
+          5.637851296924625e-18,
+          1.5,
+          6.93889390390723e-18
+        ],
+        "bounds": [
+          [
+            -0.5,
+            1.0,
+            -0.5
+          ],
+          [
+            0.5,
+            2.0,
+            0.5
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "18e7e93963ef8b2d3a3fac85cc0c8470b2e9b8e973bd5d19c5a0e49499828101",
+      "program_sha256": "fe3a360edddfd5373b672aa34f490cd03c620dec830875711f12e4fc4030d9ed",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "carried": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(6, 0).circle(1).workplane(offset=0).moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 73.13274122871833,
+        "area": 142.83185307179585,
+        "centroid": [
+          1.457369279112456e-16,
+          0.9845111613528098,
+          2.0000000000000004
+        ],
+        "bounds": [
+          [
+            -7.0,
+            -1.0,
+            0.0
+          ],
+          [
+            7.0,
+            3.0,
+            4.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 3
+      },
+      "step_sha256": "f120602c8960a2bcaa30e0b890e2d531748082a1ca19f9065b3facccd842a8da",
+      "program_sha256": "66745a1c29c0f626b9725c90beef8fcda1b3749dee4d5572ef194318ee895713",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "carried-only": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").circle(1).workplane(offset=0).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": -8.881784197001252e-16,
+        "area": 50.26548245743669,
+        "centroid": [
+          0.23623304133438872,
+          0.1902136176978195,
+          2.0
+        ],
+        "bounds": [
+          [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            4.0
+          ]
+        ],
+        "faces": 4,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "b004be604d4bc23f9383c4c4d9177c8c217dfe73a4993db5650a14a9369d457b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "cboreHole-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().cboreHole(0.25, 0.5, 1)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 383.558213533089,
+        "area": 325.39961237335746,
+        "centroid": [
+          -3.995024901963211e-17,
+          -0.0017277160988482072,
+          -0.000959842277138018
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            4.0,
+            4.0,
+            3.0
+          ]
+        ],
+        "faces": 9,
+        "solids": 1
+      },
+      "step_sha256": "1c1cbdd05e773dd6b1fdfa520381680672d0745e340cde0d13c53328a0ae0ab3",
+      "program_sha256": "4419f02464337824a8ad42fa60cd48f8e7eb38f0bc6a7245bfdcbdd26d57a02a",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "center-and-circle-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().center(5, 7).circle(0.5).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 25.570796326794902,
+        "area": 59.85398163397448,
+        "centroid": [
+          0.3071465406708715,
+          1.8378611947379586,
+          1.0000000000000002
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            5.5,
+            7.5,
+            2.0
+          ]
+        ],
+        "faces": 9,
+        "solids": 2
+      },
+      "step_sha256": "0274f73dd3bd4b7df3050df612432ffa8e30e87e6882ad3799174b30532aff8e",
+      "program_sha256": "bdaf127d2659c84c02e829408892adea1d6707dcb722e4eec84864066f25a1c9",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "center-axis": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XZ\", origin=(1, 2, 3)).center(3, -2).moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 48.0,
+        "area": 80.0,
+        "centroid": [
+          4.0,
+          -3.469446951953614e-18,
+          2.5
+        ],
+        "bounds": [
+          [
+            2.0,
+            -2.0,
+            1.0
+          ],
+          [
+            6.0,
+            2.0,
+            4.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "faa88b96bdeb2455648bd0c66eb8ff783ec0076d9dd6fae3592b65cc5615bdaa",
+      "program_sha256": "7f6aa60316c84ba51571df0b0acd0f3e61bb8d4f0c14ead8c4b78921a54d9561",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "chamfer-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().chamfer(0.25)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_NoSuchObject: NCollection_IndexedDataMap::FindFromKey",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "b1421f363d58a386d4d5dddabb9195a7687183237497561636aca2b923e3097f",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "circle": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(3, 0).circle(1).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 25.13274122871834,
+        "area": 62.83185307179586,
+        "centroid": [
+          -7.06789929214115e-17,
+          -5.285485590866834e-17,
+          1.9999999999999998
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -1.0,
+            0.0
+          ],
+          [
+            4.0,
+            1.0,
+            4.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 2
+      },
+      "step_sha256": "cf2aad9276c51171a1e32eb9f2cae368c556da4e7c1253a0ec50feae7a96fccb",
+      "program_sha256": "e41c2c9d359da811a48c385a0730d74add0ff7323c9a4dcd16eaadf3e2c0af5a",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "circle-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().circle(0.5).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 22.4292036732051,
+        "area": 56.712388980384695,
+        "centroid": [
+          3.959919543470826e-17,
+          1.5000000000000002,
+          1.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": "c58ae763165308bb7a7b3a754e6b65b50d6973e7c313bddf6b91d55533eeb432",
+      "program_sha256": "9bd9ba7dc4824c2b6de48ad2d4147935c850463268c62f9897602b95423fb59a",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "close-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().close().extrude(4)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "RuntimeError: Cannot convert object type '<class 'cadquery.occ_impl.shapes.Wire'>' to vector ",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "7f748361d4b6ad3477cae5d0b88571ac3484e53e131ce9f605a0271e674dd6d3",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "closed-drawn-path": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(1, 0).lineTo(3, 0).lineTo(3, 2).lineTo(1, 2).lineTo(1, 0).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 31.999999999999993,
+        "area": 80.0,
+        "centroid": [
+          0.0,
+          1.0,
+          2.0
+        ],
+        "bounds": [
+          [
+            -3.0,
+            0.0,
+            0.0
+          ],
+          [
+            3.0,
+            2.0,
+            4.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 2
+      },
+      "step_sha256": "5331f1683fcf0fbe7268eb7317ae4aed827443422b82dc969890ade5bfbcfd45",
+      "program_sha256": "d50cdbfea115a1c2500003c2d4874795b2e8d2635172c8b5f76c7c0c242382d7",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "closed-path": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").polyline([(1, 1), (2, 1), (2, 2)]).close().mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 3.999999999999999,
+        "area": 29.31370849898476,
+        "centroid": [
+          1.6653345369377353e-16,
+          1.333333333333333,
+          2.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.9999999999999998,
+            0.0
+          ],
+          [
+            2.0,
+            2.0,
+            4.0
+          ]
+        ],
+        "faces": 10,
+        "solids": 2
+      },
+      "step_sha256": "f042bf9bc15104f61fabd3693c24541d7bbf43598d4ee18bf9a174931c91c653",
+      "program_sha256": "10515e77badda844f47b3716b5347aa557223311dda52d01df0ab13a204a896f",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "consume-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(2).extrude(2)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: No pending wires present",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "9c2ed4be66e1436028a9f81cd7dcfedeb2e444df7d1f7d3dd49593312e170a63",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "cskHole-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().cskHole(0.25, 0.5, 90)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 383.69729445785725,
+        "area": 324.5770374216245,
+        "centroid": [
+          1.172065568419069e-16,
+          -0.0011833763744823846,
+          -6.313339610480775e-05
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            4.0,
+            4.0,
+            3.0
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "295c97fc831131b4e2db664771b29cd06102f65763e4d27d9761ebcb58a0f3bd",
+      "program_sha256": "6ba8f8272f7284e72113dc8780082e132d29c8d24c0a338e0f3dc4dc74606b68",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "cut-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().cut(cq.Workplane(\"XY\", origin=(8, 0, 0)).box(2, 2, 2))\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 384.0,
+        "area": 320.0,
+        "centroid": [
+          3.8163916471489756e-17,
+          9.25185853854297e-18,
+          7.401486830834377e-17
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            4.0,
+            4.0,
+            3.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "109ca44c1160d0223988ab5c314e97a9512cf0021817805e167cac8465eefc95",
+      "program_sha256": "4815d22ad9083bb6f097a3d835094284ccc5f90cc17655e1e2b54a2669e32abe",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "cylinder-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().cylinder(1, 1)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 3.1415926535897927,
+        "area": 12.566370614359169,
+        "centroid": [
+          -3.533949646070575e-17,
+          1.5,
+          0.0
+        ],
+        "bounds": [
+          [
+            -1.0,
+            0.5,
+            -0.5
+          ],
+          [
+            1.0,
+            2.5,
+            0.5
+          ]
+        ],
+        "faces": 3,
+        "solids": 1
+      },
+      "step_sha256": "76bc5343352c6e72eb5401afe649c376dd31fd9c0067c36169bc7af3d1a4bce9",
+      "program_sha256": "c39a08bd0ac6334720d8e3fc12f37864f4ea97912a18b6a34a0872874a356fb5",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "edge-selection": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(3, 2, 2).edges(\">Z\").mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: No pending wires present",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "a133b15ce333e941fcf0fabf52753b8f7c003512dd3942c11c91da7041f301eb",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "edges-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().edges(\">Z\").chamfer(0.25)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_NoSuchObject: NCollection_IndexedDataMap::FindFromKey",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "9070c78bb8c8d968b1197169a81ecaebb2b40063617376dd939c14f063d085d3",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "empty": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: No pending wires present",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "f69fbfdf63dfbac5a78a5a4e7a60d9d0930ae3bafd71eaba292e91b8779bd1d4",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "equal-heights": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(1, 0).lineTo(2, 1).lineTo(-1, 0).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 0.0,
+        "area": 36.61192978033179,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            -2.220446049250313e-16,
+            0.0
+          ],
+          [
+            2.0,
+            1.0000000000000002,
+            4.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "09c6bfa7c21e9feb0160f499739992cdb1b2dfd100a689c95ab9f53bfd8ad7d0",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "faces": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(3, 2, 2).faces(\">Z\").mirrorY().workplane().circle(1).extrude(4)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 14.858407346410205,
+        "area": 60.84955592153875,
+        "centroid": [
+          -0.21312288678313382,
+          1.3609264871380757e-17,
+          0.7695057161293395
+        ],
+        "bounds": [
+          [
+            -1.5,
+            -1.0,
+            -1.0
+          ],
+          [
+            1.5,
+            1.0,
+            3.0
+          ]
+        ],
+        "faces": 10,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "3d30779e87903a8536c80448f8570342211fbd26a1a0d56a24beed8e3ee5954d",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "faces-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().faces(\">Z\").workplane().hole(0.25)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: Can not return the Nth element of an empty list",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "34236562857d6be1b6170efed8ae26328158de196f234e59bbb22c2da97349f6",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "fillet-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().fillet(0.25)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "OCP.OCP.Standard.Standard_Failure: There are no suitable edges for chamfer or fillet",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "891cec4f7ecedf0a2ed6be4c51d8dda32297fefe8a91811a2ffe89470fd22be2",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "half-arc": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XZ\").moveTo(0, 0).threePointArc((2, 1), (0, 2)).lineTo(0, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 33.67871794485225,
+        "area": 61.125307684189735,
+        "centroid": [
+          3.9558145643540546e-17,
+          -2.0,
+          1.0000000000000002
+        ],
+        "bounds": [
+          [
+            -2.0,
+            -4.0,
+            -0.24999999999999956
+          ],
+          [
+            2.0,
+            0.0,
+            2.25
+          ]
+        ],
+        "faces": 4,
+        "solids": 1
+      },
+      "step_sha256": "cbf2b1b4e9708b634b580498dc85a593508407e0d65d1fa8f93ee0a4219a0fee",
+      "program_sha256": "5676a8c8e749118483a0578717ccbe3e01e06464f2fa0f1038b19987b90d3616",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "hole-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().hole(0.25)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 383.705475688726,
+        "area": 324.61421420996,
+        "centroid": [
+          2.7883631775840114e-16,
+          -0.0011513686796314542,
+          -2.146333639731759e-18
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            4.0,
+            4.0,
+            3.0
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": "54c242beef8ed1c3735620bbd79e4f95ae5f248c4bbceea8c42fea173098ff0c",
+      "program_sha256": "d3c762f305ef2f94ebf1ec2473c5c286eaf0986a7fac95930d268c4057a05c92",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "line-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().lineTo(1, 1).close().extrude(2)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "RuntimeError: Cannot convert object type '<class 'cadquery.occ_impl.shapes.Wire'>' to vector ",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "a7c7803723fac2724cc1d1a36ece8b6af32f2567a1004709271e76eb2c89a405",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "loft-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().workplane(offset=2).rect(2, 2).loft()\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 15.249999999999998,
+        "area": 41.80440329126692,
+        "centroid": [
+          -1.0192211373607996e-16,
+          0.881147540983607,
+          0.8251366120218581
+        ],
+        "bounds": [
+          [
+            -2.0000001,
+            -1.0000001,
+            -1e-07
+          ],
+          [
+            2.0000001,
+            3.0000001,
+            2.0000001
+          ]
+        ],
+        "faces": 10,
+        "solids": 1
+      },
+      "step_sha256": "f6a1c4de3f1cac1cba56ea79e565605a4d59b6e9111747817bacd91b254de6c9",
+      "program_sha256": "a754ae2d60b988a4ea02859856ed8f4eebb26be86315b4b5326f967d1651ae11",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "mirror-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().mirrorY().extrude(2)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 0.0,
+        "area": 20.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 8,
+        "solids": 2
+      },
+      "step_sha256": null,
+      "program_sha256": "adcf78d0a89c9ff888895315f338d1daba36439fe61a215ec97c83799ff3af8b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "move-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().moveTo(1, 1).lineTo(2, 2).close().extrude(2)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: Cannot build face(s): inner wire is not closed",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "77ef156bb471c724082291f49a94d2e811ac3f9ccfde85609cce4d2a86d7372f",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "neither-joins": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(1, 0).lineTo(2, 0).lineTo(2, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: Cannot build face(s): outer wire is not closed",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "130c55b5879ce1a9f5a5ae3b7933d65c16840be5c5a2d0df4299267254214520",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "offset-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().workplane(offset=1).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 24.0,
+        "area": 52.0,
+        "centroid": [
+          0.0,
+          1.5,
+          1.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "ff7cc8d6a671c780d528b662cb420ac94866118cb8b18365a537cfda570e8672",
+      "program_sha256": "dfe2b2dde33c5320117fac29a00bef1c366bcf8ccdcbd16f78c0231fdad10884",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "one-above-join-limit": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(5.000005e-08, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 47.99999983999984,
+        "area": 79.9999995999996,
+        "centroid": [
+          -3.7007434277530124e-17,
+          1.4999999959999957,
+          2.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            4.0
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "0108ae2171ef5d41445157eb25257ae984c3149b060eee57088d1d94c2e0c872",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "point": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(1, 2).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "ValueError: No pending wires present",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "606d906aa97484b11971722dff432ad3288d193961ffb8fd56fa47e56677ee1a",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "points": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").pushPoints([(1, 2), (3, 4)]).mirrorY().circle(1).extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 25.132741228718338,
+        "area": 62.831853071795855,
+        "centroid": [
+          2.0000000000000004,
+          3.000000000000001,
+          2.0000000000000004
+        ],
+        "bounds": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            4.0,
+            5.0,
+            4.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 2
+      },
+      "step_sha256": "71a2e6f76274655e4406a7e93c118660d9e8a6626a40643a97a8db11f7a1a892",
+      "program_sha256": "7b367459d6c96cacf11e1f12b61145f593ad7cd585691c5ea47c6ec668efed23",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "points-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().pushPoints([(1, 1)]).circle(1).extrude(2)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 17.716814692820414,
+        "area": 58.28318530717958,
+        "centroid": [
+          -0.35464531385124154,
+          1.6773226569256205,
+          0.9999999999999998
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 7,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "10134ba61dc08404d1f9a01d943ed679f867ab125972f05b6dbf6640af1c4175",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "polarArray-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().polarArray(3, 0, 360, 4).circle(0.25).extrude(2)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 24.785398163397442,
+        "area": 65.35176877775663,
+        "centroid": [
+          -5.01044941511787e-17,
+          1.3574042784389126,
+          1.0000000000000007
+        ],
+        "bounds": [
+          [
+            -3.25,
+            -3.25,
+            0.0
+          ],
+          [
+            3.25,
+            3.25,
+            2.0
+          ]
+        ],
+        "faces": 16,
+        "solids": 4
+      },
+      "step_sha256": null,
+      "program_sha256": "b4f33e544a5ccab3afc7b15a21db3eef6dfd2aa8a6774d3cdab9a794ba7a714b",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "polygon-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().polygon(6, 1).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 22.700961894323342,
+        "area": 56.70096189432334,
+        "centroid": [
+          -3.912514473328222e-17,
+          1.5,
+          1.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 1
+      },
+      "step_sha256": "965a31031c4daee14dd034e55a6a964dd1e55d999dfcf22949cc74adbc0e7d97",
+      "program_sha256": "ee6ca78ac774685ea07525c3472be0efd795d2a55f386bf3f250b75a08dbc3b3",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "polyline-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().polyline([(0, 0), (1, 0), (0, 1)]).close().extrude(2)\n",
+    "oracle": {
+      "status": "invalid",
+      "message": "BRepCheck_Analyzer: shape is not valid",
+      "measures": {
+        "volume": 22.999999999999996,
+        "area": 57.82842712474619,
+        "centroid": [
+          -0.014492753623188357,
+          1.5507246376811596,
+          1.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 9,
+        "solids": 1
+      },
+      "step_sha256": null,
+      "program_sha256": "838346958dc85c0f2491ee7c8f3cea11c36e30955b27b112167c2a3ed14cf700",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "rarray-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().rarray(1, 1, 2, 2).circle(0.25).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 23.999999999999996,
+        "area": 64.56637061435919,
+        "centroid": [
+          8.673617379884037e-19,
+          1.4672750765251064,
+          1.0000000000000002
+        ],
+        "bounds": [
+          [
+            -2.0,
+            -0.75,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 14,
+        "solids": 3
+      },
+      "step_sha256": "fff4bcfb4f3b36a9c03654f8e4d13069725d9a87ac2cf066636a8bae0bf1c92d",
+      "program_sha256": "52335f440883dc44e33afcbed0515e298de9c0933d9aa3a416c69b9705bba84f",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "rect-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().rect(1, 1).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 22.0,
+        "area": 58.0,
+        "centroid": [
+          0.0,
+          1.5,
+          0.9999999999999997
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 10,
+        "solids": 1
+      },
+      "step_sha256": "74b92ba3b18c03b5ec1c54b5dc5686bebade52f68cd300f22998b1d8857d6bbb",
+      "program_sha256": "5b5302ae213481eb6174b0652ca0001a8c037f9df668ac741455d855cca3ade4",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "retraced-axis-tip": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(0, 0).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 0.0,
+        "area": 16.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0,
+            4.0
+          ]
+        ],
+        "faces": 4,
+        "solids": 1
+      },
+      "step_sha256": "f14f3f5305e5e38846f005c45918f1fa2158e6956fa3bc63cff07b992cc7ae9f",
+      "program_sha256": "59045133a91424438a5f860d83ffb8a31b0809dc8464a0a6b9b834f9d03fa436",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "revolve-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().revolve(360, (-3, 0), (-3, 1))\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 226.1946710584651,
+        "area": 263.89378290154264,
+        "centroid": [
+          -3.000000000000001,
+          1.4999999999999998,
+          1.010657125118571e-16
+        ],
+        "bounds": [
+          [
+            -8.0,
+            0.0,
+            -5.0
+          ],
+          [
+            2.0,
+            3.0,
+            5.0
+          ]
+        ],
+        "faces": 4,
+        "solids": 1
+      },
+      "step_sha256": "fd408cbf799fa8d14c71d9709b561550db0d17621a4373adea519bb575333e3a",
+      "program_sha256": "35cc0d4a51a6534c55545a1ea0b97bdd5b665eaa320e727174a646027c57ecac",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "round": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"YZ\", origin=(3, 4, 5)).moveTo(0, -2).threePointArc((2, 0), (0, 2)).mirrorY().extrude(-3)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 37.69911184307751,
+        "area": 62.83185307179586,
+        "centroid": [
+          1.5,
+          4.0,
+          5.000000000000001
+        ],
+        "bounds": [
+          [
+            0.0,
+            2.0,
+            3.0
+          ],
+          [
+            3.0,
+            6.0,
+            7.0
+          ]
+        ],
+        "faces": 3,
+        "solids": 1
+      },
+      "step_sha256": "a125ff7111c2397c8acfa8c694e3b3b52e036caa480ff16a8e65f3b10c001f75",
+      "program_sha256": "31085d2ba7e2c3cdacace1928ce4e142abdc285ca825745c6d908de5eb356ac1",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "sketch": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").sketch().rect(2, 3).finalize().mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 24.0,
+        "area": 52.0,
+        "centroid": [
+          7.625555279814714e-18,
+          0.0,
+          2.0
+        ],
+        "bounds": [
+          [
+            -1.0,
+            -1.5,
+            0.0
+          ],
+          [
+            1.0,
+            1.5,
+            4.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "be236aceba4997284f9b278829236f0c030417900ec4613fe3a3fbc476e984ab",
+      "program_sha256": "98928c492f06d5a3e4459d8f68bb55cac5e7de030d0b160711decca9fe1ded42",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "sketch-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().sketch().rect(1, 1).finalize().extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 1.9999999999999996,
+        "area": 10.0,
+        "centroid": [
+          3.52365706057789e-18,
+          1.5000000000000002,
+          1.0
+        ],
+        "bounds": [
+          [
+            -0.5,
+            1.0,
+            0.0
+          ],
+          [
+            0.5,
+            2.0,
+            2.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "a5cf3d02928659035905feeee35669246414173034d609e9ae69e33ebf839c57",
+      "program_sha256": "7abaccae001ba8c2a41bac4aaf487312deade080ade29bd9d008afafcb210cf0",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "sloped-gap": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 1).lineTo(2, 2).lineTo(5e-8, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 32.00000015999999,
+        "area": 59.77708773999663,
+        "centroid": [
+          -6.9388938692127606e-18,
+          1.500000005885417,
+          2.0000000000000004
+        ],
+        "bounds": [
+          [
+            -2.0000000000000004,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            4.0
+          ]
+        ],
+        "faces": 8,
+        "solids": 1
+      },
+      "step_sha256": "742a06cb9c92ca17baad4b67d6854c3479511ba54aac572a2962b2b0bbec13be",
+      "program_sha256": "0e8057f7bf85101716eb4388532ddd0b9afb3875d13890ce185422cb7e052fe5",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "slot-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().slot2D(1, 0.5, 0).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 23.107300918301274,
+        "area": 56.248893571891074,
+        "centroid": [
+          0.0,
+          1.5,
+          0.9999999999999999
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 10,
+        "solids": 1
+      },
+      "step_sha256": "d0e23c89859e66966b8f4a541f832f0caad86a8a7c6f37802630ceb2dc6122cc",
+      "program_sha256": "0dc183f587b2c9f548fb0978b67c77a0b8bb791dfd66b46b82900e805d2ce000",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "solid": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(3, 2, 2).mirrorY()\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 0.0,
+        "area": 0.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "bounds": [
+          [
+            -1.5,
+            -1.0,
+            -1.0
+          ],
+          [
+            1.5,
+            1.0,
+            1.0
+          ]
+        ],
+        "faces": 0,
+        "solids": 0
+      },
+      "step_sha256": "e5057220037e2d1ab8a03ecd99d52e72f2ddeb0aa5d4ea060af4a387ea25a658",
+      "program_sha256": "2df00ac7203cf188d72848b0e31a740a99ed0af50b80cf47ed44d8a405d2d95f",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "sphere-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().sphere(1)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 4.188790204786391,
+        "area": 12.566370614359172,
+        "centroid": [
+          -5.784042325902804e-17,
+          1.5,
+          7.80625564189563e-18
+        ],
+        "bounds": [
+          [
+            -1.0,
+            0.5,
+            -1.0
+          ],
+          [
+            1.0,
+            2.5,
+            1.0
+          ]
+        ],
+        "faces": 1,
+        "solids": 1
+      },
+      "step_sha256": "427b7f5b56bdf93056953e483944391e9d94100d90932fb8a2b992e6a859a431",
+      "program_sha256": "cc9d1495d7ee2e7b0f79949c927f7ff8029e295504709e16947b7284bd43eedf",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "stock": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 2).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 176.0,
+        "area": 248.0,
+        "centroid": [
+          1.3069564370143444e-17,
+          0.40909090909090895,
+          0.818181818181818
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -1.0
+          ],
+          [
+            4.0,
+            4.0,
+            5.0
+          ]
+        ],
+        "faces": 11,
+        "solids": 1
+      },
+      "step_sha256": "c38ac6de76c812e6bcc9cadf33d84303790b6ebaefb434fb4f7e7ce5e4b0fd50",
+      "program_sha256": "6c2728c87d0830d56a118f3d5cbf88add564520dceea4c976a3442f26bc2e771",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "stock-follow-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(2).faces(\">Z\").workplane().center(0, 1.5).hole(1, depth=1)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 407.2146018366025,
+        "area": 351.1415926535898,
+        "centroid": [
+          -2.0635312387455623e-16,
+          0.08551241187779483,
+          0.22706874421417203
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            4.0,
+            4.0,
+            5.0
+          ]
+        ],
+        "faces": 13,
+        "solids": 1
+      },
+      "step_sha256": "9864ccd1cfa836e678561939b932bb40f689888e58a2c957bc03d514fbe1202c",
+      "program_sha256": "49488730f481c8d6ea3650d0585dc63fbce064a4cafc0e71274d0b3167b35986",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "taper-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(2, taper=10)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 19.163856997007684,
+        "area": 44.84193921636779,
+        "centroid": [
+          9.876478850537688e-18,
+          1.4999999999999998,
+          0.9109251636745518
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            1.969615506024416
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "9988433f179017d022db05cba721e0852a95a18fc91b711aa958afee38c61cf7",
+      "program_sha256": "4672483a6e443cbb6850f1147b44ee7247cec83bc204d7f365319e7fdfeca44e",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "threePointArc-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().threePointArc((1, 1), (1, 2)).close().extrude(2)\n",
+    "oracle": {
+      "status": "runtime",
+      "message": "RuntimeError: Cannot convert object type '<class 'cadquery.occ_impl.shapes.Wire'>' to vector ",
+      "measures": null,
+      "step_sha256": null,
+      "program_sha256": "a843aabcf579e167dc6a3890f2033c09af8548ddfb61d0ea6c1e103349aa4b71",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "through-cut-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().cutThruAll()\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 312.0,
+        "area": 380.0,
+        "centroid": [
+          4.2700885562506023e-17,
+          -0.34615384615384615,
+          -3.433862880651526e-17
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            4.0,
+            4.0,
+            3.0
+          ]
+        ],
+        "faces": 10,
+        "solids": 1
+      },
+      "step_sha256": "39824b2b3c51cbe627a1ca6b39003ebbd8f99bfe74a1646e914d705a37ba7fd3",
+      "program_sha256": "0bad184925e7eac070ad2dd144c8519deb4621e0d0357c44e8a6add140c5db1d",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "tilted-rectangle": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\", origin=(3, 4, 5)).transformed(rotate=cq.Vector(0, 0, 30)).moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().extrude(4)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 48.0,
+        "area": 80.0,
+        "centroid": [
+          2.25,
+          5.299038105676658,
+          7.0
+        ],
+        "bounds": [
+          [
+            -0.23205080756887675,
+            3.0,
+            5.0
+          ],
+          [
+            4.732050807568878,
+            7.598076211353316,
+            9.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "7590f6d1b6a30b1d47700f3d05ff4671b902b04daa3a13110da8cfbda855b343",
+      "program_sha256": "216ea71c17868fd88ee90826cbdf715422b0c53d0476f9afa2ee0c0510ba25d9",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "transformed-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().transformed(rotate=cq.Vector(0, 0, 90)).extrude(2)\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 24.0,
+        "area": 52.0,
+        "centroid": [
+          0.0,
+          1.5,
+          1.0
+        ],
+        "bounds": [
+          [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            3.0,
+            2.0
+          ]
+        ],
+        "faces": 6,
+        "solids": 1
+      },
+      "step_sha256": "ff7cc8d6a671c780d528b662cb420ac94866118cb8b18365a537cfda570e8672",
+      "program_sha256": "d2a12252b941d502badf6cb73c9dda2cb6ea62275751e78c35f54fd1ebc51854",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  },
+  "union-after-mirror": {
+    "program": "import cadquery as cq\n\nresult = cq.Workplane(\"XY\").box(8, 8, 6).faces(\">Z\").workplane().moveTo(0, 0).lineTo(2, 0).lineTo(2, 3).lineTo(0, 3).mirrorY().union(cq.Workplane(\"XY\", origin=(8, 0, 0)).box(2, 2, 2))\n",
+    "oracle": {
+      "status": "ok",
+      "message": "",
+      "measures": {
+        "volume": 391.99999999999994,
+        "area": 344.0,
+        "centroid": [
+          0.163265306122449,
+          9.735692977420858e-18,
+          7.307080111053328e-17
+        ],
+        "bounds": [
+          [
+            -4.0,
+            -4.0,
+            -3.0
+          ],
+          [
+            9.0,
+            4.0,
+            3.0
+          ]
+        ],
+        "faces": 12,
+        "solids": 2
+      },
+      "step_sha256": "50e0feab767bf77843cd741c7453a243181d3fc2eb68de2dc1bae1ee27bc629b",
+      "program_sha256": "bcb5c408e3c254a16e9acc49ddfd70015149fac421e532418efe5059ba4f22e7",
+      "versions": {
+        "cadquery": "2.3.0",
+        "ocp": "7.9.3.0",
+        "python": "3.12.3"
+      }
+    }
+  }
+}

@@ -244,6 +244,8 @@ origin and preserves the placement of pending wires (ADR-0024).
 `workplane` and `transformed` empty the stack and carry a single loft
 section at its original placement. `loft` consumes the sections and puts
 the lofted solid on the stack (ADR-0026).
+`mirrorY` puts the closed profile of a reflected half outline on the stack
+in the plane where it was drawn (ADR-0028).
 `edges` puts a **stack of edges** on it, the solid's, the stacked faces' or
 the stacked edges' own, which `fillet` and `chamfer` blend (ADR-0020).
 

@@ -339,7 +339,7 @@ the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `pushPoints`,
 `rarray`, `polarArray`, `hole` (a diameter, with `depth=`), `cboreHole`,
 `cskHole`, `cutBlind`, `cutThruAll`, `center`, `box`, `cylinder`, `sphere`,
 `circle`, `rect`, `slot2D`, `polygon`, `extrude`, `loft`, `union`, `cut`, `moveTo`,
-`lineTo`, `threePointArc`, `polyline`, `close`, `revolve` and
+`lineTo`, `threePointArc`, `polyline`, `close`, `mirrorY`, `revolve` and
 `Workplane.sketch()`. The edge selectors include the six axis selectors,
 `|X |Y |Z` and `'>Z or <Z'`. Edge selections rank by centre of mass.
 `fillet` and `chamfer` blend selected edges, or every edge of the stacked
@@ -578,6 +578,20 @@ Open CASCADE builds nearly flat is an `arris_refusal` row. `close` makes
 the loop with `Loop.path`: a line back to the start, unless the last
 segment, a line or an arc, ends within CadQuery's 1e-6 of it, when it
 ends on the start.
+
+`mirrorY()` reflects one open half outline across the active plane's
+local y axis and joins the two halves into a closed profile (ADR-0028).
+Lines and circular arcs retain their kinds. On-axis terminal line runs
+are omitted from the boundary, and straight edges across the axis are
+joined for extrusion and edge selection. Horizontal end segments can
+join across a reflected endpoint gap of at most 1e-7 drawing units.
+With two unjoined pairs the call raises the oracle's open-wire error.
+A single joined pair, a curved or sloped end that would need snapping,
+and other wire or stack contexts raise `UnsupportedApi`. The profile
+feeds the existing straight sweeps and revolution, and the source branch
+keeps its path. Lofting through the mirrored profile raises
+`UnsupportedApi` because the oracle loft uses the unsimplified wire.
+
 `workplane(offset=d)` keeps the axes and empties the stack: on an empty
 stack its origin is the old one moved `d` along the normal; on a stack
 holding one solid it is the old origin projected onto the plane through

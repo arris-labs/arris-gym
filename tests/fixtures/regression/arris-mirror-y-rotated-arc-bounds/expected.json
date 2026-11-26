@@ -1,0 +1,40 @@
+{
+  "dialect": "cq",
+  "status": "ok",
+  "measures": {
+    "volume": 33.67871794485226,
+    "area": 61.12530768418975,
+    "centroid": [
+      2.455360964984973,
+      4.8386705679454245,
+      7
+    ],
+    "bounds": [
+      [
+        0.5763580390259051,
+        3.180191291684154,
+        5
+      ],
+      [
+        4.334363890944041,
+        6.497149844206695,
+        9
+      ]
+    ],
+    "faces": 4,
+    "face_kinds": [
+      [
+        "cylinder",
+        2
+      ],
+      [
+        "plane",
+        2
+      ]
+    ],
+    "solids": 1,
+    "shells": 1,
+    "genus": 0
+  },
+  "xfail": "The swept arcs have conservative bounds beyond their circular extrema."
+}

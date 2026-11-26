@@ -178,6 +178,11 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   on a `moveTo` point, on an empty stack, after `lineTo` and after an arc,
   on each named plane, closed by a line and by an arc ending on the start,
   extruded both ways and revolved.
+- `Workplane.mirrorY`, `wire` and `consolidateWires` (`cadquery/cq.py`),
+  `Plane.mirrorInPlane` (`cadquery/occ_impl/geom.py`) and `Wire.combine`
+  (`cadquery/occ_impl/shapes.py`) define the free-edge assembly, local
+  reflection and wire joining. The effective endpoint limit on the
+  pinned oracle is recorded in ADR-0028 and `tests/fixtures/mirrors/`.
 - `Sketch.segment`, `arc`, `close` and `assemble` (`cadquery/sketch.py`):
   implicit starts use the last free edge's end, closing draws a line to
   the first start, and assembly retains the free edges. Confirmed in
