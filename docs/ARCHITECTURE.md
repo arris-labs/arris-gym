@@ -926,10 +926,10 @@ the pinned oracle reports from the 0.11.1 replay.
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 15,326 (85.6%) | 1,871 | 968 (100%) | 0 |
-| agree (all programs) | 12,523 (70.0%) | 980 | 893 (92.3%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 2,573 / 899 / 372 | 16,383 / 174 / 0 | 0 / 56 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 1,531 | 0 | 19 | 0 |
+| reach | 15,656 (87.5%) | 1,871 | 968 (100%) | 0 |
+| agree (all programs) | 12,791 (71.5%) | 980 | 893 (92.3%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 2,243 / 899 / 372 | 16,383 / 174 / 0 | 0 / 56 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 1,593 | 0 | 19 | 0 |
 | unclassified (all) | 0 | 363 | 0 | 0 |
 | timeouts | 0 | 31 | 0 | 0 |
 | in-subset `cq_bug` | 0 | 717 | 0 | 0 |
@@ -1119,12 +1119,18 @@ all 392 gear programs outside the subset. Each keeps its `cq_bug` row.
 Of the 1,176 newly reached programs, 832 agree, 129 are `arris_refusal`,
 51 are `arris_bug` and 164 are `occt_wrong`. The checked verdicts use
 construction, boundary integrals and reduced regressions under ADR-0006.
-Both corpora replay against byte-identical pinned oracle rows and meet
-ADR-0014's reach target. BenchCAD has 12,523 agreements and table digest
-`aa4fb6b6…94dd`. CAD-Recode has 893 agreements and reproduces its table
-and reports at `7cc30ad7…6b92`. Both tables have zero timeouts,
-unclassified rows and in-subset `cq_bug` rows. The fixture READMEs record
-the full digests and class changes.
+The Bundle 5 BenchCAD table has 12,523 agreements and digest
+`aa4fb6b6…94dd`.
+
+`shell(thickness)` (ADR-0029) raises BenchCAD reach to 15,656/17,900.
+Both kernels build the 330 newly reached programs. Agreement rises by
+268 to 12,791. The other 62 programs have checked `occt_wrong` verdicts
+from section or boundary integrals under ADR-0006. The full replay
+reproduces the pinned oracle bytes and every fidelity row outside the
+330 shell stems. CAD-Recode has 893 agreements and reproduces its table
+and reports at `7cc30ad7…6b92`. Both corpora meet ADR-0014's reach target
+and have zero timeouts, unclassified rows and in-subset `cq_bug` rows.
+The fixture READMEs record the full digests and class changes.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

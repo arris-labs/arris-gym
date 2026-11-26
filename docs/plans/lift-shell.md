@@ -85,10 +85,12 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   disputed measures by construction, independent boundary integration or
   a second oracle under ADR-0006. Bind verdicts to the evidence, test
   affected stems in small slices and record kernel limits in the arris report.
-- [ ] Step 5 **[2] [conductor-run]**. Replay both full corpora with all
+- [x] Step 5 **[2] [conductor-run]**. Replay both full corpora with all
   checked verdicts and pinned oracle rows from fresh work directories.
   Commit the verified BenchCAD reports and matching assertions. Verify the
   CAD-Recode reports reproduce and record both fidelity table digests.
+  [BenchCAD replay](../../tests/fixtures/c2/benchcad/README.md#the-table) and
+  [CAD-Recode replay](../../tests/fixtures/c2/cadrecode/README.md#the-table).
 
 ## Acceptance
 

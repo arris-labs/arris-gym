@@ -81,7 +81,7 @@ unclassified or timed-out rows. The oracle ends `ok` on all 968. arris
 ends `ok` on 912 and `arris_refusal` on 56.
 
 Table digest: `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92`.
-The replay from a fresh work directory reproduces
+The full replay after the BenchCAD shell lift reproduces
 the table, reach report, both arris reports and pinned oracle rows
 byte-for-byte. The aggregate census and per-program rows also regenerate
 byte-for-byte. The census digest is

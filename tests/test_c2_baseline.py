@@ -40,14 +40,19 @@ from arris_gym.fidelity import (
 C2 = Path(__file__).parent / "fixtures" / "c2"
 CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)}
 VERDICT_FILES = {
-    "benchcad": ("verdicts.json", "loft-replay/verdicts.json", "loft-replay/trim-verdict.json"),
+    "benchcad": (
+        "verdicts.json",
+        "loft-replay/verdicts.json",
+        "loft-replay/trim-verdict.json",
+        "shell-replay/verdicts.json",
+    ),
     "cadrecode": ("verdicts.json",),
 }
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 15_326,
-        "agree": 12_523,
+        "in_subset": 15_656,
+        "agree": 12_791,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 2,  # ADR-0025's corner patches
         "timed_out": 0,
@@ -55,8 +60,8 @@ FIGURES = {
             "arris_bug": 372,
             "arris_refusal": 899,
             "by_design": 2,
-            "cq_bug": 2_573,
-            "occt_wrong": 1_531,
+            "cq_bug": 2_243,
+            "occt_wrong": 1_593,
         },
         "unclassified": 0,
         "oracle_ok": 17_568,
@@ -118,7 +123,7 @@ def table_of(corpus: str) -> FidelityTable:
 
 
 def pre_shell_subset() -> cq.Subset:
-    """Bundle 5 declarations used to generate the committed fidelity tables."""
+    """Bundle 5 declarations before the shell lift."""
     current = cq.subset()
     return replace(
         current, forms=tuple(form for form in current.forms if form.name != "Workplane.shell")
@@ -145,6 +150,23 @@ def test_shell_reach_adds_only_the_enclosures_and_trays() -> None:
     }
     slice_path = C2 / "benchcad" / "shell-replay" / "stems.txt"
     assert slice_path.read_text().splitlines() == sorted(added)
+
+
+def test_benchcads_new_shell_rows_build_and_keep_the_checked_classifications() -> None:
+    stems = set((C2 / "benchcad" / "shell-replay" / "stems.txt").read_text().splitlines())
+    rows = {entry.name: entry.row for entry in table_of("benchcad").entries if entry.name in stems}
+    assert rows.keys() == stems
+    assert all(
+        row.status is Status.OK and row.oracle_status is OracleStatus.OK for row in rows.values()
+    )
+    assert Counter(
+        (stem.rsplit("_", 2)[0], row.outcome, row.disagreement) for stem, row in rows.items()
+    ) == {
+        ("enclosure", FidelityOutcome.AGREE, None): 163,
+        ("enclosure", FidelityOutcome.DISAGREE, DisagreementClass.OCCT_WRONG): 11,
+        ("sheet_metal_tray", FidelityOutcome.AGREE, None): 105,
+        ("sheet_metal_tray", FidelityOutcome.DISAGREE, DisagreementClass.OCCT_WRONG): 51,
+    }
 
 
 def test_benchcad_polygon_loft_deferral_matches_the_measured_gear_contexts() -> None:
@@ -197,7 +219,7 @@ def test_the_committed_reach_report_matches_the_table_and_census(corpus: str) ->
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
     rows = census_rows(corpus)
-    assert reach_report(table, rows, pre_shell_subset()) == committed
+    assert reach_report(table, rows, cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, rows, fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]

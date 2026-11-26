@@ -40,29 +40,46 @@ root=tests/fixtures/c2/benchcad
 work=$(mktemp -d .scratch/benchcad-fidelity.XXXXXX)
 uv run --locked --extra corpus tools/cq_corpus.py --corpus benchcad \
   --verdicts "$root/verdicts.json" "$root/loft-replay/verdicts.json" \
-    "$root/loft-replay/trim-verdict.json" \
+    "$root/loft-replay/trim-verdict.json" "$root/shell-replay/verdicts.json" \
   --oracle-rows "$root/oracle.jsonl.gz" \
   --out-dir "$work/out" --work-dir "$work/chunks" --workers 16
 ```
 
-Reach is 15,326/17,900 (85.6%), above the ADR-0014 target of 15,215.
-Of all 17,900 programs, 12,523 agree and 5,377 disagree. The disagreement
-classes are 372 `arris_bug`, 899 `arris_refusal`, 2 `by_design`, 2,573
-`cq_bug` and 1,531 `occt_wrong`. There are zero unclassified rows, timeouts
+Reach is 15,656/17,900 (87.5%), above the ADR-0014 target of 15,215.
+Of all 17,900 programs, 12,791 agree and 5,109 disagree. The disagreement
+classes are 372 `arris_bug`, 899 `arris_refusal`, 2 `by_design`, 2,243
+`cq_bug` and 1,593 `occt_wrong`. There are zero unclassified rows, timeouts
 and in-subset `cq_bug` rows. The two `by_design` rows are the vertex blends
 from ADR-0025. All 392 deferred gear lofts remain in the table as
 outside-subset `cq_bug` rows under ADR-0012 and ADR-0026.
 
-Candidate statuses are 14,395 `ok`, 2,573 `unsupported_api`, 900
+Candidate statuses are 14,725 `ok`, 2,243 `unsupported_api`, 900
 `arris_refusal` and 32 `checker_fail`. The pinned oracle has 17,568 `ok`
 and 332 `invalid` reports.
 
 The table digest is
-`aa4fb6b6ea89276adc2c55b177e7b1a1bb1e31b42683dc79ceff0b7e673b94dd`.
+`bde03cc9c0d13ee40a400db9d3b0ff6cf1773b89745fdf524359b77c295300ff`.
 The fresh replay reproduces the pinned oracle file byte-for-byte with
 uncompressed SHA-256
 `db298f073af368bc5a73f6856134cd0c8bcafa4bb3a9f6a7911de668fd49136b`.
 The aggregate census and per-program rows also regenerate byte-for-byte.
+
+### Changed classes after shell
+
+All 330 newly reached programs were `cq_bug` before ADR-0029's shell lift.
+All now build on both sides. Every other fidelity row matches the Bundle 5
+table exactly. The Bundle 5 digest is
+`aa4fb6b6ea89276adc2c55b177e7b1a1bb1e31b42683dc79ceff0b7e673b94dd`.
+
+| Family | Newly reached | Agreement | `occt_wrong` |
+|---|---:|---:|---:|
+| Enclosure | 174 | 163 | 11 |
+| Sheet metal tray | 156 | 105 | 51 |
+| Total | 330 | 268 | 62 |
+
+The [shell replay](shell-replay/README.md) records the operation counts
+and the independent measure checks behind the 62 verdicts.
+Both arris reports reproduce the Bundle 5 bytes.
 
 ### Changed classes after lofts, tapers and mirrors
 
@@ -78,9 +95,6 @@ other fidelity row is byte-identical to the pre-lift table's row.
 
 The [loft replay evidence](loft-replay/README.md) gives the basis of the
 227 explicit verdicts.
-
-The [shell replay](shell-replay/README.md) records the 330 newly reached
-stems and their measurement gaps ahead of the next full table.
 
 ### arris 0.12.0 before lofts, tapers and mirrors
 
