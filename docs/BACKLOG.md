@@ -228,7 +228,9 @@ A defect a run measured, one block each:
 - Seen: ADR-0026 (2026-11-26), BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`
 - Reproduce: keep the chain through the first loft in the three stems under `tests/fixtures/lofts/README.md` and return that loft
 - Measured: all three loft-only prefixes time out in the body worker, and the same builds returning a box take 0.029–0.036 s
-- State: measured; the consumer report is `../arris/docs/ideas/benchcad-loft-interpolation-and-body-check.md`
+- State. ADR-0026 defers 299 two-section gear lofts with too many curved
+  sides and 93 three-section gear lofts with an interpolation gap. The
+  consumer report is `../arris/docs/ideas/benchcad-loft-interpolation-and-body-check.md`.
 
 ### loft-follow-on-bounds-and-blends
 - What: a completed propeller has a bounding-box gap, and two wing nuts receive a later fillet refusal

@@ -109,7 +109,7 @@ a kernel construction or CadQuery semantic to establish. Grades map to tiers.
   Check analytic rows by closed form and freeform gaps by independent boundary
   integration or a second oracle under ADR-0006. Bind verdicts to evidence,
   check representative stems and record kernel limits in the arris report.
-- [ ] Step 8 **[2] [conductor-run]**. Replay both full corpora from fresh
+- [x] Step 8 **[2] [conductor-run]**. Replay both full corpora from fresh
   work directories using the checked verdicts and pinned oracle rows. Commit
   the verified BenchCAD artefacts and matching assertions. Confirm CAD-Recode
   reproduces its committed table and reports. Record counts and digests.
@@ -207,4 +207,22 @@ The Step 7 replay of the 1,568 affected stems checks all 227 new verdicts,
 pins the same oracle rows and records zero unclassified rows, zero
 timeouts and zero in-subset `cq_bug` rows. Its digest is
 `eebe8e17988287db6e6000202b74e52a439b7db638915a8291c3445a86b39a96`.
-Step 8 checks both full corpora from fresh work directories.
+
+## Full-corpus replay evidence for Step 8
+
+Both corpora ran from fresh work directories with their checked verdicts.
+Both reproduced the pinned oracle bytes, aggregate census and per-program
+census rows. Each has zero unclassified rows, zero in-subset `cq_bug` rows
+and zero timeouts. The two BenchCAD `by_design` rows use ADR-0025.
+
+| Corpus | Reach | Agreements | Fidelity table digest |
+|---|---:|---:|---|
+| BenchCAD | 15,326/17,900 | 12,523 | `aa4fb6b6ea89276adc2c55b177e7b1a1bb1e31b42683dc79ceff0b7e673b94dd` |
+| CAD-Recode | 968/968 | 893 | `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92` |
+
+BenchCAD changes 1,176 rows from `cq_bug` to 832 agreements, 129
+`arris_refusal`, 51 `arris_bug` and 164 `occt_wrong`. CAD-Recode reproduces
+the fidelity table, reach report and both arris reports byte-for-byte.
+The fixture READMEs record the oracle and census digests and replay commands.
+[BenchCAD](../../tests/fixtures/c2/benchcad/README.md),
+[CAD-Recode](../../tests/fixtures/c2/cadrecode/README.md).

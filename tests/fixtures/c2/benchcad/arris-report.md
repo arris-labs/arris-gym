@@ -1,14 +1,15 @@
 # arris report
 
-Over 17900 programs: 770 arris refusals, 321 arris bugs.
+Over 17900 programs: 899 arris refusals, 372 arris bugs.
 
 Licences: ` "CC-BY-4.0" `.
 arris ` "0.12.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3.0" `, Python ` "3.12.3" `.
 
 ## Refusals
 
-### ` "OpDegenerateError" ` (539)
+### ` "OpDegenerateError" ` (666)
 
+- 1x ` "degenerate result: a result shell or lump would touch itself, or the contact cannot be split into manifold shells (+e388, +e400, +f230, +f239)" `
 - 2x ` "degenerate result: a result shell or lump would touch itself, or the contact cannot be split into manifold shells (+e8)" `
 - 121x ` "degenerate result: a result shell or lump would touch itself, or the contact cannot be split into manifold shells (+v4, +v5)" `
 - 2x ` "degenerate result: the blend does not fit its faces: it leaves its face through an edge that is not the corner's own, or two blends' contacts on one face cross or swap order (+e11, +e4, +f12)" `
@@ -40,14 +41,24 @@ arris ` "0.12.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 17x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e22, +e34, +v16)" `
 - 4x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e26, +e18, +v12)" `
 - 14x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e28, +e18, +v12)" `
+- 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e29, +e30, +v0)" `
+- 10x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e29, +e30, +v18)" `
 - 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e31, +e18, +v12)" `
+- 14x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e31, +e32, +v18)" `
 - 4x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e33, +e18, +v12)" `
+- 4x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e33, +e34, +v18)" `
 - 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e34, +e18, +v12)" `
+- 7x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e35, +e36, +v0)" `
+- 29x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e35, +e36, +v18)" `
+- 45x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e36, +e37, +v18)" `
 - 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e44, +e29, +v21)" `
 - 71x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e47, +e79, +e48, +v33)" `
 - 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e50, +e22, +v16)" `
 - 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e54, +e35, +v25)" `
+- 2x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e67, +e68, +v0)" `
+- 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e69, +e70, +v0)" `
 - 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e73, +e47, +v33)" `
+- 12x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e74, +e75, +v0)" `
 - 30x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e76, +e39, +e40, +v25)" `
 - 1x ` "degenerate result: the corner at the edge's end is one the blend's closed forms do not cover (+e96, +e78, +v48)" `
 - 61x ` "degenerate result: the edge's faces meet at a tangent dihedral, which has no corner to blend (+e15, +f20, +f21)" `
@@ -57,13 +68,14 @@ arris ` "0.12.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - 83x ` "degenerate result: the profile crosses the revolve axis" `
 - 38x ` "degenerate result: two faces of one lump of the result meet at a tangent contact (+f2, +f5)" `
 
-### ` "OpInternalError" ` (16)
+### ` "OpInternalError" ` (18)
 
 - 1x ` "kernel bug: one curve entered twice on a face was not found" `
 - 1x ` "kernel bug: the builder refused: e12 is used by 1 coedge(s); a solid's edge needs two, a degenerate edge one" `
 - 1x ` "kernel bug: the contacts on the shared face through one point was not found" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f16's arrangement does not turn once" `
 - 4x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f21's arrangement does not turn once" `
+- 2x ` "kernel bug: the face arrangement is not a subdivision: a cycle of f36's arrangement does not turn once" `
 - 2x ` "kernel bug: the face arrangement is not a subdivision: a hole of f17 lies inside no region" `
 - 1x ` "kernel bug: the face arrangement is not a subdivision: a hole of f19 lies inside no region" `
 - 3x ` "kernel bug: the face arrangement is not a subdivision: a hole of f9 lies inside no region" `
@@ -298,6 +310,15 @@ arris ` "0.12.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "clevis_pin_019359_s20260505" ` (9b5cb2698ccd16dbc192a00b6555d264c14354efc256b2f56cf86520bbb2ba88): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "clevis_pin_019624_s20260505" ` (c751dd19f4da443a05d54e22144d5f0b2ea514f04829395289032a6e8d35af1a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "clevis_pin_019708_s20260505" ` (fc373b7795411077acc98e72932f6f27e86f20b5bd858be26fce1dab0ec1829d): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
+- ` "gusseted_bracket_000041_s20260507" ` (541eed1e3f67a17f54e96e678ebc87f011c498bbb19f21a05d5703263e205c2a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds" `
+- ` "gusseted_bracket_009604_s20260505" ` (d30f7f4bcb2acba81bc5a626e59c1d0e69897f194fd8b441a003920af2d0df67): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds" `
+- ` "gusseted_bracket_016486_s20260505" ` (5e61336b943e8fc41fa4d4e4b0454c7ee6bd97c65510ac85370e0394c59401f0): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds" `
+- ` "gusseted_bracket_019565_s20260505" ` (fd1339a7f3c536430780804a0209362a05e5d803ce1a9227cfe0e083c8b16a44): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-mirrored-gusset-chamfer-bounds" `
+- ` "knob_000910_s20260506" ` (3bb93f8c3ad0cfd0f659dc1b7e30ddb86d4aae597b02d0e896975a89b38d3609): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-draft-knob-flute-measures" `
+- ` "knob_001502_s20260506" ` (fc5694150718d03fb899430862e057e517088f763c95ba081e1ac9abb9b4ba58): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-draft-knob-flute-measures" `
+- ` "knob_002035_s20260506" ` (63417f2e320549f7d7f8b8e4d9ed977d400a2b012df1f337b7f72a1795bd09fc): arris ok, oracle ok, fixture none
+- ` "knob_004904_s20260505" ` (30b67b660993804ffd548d2999aa08e89e8d484fba77791575860d75237fdccc): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-draft-knob-flute-measures" `
+- ` "knob_006103_s20260505" ` (0f150badfc25cf1ef33de0c0e84b8fb3902b37024a061247a008242e3a266720): arris ok, oracle ok, fixture none
 - ` "piston_000251_s20260505" ` (e1c11c68c85cccc865b2d7b71c6eefd2652a35f228a19816568f3759ea1e5bf1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
 - ` "piston_000267_s20260505" ` (b851675078ef3a9a33c94baa63eeee791cafc7138458a587b2cced206b84ce83): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
 - ` "piston_000326_s20260507" ` (65ae4ec8653e7109299df06b1701fec265eecddc872d2da3f43461d0a89647d0): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
@@ -354,6 +375,47 @@ arris ` "0.12.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "piston_018928_s20260505" ` (afcba857e77df5572fb03e74efedff511d55a149a902958114d0e67dde80a682): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
 - ` "piston_019012_s20260505" ` (f9b5cd6899a216d7bef54251de47112381da9d5bce7bb5861c4bb966ec142643): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
 - ` "piston_019707_s20260505" ` (9b27277ab83d94cedca23b6fffbb6cf5ce562df3f6313cfa9735ddb770ed0f27): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-through-side-bore-cylinder-bounds" `
+- ` "propeller_000111_s20260505" ` (13481a1103bf7983ed441b283c798985184096e514d743d279cf6cc8189aef45): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_000368_s20260505" ` (323607fa90b52b201731afd50978ac6d79c13971c73bf148f47f2dd747be9ed4): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_000571_s20260507" ` (7ecf6cf6d0ac9888b6b7b7d13b823e3a4cf30d0f96645c111b4d764e4cd0ec3d): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_000607_s20260505" ` (c9937ff3db783ea2c0297225e64eba199a30145cb155949ce65face2bf2f0206): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_001170_s20260505" ` (2665bc8eb98e19cd795d778fd9718491691ea3e72e8e4a4e6caa819c681b5189): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_002138_s20260505" ` (86357e2437367a2dd9abab3c99d1a2ed5364139e376c9c831047207f718b4919): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_002251_s20260505" ` (5bd260375f084d285941394c76a6a0502cc0e3aba721bcba19a064a6367276b8): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_002397_s20260505" ` (651ff6389e392d9f4e31979fb089f435c9faf8a78d13b3d9866bc04c2ac64b2c): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_003334_s20260505" ` (0943b4da6d1edd95e222a4651ce4fb0d28eefccea5412b6e82cb6d4cd8385a8f): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_005615_s20260505" ` (4b16e6e33dfb9bc677493583eeca0788d6f42c03b67eac6c3784e0b7fb785f34): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_005824_s20260505" ` (567c04071f1541399c70c0f1cebb798956ab60ce639e0b54abd5c64e38329077): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_006027_s20260505" ` (db57585a64de8555efb2b42b87a6c2f670e7c45c6c2efde1435ab73662d3979b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_006740_s20260505" ` (13b3a0f356c278c81bb9db81aff8f54be8dd38ab09772821eb67642e31bcb315): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_007476_s20260505" ` (f00c23e58ca95e8b0c9cdeac11bff5a22f5669abef42020ba30058bacb7069b8): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_007771_s20260505" ` (a78fbc4f4fd48e6dee5081510cee59a163feef4fe95a5c196177ba9c8687f077): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_008183_s20260505" ` (6169ca3d076c7b4eb0026057526079d0cc3796da3a3afadafd48c6abbf614563): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_009713_s20260505" ` (5b8073d7d4a7e7b8eae48dd368f81108bae8a9c7582e2896949e0ab01fa01cab): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_009952_s20260505" ` (d429bdf6807df52f6439295499a8f4dd807b9d81c3dd6bc863a1468e361d6613): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_010178_s20260505" ` (7114f8b9d19e80731e4c2995545a71b077b653f4200c0cbee5b575fdbb908c05): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_011139_s20260505" ` (c8388b826e88d12abed9341105172c87604a5b4fb8003c09188676cccf750266): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_011622_s20260505" ` (3ba02509fa3c9c6dd2dba4aaba88f9b78cf7ff4744b4b736b1b291449a45f6b9): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_012254_s20260505" ` (283e91e407ddc9e70357a6389f68ac3ab976ef7c235fc857892aca809b83c27f): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_012667_s20260505" ` (dc4ea2034caa8d72ef755de3bdbc8c1bef6149976c16af250cb33cc5f00286ea): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_012692_s20260505" ` (8aa446781ae13363548bb4cd53bd7468dff7fadc430b521c304f240996f33e4a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_012763_s20260505" ` (a2ee819a24d31b485ac3e1641b6140c2f03f46622a1ec2c853e99846389ede54): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_012866_s20260505" ` (fcd7d9b54740f24230fe90aa61b9084f6f7b7889b4103a6c8ce4a1ecaec0f29a): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_013320_s20260505" ` (74aa4bec68e2a7b8524b0c6a745dc91853f6bb287cc7afc6b435d4bb8b851035): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_014427_s20260505" ` (2cd80a47d1173cfdd0c036bfe8603d5097924ac6d5de87e576cf6b9426a52c11): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_014472_s20260505" ` (d94dd29d57c074bc422f0552db31e1e160abe0d544df354f2d369dfd37209eb1): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_014638_s20260505" ` (2ee081190c17c872eb42e2f640fa7b5c2f457574f7042ec97d15f6f7a1fe40fe): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_015126_s20260505" ` (4085e02babe3a9de726edbb06fdc157dd0f6e821fe4dff6dc2f225f701ee9e6b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_015552_s20260505" ` (39a9b40f16d7ab65a4eb420f6a2d1cf0cf170a2beeb56134901ed0c17a49bc67): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_016859_s20260505" ` (0073d62000a7b4fb159e825d43e80ec069fbae7be5ca490958fea99c77b53e4b): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_016935_s20260505" ` (6c1b736bf989a3cc2f66aeae81ea58500473ccd779d359dc07974f96598f4e06): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_017159_s20260505" ` (43b3f3cb1e94c98c0662def20fd3ba43136df81217813beb8966bc1fc23e66e3): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_017179_s20260505" ` (03340e42cb7a3cf5a7550d2068aa40a6b8625f34aa17f7bd31422fb86272c1c8): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_017265_s20260505" ` (b57d0d492c636e8d74a6b1cc6d4d9f4e58b8ef698adc3024ce1a503815edbfbe): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_017780_s20260505" ` (87e9f502ec009439488e9f0f035e9da2805cde272125889834add79a57538a39): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_017962_s20260505" ` (dc855bdfedbd679da66b06e1c97e89c619079b79d23de483a2d9f6af943d93e9): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_018603_s20260505" ` (b6395457931eb99ce6014e3025153d4dffc5bd589295418de3e6bf05fb637164): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
+- ` "propeller_019949_s20260505" ` (e384f567488f33ca0acc723b9e25ee9c455c1d8f0507e0b7b87c5a25dab3a3e5): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-turned-blade-prism-bounds" `
 - ` "shaft_collar_000067_s20260507" ` (ed1e4b4337aa6b15d14813a3ec99f25dc4fa3e306346a952a50fcbebcc4e0023): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_000245_s20260507" ` (a27731729582c45ccd4c8dbc0ea4794477424fc645a4e8fbbecbee3e593d7431): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "shaft_collar_000264_s20260507" ` (7e8b162a72593f1325a203eb057a464d936078a9d7c3300dcf44096a52afd6f3): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
@@ -428,3 +490,4 @@ arris ` "0.12.0" `; numpy ` "2.3.4" `; oracle cadquery ` "2.3.0" `, OCP ` "7.9.3
 - ` "shaft_collar_019663_s20260505" ` (2cb656f3385df34d348eab331335b6c002dd30baeaa49cab1a9003bfdddf8f39): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-cross-hole-bounds" `
 - ` "spacer_ring_002522_s20260505" ` (36934565be5dd19f52902aa9400dc24c0b294f5cdbc3fdf91dec49998e47e58e): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-slot-into-rounded-rim-bounds" `
 - ` "spacer_ring_008375_s20260505" ` (79b37131fd10903ea3a2d766382a1f23c806c96b390cc7c71c3ef420edb41dc9): arris ok, oracle ok, fixture ` "tests/fixtures/regression/cq-chamfer-slot-bounds" `
+- ` "wing_nut_016440_s20260505" ` (1e72e2276e54704706a6c8dad4a1b119f858fa5372f5b50edb3926e9e75955b4): arris arris_refusal, oracle invalid, fixture ` "tests/fixtures/regression/cq-wing-fillet-missing-trim-edge" `

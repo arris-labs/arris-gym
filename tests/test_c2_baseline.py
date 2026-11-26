@@ -1,4 +1,4 @@
-"""The C2 tables (plans/fidelity-target step 6, re-run by plans/face-centre-of-mass step 7).
+"""The committed C2 fidelity tables and their reports.
 
 `tools/cq_corpus.py` wrote `tests/fixtures/c2/<corpus>/` (network, the oracle
 environment, outside the gate). This reads the committed rows only: the table
@@ -33,25 +33,30 @@ from arris_gym.fidelity import (
     OracleStatus,
     ReachReport,
     Verdict,
+    arris_rows,
     reach_report,
 )
 
 C2 = Path(__file__).parent / "fixtures" / "c2"
 CORPORA = {"benchcad": ("CC-BY-4.0", 17_900), "cadrecode": ("CC-BY-NC-4.0", 968)}
+VERDICT_FILES = {
+    "benchcad": ("verdicts.json", "loft-replay/verdicts.json", "loft-replay/trim-verdict.json"),
+    "cadrecode": ("verdicts.json",),
+}
 # The published figures of each committed table, every one over all programs.
 FIGURES = {
     "benchcad": {
-        "in_subset": 14_150,
-        "agree": 11_691,
+        "in_subset": 15_326,
+        "agree": 12_523,
         "in_subset_cq_bug": 0,
         "in_subset_by_design": 2,  # ADR-0025's corner patches
         "timed_out": 0,
         "classes": {
-            "arris_bug": 321,
-            "arris_refusal": 770,
+            "arris_bug": 372,
+            "arris_refusal": 899,
             "by_design": 2,
-            "cq_bug": 3_749,
-            "occt_wrong": 1_367,
+            "cq_bug": 2_573,
+            "occt_wrong": 1_531,
         },
         "unclassified": 0,
         "oracle_ok": 17_568,
@@ -97,7 +102,7 @@ def census_rows(corpus: str) -> list[ProgramCensus | Unparsable]:
 
 
 def baseline_subset() -> cq.Subset:
-    """The declarations used for the committed arris 0.12.0 table."""
+    """The arris 0.12.0 declarations before the loft, taper and mirror lifts."""
     record = json.loads((C2 / "subset-arris-0.12.0.json").read_text())
     return cq.Subset(
         forms=tuple(cq.CensusForm(**form) for form in record["forms"]),
@@ -131,6 +136,12 @@ def test_benchcad_polygon_loft_deferral_matches_the_measured_gear_contexts() -> 
     assert {
         row.stem for row in rows if isinstance(row, ProgramCensus) and row.deferred_polygon_loft
     } == excluded
+    measured = {entry.name: entry.row for entry in table_of("benchcad").entries}
+    assert all(
+        measured[stem].status is Status.UNSUPPORTED_API
+        and measured[stem].disagreement is DisagreementClass.CQ_BUG
+        for stem in excluded
+    )
 
 
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
@@ -148,21 +159,33 @@ def test_the_baseline_table_has_a_row_per_program_and_its_digest_is_stated(corpu
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
 def test_the_table_uses_every_committed_verdict(corpus: str) -> None:
     table = table_of(corpus)
-    committed = json.loads((C2 / corpus / "verdicts.json").read_text("utf-8"))
-    assert {entry.name: entry.row.verdict for entry in table.entries if entry.row.verdict} == {
-        stem: Verdict.model_validate(verdict) for stem, verdict in committed.items()
-    }
+    expected: dict[str, Verdict] = {}
+    for filename in VERDICT_FILES[corpus]:
+        committed = json.loads((C2 / corpus / filename).read_text("utf-8"))
+        assert expected.keys().isdisjoint(committed)
+        expected.update({stem: Verdict.model_validate(v) for stem, v in committed.items()})
+    assert {
+        entry.name: entry.row.verdict for entry in table.entries if entry.row.verdict
+    } == expected
 
 
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
-def test_the_committed_reach_report_is_the_tables_and_the_censuss(corpus: str) -> None:
+def test_the_committed_reach_report_matches_the_table_and_census(corpus: str) -> None:
     table = table_of(corpus)
     committed = ReachReport.model_validate_json((C2 / corpus / "reach-report.json").read_text())
     rows = census_rows(corpus)
-    assert reach_report(table, rows, baseline_subset()) == committed
+    assert reach_report(table, rows, cq.subset()) == committed
     assert committed.programs == CORPORA[corpus][1]
     c1 = reach_report(table, rows, fixture_cases.c1_subset())
     assert c1.in_subset == C1_REACH[corpus]
+
+
+@pytest.mark.parametrize("corpus", sorted(CORPORA))
+def test_the_committed_arris_reports_are_generated_from_the_table(corpus: str) -> None:
+    report = arris_rows(table_of(corpus))
+    root = C2 / corpus
+    assert report.to_json() + "\n" == (root / "arris-report.json").read_text("utf-8")
+    assert report.to_markdown() == (root / "arris-report.md").read_text("utf-8")
 
 
 @pytest.mark.parametrize("corpus", sorted(CORPORA))
@@ -202,6 +225,10 @@ def test_benchcads_arris_bugs_are_verdict_families_and_checker_fail_caps() -> No
         "bearing_retainer_cap": 24,
         "clevis_pin": 126,
         "piston": 56,
+        "propeller": 41,
+        "gusseted_bracket": 4,
+        "knob": 5,
+        "wing_nut": 1,
         "cam": 1,
         "spacer_ring": 2,
     }
@@ -248,7 +275,7 @@ def test_benchcads_previously_refused_connecting_rods_build_on_both_kernels() ->
     """ADR-0022 ranks the seam-split cylinder side as one face for all six rows."""
     agreements = {"000909", "007540"}
     oracle_errors = {"002995", "007023", "015811", "016153"}
-    inside = set(reach(census_rows("benchcad"), baseline_subset()).stems)
+    inside = set(reach(census_rows("benchcad"), cq.subset()).stems)
     rows = {entry.name: entry.row for entry in table_of("benchcad").entries}
     for number in sorted(agreements | oracle_errors):
         stem = f"connecting_rod_{number}_s20260505"

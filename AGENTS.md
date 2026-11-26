@@ -36,10 +36,11 @@ unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
 (ADR-0008 to ADR-0010); `arris-gym rescore benchcad` re-scores the slice
 against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
 **0.1.0 published** (2026-11-10).
-**C2:** The arris 0.12.0 baseline reaches 14,150/17,900 on BenchCAD
-(11,691 agreements) and 968/968 on CAD-Recode (893 agreements), with zero
-in-subset `cq_bug` rows, unclassified rows and timeouts on both corpora.
-**Next:** `lift-lofts-and-tapers` (`docs/ROADMAP.md`).
+**C2:** On arris 0.12.0, bundle 5 reaches 15,326/17,900 on BenchCAD
+(12,523 agreements) and 968/968 on CAD-Recode (893 agreements). Both reach targets
+are met, with zero in-subset `cq_bug` rows, unclassified rows and timeouts.
+**Next:** Retire `lift-lofts-and-tapers`, then the tail and the C2
+cross-architecture digest check (`docs/ROADMAP.md`).
 
 ## Rules that are not derivable from the code
 

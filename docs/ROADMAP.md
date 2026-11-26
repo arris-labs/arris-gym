@@ -121,15 +121,14 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status (2026-11-25).** The verified arris 0.12.0 baseline keeps BenchCAD reach
-at 14,150/17,900 (79.1% against the 85% target) and CAD-Recode at its
-968/968 target (ADR-0014). Agreement is 11,691 and 893 respectively,
-with two BenchCAD `by_design` rows under ADR-0025. Both corpora have
-zero unclassified rows, timeouts and in-subset `cq_bug` rows. The C1
-rescore has 300 successful rows with exact IoU of 1.0 and the same digest
-at 2 and 16 workers and in CI on x86-64 and aarch64. Next,
-`lift-lofts-and-tapers` completes bundle 5, followed by the tail
-(`shell` and the rest) and the C2 cross-architecture digest check.
+**Status (2026-11-26).** Bundle 5 reaches 15,326/17,900 (85.6%) on
+BenchCAD and 968/968 on CAD-Recode with arris 0.12.0, meeting both reach
+targets (ADR-0014). Agreements total 12,523 and 893 respectively. The two
+BenchCAD `by_design` rows are the corner patches under ADR-0025. Both
+corpora have zero unclassified rows, timeouts and in-subset `cq_bug` rows.
+The C1 rescore has 300 successful rows with exact IoU of 1.0 and the same digest
+at 2 and 16 workers and in CI on x86-64 and aarch64. The tail (`shell`
+and the rest) and the C2 cross-architecture digest check remain.
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified

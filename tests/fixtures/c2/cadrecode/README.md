@@ -60,11 +60,10 @@ the library's code licence does not replace it.
 `fidelity.json.gz` compares all 968 programs under `cq` on arris 0.12.0
 with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
 `arris-report.json` and `.md` carry the refusals. `reach-report.json`
-checks this table against the census and the declarations recorded in
-`../subset-arris-0.12.0.json` before the loft lift (`5131d96`).
+checks this table against the census and `cq.subset()`.
 
-Regenerate at `5131d96` with the synced oracle environment and a fresh work
-directory (outside the gate):
+Regenerate with the synced oracle environment and a fresh work directory
+(outside the gate).
 
 ```sh
 root=tests/fixtures/c2/cadrecode
@@ -82,6 +81,12 @@ unclassified or timed-out rows. The oracle ends `ok` on all 968. arris
 ends `ok` on 912 and `arris_refusal` on 56.
 
 Table digest: `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92`.
+The loft, taper and mirror replay from a fresh work directory reproduced
+the table, reach report, both arris reports and pinned oracle rows
+byte-for-byte. The aggregate census and per-program rows also regenerated
+byte-for-byte. The census digest is
+`3d0c9f1b11519ec7e8109adce9c4f5861826b5722c159494145f2b42fb055170`.
+
 On 0.11.1 the same subset had 873 agreements and digest
 `fe2861b7598b1d3e31651641cc00ff7c98f55c4a77394cded62125ebfadf71cc`.
 Nineteen formerly refused programs build and agree. The earlier refusals

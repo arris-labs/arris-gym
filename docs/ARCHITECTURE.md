@@ -910,10 +910,10 @@ the pinned oracle reports from the 0.11.1 replay.
 | | BenchCAD `code_gen` | baseline | CAD-Recode validation | baseline |
 |---|---|---|---|---|
 | programs | 17,900 | 17,900 | 968 | 968 |
-| reach | 14,150 (79.1%) | 1,871 | 968 (100%) | 0 |
-| agree (all programs) | 11,691 (65.3%) | 980 | 893 (92.3%) | 968, both sides failing |
-| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 3,749 / 770 / 321 | 16,383 / 174 / 0 | 0 / 56 / 0 | 0 / 0 / 0 |
-| `occt_wrong` (all, in the subset) | 1,367 | 0 | 19 | 0 |
+| reach | 15,326 (85.6%) | 1,871 | 968 (100%) | 0 |
+| agree (all programs) | 12,523 (70.0%) | 980 | 893 (92.3%) | 968, both sides failing |
+| `cq_bug` / `arris_refusal` / `arris_bug` (all) | 2,573 / 899 / 372 | 16,383 / 174 / 0 | 0 / 56 / 0 | 0 / 0 / 0 |
+| `occt_wrong` (all, in the subset) | 1,531 | 0 | 19 | 0 |
 | unclassified (all) | 0 | 363 | 0 | 0 |
 | timeouts | 0 | 31 | 0 | 0 |
 | in-subset `cq_bug` | 0 | 717 | 0 | 0 |
@@ -1096,6 +1096,16 @@ The chained cylinder fuses build on all
 ADR-0020 admits 90 `rivet` builds that agree with their closed forms.
 Counting outer shells under ADR-0016 resolves the count differences on
 25 `torus_link` compounds. The baseline README lists every changed class.
+
+`loft`, `extrude(taper=)` and `mirrorY` (ADR-0026 to ADR-0028) raise
+BenchCAD reach to 15,326/17,900. The static deferral under ADR-0012 keeps
+all 392 gear programs outside the subset. Each keeps its `cq_bug` row.
+Of the 1,176 newly reached programs, 832 agree, 129 are `arris_refusal`,
+51 are `arris_bug` and 164 are `occt_wrong`. The checked verdicts use
+construction, boundary integrals and reduced regressions under ADR-0006.
+Both corpora meet ADR-0014's reach target and replay against byte-identical
+pinned oracle rows. CAD-Recode reproduces its table and reports. The
+fixture READMEs record the full digests and class changes.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both
