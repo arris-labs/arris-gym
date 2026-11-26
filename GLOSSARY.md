@@ -242,9 +242,11 @@ it (ADR-0019). A bore (`hole`, `cboreHole`, `cskHole`) cuts at each point
 (ADR-0018). `circle`, `rect` and `slot2D` draw a profile at each point for
 `extrude`, `cutBlind` or `cutThruAll`. `center` leaves one point at the new
 origin and preserves the placement of pending wires (ADR-0024).
-`workplane` and `transformed` empty the stack and carry a single loft
-section at its original placement. `loft` consumes the sections and puts
-the lofted solid on the stack (ADR-0026).
+`workplane` and `transformed` empty the stack and append its single closed
+profile to the carried sections. Sections keep their drawing order and
+world placement on each branch. `loft` consumes them on its result and
+puts the new solid on the stack, fused with the nearest stock by default
+(ADR-0026).
 `mirrorY` puts the closed profile of a reflected half outline on the stack
 in the plane where it was drawn (ADR-0028).
 `edges` puts a **stack of edges** on it, the solid's, the stacked faces' or

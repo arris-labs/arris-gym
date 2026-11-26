@@ -81,9 +81,9 @@ unclassified or timed-out rows. The oracle ends `ok` on all 968. arris
 ends `ok` on 912 and `arris_refusal` on 56.
 
 Table digest: `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92`.
-The loft, taper and mirror replay from a fresh work directory reproduced
+The replay from a fresh work directory reproduces
 the table, reach report, both arris reports and pinned oracle rows
-byte-for-byte. The aggregate census and per-program rows also regenerated
+byte-for-byte. The aggregate census and per-program rows also regenerate
 byte-for-byte. The census digest is
 `3d0c9f1b11519ec7e8109adce9c4f5861826b5722c159494145f2b42fb055170`.
 

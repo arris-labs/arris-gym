@@ -54,9 +54,11 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - `cq`'s `polygon(2, d)` ends `runtime` where CadQuery 2.3.0 builds a zero-volume solid its checker passes (`ok`): an in-subset `cq_bug` (ADR-0012), held by `regression/cq-polygon-two-sides` (strict `xfail`); the census cannot see a literal, so the form cannot leave the subset for it alone: build the out-and-back prism in `cq`, and ask arris (`../arris/docs/ideas/`) if the kernel refuses a zero-volume solid (plans/lift-polygon step 2)
 - `faces` with a plane name (`"XY"`, `"YZ"`, `"XZ"`): 332 BenchCAD programs (`circlip` 182, `snap_clip` 150) all unlocked by it; CadQuery's `DirectionSelector` on a diagonal, not one of the knee's 35 items (plans/lift-edges-and-blends, non-goals)
 - `pushPoints` of `Vector` or `Location`, `cboreHole` and `cskHole` with `depth=` or `clean=`, `hole` with a positional depth, `rarray(center=)`, `polarArray(fill=, rotate=)`, `cutBlind(clean=, both=, taper=)` and `cutBlind` up to a face: lifted when a corpus program writes them
-- Extend nonzero `extrude(taper=)` to pending arrays, polygons, slots, paths,
+- Extend nonzero `extrude(taper=)` to multiple pending profiles, polygons, slots, paths,
   finalized sketches or a carried wire with a different normal when a corpus
   writes those contexts. The oracle observations are in ADR-0027.
+- Preserve the axis vertices of `mirrorY()` sections for lofting when a corpus writes that combination (ADR-0028).
+- Revisit the 392 deferred gear lofts when arris exposes explicit section parameters and checks lofts with many curved sides within the corpus deadline (ADR-0012 and ADR-0026).
 - File the two arris refusals of `regression/cq-cut-blind-after-a-filled-pocket` and `regression/cq-cut-blind-across-a-split-end-face` (a tool flush with a face split by an edge it crosses, `OpDegenerateError`) in `../arris/docs/ideas/`: both READMEs say "not yet reported"
 - Investigate the three-way rectangular overlap in `regression/rects-three-way-overlap`, where arris refuses the union and the oracle builds an invalid part. No in-subset BenchCAD row shows it. The consumer report is `../arris/docs/ideas/fuse-three-overlapping-boxes.md`.
 - Profile `double_simplex_sprocket_009154_s20260505`, which takes 29.6 s of the 30 s sandbox deadline when run alone. The consumer report is `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
@@ -249,7 +251,8 @@ A defect a run measured, one block each:
 - Seen. `i_beam_008928_s20260505` and `i_beam_010860_s20260505` in BenchCAD
   at revision `5919f578ab09ec283603a082fab07c7639ab56eb`.
 - State. `regression/cq-filleted-beam-through-bore` retains the desired
-  one solid. Removing the fillet lets the bore build.
+  one solid. Removing the fillet lets the bore build. The consumer report
+  is `../arris/docs/ideas/bore-through-a-filleted-beam.md`.
 
 ### loft-bounds-too-wide
 - What: the bounds are wider than the extreme points of the lofted solid
@@ -281,7 +284,11 @@ A defect a run measured, one block each:
 - Seen. ADR-0028, 2026-11-26, BenchCAD `5919f578ab09ec283603a082fab07c7639ab56eb`.
 - Reproduce. Compare the shared prefixes and full programs of `gusseted_bracket_000041_s20260507` and `i_beam_000007_s20260505`.
 - Measured. The gusset has a bounds excess of 0.26641 after drilling. The I-beam has a relative volume gap of 1.29e-9.
-- State. Measured for reduction in the replay.
+- State. Reduced in `regression/cq-mirrored-gusset-chamfer-bounds`,
+  `regression/oracle-filleted-gusset-bore` and
+  `regression/oracle-filleted-beam-bore`. The
+  [replay evidence](../tests/fixtures/c2/benchcad/loft-replay/README.md)
+  records the checked full-program verdicts.
 
 ## Rejected
 

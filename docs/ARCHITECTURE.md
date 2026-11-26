@@ -167,11 +167,13 @@ none of them (ADR-0003).
   admitted selectors and end forms, and have no unknown receiver. Foreign
   calls must belong to the fixed Python builtins or standard-library roots
   in `census/_foreign.py`. The current subset defers literal polygon
-  lofts beyond the limits in ADR-0026. The per-program census records
-  the recognized chain without running it. Unparsable and deferred
-  programs stay in the denominator;
-  duplicate stems are refused. The C1 slice has reach 300/300, checked
-  offline from `tests/fixtures/c1/reach-programs.jsonl.gz`.
+  lofts beyond the limits in ADR-0026. The static proof counts edges
+  after applying `close()`'s endpoint tolerance.
+  `ProgramCensus.deferred_polygon_loft` records the recognized chain,
+  and `Subset.defer_polygon_lofts` applies the flag. Unparsable and
+  deferred programs stay in the denominator. Duplicate stems are refused.
+  The C1 slice has reach 300/300, checked offline from
+  `tests/fixtures/c1/reach-programs.jsonl.gz`.
 - **Reach curve.** `census.reach_curve(programs, subset)` returns a frozen
   `ReachCurve`: initial reach and `ReachStep` records, each admitting one
   missing census item (`kind` `form`, `selector` or `end_form`, and the exact
@@ -485,8 +487,10 @@ and fuses it with the nearest stock. For a nonzero angle in degrees strictly
 between −90 and 90, the signed distance is a slant length. With the angle
 converted to radians, the axial cap offset is `distance * cos(angle)`.
 The inset per side is `abs(distance) * sin(angle)`. A negative inset
-expands the profile and rounds a rectangle's corners. An inward draft
-can end at an apex or ridge.
+expands the profile and rounds a rectangle's corners. Edge selection
+uses the boundaries of unified faces on the rounded draft (ADR-0027).
+An inward draft can end at an apex or ridge. A point selection placing
+one circle or rectangle works with nonzero taper.
 Angles outside the open interval, nonfinite inputs and unverified profile
 contexts end `unsupported_api`. Inner wires, zero slant length and a
 nonpositive circle radius end `runtime`. Zero taper uses the straight
@@ -557,8 +561,8 @@ dimensions, equal dimensions or zero diameter end `runtime`. The kernel
 refuses a nonnegative length shorter than a positive diameter (ADR-0024 §E
 and its slot amendment).
 
-A `polyline` of fewer than two points ends `unsupported_api`: CadQuery's
-leaves no `moveTo` point, so a lone point on the stack is a `moveTo`'s.
+A `polyline` of fewer than two points ends `unsupported_api`. A lone pen
+point on the stack comes from `moveTo`.
 A `polyline` after a lone `moveTo` point is `polyline` alone: it starts at its
 first point and the `moveTo` point, no pending wire, is dropped (read on the
 oracle: `ok-polyline-after-moveto-*`). After a drawn path or a polyline
@@ -590,7 +594,7 @@ joined for extrusion and edge selection. Horizontal end segments can
 join across a reflected endpoint gap of at most 1e-7 drawing units.
 With two unjoined pairs the call raises the oracle's open-wire error.
 A single joined pair, a curved or sloped end that would need snapping,
-and other wire or stack contexts raise `UnsupportedApi`. The profile
+carried wires and other stack contexts raise `UnsupportedApi`. The profile
 feeds the existing straight sweeps and revolution, and the source branch
 keeps its path. Lofting through the mirrored profile raises
 `UnsupportedApi` because the oracle loft uses the unsimplified wire.
@@ -1103,9 +1107,12 @@ all 392 gear programs outside the subset. Each keeps its `cq_bug` row.
 Of the 1,176 newly reached programs, 832 agree, 129 are `arris_refusal`,
 51 are `arris_bug` and 164 are `occt_wrong`. The checked verdicts use
 construction, boundary integrals and reduced regressions under ADR-0006.
-Both corpora meet ADR-0014's reach target and replay against byte-identical
-pinned oracle rows. CAD-Recode reproduces its table and reports. The
-fixture READMEs record the full digests and class changes.
+Both corpora replay against byte-identical pinned oracle rows and meet
+ADR-0014's reach target. BenchCAD has 12,523 agreements and table digest
+`aa4fb6b6…94dd`. CAD-Recode has 893 agreements and reproduces its table
+and reports at `7cc30ad7…6b92`. Both tables have zero timeouts,
+unclassified rows and in-subset `cq_bug` rows. The fixture READMEs record
+the full digests and class changes.
 
 CAD-Recode's 968 programs all end in `r = …`; at the baseline neither worker
 read it as a result, so its agreement said nothing about fidelity. Both

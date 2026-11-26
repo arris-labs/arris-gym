@@ -83,6 +83,9 @@ The static loft deferral excludes the 392 gear programs from reach
 under ADR-0012. The replay retains every gear row and its `cq_bug`
 class. The arris findings are recorded in
 `../arris/docs/ideas/benchcad-loft-interpolation-and-body-check.md`.
+The through-bore refusal in filleted I-beams is reproduced in
+`regression/cq-filleted-beam-through-bore`. The consumer report is in
+`../arris/docs/ideas/bore-through-a-filleted-beam.md`.
 
 Replaying the 1,568 stems from the three lifts gave 832 agreements
 and 736 disagreements, with zero unclassified rows and zero timeouts.

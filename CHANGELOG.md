@@ -25,6 +25,7 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - In the CadQuery dialect, `loft()` builds a smooth solid through two
   coaxial circles or matching straight-sided sections. It joins the solid
   to stock by default. Use `loft(combine=False)` to keep the new solid separate.
+  Newly supported programs receive geometry-based scores under reward version 1.
 
 - In the CadQuery dialect, `workplane(offset=…)` and `transformed(…)` keep
   a single pending disc, rectangle, polygon or closed path where it was
@@ -378,6 +379,9 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 - `Workplane.extrude` adds the keyword-only `taper` parameter.
   Regenerate saved `cq.subset()` snapshots and handle execution results
   for the new form where a caller previously expected `unsupported_api`.
+- `cq.subset()` now declares `Workplane.loft(*, combine=True)` and
+  `Workplane.mirrorY()`. Regenerate saved subset snapshots and handle
+  execution results for these forms where a caller expected `unsupported_api`.
 - Serialized `Measures` and `dump_text` include `solids`, which can be
   `None` when the count is unavailable. Accept the new field in readers
   and regenerate saved execution digests.

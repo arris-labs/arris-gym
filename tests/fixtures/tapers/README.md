@@ -27,6 +27,13 @@ The outward rectangular cases use section area
 `rounded-rims` covers the removal of internal cap edges from the solid's
 edge selection.
 
+Two single-point probes use `cq.Workplane("XY").pushPoints([(1, 2)])`
+followed by either `.circle(2)` or `.rect(4, 3)` and then
+`.extrude(2, taper=10)`. Each places one profile. Both programs return `ok`
+and agree with CadQuery 2.3.0 and Open CASCADE 7.9.3.0 through
+`tools/oracle_run.py`. The `points-disc` and `points-rect` probes in
+`contexts.json` place multiple profiles and exercise the subset refusal.
+
 `knob-prefix` and `tee-nut-tool` adapt `knob_000063_s20260506` and
 `tee_nut_000012_s20260506`, respectively, from
 BenchCAD/BenchCAD `code_gen` at revision

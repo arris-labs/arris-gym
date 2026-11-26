@@ -37,8 +37,9 @@ Read in cadquery 2.3.0 (the oracle's pin); none of its code is carried over.
   plane's coordinates; the axes turn by the product Rx·Ry·Rz of rotations in
   degrees about the old plane's own x, y and z axes, so the z angle acts first.
   `newObject` preserves the pending wires in CadQuery's shared context
-  through a plane change. The subset keeps them in drawing order on each
-  branch (ADR-0026).
+  through a plane change. The subset carries each admitted section in its
+  original world frame and keeps them in drawing order on each branch
+  (ADR-0026).
 - `Workplane.workplane` (`cadquery/cq.py`, with `Vector.projectToPlane` in
   `cadquery/occ_impl/geom.py`): the new plane keeps the old axes; its
   centre is the old origin on an empty stack and the one object's `Center()`

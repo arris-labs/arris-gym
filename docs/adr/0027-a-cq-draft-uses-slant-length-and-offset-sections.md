@@ -104,3 +104,12 @@ differs from arris by about 2e-11 relative and from the oracle by about
 The CadQuery entry points and oracle version are listed in
 `PROVENANCE.md`. The lengths and offsets also follow from
 [Open CASCADE 7.9.3's draft prism constructor](https://github.com/Open-Cascade-SAS/OCCT/blob/V7_9_3/src/LocOpe/LocOpe_DPrism.cxx#L336-L360).
+
+## Clarification (2026-11-26). One profile from a point selection
+
+A point selection placing one circle or rectangle meets the single-profile
+rule. A selection placing multiple profiles ends `unsupported_api`.
+The single-point probes in the taper fixture README agree with the pinned
+oracle. The checked BenchCAD verdicts classify the full-program draft
+and flute gaps using the boundary and section evidence in
+`tests/fixtures/c2/benchcad/loft-replay/README.md`.

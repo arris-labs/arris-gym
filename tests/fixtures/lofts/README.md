@@ -50,7 +50,10 @@ finalized `Sketch` on the stack. The subset reports its refusal for each.
 The 48-sided twisted polygon agrees with the oracle and passes the full
 body check within the 30 s corpus deadline. The 49-sided twisted polygon
 exercises the refusal at the next count. The 52-sided planar loft shows
-that the limit applies to nonplanar side faces. The strict regressions
+that the limit applies to nonplanar side faces. The static reach test
+`test_literal_loft_reach_counts_the_edges_after_close_snaps_the_endpoint`
+checks two 48-sided outlines with near-start closing points. Snapping
+those points keeps the loft inside the limit. The strict regressions
 `regression/cq-loft-triangle-bounds`, `regression/cq-loft-tilted-cone-bounds`
 and `regression/cq-loft-twisted-polygon-bounds` hold the kernel's bounds
 against independent closed forms.

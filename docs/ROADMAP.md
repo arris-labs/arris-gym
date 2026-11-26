@@ -121,14 +121,15 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status (2026-11-26).** Bundle 5 reaches 15,326/17,900 (85.6%) on
-BenchCAD and 968/968 on CAD-Recode with arris 0.12.0, meeting both reach
+**Status (2026-11-26).** Bundle 5 is complete. Reach is 15,326/17,900 (85.6%)
+on BenchCAD and 968/968 on CAD-Recode with arris 0.12.0, meeting both reach
 targets (ADR-0014). Agreements total 12,523 and 893 respectively. The two
 BenchCAD `by_design` rows are the corner patches under ADR-0025. Both
 corpora have zero unclassified rows, timeouts and in-subset `cq_bug` rows.
 The C1 rescore has 300 successful rows with exact IoU of 1.0 and the same digest
-at 2 and 16 workers and in CI on x86-64 and aarch64. The tail (`shell`
-and the rest) and the C2 cross-architecture digest check remain.
+at 2 and 16 workers and in CI on x86-64 and aarch64. `shell(num)` is next
+in the tail (ADR-0014). The C2 tables still need a matching digest on x86-64
+and aarch64.
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified
