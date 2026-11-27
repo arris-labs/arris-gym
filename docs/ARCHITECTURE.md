@@ -811,7 +811,9 @@ canonical digest with the committed table. It also compares the uncompressed
 oracle rows and the reach and arris reports with their committed contents,
 and checks the C2 reach and classification requirements and zero timeouts.
 The job uploads the reports and machine details before these checks. The
-corpus replays run outside the offline gate.
+corpus replays run outside the offline gate. To check a downloaded artifact
+directory, run `uv run --locked python tools/check_fidelity_replay.py --corpus
+CORPUS --replay-dir DIR`. The workflow uses the same command.
 
 [Run 45990557026](https://github.com/arris-labs/arris-gym/actions/runs/45990557026) matched
 both committed fidelity digests on x86-64 and aarch64 with zero timeouts.
