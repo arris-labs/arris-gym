@@ -26,21 +26,15 @@ uv sync                               # the locked environment, Python 3.12
 
 ## Current state
 
-**C1 closed** (2026-11-10): the vertical slice runs end to end. `run`,
-`run_many` and `Sandbox` execute programs in a warden-supervised, namespaced,
-Landlocked worker (ADR-0001, ADR-0002); `arris-gym census` fixed the 300-program
-slice (ADR-0003); CadQuery runs in an oracle worker and `fidelity` classes each
-pair (ADR-0004 to ADR-0006); `dialect="cq"` runs the census's 13 API forms, 200
-of the 300 slice programs agreeing with the oracle, 100 an arris bug, 0
-unclassified (ADR-0007); `score` returns a frozen `Score`, reward version 1
-(ADR-0008 to ADR-0010); `arris-gym rescore benchcad` re-scores the slice
-against the oracle's STEPs, its digest equal on x86-64 and aarch64 (ADR-0011).
-**0.1.0 published** (2026-11-10).
-**C2 acceptance met** (2026-11-27). On arris 0.12.0, BenchCAD reaches
-15,656/17,900 (12,791 agreements) and CAD-Recode reaches 968/968 (893
-agreements), both with zero in-subset `cq_bug` rows, unclassified rows and
-timeouts and matching x86-64 and aarch64 fidelity digests against the
-committed oracle reports (ADR-0030).
+**C1 closed** (2026-11-10). The sandbox, `cq` subset, oracle, fidelity and
+scoring run end to end, and the 300-program rescore reproduces on x86-64
+and aarch64 (ADR-0001 to ADR-0011). **0.1.0 published** (2026-11-10).
+**C2 closed** (2026-11-28) with reach of 15,656/17,900 on BenchCAD and
+968/968 on CAD-Recode on arris 0.12.0, zero in-subset `cq_bug` rows,
+unclassified rows and timeouts, and matching fidelity digests on x86-64
+and aarch64 against committed oracle reports (ADR-0030).
+**Next:** C3 re-scores model outputs, starting with BenchCAD, for the first
+technical report.
 
 ## Rules that are not derivable from the code
 

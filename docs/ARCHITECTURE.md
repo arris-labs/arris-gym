@@ -89,7 +89,7 @@ never from a message's wording:
 
 | Status | Decided by |
 |---|---|
-| `syntax` | `SyntaxError` from `compile`, before anything runs |
+| `syntax` | `SyntaxError` or `UnicodeEncodeError` from `compile`, before anything runs |
 | `unsupported_api` | `cq.UnsupportedApi`, raised by the subset, naming the call |
 | `arris_refusal` | an `arris.ArrisError` subclass; `arris.build`'s `SelectionError` and `SketchError` are subclasses too |
 | `runtime` | any other exception, `SystemExit` and `MemoryError` included; a program that ends without a result; or body bytes the body worker cannot read for any reason but the checker's |
@@ -117,8 +117,9 @@ that is not a `Workplane` or a stack with no solid is `runtime`. A CadQuery
 **compound** is that one solid, its body holding an outer shell per
 material piece and a shell for each sealed cavity (ADR-0016).
 CAD-Recode's original validation split ends in `r = …` on all 968 programs.
-The subset admits that end form (ADR-0015); the C1 reach curve ranked it
-first, a bridge that unlocks no program without further API forms.
+The subset admits that end form (ADR-0015). The CAD-Recode reach curve
+starting from the C1 subset ranked it first, a bridge that unlocked no
+program without further API forms.
 
 ## The census
 
@@ -335,9 +336,10 @@ actually run. Nothing the cache holds is reachable by a worker.
 Both yield the same `ExecResult`.
 
 `cq` is an API-compatible reimplementation over `arris.build`, nothing copied:
-the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014). Its forms include
-`Workplane("XY")`, `Workplane("YZ")`, `Workplane("XZ")` and
-`Workplane("ZX")`, each with an optional `origin=`, `Vector`,
+the **subset**, grown in the knee's bundle order, riskiest first (ADR-0014).
+It requires a named plane in the constructor: `Workplane("XY")`,
+`Workplane("YZ")`, `Workplane("XZ")` or `Workplane("ZX")`, each with an
+optional `origin=`. Other forms include `Vector`,
 `transformed`, `workplane` (with an optional `offset=`), `faces` with the six
 axis selectors `>X <X >Y <Y >Z <Z` (a second `faces(sel)` ranks only the faces
 the first kept), `edges` and `edges(sel)`, `fillet`, `chamfer`, `shell`, `pushPoints`,
@@ -376,8 +378,8 @@ The sketch forms are `push`, `reset`, `circle`, `rect`, `face`, `segment`,
 `arc`, `close`, `assemble` and `finalize` (ADR-0023).
 CadQuery STEP export ends `unsupported_api`.
 Every implemented call checks its form (`cq/_forms.py`): a keyword, count or
-kind of argument the census never writes ends `unsupported_api` naming the
-form. A program's result is the last `show_object` argument, else
+kind of argument outside the declaration ends `unsupported_api` naming
+the form. A program's result is the last `show_object` argument, else
 module-level `result`, else module-level `r` (ADR-0015), and resolves to
 the one solid on a `Workplane`'s stack: none or a non-`Workplane` is
 `runtime`. A `union` of disjoint solids, or a `cut` that splits its base,
@@ -387,7 +389,7 @@ holding no solid is its operand's solid where it stands, on the caller's
 plane; a `cut` there ends `runtime`, both as in CadQuery. Inside the worker
 a module exposing its CadQuery names is installed as `sys.modules["cadquery"]`,
 so `import cadquery as cq` runs, and
-`show_object` is a builtin of the program's namespace; under `arris` neither
+`show_object` is bound in the program's namespace; under `arris` neither
 exists. A call outside the subset raises `UnsupportedApi` naming it as the
 census writes it (`cq.Sketch`, `Workplane.text`, `cq.occ_impl` for
 `import cadquery.occ_impl`), via `__getattr__`, never `AttributeError`; a
@@ -434,8 +436,11 @@ the axis, greedy clusters of `1e-4`, `>` the last and `<` the first. A planar
 face normal to the axis is ranked by its exact plane offset. Other face keys
 come from arris's surface centroid quadrature. Faces of one surface and sense
 that share edges transitively rank as one unified face, by their area-weighted
-centre. Cone faces with different reference circles share a surface when
-their axes, opening angles and reconstructed apices agree within the
+centre. Its key has a half-width of 1e-12 times the square root of its area.
+Edges inside a unified face are excluded from `edges()`, `fillet()` and
+`chamfer()`. An edge selection or blend that depends on joining boundary
+fragments ends `unsupported_api`. Cone faces with different reference
+circles share a surface when their axes, opening angles and reconstructed apices agree within the
 model's tolerances. A second selector ranks only the unified faces already kept.
 A half torus cut across its seam can retain two quarter faces in CadQuery.
 `cq` currently groups them (`regression/cq-workplane-on-a-cut-torus-crossing-its-seam`).
@@ -454,7 +459,9 @@ faces' centres. Order-dependent or uncertain planar selections end
 the plane through its centre of mass, oriented by the outward normal at
 the centre's foot on the untrimmed surface (ADR-0022 rule 4). The parent
 origin projects onto that plane. A singular foot ends `runtime`. An unstable
-foot or an unsupported surface ends `unsupported_api`. `workplane(offset=)`
+foot or an unsupported surface ends `unsupported_api`. If the normal is
+almost vertical, the frame projects global +x onto the plane to set its
+local x axis. `workplane(offset=)`
 on faces moves the plane along its normal, as on a solid. `faces` on a stack
 whose objects have no faces (an empty stack, a `moveTo` point, a drawn path, a
 sketch) is `runtime` with CadQuery's `ValueError`, even where the chain holds a
@@ -467,7 +474,10 @@ bores what lies below the plane and leaves what lies above. A zero diameter
 cuts nothing, a negative one is `runtime`, and selected faces and a drawn path
 or sketch on the stack are `unsupported_api` (CadQuery bores at their centres) and a hole that leaves
 nothing is the kernel's refusal (CadQuery's checker cannot measure its empty
-result, an oracle `crash` row).
+result, an oracle `crash` row). A `depth=` keyword sets the bore's length.
+On a point stack from `pushPoints`, `rarray` or `polarArray`, bores start at
+each point and cut in one operation. `cboreHole` and `cskHole` pass the bore
+and its wider piece as separate tools in that cut (ADR-0018, ADR-0019).
 `polygon(nSides, diameter)` is a pending closed sketch centred as `circle`
 is (the origin of an empty stack or a lone `moveTo` point): `nSides`
 vertices on the circle of `diameter`, the first on the plane's +x, the
@@ -573,8 +583,8 @@ refuses when consumed (ADR-0024 §B and §D).
 `slot2D(length, diameter, angle)` uses the same point placements. Its angle
 in degrees adds to the rotation of a polar point. Each slot is swept on its
 own for extrusion, blind cutting or through-cutting. Touching or overlapping
-slots at points, slots drawn on pending wires, negative dimensions and
-slot revolutions with stock end `unsupported_api`. With nonnegative
+slots at points, points off the drawing plane, slots drawn on pending wires,
+negative dimensions and slot revolutions with stock end `unsupported_api`. With nonnegative
 dimensions, equal dimensions or zero diameter end `runtime`. The kernel
 refuses a nonnegative length shorter than a positive diameter (ADR-0024 §E
 and its slot amendment).
@@ -652,31 +662,19 @@ combinations or more than 48 nonplanar side faces from polygons it raises
 `cq.subset()` exposes the subset as frozen `Subset` data (ADR-0012): the
 `CensusForm` declarations the decorators themselves enforce, the admitted
 selectors, and end forms (`r = …`, `result = …` and
-`show_object(…)`, the latter also admitting a named argument). `Subset.admits(form)` matches
-counts, keyword names and literal kinds. A `name`, `expr` or `call` may
+`show_object(…)`, which includes the census's `show_object(result)`
+family for a positional argument that is a variable name).
+`Subset.admits(form)` matches counts, keyword names and literal kinds.
+A `name`, `expr` or `call` may
 supply any runtime kind; starred arguments are outside. Values and stack
 context are unproved: static membership does not predict successful
-execution. An in-subset context limitation is a `cq_bug` until fixed or its
-whole form leaves the subset. ADR-0025 permits `by_design` for differences
-confined to vertex-blend corner patches. These
+execution. A context that returns `unsupported_api` against oracle `ok`
+or `invalid` counts as `cq_bug`, including for in-subset programs.
+ADR-0025 permits `by_design` for differences confined to vertex-blend
+corner patches. These
 metadata exports belong to the caller's `arris_gym.cq`; the program-facing
 module keeps `UnsupportedApi`, `Vector` and `Workplane`. The metadata uses
 frozen standard-library dataclasses to keep `cq`'s import boundary.
-
-CadQuery's axis selectors (`>X <X >Y <Y >Z <Z`) rank faces by centre of mass
-and greedy 1e-4 clusters (ADR-0017 rule 1). A planar face normal to the axis
-has its exact plane offset as its key. Other keys are projected centres of
-mass from arris, with a half-width of 1e-12 times the square root of the
-face area (ADR-0022 rule 1). A unified face uses its combined area and
-area-weighted centre. If the bound can affect selection membership, `faces`
-returns `unsupported_api`. Edges inside a unified face are excluded from
-`edges()`, `fillet()` and `chamfer()` candidates. An edge selection or blend
-that depends on joining boundary fragments ends `unsupported_api`.
-`workplane()` follows CadQuery's `ProjectedOrigin` rule. On a unified
-cylinder, cone, sphere or torus face, it projects onto the plane through the
-face's centre of mass, with the outward normal taken at the centre's foot
-on the untrimmed surface (ADR-0022 rule 4). If that normal is almost vertical,
-the frame projects global +x onto the plane to set its local x axis.
 
 ## The reward
 
@@ -763,7 +761,9 @@ table: a failure status carries exactly −1.0, −0.5 or −0.3 and no terms, a
 
 ## Determinism
 
-The same program gives the same body, ids and score on every machine.
+With the same dependency pins and limits, successful runs are intended
+to reproduce the same body bytes, IDs and score. The cross-architecture
+measurements below give the tested scope.
 
 - **Body bytes depend on the model's history** (ADR-0001), and a fresh model
   reproduces them exactly: across processes, under different `PYTHONHASHSEED`,
@@ -791,9 +791,11 @@ The same program gives the same body, ids and score on every machine.
   ⚠ OPEN: whether a program's own run can be given such a work limit, leaving
   wall-clock as a backstop.
 
-The determinism digest is the SHA-256 of a report's rows in program order,
-each row carrying status, refusal, body digest and measures as hex floats, and
-nothing wall-clock. It is the acceptance: equal on two machines.
+The execution digest hashes the results in program order. It includes the
+statuses, messages, refusal data, body digests, measures as hex floats,
+and arris and NumPy versions. `dump_text` also prints the arris-gym version.
+Wall-clock time is excluded from both. The re-scored and fidelity tables
+have their own digests and order rows by name.
 
 **Measured.** On arris 0.10.0 the re-scored table's digest (§The re-scored
 table) matches on three machines: AMD Ryzen 9 7950X and AMD EPYC 7763
@@ -858,9 +860,9 @@ limit, and is that child's warden: a `SIGKILL` at the deadline, then a sweep
 of the PID namespace it is PID 1 of (`kill(-1)` and reaping until nothing is
 left). Only then does it write the warden's record. A program starts in about
 18 ms. `OracleZygote` is one zygote's handle, and `run_many` keeps
-`workers` of them, replacing any that dies or nears its 600 s lifetime. Its
-reports are the same bytes as fresh workers': the slice's `oracle.jsonl` is
-unchanged through it.
+`workers` of them, replacing any that dies or nears its 600 s lifetime.
+Oracle zygotes matched the fresh workers' report bytes for the
+300-program slice.
 
 `fidelity.parse_outcome` turns that outcome into an **oracle report**
 (`OracleReport`: an `OracleStatus` of `ok`, `syntax`, `runtime`, `no_result`,
@@ -886,12 +888,11 @@ reuses matching reports by program SHA-256 and runs the oracle for the
 remaining programs. The two options are mutually exclusive.
 
 The STEP text (`step_text` in the frame, `OracleReport.step`) is what the
-re-scored table reads as a target (ADR-0011). The worker blanks the two
-things in it that change from run to run, `FILE_NAME`'s timestamp and the
-translator's per-process counter, so the text is the same bytes on every
-run. `step_sha256` hashes its data section, from `DATA;` on. The text stays
-out of `OracleReport.digest()` and out of `oracle.jsonl`, which the hash
-already pins.
+re-scored table reads as a target (ADR-0011). The worker blanks
+`FILE_NAME`'s timestamp and the translator's per-process counter.
+`step_sha256` hashes the data section, from `DATA;` on. Each live run can
+produce different data bytes as described below. `OracleReport.digest()`
+and `oracle.jsonl` carry the hash in place of the text.
 
 Two measurements **agree** when volume, area, centroid and bounds are each
 inside the **agreement tolerance** (`fidelity/_agreement.py`, ADR-0005), set
@@ -944,13 +945,10 @@ must be exactly the table's names) into a frozen `ReachReport`: `programs`,
 `in_subset`, `agree` (over all programs), `timed_out`, the in-subset rows by
 outcome and by class, and `in_subset_cq_bug` and `in_subset_by_design` named,
 so the fidelity target is two comparisons beside the reach. An unparsable
-program is a row outside the subset. `tools/cq_corpus.py --corpus
-benchcad|cadrecode` runs a whole corpus under `cq` and on oracle zygotes and
-writes the table, the arris report and the reach report under
-`tests/fixtures/c2/<corpus>/` (rows only, no program text); with
-`--oracle-rows` a committed `oracle.jsonl.gz` answers every program whose
-SHA-256 and oracle versions it holds, so a change to `cq` alone re-runs `cq`
-alone and keeps the oracle's committed draw. The C1 slice reaches 300/300
+program is a row outside the subset. The corpus tool writes the table, the
+arris report and the reach report to `--out-dir`, defaulting to
+`tests/fixtures/c2/<corpus>/`. The outputs carry result rows and their
+provenance. The C1 slice reaches 300/300
 and all 300 agree on arris 0.12.0. The chained cylinder fuses now build the
 100 `lobed_knob` parts that needed `arris_bug` verdicts on arris 0.11.1
 (`tests/fixtures/c1/README.md`).

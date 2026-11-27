@@ -16,9 +16,9 @@ against arris and laman is `../order-of-work.md`.
 The unit of acceptance: a directory `tests/fixtures/<area>/<slug>/` with
 
 - `program.py`: the program, its dialect named in `expected.json`;
-- `expected.json`: status, refusal kind, volume, area, centroid, face and
-  solid counts, each from a closed form or from how the part was built, never
-  from arris-gym's output.
+- `expected.json`: status and, where applicable, refusal kind and expected
+  measures. Expected geometry comes from a closed form or from the part's
+  construction.
 
 Measures compare within a named default tolerance unless the fixture's README
 cites the ADR that decided another (`tools/check-fixtures.sh`). A message
@@ -91,8 +91,9 @@ Retires: do CadQuery's stack semantics fit over `arris.build`?
 
 ### M4 — reward and metrics
 Retires: is the reward right, and bit-stable, on cases with known answers?
-- **In:** `reward` (§The reward), the IoU and estimator ADRs, the reward
-  weights and τ ADR, the field's metrics from BenchCAD's own scorer.
+- **In:** the IoU and estimator ADRs, the reward weights and τ ADR, and the
+  field's metrics from BenchCAD's own scorer.
+  [Reward design](ARCHITECTURE.md#the-reward)
 - **Out:** tuning the weights on model outputs.
 - **Accept**, by closed form:
   - a failure status gives exactly −1.0, −0.5 or −0.3;
@@ -121,52 +122,53 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status (2026-11-27).** C2 acceptance is met. Reach is
-15,656/17,900 (87.5%) on BenchCAD and 968/968 on CAD-Recode with arris 0.12.0,
-meeting both reach targets (ADR-0014). Agreements total 12,791 and 893
-respectively. Both corpora have zero unclassified rows, timeouts and
-in-subset `cq_bug` rows. The two BenchCAD `by_design` rows are the corner
-patches under ADR-0025. `shell(num)` adds 330 BenchCAD programs
-(ADR-0029). Both committed fidelity digests match on x86-64 and aarch64
-against the same committed oracle reports (ADR-0030). The C1 rescore has
-300 successful rows with exact IoU of 1.0 and the same digest at 2 and 16
-workers and in CI on x86-64 and aarch64. Cycle closure is pending.
+**Goal.** Grow the `cq` subset in census order and measure its fidelity on
+BenchCAD `code_gen` and the CAD-Recode validation split.
 
-**Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
-CAD-Recode validation split until the fidelity table has nothing unclassified
-and a fidelity target is met. M3 reported agreement (200 of 300) without
-targeting it; this cycle sets the target by ADR from the reach curves over both corpora,
-before the subset grows: T = 85% on BenchCAD, 100% on CAD-Recode (ADR-0014).
+**Status: done 2026-11-28.** Reach and classification meet the fidelity
+gate, and both tables reproduce on x86-64 and aarch64 against committed
+oracle reports (ADR-0012 to ADR-0030).
 
-**In:**
-- the fidelity target, by ADR;
-- the CAD-Recode validation split pinned by revision, and a census over it;
-- the `cq` forms the two censuses rank next in the knee's bundle order: selectors,
-  `hole`, `chamfer`, `fillet`, the bare `cq.Workplane()` and `centered=False`
-  (the backlog's open `cq` lines), plus `shell(num)` from the BenchCAD tail.
-  Each lifted form has a fixture by construction.
-- the fidelity table over both corpora, every disagreement classed;
-- the arris rows (the 100 `lobed_knob` refusals, the split-face `interference`
-  refusals) filed, and the fidelity table re-run on each `arris` bump.
+**In.** Pinned corpora and censuses, reach targets at 85% and 100%, the
+admitted `cq` forms including selectors, holes, blends, sketches and
+shell, and both classified fidelity tables and arris reports. The consumer
+report is filed as `../arris/docs/ideas/arris-gym-c2-fidelity-report.md`.
 
-**Out:** CadQuery assemblies, `cq.Sketch` constraints, plugins, `.wrapped`,
-raw OCP calls; model outputs and baselines (C3); training.
-**Accept:** 0 unclassified on both corpora; the fidelity target met; the
-table's digest equal on two machines of different architecture.
-**Decision point:** low fidelity from arris refusals ranks arris's next cycle;
-low fidelity from CadQuery semantics narrows the subset.
+**Out.** Bare `cq.Workplane()` and `box(..., centered=False)` are deferred
+in the [backlog](BACKLOG.md). CadQuery assemblies, sketch constraints,
+plugins, `.wrapped`, raw OCP calls, model baselines and training.
+
+**Accept.** On arris 0.12.0, BenchCAD reaches 15,656/17,900 with 12,791
+agreements, and CAD-Recode reaches 968/968 with 893 agreements. Both have
+zero unclassified rows, timeouts and in-subset `cq_bug` rows.
+BenchCAD has two `by_design` corner-patch rows under ADR-0025.
+The fixture READMEs record the tables and replay commands.
+[BenchCAD](../tests/fixtures/c2/benchcad/README.md#the-table) and
+[CAD-Recode](../tests/fixtures/c2/cadrecode/README.md#the-table)
 
 ## C3 — re-scored benchmarks
 
-**Goal.** The first publication. A scorer takes a benchmark's tasks and a
-model's outputs and scores them on arris, every failure counted: BenchCAD, the
-CAD-Recode validation split, Text2CAD-Bench if its data is released.
+**Goal.** Compare arris-gym scores for model outputs with published
+benchmark results, counting every failure.
 
-**In:** frontier baselines (one shot, and up to three retries with error
-feedback), open specialists where their licences allow, the technical report.
-**Accept:** report tables regenerate bit-identically on two machines; every
-survey number the report cites verified against its paper. Spending on model
-APIs and contacting the BenchCAD authors are the human's.
+**Status: open 2026-11-28.**
+
+**In.** Re-score BenchCAD first, then CAD-Recode validation. Include
+Text2CAD-Bench if its data is released and the licence permits use. Decide
+how to handle compound STEP targets before expanding BenchCAD beyond
+the slice. The current reader accepts one solid (ADR-0011), and 827
+BenchCAD `ok` oracle reports contain two to nine solids. Run one-shot
+frontier baselines and up to three retries with error feedback, plus open
+specialists where their licences allow. Report the benchmark's metrics
+beside arris-gym's results.
+
+**Out.** Training and an arris-gym-authored benchmark. Spending on model APIs
+and contacting the BenchCAD authors are the human's decisions.
+
+**Accept.** Every task has a result row, including failed programs and
+targets. The report tables regenerate bit-identically on two machines, and
+every benchmark number cited from the literature is verified against its
+paper.
 
 ## Later cycles, roughly in order
 

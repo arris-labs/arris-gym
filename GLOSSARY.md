@@ -135,9 +135,10 @@ _Avoid_: oracle server, oracle pool
 **Oracle report**:
 What one program did on the oracle: an `OracleStatus`, the exception's words,
 Open CASCADE's measures, the STEP hash and, for `ok`, the STEP text with its
-timestamp and counter blanked, parsed from the oracle worker's frame, which
-the caller trusts no more than any worker's. A frame that contradicts its
-status, its job or its STEP's hash is a `crash`.
+timestamp and counter blanked. The caller parses the oracle worker's frame.
+A frame that contradicts its status, its job or its STEP's hash is a
+`crash`. The data section and the last bits of measures can vary between
+live runs. An oracle replay uses committed reports (ADR-0030).
 _Avoid_: oracle result
 
 ## Scoring
@@ -323,8 +324,9 @@ fixed across candidate runs (ADR-0030).
 
 **Agreement tolerance**:
 The four constants in `fidelity` (volume, area, centroid, bounds) inside which
-`cq` on arris and the oracle measure the same part; face counts are carried,
-never judged (ADR-0005).
+`cq` on arris and the oracle measure the same part. Agreement between two
+`ok` results also requires equal solid counts. Face counts are diagnostic
+(ADR-0005, ADR-0016).
 _Avoid_: epsilon
 
 **Fidelity**:
@@ -408,9 +410,10 @@ programs, timeouts, and the in-subset rows by outcome and class, with
 `in_subset_cq_bug` and `in_subset_by_design` named (`fidelity.ReachReport`).
 
 **Fidelity target**:
-What C2 must meet on each corpus, set by ADR: a reach of at least T and no
-`cq_bug` row among its in-subset programs. Plain agreement over all programs
-is published beside it, never targeted.
+The minimum reach T for a corpus and zero `cq_bug` rows among its in-subset
+programs. In-subset `by_design` rows require an explicit exception
+(ADR-0014, ADR-0025). Fidelity reports give the agreement count over the
+whole corpus alongside these checks.
 _Avoid_: pass rate
 
 **Stage**:
