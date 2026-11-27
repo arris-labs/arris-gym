@@ -207,3 +207,9 @@ meet is each kernel's own, and such an in-subset row is `by_design`,
 counted in `in_subset_by_design` and named in the corpus's README. Every
 other in-subset `by_design` row still fails the target. BenchCAD has two
 (plans/lift-rects-and-through-cuts step 7).
+
+## Amendment (2026-11-27): cross-architecture replay
+
+[ADR-0030](0030-c2-fidelity-replays-committed-oracle-reports.md) defines the
+cross-architecture comparison against the same committed oracle reports
+and records the matching run for both corpora.

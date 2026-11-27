@@ -156,6 +156,11 @@ table's digest equal on two machines of different architecture.
 **Decision point:** low fidelity from arris refusals ranks arris's next cycle;
 low fidelity from CadQuery semantics narrows the subset.
 
+**Measured.** Both committed fidelity digests match on x86-64 and aarch64
+against the pinned oracle reports (ADR-0030). BenchCAD reaches 15,656/17,900
+with 12,791 agreements. CAD-Recode reaches 968/968 with 893 agreements.
+Both have zero unclassified rows, timeouts and in-subset `cq_bug` rows.
+
 ## C3 — re-scored benchmarks
 
 **Goal.** The first publication. A scorer takes a benchmark's tasks and a

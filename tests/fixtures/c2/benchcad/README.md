@@ -32,24 +32,34 @@ with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
 `arris-report.json` and `.md` describe the refusals and arris bugs.
 `reach-report.json` checks the table against the census and `cq.subset()`.
 
-Regenerate with the synced oracle environment and a fresh work directory
-(outside the gate).
+Replay the committed oracle reports from the repository root with a fresh
+work directory (ADR-0030, outside the gate).
 
 ```sh
 root=tests/fixtures/c2/benchcad
-work=$(mktemp -d .scratch/benchcad-fidelity.XXXXXX)
-uv run --locked --extra corpus tools/cq_corpus.py --corpus benchcad \
+work=$(mktemp -d)
+mkdir "$work/out"
+uv sync --locked --extra corpus
+uv run --locked --extra corpus python tools/cq_corpus.py --corpus benchcad \
   --verdicts "$root/verdicts.json" "$root/loft-replay/verdicts.json" \
     "$root/loft-replay/trim-verdict.json" "$root/shell-replay/verdicts.json" \
-  --oracle-rows "$root/oracle.jsonl.gz" \
-  --out-dir "$work/out" --work-dir "$work/chunks" --workers 16
+  --replay-oracle-rows "$root/oracle.jsonl.gz" \
+  --out-dir "$work/out" --work-dir "$work/chunks" --workers 4 --timeout 240
 ```
+
+On 2026-11-27, [run 45990557026](https://github.com/arris-labs/arris-gym/actions/runs/45990557026)
+tested `1d577e97620336a122099bce4d01f66d7b4abe82` on Linux x86-64 and
+aarch64. Both jobs reproduced the fidelity digest and counts below. The
+uncompressed oracle rows, reach report and both arris reports matched the
+committed contents.
+[x86-64 reports](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15197263245) ·
+[aarch64 reports](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15195438502)
 
 Reach is 15,656/17,900 (87.5%), above the ADR-0014 target of 15,215.
 Of all 17,900 programs, 12,791 agree and 5,109 disagree. The disagreement
 classes are 372 `arris_bug`, 899 `arris_refusal`, 2 `by_design`, 2,243
 `cq_bug` and 1,593 `occt_wrong`. There are zero unclassified rows, timeouts
-and in-subset `cq_bug` rows. The two `by_design` rows are the vertex blends
+and in-subset `cq_bug` rows. The two in-subset `by_design` rows are the vertex blends
 from ADR-0025. All 392 deferred gear lofts remain in the table as
 outside-subset `cq_bug` rows under ADR-0012 and ADR-0026.
 

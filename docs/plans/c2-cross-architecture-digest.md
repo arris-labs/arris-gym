@@ -80,7 +80,7 @@ the design. **[3]** unproven, correctness has to be established here.
   `../arris/docs/ideas/` and leave C2 open. After a local fix, compare the
   four fresh outputs, record any justified fixture changes in a `fixtures:`
   commit, and verify all four jobs against the resulting fixtures.
-- [ ] Step 5 **[1]** — Record the tested commit, run links, digests and
+- [x] Step 5 **[1]** — Record the tested commit, run links, digests and
   counts in both corpus READMEs. Add the ADR for pinned-oracle replay and
   update the BACKLOG finding with the evidence. Verify each README's
   commands and values against the green run.

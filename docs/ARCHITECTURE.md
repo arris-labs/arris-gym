@@ -812,6 +812,12 @@ oracle rows and the reach and arris reports with their committed contents.
 The job uploads the reports and machine details before checking for
 differences. The corpus replays run outside the offline gate.
 
+[Run 45990557026](https://github.com/arris-labs/arris-gym/actions/runs/45990557026) matched
+both committed fidelity digests on x86-64 and aarch64 with zero timeouts.
+The [BenchCAD](../tests/fixtures/c2/benchcad/README.md) and
+[CAD-Recode](../tests/fixtures/c2/cadrecode/README.md) READMEs record the
+tested commit, replay commands and full digests.
+
 ## The oracle
 
 `tools/oracle/` is its own `uv` environment holding CadQuery and OCP. It takes
@@ -862,7 +868,7 @@ carries another program's SHA-256 or a STEP text whose recomputed hash is not
 its `step_sha256` is a `crash`. `tools/oracle_run.py` runs a list of programs
 and writes `oracle.jsonl` in submission order.
 
-C2's cross-architecture fidelity comparison runs
+C2's cross-architecture fidelity comparison (ADR-0030) runs
 `tools/cq_corpus.py --corpus CORPUS --replay-oracle-rows FILE` with the
 corpus's committed oracle reports. Both architectures use the same
 versions (including oracle Python 3.12.3), STEP hashes and full-precision

@@ -46,3 +46,4 @@ training cycle starts from.
 | [0027](0027-a-cq-draft-uses-slant-length-and-offset-sections.md) | A `cq` draft uses slant length and offset sections | accepted |
 | [0028](0028-a-cq-mirror-joins-a-half-outline-in-its-drawing-plane.md) | A `cq` mirror joins a half outline in its drawing plane | accepted |
 | [0029](0029-a-cq-shell-uses-sharp-offsets-where-arc-joins-stay-sharp.md) | A `cq` shell uses sharp offsets where arc joins stay sharp | accepted |
+| [0030](0030-c2-fidelity-replays-committed-oracle-reports.md) | C2 fidelity replays committed oracle reports | accepted |

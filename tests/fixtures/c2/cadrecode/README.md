@@ -62,16 +62,26 @@ with the committed oracle rows from CadQuery 2.3.0 and Open CASCADE 7.9.3.0.
 `arris-report.json` and `.md` carry the refusals. `reach-report.json`
 checks this table against the census and `cq.subset()`.
 
-Regenerate with the synced oracle environment and a fresh work directory
-(outside the gate).
+Replay the committed oracle reports from the repository root with a fresh
+work directory (ADR-0030, outside the gate).
 
 ```sh
 root=tests/fixtures/c2/cadrecode
-work=$(mktemp -d .scratch/cadrecode-fidelity.XXXXXX)
-uv run --locked --extra corpus tools/cq_corpus.py --corpus cadrecode \
-  --verdicts "$root/verdicts.json" --oracle-rows "$root/oracle.jsonl.gz" \
-  --out-dir "$work/out" --work-dir "$work/chunks"
+work=$(mktemp -d)
+mkdir "$work/out"
+uv sync --locked --extra corpus
+uv run --locked --extra corpus python tools/cq_corpus.py --corpus cadrecode \
+  --verdicts "$root/verdicts.json" --replay-oracle-rows "$root/oracle.jsonl.gz" \
+  --out-dir "$work/out" --work-dir "$work/chunks" --workers 4 --timeout 30
 ```
+
+On 2026-11-27, [run 45990557026](https://github.com/arris-labs/arris-gym/actions/runs/45990557026)
+tested `1d577e97620336a122099bce4d01f66d7b4abe82` on Linux x86-64 and
+aarch64. Both jobs reproduced the fidelity digest and counts below. The
+uncompressed oracle rows, reach report and both arris reports matched the
+committed contents.
+[x86-64 reports](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15195900879) ·
+[aarch64 reports](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15196175506)
 
 All counts are over the 968 programs. Reach is **968**, which meets the
 CAD-Recode fidelity target (ADR-0014). All 893 agreements are two
