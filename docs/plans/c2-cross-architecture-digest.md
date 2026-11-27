@@ -62,7 +62,7 @@ the design. **[3]** unproven, correctness has to be established here.
   shared program hashes under distinct stems, and rejected missing,
   duplicate, unanswered or mismatched reports. Exercise replay without
   an oracle environment and run the existing reuse and resume tests.
-- [ ] Step 2 **[3] [CI] [conductor-run]** — Run both full corpus replays
+- [x] Step 2 **[3] [CI] [conductor-run]** — Run both full corpus replays
   on both machines with the committed inputs and the existing 30 s corpus
   deadline. Compare each validated table with its committed fixture. Upload
   the table and reports before declaring any comparison failure, and retain
@@ -84,6 +84,27 @@ the design. **[3]** unproven, correctness has to be established here.
   counts in both corpus READMEs. Add the ADR for pinned-oracle replay and
   update the BACKLOG finding with the evidence. Verify each README's
   commands and values against the green run.
+
+## Step 2 evidence
+
+The workflow tested `53f333b7a59dbff050d64c1106ad4ecb9d2cfecd` on 2026-11-27
+with four workers and a 30 s deadline. All four replays uploaded their reports
+before comparison. The x86-64 runner used Python 3.12.16 and glibc 2.43.
+The aarch64 runner used Python 3.12.3 and glibc 2.39.
+[Run 45957071207](https://github.com/arris-labs/arris-gym/actions/runs/45957071207)
+
+| Corpus and architecture | Validated digest | Timeouts | Comparison |
+| --- | --- | ---: | --- |
+| [BenchCAD x86-64](https://github.com/arris-labs/arris-gym/actions/runs/45957071207/artifacts/15183345295) | `dbca3adbb134737eab0e6a839b47a1ecfc77569b580128a7f43dde4300dde4d9` | 55 | Fidelity and reach differ |
+| [BenchCAD aarch64](https://github.com/arris-labs/arris-gym/actions/runs/45957071207/artifacts/15180034817) | `0cfcef7289eba916e89c58dcf7b259dfb59a1bbee316ddb381db19cfee678183` | 28 | Fidelity and reach differ |
+| [CAD-Recode x86-64](https://github.com/arris-labs/arris-gym/actions/runs/45957071207/artifacts/15179432086) | `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92` | 0 | All reports match |
+| [CAD-Recode aarch64](https://github.com/arris-labs/arris-gym/actions/runs/45957071207/artifacts/15179795475) | `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92` | 0 | All reports match |
+
+The oracle rows and the two arris reports match the committed contents in
+all four jobs. Every count in the acceptance table matches except the
+BenchCAD timeout counts. The x86-64 timeouts span 51 `double_simplex_sprocket`
+and four `sprocket` programs. All 28 aarch64 timeouts are
+`double_simplex_sprocket` programs. The tables name each timed-out stem.
 
 ## Acceptance
 
@@ -123,9 +144,9 @@ rows. Run `tools/gate.sh` for the offline checks.
 - **Settled (step 2):** Commit the workflow before the authorized branch
   push so GitHub Actions can run it. Record the run and tick step 2 after
   collecting the results from all four jobs.
-- ⚠ OPEN: Do the full tables match at the existing deadline? The agent
-  decides from step 2, and uses step 3 to distinguish a timing difference
-  from a change to a row's content.
+- **Settled (step 2):** CAD-Recode matches at the existing deadline.
+  BenchCAD's 55 and 28 timeouts break digest equality. Step 3 checks
+  whether any other rows or fields differ.
 - ⚠ OPEN: If the replay hits timeouts, what deadline and worker count make
   both machines finish reliably? The agent measures in step 3 and records
   the choice in step 4. Any change to C2 acceptance is the human's decision.
