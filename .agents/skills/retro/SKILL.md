@@ -12,12 +12,12 @@ checks, tools, docs) made the work slower, wronger or more dependent on the
 human than it had to be, and the smallest change that fixes it for every
 later session.
 
-1. **Read the sessions.** Nothing given: this session, from your own
-   context. A plan slug or session id: the transcripts under
-   `~/.claude*/projects/<this checkout's path, slashes as dashes>/*.jsonl`
-   that mention it (`tools/session-digest.py <jsonl>...` lists the human's
-   messages, tool counts, failed calls and repeated reads). Read the plan's
-   commits too (`git log --grep='plans/<slug>'`), and count the steps
+1. **Read the sessions.** With no argument, use this session's context.
+   From the checkout root, run `python3 tools/session-digest.py --find <slug-or-id>`.
+   It searches the checkout's Claude Code and Codex transcripts and prints
+   their paths, human messages, tool counts, failed calls and repeated reads.
+   Pass explicit JSONL paths to digest a known set of transcripts. Read the
+   plan's commits too (`git log --grep='plans/<slug>'`), and count the steps
    that needed a later commit naming them: a tier often reworked is a
    grade candidate.
 2. **Find the candidates**, each with its evidence (session id and a quote
