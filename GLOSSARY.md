@@ -315,6 +315,12 @@ CadQuery on Open CASCADE, run out of process under `tools/oracle/`, never
 imported.
 _Avoid_: reference implementation
 
+**Oracle replay**:
+A fidelity comparison that runs selected corpus programs under `cq` against
+committed oracle reports. Each report is matched by stem, program SHA-256,
+family, revision and licence. Its versions, STEP hash and measures are held
+fixed across candidate runs (ADR-0030).
+
 **Agreement tolerance**:
 The four constants in `fidelity` (volume, area, centroid, bounds) inside which
 `cq` on arris and the oracle measure the same part; face counts are carried,
