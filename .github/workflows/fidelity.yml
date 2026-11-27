@@ -15,11 +15,17 @@ jobs:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm]
         corpus: [benchcad, cadrecode]
+        include:
+          # Step 3 verified all affected BenchCAD rows at this deadline.
+          - corpus: benchcad
+            deadline: 240
+          - corpus: cadrecode
+            deadline: 30
     runs-on: ${{ matrix.os }}
     env:
       CORPUS: ${{ matrix.corpus }}
       WORKERS: "4"
-      DEADLINE: "30"
+      DEADLINE: ${{ matrix.deadline }}
     defaults:
       run:
         shell: bash

@@ -141,6 +141,10 @@ in the timing probe.
 
 ## Acceptance
 
+The workflow uses four workers per job, a 240 s BenchCAD replay deadline
+and a 30 s CAD-Recode replay deadline. The BenchCAD setting uses the cap
+verified in the step 3 diagnostic run. The library deadline is unchanged.
+
 The fidelity workflow replays both full corpora on the same commit using
 `uv sync --locked --extra corpus` and `uv run --locked --extra corpus
 python tools/cq_corpus.py --corpus … --verdicts … --replay-oracle-rows …`.
