@@ -65,7 +65,9 @@ and the human can read in two minutes: under ~150 lines and ~10 steps.
      tool takes a `--stem` filter in an earlier step.
    - *Acceptance* is an executable fixture run, ideally the milestone's own:
      which fixtures, which numbers (statuses, measures, rewards, fidelity
-     rows, digests), which property tests.
+     rows, digests), which property tests. If a known corpus row is close to
+     the proposed deadline, time that slice on each target runner at the
+     intended worker count before starting the full matrix.
    - *Docs to update* is written now, while the deltas are fresh — it is
      what `/retire-plan` executes; `GLOSSARY.md` is on it when a term is
      new. Docstrings on new public items are part of the steps.
