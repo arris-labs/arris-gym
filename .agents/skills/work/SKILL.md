@@ -13,15 +13,19 @@ ask which if two), **conducts** the whole rest of the plan by *Conduct*,
 then retires it: each step a fresh subagent that follows *Do* for that one
 step. The conductor's turn does not end between steps: a checked hand-back
 is followed at once by the next step's subagent. It stops early only for
-what *Conduct* names (a **[CI]** step, a human-only question, a second
+what *Conduct* names (an external action awaiting the human, a human-only question, a second
 miss); reporting after one step and waiting for another `/work` is a bug.
 
 ## Do
 
 1. Open `docs/plans/<slug>.md`; target the first unchecked step or the
-   given range. Re-read its *Design deltas* and any `⚠ OPEN:` naming it. A
-   **[CI]** step is worked on `plan/<slug>`, and the push its test needs is
-   asked for before writing it, not after.
+   given range. Re-read its *Design deltas* and any `⚠ OPEN:` naming it.
+   For **[CI]** work, check the plan's refs and runs against the human's
+   existing authorization. Ask once for the outstanding actions the plan
+   anticipates, including any diagnostic ref and verification reruns. State
+   which actions the human will take and which the agent may take. Continue
+   authorized local preparation while approval is pending. If a needed
+   action falls outside the approved scope, ask about that action.
 2. Implement the step with its test or fixture (each guarantee a docstring
    or ADR states, such as a round-trip, an order or "independent of X", gets
    a test that tries to break it, a `hypothesis` property for a round-trip), the docs it changes and a
@@ -102,8 +106,9 @@ miss); reporting after one step and waiting for another `/work` is a bug.
 ## Conduct
 
 1. Read the plan; for each unchecked step note its tier: its grade, or the
-   tier it names (`**[1, tier 3]**`). A **[CI]** step stops the conductor
-   before it starts: its push is the human's.
+   tier it names (`**[1, tier 3]**`). Confirm the **[CI]** authorization as
+   in *Do*. The conductor handles approved external actions and watches the
+   resulting runs. Pause at an action that still needs the human.
 2. Group the steps in order into **batches**: up to 3 consecutive steps
    whose tier is 1 or 2 share one subagent (one context), on the highest
    tier among them. A tier-3 step is always a batch of its own and ends the

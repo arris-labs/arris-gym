@@ -3,6 +3,8 @@
 - Started: YYYY-MM-DD
 - Milestone: M? (cycle C?, docs/ROADMAP.md)
 - Idea: docs/ideas/<slug>.md (absorbed, or its <part> absorbed), or verbatim from the human: "…"
+- For **[CI]** steps, name the plan ref, any anticipated diagnostic ref,
+  and the CI runs and reruns that `/work` should request together.
 
 Under ~150 lines and ~10 steps; larger work is milestone plans.
 
