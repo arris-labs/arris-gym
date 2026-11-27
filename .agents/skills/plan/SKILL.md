@@ -62,7 +62,11 @@ and the human can read in two minutes: under ~150 lines and ~10 steps.
      that needs a run past 110 s (a corpus-wide pass, a tool over every
      row) carries **[conductor-run]**: the conductor runs it in the
      background and a subagent's step records its outputs (`/work`), or the
-     tool takes a `--stem` filter in an earlier step.
+     tool takes a `--stem` filter in an earlier step. When a command gains
+     a diagnostic selection, put a test in the introducing step that uses
+     the full command's inputs with the selection. For oracle replay, pass
+     `--slice` with the pinned oracle reports and a verdict file that also
+     names an unselected corpus stem.
    - *Acceptance* is an executable fixture run, ideally the milestone's own:
      which fixtures, which numbers (statuses, measures, rewards, fidelity
      rows, digests), which property tests. If a known corpus row is close to
