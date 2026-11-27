@@ -5,16 +5,21 @@
   `.agents/`, `docs/`): the layer and fixture checks, the generated API
   reference, ruff, `mypy --strict` and pytest. When the gate passes a minute,
   it is split by an ADR, not by skipping stages.
-- **No foreground waits.** A run expected to take over a minute, and a CI
-  watch, runs with `run_in_background`, and the agent goes on with what
-  does not depend on its result. A foreground `until`, `while` or `sleep`
+- **No foreground waits.** Start a run expected to take over a minute, and
+  any CI watch, as a background job. Continue independent work. A foreground
+  `until`, `while` or `sleep`
   loop, or a `tail --pid`/`tail -f`, waiting on one is never written: the
   completion notification is the wait. In Claude Code `tools/bash-guard.sh`
   refuses it (a PreToolUse hook).
-  Start the long job itself with `run_in_background`, never detached inside
+  In Claude Code, start the job with `run_in_background`. Start the command itself,
+  never detached inside
   its own shell with `&` or `nohup` (its notification would fire at once),
   and never wait on it with `pgrep -f <pattern>`: the watcher matches its
   own command line and loops forever (the guard refuses that too).
+  In Codex, start `gh run watch <run-id> --exit-status --interval 60` with
+  `exec_command` and `yield_time_ms: 1000`. Keep the returned session ID
+  and use `write_stdin` to wait for its exit status. Query individual jobs
+  when a result can change the next action. Verify artifacts after the watch exits.
 - Commit **directly to `main`**, one plan step per commit. Branch
   (`plan/<slug>`, rebased, `merge --ff-only`, deleted after) only when a
   plan may be thrown away or the human asked to review first.
