@@ -16,7 +16,7 @@ jobs:
         os: [ubuntu-latest, ubuntu-24.04-arm]
         corpus: [benchcad, cadrecode]
         include:
-          # Step 3 verified all affected BenchCAD rows at this deadline.
+          # ADR-0030 records the timing probes for the BenchCAD replay deadline.
           - corpus: benchcad
             deadline: 240
           - corpus: cadrecode
@@ -82,7 +82,8 @@ jobs:
 
           from arris_gym.fidelity import FidelityTable, ReachReport
 
-          committed = Path("tests/fixtures/c2") / os.environ["CORPUS"]
+          corpus = os.environ["CORPUS"]
+          committed = Path("tests/fixtures/c2") / corpus
           replayed = Path(os.environ["REPLAY_DIR"]) / "out"
           with gzip.open(committed / "fidelity.json.gz", "rt", encoding="utf-8") as table:
               expected = FidelityTable.from_json(table.read())
@@ -111,4 +112,21 @@ jobs:
                   differences.append(report)
           if differences:
               raise SystemExit("Reports differ from the committed fixtures: " + ", ".join(differences))
+
+          # The pinned program counts and ADR-0014 reach targets, with the
+          # two ADR-0025 BenchCAD corner patches allowed as by_design.
+          programs, minimum_reach, allowed_by_design = {
+              "benchcad": (17_900, 15_215, 2),
+              "cadrecode": (968, 968, 0),
+          }[corpus]
+          if (
+              actual.programs != programs
+              or reach.programs != programs
+              or reach.in_subset < minimum_reach
+              or actual.outcomes["unclassified"]
+              or actual.timed_out
+              or reach.in_subset_cq_bug
+              or reach.in_subset_by_design > allowed_by_design
+          ):
+              raise SystemExit(f"Replay does not meet C2 acceptance for {corpus}")
           PY

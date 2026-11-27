@@ -804,13 +804,14 @@ bytes on the slice. The digest moves with any version it covers: a new
 version is recorded in each row but not hashed, ADR-0011), and the
 committed `rescore.json` is recommitted in a `fixtures:` commit with it.
 
-The C2 fidelity workflow runs each corpus on x86-64 and aarch64 using the
-committed oracle reports (§The oracle). Each job validates the full
+The C2 fidelity workflow runs an oracle replay for each corpus on x86-64
+and aarch64 (§The oracle). Each job validates the full
 `FidelityTable`, including its measure deltas and refusals, and compares its
 canonical digest with the committed table. It also compares the uncompressed
-oracle rows and the reach and arris reports with their committed contents.
-The job uploads the reports and machine details before checking for
-differences. The corpus replays run outside the offline gate.
+oracle rows and the reach and arris reports with their committed contents,
+and checks the C2 reach and classification requirements and zero timeouts.
+The job uploads the reports and machine details before these checks. The
+corpus replays run outside the offline gate.
 
 [Run 45990557026](https://github.com/arris-labs/arris-gym/actions/runs/45990557026) matched
 both committed fidelity digests on x86-64 and aarch64 with zero timeouts.
@@ -1195,9 +1196,11 @@ agree with the same oracle reports. CAD-Recode keeps reach 968/968, 19
 `7cc30ad7…6b92`.
 
 The oracle's 240 s corpus deadline covers the slowest measured oracle run.
-The arris run keeps its 30 s deadline. One double simplex sprocket with a
-through-cut keyway takes 29.6 s alone, close enough for load to move its
-status (BACKLOG). The oracle's bytes are not repeatable run to
+The arris corpus run defaults to 30 s. The fidelity workflow gives the
+BenchCAD replay 240 s and CAD-Recode 30 s with four workers (ADR-0030).
+The BenchCAD probes measure sprocket timeouts at 30 s, with the slowest
+four-worker observation taking 60.54 s (BACKLOG).
+The oracle's bytes are not repeatable run to
 run for some programs: on the BenchCAD re-run 214 rows of 8
 families (`sheet_metal_tray`, `washer`, `spacer_ring`, `snap_clip`,
 `ratchet_sector`, `hollow_tube`, `spline_hub`, `parallel_key`) differed from
