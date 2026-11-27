@@ -1,0 +1,54 @@
+name: C2 BenchCAD timeout diagnosis
+
+on:
+  push:
+    branches: [probe/c2-fidelity-timeouts]
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+        group: [serial-0, serial-1, serial-2, serial-3, parallel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      GROUP: ${{ matrix.group }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked --extra corpus
+      - name: Measure execution and body phases using the pinned oracle reports
+        shell: bash
+        env:
+          PYTHONPATH: tools
+        run: |
+          out="$RUNNER_TEMP/c2-timings"
+          mkdir "$out"
+          {
+            git rev-parse HEAD
+            uname -m
+            lscpu
+            getconf GNU_LIBC_VERSION
+            uv run --locked --extra corpus python --version
+          } | tee "$out/machine.txt"
+          if [[ "$GROUP" == parallel ]]; then
+            settings=(--workers 4)
+          else
+            settings=(--workers 1 --shard "${GROUP#serial-}" --shards 4)
+          fi
+          uv run --locked --extra corpus python tools/c2_timeout_probe.py \
+            tools/c2-timeout-stems.txt "$out" "${settings[@]}" --deadline 240
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: c2-timeouts-${{ matrix.os }}-${{ matrix.group }}
+          path: |
+            ${{ runner.temp }}/c2-timings/timings.jsonl
+            ${{ runner.temp }}/c2-timings/machine.txt
+          if-no-files-found: error
