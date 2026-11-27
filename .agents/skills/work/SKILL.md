@@ -13,8 +13,9 @@ ask which if two), **conducts** the whole rest of the plan by *Conduct*,
 then retires it: each step a fresh subagent that follows *Do* for that one
 step. The conductor's turn does not end between steps: a checked hand-back
 is followed at once by the next step's subagent. It stops early only for
-what *Conduct* names (an external action awaiting the human, a human-only question, a second
-miss); reporting after one step and waiting for another `/work` is a bug.
+what *Conduct* names (an external action awaiting the human, a human-only
+question, a second miss). Reporting after one step and waiting for another
+`/work` is a bug.
 
 ## Do
 
@@ -41,18 +42,15 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    item is in the plan's *Design deltas* (add it if missing) and its new word
    gets its `GLOSSARY.md` entry, in the same commit.
 3. Run the step's own tests (`uv run pytest tests/<file>`) and `uv run ruff
-   format`. The hook runs the gate at the commit. A run expected past a
-   minute goes with `run_in_background`, and the step goes on with what does
-   not depend on it (`.agents/rules/git.md`, no foreground waits). A
-   subagent has no one to notify: it runs in the foreground under `timeout`
-   of at most 110 s and splits a probe that needs longer. The exception is
-   the commit: its hook runs the gate (~2 min), so `git commit` runs in the
-   foreground under `timeout 300` with the Bash tool's own timeout raised to
-   300000 ms. A whole-corpus re-run cannot be split (a timeout row re-runs on
-   every pass, so a resume makes no progress): a step that needs one is the
-   conductor's, run with `run_in_background`. For a
-   change to what a program builds or scores, look at the result (`inspect`
-   skill) before trusting a green test.
+   format`. Start a run expected past a minute as a background job and
+   continue independent work (`.agents/rules/git.md`). A subagent without
+   background completion keeps foreground probes within 110 s and splits
+   longer probes. Start a `git commit` that runs the gate in the background
+   without a shell timeout and collect its exit status. A subagent that
+   cannot receive completion hands the staged commit to the conductor.
+   A whole-corpus re-run belongs to the conductor and runs in the background.
+   For a change to what a program builds or scores, look at the result
+   (`inspect` skill) before trusting a green test.
 4. Read your own `git diff --cached` against `.agents/review.md` and
    `.agents/rules/gym.md` before committing: a status decided from a
    message's wording, an aggregate over survivors, a tolerance literal, a
@@ -118,17 +116,17 @@ miss); reporting after one step and waiting for another `/work` is a bug.
    poll. Its prompt: "Work step N (or steps N-M, in order) of
    `docs/plans/<slug>.md` in this checkout by *Do* in
    `.agents/skills/work/SKILL.md`, only those steps, one commit per step
-   (each step's box ticked in its own commit). The commit is `timeout 300
-   git commit …` with the Bash tool's timeout 300000, and staging is `git add
-   <paths>`, never `-A` (`tools/bash-guard.sh` refuses both otherwise). A run
-   whose result you need goes in the foreground under `timeout`, never
-   backgrounded and polled. You answer to the conductor, never the human:
-   hand back the commit id and anything surprising, or the question that
-   stopped you." A step that needs a run over 110 s (a corpus re-run) is
-   split in the plan: the conductor runs it in the background, a subagent
-   records its outputs in the next step. The conductor writes no code itself; it alone talks to
-   the human.
-3. On each hand-back, check what landed: one commit per step of the
+   (each step's box ticked in its own commit). Stage with `git add <paths>`.
+   Follow *Do* for the background commit and its exit status. If you cannot
+   receive completion, hand back the staged paths, the exact commit message
+   and any batch steps still pending. Otherwise return the commit id and
+   anything surprising, or the question that stopped you." A step that
+   needs a run over 110 s (a corpus re-run) is split in the plan. The
+   conductor runs it in the background and a subagent records its outputs
+   in the next step. The conductor writes no code and alone talks to the human.
+3. On a staged hand-back, verify the index and start the commit in the
+   background. Wait for the hook's exit status before resuming any remaining
+   batch steps. On each hand-back, check what landed: one commit per step of the
    batch, each naming `(plans/<slug> step N)`, every step ticked, `git
    status` is clean. Read `git diff <batch base> -- docs/plans/<slug>.md`
    too: each new *Settled* note is judged against the list below whether or
@@ -146,7 +144,8 @@ miss); reporting after one step and waiting for another `/work` is a bug.
 4. After the last box, retire the plan in this session by
    `.agents/skills/retire-plan/SKILL.md`; its review subagent runs on tier
    3. A hard finding goes to a fresh subagent on the tier of the step it
-   repairs; the conductor commits only the retirement.
+   repairs. The conductor commits the retirement and any staged steps
+   handed back for the gate.
 5. Reply as *Do*'s step 7 does, one line per step conducted (its commit,
    its tier, its batch, anything surprising), then the retirement's reply.
 
