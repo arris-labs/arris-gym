@@ -73,7 +73,7 @@ the design. **[3]** unproven, correctness has to be established here.
   xfail fixtures for newly reproduced failures. For timeouts, measure the
   named programs on both architectures, alone and at the replay's
   concurrency. If all four jobs match, record that evidence and skip step 4.
-- [ ] Step 4 **[3] [conductor-run]** — If needed, fix the demonstrated
+- [x] Step 4 **[3] [conductor-run]** — If needed, fix the demonstrated
   cause and verify the reduced fixture on both architectures. A replay-only
   deadline or worker count is measured by step 3. For an arris defect that
   requires an upstream fix, file the reduced case under
@@ -138,6 +138,22 @@ The slowest four-worker stem on both machines is
 take 40.03 s and 20.50 s on x86-64, and 31.98 s and 13.26 s on aarch64.
 The four single sprockets timed out in step 2 and finish within 30 s
 in the timing probe.
+
+## Step 4 verification
+
+[Run 45990557026](https://github.com/arris-labs/arris-gym/actions/runs/45990557026)
+tested `1d577e97620336a122099bce4d01f66d7b4abe82` on 2026-11-27.
+Each job used four workers. Both architectures reproduced each corpus's
+committed fidelity digest and every count in the acceptance table below,
+including zero timeouts. The uncompressed oracle rows and the reach and
+arris reports matched the committed contents in all four jobs.
+
+| Corpus and architecture | Validated fidelity digest |
+| --- | --- |
+| [BenchCAD x86-64](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15197263245) | `bde03cc9c0d13ee40a400db9d3b0ff6cf1773b89745fdf524359b77c295300ff` |
+| [BenchCAD aarch64](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15195438502) | `bde03cc9c0d13ee40a400db9d3b0ff6cf1773b89745fdf524359b77c295300ff` |
+| [CAD-Recode x86-64](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15195900879) | `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92` |
+| [CAD-Recode aarch64](https://github.com/arris-labs/arris-gym/actions/runs/45990557026/artifacts/15196175506) | `7cc30ad7c343342e6763224b231790dd9de5f2954d2b7bac3693522dc1246b92` |
 
 ## Acceptance
 
