@@ -875,7 +875,8 @@ versions (including oracle Python 3.12.3), STEP hashes and full-precision
 measures. Replay needs no oracle environment. Each selected stem requires
 one answered report with the matching program SHA-256, family, revision
 and licence. Distinct stems may share a hash. With `--slice FILE`, either
-corpus can replay a selection from its full pinned report file.
+corpus can replay a selection with its full pinned report and verdict files.
+The tool applies verdicts to the selected stems.
 
 For live comparison, `--oracle-rows FILE` probes the local oracle's versions,
 reuses matching reports by program SHA-256 and runs the oracle for the

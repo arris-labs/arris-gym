@@ -5,6 +5,7 @@ except for its timed-out rows, which are run again (a timeout is never cached). 
 from __future__ import annotations
 
 import gzip
+import json
 import pathlib
 from collections.abc import Sequence
 from typing import Any
@@ -16,6 +17,7 @@ import oracle_run
 from arris_gym.census import CorpusProgram
 from arris_gym.fidelity import (
     FidelityTable,
+    OracleMeasures,
     OracleReport,
     OracleStatus,
     OracleVersions,
@@ -158,6 +160,47 @@ def test_replay_preserves_reports_by_stem_without_an_oracle_environment(
     path.write_bytes(cq_corpus.gz(oracle_run.rows_text(rows)))
     with pytest.raises(ValueError, match="does not match the pinned oracle rows"):
         cq_corpus.main(argv)
+
+
+def test_replay_slice_uses_the_corpus_verdicts(
+    replay_input: tuple[list[dict[str, object]], list[str], pathlib.Path],
+) -> None:
+    rows, argv, path = replay_input
+    report = OracleReport.model_validate(rows[0]["report"])
+    rows[0]["report"] = report.model_copy(
+        update={
+            "status": OracleStatus.INVALID,
+            "measures": OracleMeasures(
+                volume=1,
+                area=6,
+                centroid=(0, 0, 0),
+                bounds=((0, 0, 0), (1, 1, 1)),
+                faces=6,
+                solids=1,
+            ),
+        },
+    ).model_dump(mode="json", exclude={"step", "seconds"})
+    path.write_bytes(cq_corpus.gz(oracle_run.rows_text(rows)))
+    selection = path.parent / "slice.txt"
+    selection.write_text("a\n", encoding="utf-8")
+    verdicts = path.parent / "verdicts.json"
+    verdict = {
+        "disagreement": "by_design",
+        "evidence": {"kind": "doc", "anchor": "docs/ARCHITECTURE.md#outcomes"},
+    }
+    verdicts.write_text(json.dumps({"a": verdict, "b": verdict}), encoding="utf-8")
+    command = [*argv, "--slice", str(selection), "--verdicts", str(verdicts)]
+    assert cq_corpus.main(command) == 0
+    table_path = path.parent / "out" / "fidelity.json.gz"
+    table = FidelityTable.from_json(gzip.decompress(table_path.read_bytes()).decode("utf-8"))
+    (entry,) = table.entries
+    assert entry.name == "a"
+    assert entry.row.verdict is not None
+    assert entry.row.verdict.model_dump(mode="json") == verdict
+
+    verdicts.write_text(json.dumps({"a": verdict, "unknown": verdict}), encoding="utf-8")
+    with pytest.raises(ValueError, match=r"verdicts for stems outside the run: .*unknown"):
+        cq_corpus.main(command)
 
 
 @pytest.mark.parametrize(

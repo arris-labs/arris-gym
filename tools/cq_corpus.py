@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a whole corpus under `cq` and on the oracle; write its fidelity rows and reach report.
+"""Compare corpus programs run under `cq` with live or pinned oracle reports.
 
 Generalises `cq_slice.py` and `oracle_run.py` to `--corpus benchcad|cadrecode`
 (the `[corpus]` extra, the Hugging Face cache or the network, and
@@ -25,7 +25,8 @@ draw them again.
 
 `--replay-oracle-rows FILE` compares against the pinned reports with no live
 oracle. It requires one answered report per selected stem, from the same
-program SHA-256, family, licence and revision.
+program SHA-256, family, licence and revision. A replay with `--slice`
+accepts the full corpus's verdict files and applies verdicts to selected stems.
 """
 
 from __future__ import annotations
@@ -265,7 +266,9 @@ def retry_timeouts(
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the corpus and write the rows; print the counts and digests to stderr."""
-    parser = argparse.ArgumentParser(description="Run a whole corpus under cq and on the oracle.")
+    parser = argparse.ArgumentParser(
+        description="Compare corpus programs run under cq with live or pinned oracle reports."
+    )
     parser.add_argument("--corpus", choices=("benchcad", "cadrecode"), required=True)
     parser.add_argument("--slice", type=pathlib.Path, help="corpus stems to run, one per line")
     parser.add_argument(
@@ -293,14 +296,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    programs, source, licence, revision = load(args.corpus)
+    corpus_programs, source, licence, revision = load(args.corpus)
+    programs = corpus_programs
     if args.slice is not None:
         wanted = set(oracle_run.read_slice(args.slice))
         programs = [p for p in programs if p.stem in wanted]
         if len(programs) != len(wanted):
             raise ValueError("stems the corpus lacks")
     out_dir = args.out_dir or C2 / args.corpus
-    verdicts = read_verdict_files(args.verdicts, [p.stem for p in programs])
+    verdict_programs = corpus_programs if args.replay_oracle_rows is not None else programs
+    verdicts = read_verdict_files(args.verdicts, [p.stem for p in verdict_programs])
     known: dict[str, OracleReport] = {}
     replay = None
     if args.oracle_rows is not None:
