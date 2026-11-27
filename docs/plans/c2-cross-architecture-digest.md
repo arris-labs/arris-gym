@@ -67,7 +67,7 @@ the design. **[3]** unproven, correctness has to be established here.
   deadline. Compare each validated table with its committed fixture. Upload
   the table and reports before declaring any comparison failure, and retain
   the evidence from all four jobs.
-- [ ] Step 3 **[3]** — If a comparison differs, diff by stem and field,
+- [x] Step 3 **[3]** — If a comparison differs, diff by stem and field,
   then use `--slice` and the inspect skill to isolate the earliest difference
   in execution, body measures or fidelity comparison. Record minimal strict
   xfail fixtures for newly reproduced failures. For timeouts, measure the
@@ -105,6 +105,39 @@ all four jobs. Every count in the acceptance table matches except the
 BenchCAD timeout counts. The x86-64 timeouts span 51 `double_simplex_sprocket`
 and four `sprocket` programs. All 28 aarch64 timeouts are
 `double_simplex_sprocket` programs. The tables name each timed-out stem.
+
+## Step 3 diagnosis
+
+The 28 aarch64 timeouts are among the 55 x86-64 timeouts. Against the
+committed table, the affected rows change only in `status` (`ok` to
+`timeout`) and `deltas` (null). The existing `occt_wrong` verdicts
+preserve the class (ADR-0006). Reach changes only in its timeout count.
+
+On the local Ryzen 9 7950X, a `--slice` replay of
+`double_simplex_sprocket_009154_s20260505` matches its committed row
+at 30 s and times out in the body worker at 20 s. With four workers
+on two physical cores with SMT, it and three other stems in its family
+(`000096_s20260507`, `006936_s20260505`, `013358_s20260505`) time out
+at 30 s and match their committed rows in 31.00–39.69 s at a 240 s cap.
+This reproduces the existing sprocket performance finding in BACKLOG.
+
+[Diagnostic run 45983480076](https://github.com/arris-labs/arris-gym/actions/runs/45983480076)
+tests `dfc7b683932189ef02793f75487f4832476961be` at a 240 s diagnostic
+cap. The ten artifacts cover all 55 stems per architecture and worker
+count. All 220 observations end `ok` and match their committed rows.
+
+| Architecture | Workers | Median (s) | Slowest (s) | Above 30 s |
+| --- | ---: | ---: | ---: | ---: |
+| x86-64 | 1 | 29.28 | 49.47 | 27 |
+| x86-64 | 4 | 40.14 | 60.54 | 39 |
+| aarch64 | 1 | 29.22 | 44.68 | 27 |
+| aarch64 | 4 | 29.65 | 45.25 | 27 |
+
+The slowest four-worker stem on both machines is
+`double_simplex_sprocket_011623_s20260505`. Its program and body workers
+take 40.03 s and 20.50 s on x86-64, and 31.98 s and 13.26 s on aarch64.
+The four single sprockets timed out in step 2 and finish within 30 s
+in the timing probe.
 
 ## Acceptance
 
@@ -147,6 +180,7 @@ rows. Run `tools/gate.sh` for the offline checks.
 - **Settled (step 2):** CAD-Recode matches at the existing deadline.
   BenchCAD's 55 and 28 timeouts break digest equality. Step 3 checks
   whether any other rows or fields differ.
-- ⚠ OPEN: If the replay hits timeouts, what deadline and worker count make
-  both machines finish reliably? The agent measures in step 3 and records
-  the choice in step 4. Any change to C2 acceptance is the human's decision.
+- **Settled (step 3):** The 30 s deadline is too short on both architectures
+  even with one worker. At four workers the 240 s diagnostic cap recovers
+  all affected rows. Step 4 sets the BenchCAD replay deadline from these
+  timings and verifies it on the full corpora at the C2 acceptance counts.
