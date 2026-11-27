@@ -5,6 +5,8 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+## 0.2.0 — 2026-11-28
+
 - In the CadQuery dialect, use `faces(selector).shell(-thickness)` to hollow
   convex planar stock or open a circular cylinder at a flat end. Calling
   `shell(-thickness)` on convex planar stock without selected faces creates
