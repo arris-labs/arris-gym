@@ -1,0 +1,108 @@
+name: C2 fidelity replay
+
+on:
+  push:
+    branches: [plan/c2-cross-architecture-digest]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+        corpus: [benchcad, cadrecode]
+    runs-on: ${{ matrix.os }}
+    env:
+      CORPUS: ${{ matrix.corpus }}
+      WORKERS: "4"
+      DEADLINE: "30"
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked --extra corpus
+      - name: Prepare a fresh replay directory
+        run: |
+          replay_dir=$(mktemp -d "$RUNNER_TEMP/fidelity.XXXXXX")
+          mkdir "$replay_dir/out"
+          echo "REPLAY_DIR=$replay_dir" >> "$GITHUB_ENV"
+          {
+            git rev-parse HEAD
+            uname -m
+            lscpu
+            getconf GNU_LIBC_VERSION
+            uv run --locked --extra corpus python --version
+            echo "corpus=$CORPUS workers=$WORKERS deadline=${DEADLINE}s"
+          } | tee "$replay_dir/out/machine.txt"
+      - name: Replay the corpus against the committed oracle
+        id: replay
+        run: |
+          root="tests/fixtures/c2/$CORPUS"
+          verdicts=("$root/verdicts.json")
+          if [[ "$CORPUS" == benchcad ]]; then
+            verdicts+=("$root/loft-replay/verdicts.json" "$root/loft-replay/trim-verdict.json"
+                       "$root/shell-replay/verdicts.json")
+          fi
+          uv run --locked --extra corpus python tools/cq_corpus.py --corpus "$CORPUS" \
+            --verdicts "${verdicts[@]}" --replay-oracle-rows "$root/oracle.jsonl.gz" \
+            --out-dir "$REPLAY_DIR/out" --work-dir "$REPLAY_DIR/chunks" \
+            --workers "$WORKERS" --timeout "$DEADLINE"
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && (steps.replay.outcome == 'success' || steps.replay.outcome == 'failure') }}
+        with:
+          name: fidelity-${{ matrix.corpus }}-${{ matrix.os }}
+          path: |
+            ${{ env.REPLAY_DIR }}/out/fidelity.json.gz
+            ${{ env.REPLAY_DIR }}/out/oracle.jsonl.gz
+            ${{ env.REPLAY_DIR }}/out/reach-report.json
+            ${{ env.REPLAY_DIR }}/out/arris-report.json
+            ${{ env.REPLAY_DIR }}/out/arris-report.md
+            ${{ env.REPLAY_DIR }}/out/machine.txt
+          if-no-files-found: error
+      - name: Compare the validated table and reports with the committed fixtures
+        run: |
+          uv run --locked --extra corpus python - <<'PY'
+          import gzip
+          import hashlib
+          import os
+          from pathlib import Path
+
+          from arris_gym.fidelity import FidelityTable, ReachReport
+
+          committed = Path("tests/fixtures/c2") / os.environ["CORPUS"]
+          replayed = Path(os.environ["REPLAY_DIR"]) / "out"
+          with gzip.open(committed / "fidelity.json.gz", "rt", encoding="utf-8") as table:
+              expected = FidelityTable.from_json(table.read())
+          with gzip.open(replayed / "fidelity.json.gz", "rt", encoding="utf-8") as table:
+              actual = FidelityTable.from_json(table.read())
+          reach = ReachReport.model_validate_json((replayed / "reach-report.json").read_bytes())
+          print(f"committed table digest: {expected.digest}")
+          print(f"replayed table digest:  {actual.digest}")
+          print(
+              f"programs={actual.programs} in_subset={reach.in_subset} agree={actual.outcomes['agree']} "
+              f"unclassified={actual.outcomes['unclassified']} timeouts={len(actual.timed_out)} "
+              f"in_subset_cq_bug={reach.in_subset_cq_bug} in_subset_by_design={reach.in_subset_by_design}"
+          )
+
+          pinned_oracle = gzip.decompress((committed / "oracle.jsonl.gz").read_bytes())
+          replayed_oracle = gzip.decompress((replayed / "oracle.jsonl.gz").read_bytes())
+          print(f"committed oracle digest: {hashlib.sha256(pinned_oracle).hexdigest()}")
+          print(f"replayed oracle digest:  {hashlib.sha256(replayed_oracle).hexdigest()}")
+          differences = []
+          if expected.digest != actual.digest:
+              differences.append("fidelity.json.gz")
+          if pinned_oracle != replayed_oracle:
+              differences.append("oracle.jsonl.gz")
+          for report in ("reach-report.json", "arris-report.json", "arris-report.md"):
+              if (committed / report).read_bytes() != (replayed / report).read_bytes():
+                  differences.append(report)
+          if differences:
+              raise SystemExit("Reports differ from the committed fixtures: " + ", ".join(differences))
+          PY

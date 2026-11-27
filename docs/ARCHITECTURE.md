@@ -804,6 +804,14 @@ bytes on the slice. The digest moves with any version it covers: a new
 version is recorded in each row but not hashed, ADR-0011), and the
 committed `rescore.json` is recommitted in a `fixtures:` commit with it.
 
+The C2 fidelity workflow runs each corpus on x86-64 and aarch64 using the
+committed oracle reports (§The oracle). Each job validates the full
+`FidelityTable`, including its measure deltas and refusals, and compares its
+canonical digest with the committed table. It also compares the uncompressed
+oracle rows and the reach and arris reports with their committed contents.
+The job uploads the reports and machine details before checking for
+differences. The corpus replays run outside the offline gate.
+
 ## The oracle
 
 `tools/oracle/` is its own `uv` environment holding CadQuery and OCP. It takes

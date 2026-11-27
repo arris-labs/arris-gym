@@ -120,6 +120,9 @@ rows. Run `tools/gate.sh` for the offline checks.
 
 ## Open questions
 
+- **Settled (step 2):** Commit the workflow before the authorized branch
+  push so GitHub Actions can run it. Record the run and tick step 2 after
+  collecting the results from all four jobs.
 - ⚠ OPEN: Do the full tables match at the existing deadline? The agent
   decides from step 2, and uses step 3 to distinguish a timing difference
   from a change to a row's content.
