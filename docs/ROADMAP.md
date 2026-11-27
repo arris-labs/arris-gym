@@ -121,16 +121,16 @@ training.
 
 ## C2 — the fidelity gate
 
-**Status (2026-11-27).** Bundle 5 and the shell lift are complete. Reach is
+**Status (2026-11-27).** C2 acceptance is met. Reach is
 15,656/17,900 (87.5%) on BenchCAD and 968/968 on CAD-Recode with arris 0.12.0,
 meeting both reach targets (ADR-0014). Agreements total 12,791 and 893
 respectively. Both corpora have zero unclassified rows, timeouts and
 in-subset `cq_bug` rows. The two BenchCAD `by_design` rows are the corner
 patches under ADR-0025. `shell(num)` adds 330 BenchCAD programs
-(ADR-0029). The C1 rescore has 300 successful rows with exact IoU of 1.0
-and the same digest at 2 and 16 workers and in CI on x86-64 and aarch64.
-The remaining C2 acceptance check is to match both x86-64 fidelity table
-digests on aarch64.
+(ADR-0029). Both committed fidelity digests match on x86-64 and aarch64
+against the same committed oracle reports (ADR-0030). The C1 rescore has
+300 successful rows with exact IoU of 1.0 and the same digest at 2 and 16
+workers and in CI on x86-64 and aarch64. Cycle closure is pending.
 
 **Goal.** The `cq` subset grows in the knee's bundle order over BenchCAD and the
 CAD-Recode validation split until the fidelity table has nothing unclassified
@@ -155,11 +155,6 @@ raw OCP calls; model outputs and baselines (C3); training.
 table's digest equal on two machines of different architecture.
 **Decision point:** low fidelity from arris refusals ranks arris's next cycle;
 low fidelity from CadQuery semantics narrows the subset.
-
-**Measured.** Both committed fidelity digests match on x86-64 and aarch64
-against the pinned oracle reports (ADR-0030). BenchCAD reaches 15,656/17,900
-with 12,791 agreements. CAD-Recode reaches 968/968 with 893 agreements.
-Both have zero unclassified rows, timeouts and in-subset `cq_bug` rows.
 
 ## C3 — re-scored benchmarks
 

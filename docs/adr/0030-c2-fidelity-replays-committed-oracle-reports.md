@@ -29,10 +29,15 @@ and both arris reports with their committed contents.
 reproduced both committed digests on x86-64 and aarch64 on arris 0.12.0.
 Each job used four workers. The 30 s BenchCAD trial produced 55 timeouts
 on x86-64 and 28 on aarch64.
+[Initial run 45957071207](https://github.com/arris-labs/arris-gym/actions/runs/45957071207)
+
 [Timing probes](https://github.com/arris-labs/arris-gym/actions/runs/45983480076)
-recovered all affected rows at the 240 s diagnostic cap. The verified
-full replay used that cap for BenchCAD and 30 s for CAD-Recode, with
-zero timeouts on either architecture.
+recovered all 55 affected stems at the 240 s diagnostic cap on each
+architecture at both one and four workers. At one worker, 27 stems on
+each architecture took longer than 30 s. The slowest four-worker stem,
+`double_simplex_sprocket_011623_s20260505`, took 60.54 s on x86-64 and
+45.25 s on aarch64. The verified full replay used that cap for BenchCAD and
+30 s for CAD-Recode, with zero timeouts on either architecture.
 
 The [BenchCAD](../../tests/fixtures/c2/benchcad/README.md) and
 [CAD-Recode](../../tests/fixtures/c2/cadrecode/README.md) READMEs give the

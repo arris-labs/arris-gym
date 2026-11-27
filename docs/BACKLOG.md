@@ -63,7 +63,13 @@ re-brainstormed. A *measured* defect is not a raw idea: it goes under
 - Revisit the default outward and inward reentrant shell joins when arris offers arc joins (ADR-0029, consumer request in `../arris/docs/ideas/arc-joins-for-shell-offsets.md`).
 - File the two arris refusals of `regression/cq-cut-blind-after-a-filled-pocket` and `regression/cq-cut-blind-across-a-split-end-face` (a tool flush with a face split by an edge it crosses, `OpDegenerateError`) in `../arris/docs/ideas/`: both READMEs say "not yet reported"
 - Investigate the three-way rectangular overlap in `regression/rects-three-way-overlap`, where arris refuses the union and the oracle builds an invalid part. No in-subset BenchCAD row shows it. The consumer report is `../arris/docs/ideas/fuse-three-overlapping-boxes.md`.
-- Profile `double_simplex_sprocket_009154_s20260505`, which takes 29.6 s of the 30 s sandbox deadline when run alone. The consumer report is `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
+- Profile the BenchCAD sprocket program and body workers. The 30 s replay
+  hit 55 timeouts on x86-64 and 28 on aarch64. All affected rows reproduce
+  their committed results at 240 s, with a slowest four-worker observation
+  of 60.54 s on x86-64 and 45.25 s on aarch64. The timing depends on load,
+  so the named corpus rows and probes in ADR-0030 preserve the regression
+  evidence. The consumer report is
+  `../arris/docs/ideas/benchcad-through-cut-body-check-and-blends.md`.
 - Investigate the converged oracle trim integral of `regression/oracle-slotted-ring-boundary`, which differs from its construction by 2.36e-8 relative in volume. The fixture is strict `xfail` and no verdict relies on it.
 
 ## Findings
