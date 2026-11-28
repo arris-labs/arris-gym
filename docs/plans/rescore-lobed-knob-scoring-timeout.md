@@ -45,7 +45,7 @@ with zero timeouts. Preserve the evidence for the C3 report protocol.
 Complexity grades and tiers follow `.agents/tiers.md`. **[1]** is routine,
 **[2]** is careful, and **[3]** requires establishing a new rule or guarantee.
 
-- [ ] Step 1 **[2]** **[CI]** — Add an opt-in corpus timing probe on the
+- [x] Step 1 **[2]** **[CI]** — Add an opt-in corpus timing probe on the
   plan ref. Use the pinned `lobed_knob_006797_s20260505` program and
   committed STEP. Time repeated `score` calls at one worker and under
   intended concurrency, starting at four workers and a 60 s deadline.
@@ -94,8 +94,8 @@ Complexity grades and tiers follow `.agents/tiers.md`. **[1]** is routine,
 
 ## Open questions
 
-- ⚠ OPEN: Which deadline and worker count give enough headroom on both
-  architectures? The agent decides from step 1 and verifies in step 3.
-  If the full replay reveals a slower pair, measure it before changing
-  the deadline. Profile isolated slow pairs if concurrency alone cannot
-  account for the observed cost.
+- *Settled.* Use four workers and a 60 s score deadline for the replay.
+  [Calibration](https://github.com/arris-labs/arris-gym/actions/runs/46123722320)
+  matched all input and score digests on both four-CPU runners. At four
+  workers, the maximum was 23.63 s on x86-64 and 17.39 s on aarch64,
+  leaving at least 36 s of measured headroom. Step 3 checks the full slice.
