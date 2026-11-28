@@ -67,9 +67,14 @@ error and leaves the completed rows for diagnosis.
 
 ## Offline replay
 
+From the repository root, unpack the [frozen 300-record bundle](../../tests/fixtures/benchcad-vision2code/baseline/README.md)
+and replay using the locked Gym environment.
+
 ```sh
+bundle=$(mktemp -d)
+tar -xzf tests/fixtures/benchcad-vision2code/baseline/bundle.tar.gz -C "$bundle"
 uv run --locked python tools/benchcad/vision2code.py replay \
-  --bundle BUNDLE --out OUT --workers 4 --score-timeout 60
+  --bundle "$bundle" --out OUT --workers 4 --score-timeout 60
 ```
 
 Replay uses the main environment and a frozen bundle. It checks the entire

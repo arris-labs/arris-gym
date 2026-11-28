@@ -100,7 +100,7 @@ algorithm, isolation guarantee or semantic rule to establish.
   architectures with four workers and a starting score deadline of 60 s (ADR-0031).
   Include the slowest pairs observed in the local smoke. Record the existing
   program and target limits, per-stage times and the measured score deadline.
-- [ ] Step 5 **[2]** **[conductor-run]** — Freeze one prediction set and grade
+- [x] Step 5 **[2]** **[conductor-run]** — Freeze one prediction set and grade
   all 300 IDs on both paths. Verify program and target hashes against the
   manifest, freeze the upstream rows, reconcile counts and record the first
   comparison digest. Verify a replay from the stored artifacts.
@@ -168,3 +168,8 @@ algorithm, isolation guarantee or semantic rule to establish.
   headroom on the slowest score. Program and target workers used the
   existing 5 s and 512 MiB limits. The smoke exercised one scoreable
   sampled prediction. Step 6 checks the full greedy prediction set.
+- **Settled (step 5):** the [stored bundle and local replay evidence](../../tests/fixtures/benchcad-vision2code/baseline/README.md)
+  cover all 300 IDs. Both local replays produced comparison digest
+  `63c6626e60116b3ac0eee622a4db118e49a44793475a496db3b1eebc5119dbba`.
+  The greedy baseline had two upstream scores, zero Gym scores and zero
+  timeouts. Step 4 provides the timing evidence for the Gym scoring stage.
