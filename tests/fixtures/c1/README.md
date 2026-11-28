@@ -96,18 +96,30 @@ the gate); the same run leaves `oracle.jsonl` byte-identical. Read by
 ## The re-scored table
 
 `rescore.json` and `rescore.md` are the 300 slice programs run under `cq`
-and scored against their targets: `uv run --locked --extra corpus arris-gym
-rescore benchcad --out DIR --workers N` (network once, for the corpus; outside
-the gate). On arris 0.12.0, runs at 2 and 16 workers produced
-byte-identical JSON and Markdown with digest
+and scored against their targets. To repeat the CI replay from the repository
+root, run these commands (network once for the corpus, outside the gate).
+
+```sh
+uv run --locked --extra corpus arris-gym rescore benchcad \
+  --workers 4 --score-timeout 60 --out rescore-out
+uv run --locked python tools/rescore_diff.py tests/fixtures/c1/rescore.json rescore-out/rescore.json
+```
+
+Both jobs at `6a4538f` matched the committed table with digest
 `7653aec26a1f12111b53e4ec7587b926431eb68a9628a3b95443a3107ba23551`.
-Both [CI rescore jobs](https://github.com/arris-labs/arris-gym/actions/runs/45691768350)
-on commit `3a817e6` reproduced that digest: `ubuntu-latest` (x86-64)
-and `ubuntu-24.04-arm` (aarch64).
+The `rescore-ubuntu-latest` (x86-64) and `rescore-ubuntu-24.04-arm`
+(aarch64) artifacts each contain both tables and `run-evidence.txt`.
+[CI replay run 46125347612](https://github.com/arris-labs/arris-gym/actions/runs/46125347612).
+
 All 300 rows are `ok`, stage `none`, with exact IoU of 1.0. No row timed
 out. Invalidity is 0 and mean reward is 0.964561 over all 300 programs.
 Each row carries the source, CC-BY-4.0, and the arris, NumPy and reward
 versions.
+
+On arris 0.12.0, earlier local runs at 2 and 16 workers produced
+byte-identical JSON and Markdown. Both CI architectures reproduced the
+same digest at `3a817e6`.
+[CI run 45691768350](https://github.com/arris-labs/arris-gym/actions/runs/45691768350).
 
 Compared with the 0.11.1 reports committed in `bd4c0bd`,
 `tools/rescore_diff.py` first locates changes at the program on 100 rows,
@@ -149,6 +161,9 @@ at `37b5a61`, the x86-64 score worker hit its 30 s deadline for
 `lobed_knob_006797_s20260505`. The program was `ok` and its program,
 candidate, target and STEP digests matched the committed row. This was
 the only changed row. The aarch64 job reproduced the committed digest.
+The baseline at `f516d4e` repeated the single x86-64 timeout and the
+aarch64 digest match.
+[Baseline run 46123722284](https://github.com/arris-labs/arris-gym/actions/runs/46123722284).
 
 The [timing probe](../../../tools/rescore_timing_probe.py) builds the pinned
 candidate and reads the committed STEP before timing. It checks all four
@@ -156,7 +171,10 @@ input digests, then times three rounds each at one and four workers with a
 60 s score deadline. Each round starts one score call per worker. The JSON
 records CPU affinity, settings, elapsed times, statuses, score digests
 and the expected digest. A changed score (including a timeout) gives a
-nonzero exit after the measurements are written.
+nonzero exit after the measurements are written. All calls reproduced
+the committed score digest. ADR-0031 records the score timings and
+full replay evidence.
+[Calibration run 46123722320](https://github.com/arris-labs/arris-gym/actions/runs/46123722320).
 
 To repeat the original 30 s contention case, set `CPU` to one logical CPU
 allowed by `taskset -pc $$` and run from the repository root.

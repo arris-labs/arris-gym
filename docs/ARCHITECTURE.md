@@ -1224,6 +1224,8 @@ corpus, `slice.txt` and `tests/fixtures/c1/targets.jsonl.gz`, so the table
 depends on the main environment alone, never on CadQuery (ADR-0011).
 The score deadline accepts positive finite seconds and defaults to 30 s.
 It applies per score worker. Program and target workers keep their own deadlines.
+The BenchCAD slice CI replay uses four workers and a 60 s score deadline
+on x86-64 and aarch64 (ADR-0031).
 
 - **A row per program**, in name order: source, licence, program SHA-256,
   dialect, the program's status and refusal, the candidate's and the target's

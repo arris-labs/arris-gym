@@ -47,3 +47,4 @@ training cycle starts from.
 | [0028](0028-a-cq-mirror-joins-a-half-outline-in-its-drawing-plane.md) | A `cq` mirror joins a half outline in its drawing plane | accepted |
 | [0029](0029-a-cq-shell-uses-sharp-offsets-where-arc-joins-stay-sharp.md) | A `cq` shell uses sharp offsets where arc joins stay sharp | accepted |
 | [0030](0030-c2-fidelity-replays-committed-oracle-reports.md) | C2 fidelity replays committed oracle reports | accepted |
+| [0031](0031-calibrate-the-benchcad-slice-score-deadline.md) | Calibrate the BenchCAD slice score deadline | accepted |

@@ -65,7 +65,7 @@ Complexity grades and tiers follow `.agents/tiers.md`. **[1]** is routine,
   slice after calibration. Keep the existing committed table comparison
   and publish both artifacts. Investigate any timeout or digest difference
   before accepting the settings.
-- [ ] Step 4 **[1]** — Record the measured settings, timings, run IDs
+- [x] Step 4 **[1]** — Record the measured settings, timings, run IDs
   and digests in an ADR and sync the replay docs.
 
 ## Acceptance

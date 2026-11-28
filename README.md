@@ -27,8 +27,9 @@ Pre-alpha, Linux only (x86-64 and AArch64, with user namespaces, Landlock,
   repository checkout, `arris-gym rescore benchcad` scores a 300-program
   slice against committed STEP targets from CadQuery. Use
   `arris-gym rescore benchcad --score-timeout SECONDS` to set the deadline
-  per score worker, which defaults to 30 seconds. These commands need
-  the `arris-gym[corpus]` extra.
+  per score worker, which defaults to 30 seconds. To use the CI replay
+  settings, run `arris-gym rescore benchcad --workers 4 --score-timeout 60`.
+  These commands need the `arris-gym[corpus]` extra.
 
 The CadQuery subset covers workplane and sketch operations, booleans,
 axis selectors, drilling, blends and supported loft, draft and shell forms.
