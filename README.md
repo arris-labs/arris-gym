@@ -25,7 +25,9 @@ Pre-alpha, Linux only (x86-64 and AArch64, with user namespaces, Landlock,
 - `arris-gym census --corpus benchcad` and `--corpus cadrecode` count the API
   forms and compute static reach without running the programs. From a
   repository checkout, `arris-gym rescore benchcad` scores a 300-program
-  slice against committed STEP targets from CadQuery. These commands need
+  slice against committed STEP targets from CadQuery. Use
+  `arris-gym rescore benchcad --score-timeout SECONDS` to set the deadline
+  per score worker, which defaults to 30 seconds. These commands need
   the `arris-gym[corpus]` extra.
 
 The CadQuery subset covers workplane and sketch operations, booleans,

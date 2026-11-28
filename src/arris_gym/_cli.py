@@ -31,6 +31,8 @@ from arris_gym.census import (
 from arris_gym.cq import subset
 from arris_gym.rescore import RescoreTable, rescore
 from arris_gym.rescore import benchcad as rescore_benchcad
+from arris_gym.reward._scoring import DEFAULT_SCORE_TIMEOUT
+from arris_gym.sandbox._run import check_timeout
 
 Reader = Callable[[], list[CorpusProgram]]
 """Reads a corpus's programs; the CLI's seam, so a test needs no download."""
@@ -100,10 +102,19 @@ def run_census(reader: Reader, out: Path, info: CorpusInfo = benchcad.INFO) -> C
 
 
 def run_rescore(
-    reader: Reader, slice_path: Path, targets: Path, out: Path, workers: int | None
+    reader: Reader,
+    slice_path: Path,
+    targets: Path,
+    out: Path,
+    workers: int | None,
+    score_timeout: float,
 ) -> RescoreTable:
     """Re-score the slice, write `rescore.json` and `rescore.md` into `out`."""
-    table = rescore(rescore_benchcad.load(slice_path, targets, reader), workers=workers)
+    table = rescore(
+        rescore_benchcad.load(slice_path, targets, reader),
+        workers=workers,
+        score_timeout=score_timeout,
+    )
     out.mkdir(parents=True, exist_ok=True)
     (out / "rescore.json").write_text(table.to_json() + "\n", encoding="utf-8")
     (out / "rescore.md").write_text(table.to_markdown(), encoding="utf-8")
@@ -112,7 +123,9 @@ def run_rescore(
 
 def run_rescore_command(args: argparse.Namespace, reader: Reader) -> int:
     """`arris-gym rescore benchcad`: run it and print the counts and the digest."""
-    table = run_rescore(reader, args.slice_path, args.targets, args.out, args.workers)
+    table = run_rescore(
+        reader, args.slice_path, args.targets, args.out, args.workers, args.score_timeout
+    )
     print(f"programs {table.programs}")
     print("statuses: " + ", ".join(f"{k} {n}" for k, n in table.statuses.items() if n))
     print("stages: " + ", ".join(f"{k} {n}" for k, n in table.stages.items() if n))
@@ -151,7 +164,19 @@ def main(argv: Sequence[str] | None = None, *, reader: Reader | None = None) -> 
     res.add_argument("--targets", type=Path, default=rescore_benchcad.TARGETS)
     res.add_argument("--out", type=Path, default=Path("rescore-out"))
     res.add_argument("--workers", type=int, default=None)
+    res.add_argument(
+        "--score-timeout",
+        type=float,
+        default=DEFAULT_SCORE_TIMEOUT,
+        metavar="SECONDS",
+        help="wall-clock deadline per score worker (default: %(default)s)",
+    )
     args = parser.parse_args(argv)
+    if args.command == "rescore":
+        try:
+            check_timeout(args.score_timeout)
+        except ValueError as error:
+            res.error(f"--score-timeout: {error}")
 
     if reader is None:
         if not _extra_present():

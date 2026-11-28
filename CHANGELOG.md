@@ -5,6 +5,10 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+- Set the deadline per score worker for BenchCAD replays with
+  `--score-timeout SECONDS` or `rescore(..., score_timeout=...)`. The default
+  is 30 seconds. A scoring timeout counts as a failure and keeps both body digests.
+
 ## 0.2.0 — 2026-11-28
 
 - In the CadQuery dialect, use `faces(selector).shell(-thickness)` to hollow

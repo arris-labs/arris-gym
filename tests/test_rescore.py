@@ -84,21 +84,37 @@ def test_a_program_failing_beside_a_target_failing_is_the_programs(sandbox: ag.S
     assert row.score.status is Status.SYNTAX
 
 
+@pytest.mark.parametrize("override", [None, 60.0])
 def test_a_scoring_failure_is_the_scoring_stage(
-    sandbox: ag.Sandbox, monkeypatch: pytest.MonkeyPatch
+    sandbox: ag.Sandbox, monkeypatch: pytest.MonkeyPatch, override: float | None
 ) -> None:
-    def failing(result: ag.ExecResult, target: ag.BodyRef, **_: object) -> Score:
-        return failed_score(Status.TIMEOUT, "scoring took 30.0 s")
+    def failing(
+        result: ag.ExecResult, target: ag.BodyRef, *, sandbox: ag.Sandbox, timeout: float
+    ) -> Score:
+        assert timeout == (30.0 if override is None else override)
+        return failed_score(Status.TIMEOUT, f"scoring took {timeout} s")
 
     monkeypatch.setattr(module, "score", failing)
-    table = rescore([entry("a")], sandbox=sandbox)
+    if override is None:
+        table = rescore([entry("a")], sandbox=sandbox)
+    else:
+        table = rescore([entry("a")], score_timeout=override)
     (row,) = table.rows
     assert row.stage is Stage.SCORING
+    assert row.program_status is Status.OK
     assert row.score.status is Status.TIMEOUT
     assert row.score.reward == -1.0
     assert row.candidate_sha256 is not None
     assert row.target_sha256 is not None
     assert [(t.name, t.stage) for t in table.timed_out] == [("a", Stage.SCORING)]
+    assert table.programs == table.stages["scoring"] == table.statuses["timeout"] == 1
+    assert table.mean_reward == -1.0
+
+
+@pytest.mark.parametrize("limit", [0.0, -1.0, float("inf"), float("nan"), True])
+def test_invalid_score_timeout_is_rejected_even_if_no_entry_reaches_scoring(limit: float) -> None:
+    with pytest.raises(ValueError, match="timeout must be a positive finite number"):
+        rescore([entry("bad", "result = (")], score_timeout=limit)
 
 
 def test_every_entry_has_a_row_and_the_table_ignores_order_and_workers(

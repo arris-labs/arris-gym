@@ -55,7 +55,7 @@ Complexity grades and tiers follow `.agents/tiers.md`. **[1]** is routine,
   both architectures. Set one finite deadline and one worker count that
   give measured headroom on both. Preserve the failing CI evidence and
   the local one-CPU probe recipe in the replay record.
-- [ ] Step 2 **[1]** — Thread the option through the public function and
+- [x] Step 2 **[1]** — Thread the option through the public function and
   CLI. Extend the controlled scoring-timeout fixture to verify deadline
   forwarding and the counted failure. Cover CLI forwarding and invalid
   limits, including a batch that never reaches scoring. Update the public

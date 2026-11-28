@@ -261,6 +261,7 @@ caller ─ socket ─▶ zygote ──fork──▶ warden ──fork──▶ p
   finite number in [0, 1] is a `crash`; the caller computes the reward from the
   terms itself. Its deadline is 30 s by default, above the 17 s ADR-0008
   measured for the slowest exact answer under 30 concurrent processes.
+  The caller can set it through `score(timeout=…)` or the replay option.
 - The **step worker** (`sandbox/_step.py`) is a job of its own kind, `step`,
   under the same warden and limits: a target's STEP text is the output of a
   hostile program (ADR-0011). It runs `read_step` on a fresh model and writes
@@ -1213,13 +1214,16 @@ baseline's (BACKLOG Findings `oracle-nondeterministic-step`).
 
 ## The re-scored table
 
-`arris-gym rescore benchcad [--slice F] [--targets F] [--out DIR] [--workers N]`
+`arris-gym rescore benchcad [--slice F] [--targets F] [--out DIR] [--workers N] [--score-timeout SECONDS]`
 (the `[corpus]` extra) runs the 300 slice programs under `cq`, scores each
 against the oracle's STEP of the same program (the target), read into arris,
-writes `rescore.json` and `rescore.md` and prints the counts and the digest. `rescore.rescore(entries, *, sandbox, workers)` returns one
+writes `rescore.json` and `rescore.md` and prints the counts and the digest.
+`rescore.rescore(entries, *, sandbox, workers, score_timeout)` returns one
 `RescoreTable`; `rescore/benchcad.py` builds the entries from the pinned
 corpus, `slice.txt` and `tests/fixtures/c1/targets.jsonl.gz`, so the table
 depends on the main environment alone, never on CadQuery (ADR-0011).
+The score deadline accepts positive finite seconds and defaults to 30 s.
+It applies per score worker. Program and target workers keep their own deadlines.
 
 - **A row per program**, in name order: source, licence, program SHA-256,
   dialect, the program's status and refusal, the candidate's and the target's
@@ -1228,7 +1232,8 @@ depends on the main environment alone, never on CadQuery (ADR-0011).
 - **`Stage`** says where a failure happened: `none`, `program`, `target` or
   `scoring`. A failed target gives a `Score` of status `runtime`, `timeout` or
   `crash` and reward −1.0; the target is read for every entry, so a `program`
-  row keeps the target's digests. `Score` itself does not change.
+  row keeps the target's digests. A score worker that reaches its deadline
+  gives a `scoring` row with `timeout`, reward −1.0 and both body digests.
 - **Aggregates** state their denominator: counts of every `Status`, `Stage` and
   `IouRoute`, zeros included; `invalidity_rate`; `mean_reward` over all
   programs by `math.fsum`; beside it `mean_reward_valid`, labelled as survivors,

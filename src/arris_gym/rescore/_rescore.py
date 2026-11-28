@@ -13,6 +13,7 @@ from typing import assert_never
 
 from arris_gym.rescore._table import RescoreEntry, RescoreRow, RescoreTable, Stage
 from arris_gym.reward import Score, failed_score, score
+from arris_gym.reward._scoring import DEFAULT_SCORE_TIMEOUT
 from arris_gym.sandbox import (
     ExecResult,
     Sandbox,
@@ -21,6 +22,7 @@ from arris_gym.sandbox import (
     check_workers,
     read_target,
 )
+from arris_gym.sandbox._run import check_timeout
 
 
 def _target_failure(target: TargetResult) -> Score:
@@ -47,14 +49,16 @@ def _target_failure(target: TargetResult) -> Score:
             assert_never(unreachable)
 
 
-def _row(entry: RescoreEntry, result: ExecResult, target: TargetResult, sb: Sandbox) -> RescoreRow:
+def _row(
+    entry: RescoreEntry, result: ExecResult, target: TargetResult, sb: Sandbox, score_timeout: float
+) -> RescoreRow:
     """The row of one entry from its program's result and its target."""
     if result.status is not Status.OK:
         stage, pair = Stage.PROGRAM, failed_score(result.status, result.message)
     elif target.body is None or target.status is not Status.OK:
         stage, pair = Stage.TARGET, _target_failure(target)
     else:
-        pair = score(result, target.body, sandbox=sb)
+        pair = score(result, target.body, sandbox=sb, timeout=score_timeout)
         stage = Stage.NONE if pair.status is Status.OK else Stage.SCORING
     return RescoreRow(
         name=entry.name,
@@ -78,6 +82,7 @@ def rescore(
     *,
     sandbox: Sandbox | None = None,
     workers: int | None = None,
+    score_timeout: float = DEFAULT_SCORE_TIMEOUT,
 ) -> RescoreTable:
     """Re-score `entries`: run each program, read its STEP target, score the pair.
 
@@ -88,10 +93,12 @@ def rescore(
     `Stage.SCORING`. The target of a program that failed is read too, so its
     row has the target's digests. At most `workers` entries are in flight
     (the core count, capped, by default); `sandbox` is the process's own
-    fresh one when None. The table does not depend on `workers` or on the
-    order of `entries`. Raises `ValueError` for no entries, a name given
-    twice or a non-positive `workers`, and `SandboxUnavailable` where this
-    machine cannot isolate a worker; never for what a program or STEP holds.
+    fresh one when None. `score_timeout` is the wall-clock deadline for
+    each score worker in seconds, defaulting to 30. The table is ordered
+    by name. Raises `ValueError` for no entries, a name given twice, a
+    non-positive `workers` or a deadline that is not positive and finite.
+    Raises `SandboxUnavailable` where this machine cannot isolate a worker,
+    never for what a program or STEP holds.
 
     >>> import arris.build as b
     >>> box = b.Solid.box((0.0, 0.0, 0.0), (1.0, 2.0, 3.0))
@@ -104,18 +111,19 @@ def rescore(
     >>> table.mean_reward, table.stages["none"]
     (1.0, 1)
     """
+    check_timeout(score_timeout)
     live = check_workers(workers)
     names = [entry.name for entry in entries]
     if len(set(names)) != len(names):
         raise ValueError("an entry name is given twice")
     if sandbox is None:
         with Sandbox() as own:
-            return rescore(entries, sandbox=own, workers=live)
+            return rescore(entries, sandbox=own, workers=live, score_timeout=score_timeout)
 
     def one(entry: RescoreEntry) -> RescoreRow:
         result = sandbox.run(entry.program, dialect=entry.dialect)
         target = read_target(entry.step, sandbox=sandbox)
-        return _row(entry, result, target, sandbox)
+        return _row(entry, result, target, sandbox, score_timeout)
 
     with ThreadPoolExecutor(max_workers=min(live, max(1, len(entries)))) as pool:
         rows = list(pool.map(one, entries))

@@ -5,6 +5,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+from collections.abc import Sequence
 from pathlib import Path
 
 import arris.build as b
@@ -12,7 +13,8 @@ import pytest
 
 from arris_gym import _cli
 from arris_gym.census import CensusReport, CorpusProgram, ReachCurve, slice_families
-from arris_gym.rescore import RescoreTable
+from arris_gym.rescore import RescoreEntry, RescoreTable, rescore
+from arris_gym.sandbox import Sandbox
 
 CODE = "import cadquery as cq\nr = cq.Workplane('XY').box(1, 1, 1)\n"
 
@@ -91,8 +93,20 @@ def rescore_files(tmp_path: Path, stems: list[str]) -> tuple[Path, Path]:
 
 
 def test_rescore_writes_the_table_and_prints_the_digest(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    def check_forwarded(
+        entries: Sequence[RescoreEntry],
+        *,
+        sandbox: Sandbox | None = None,
+        workers: int | None = None,
+        score_timeout: float,
+    ) -> RescoreTable:
+        assert workers == 2
+        assert score_timeout == 42.5
+        return rescore(entries, sandbox=sandbox, workers=workers, score_timeout=score_timeout)
+
+    monkeypatch.setattr(_cli, "rescore", check_forwarded)
     slice_path, targets = rescore_files(tmp_path, ["good", "bad"])
     programs = [
         CorpusProgram(stem="good", family="f", text=BOX_CQ),
@@ -101,7 +115,7 @@ def test_rescore_writes_the_table_and_prints_the_digest(
     out = tmp_path / "out"
     argv = [
         "rescore", "benchcad", "--slice", str(slice_path), "--targets", str(targets),
-        "--out", str(out), "--workers", "2",
+        "--out", str(out), "--workers", "2", "--score-timeout", "42.5",
     ]  # fmt: skip
     assert _cli.main(argv, reader=lambda: programs) == 0
     table = RescoreTable.from_json((out / "rescore.json").read_text(encoding="utf-8"))
@@ -116,6 +130,16 @@ def test_rescore_writes_the_table_and_prints_the_digest(
     markdown = (out / "rescore.md").read_text(encoding="utf-8")
     assert table.digest in markdown
     assert "survivors" in markdown
+
+
+@pytest.mark.parametrize("limit", ["0", "-1", "inf", "nan", "text"])
+def test_rescore_rejects_invalid_score_timeout(
+    limit: str, capsys: pytest.CaptureFixture[str]
+) -> None:
+    with pytest.raises(SystemExit) as raised:
+        _cli.main(["rescore", "benchcad", "--score-timeout", limit], reader=list)
+    assert raised.value.code == 2
+    assert "--score-timeout" in capsys.readouterr().err
 
 
 def test_rescore_names_a_stem_the_corpus_lacks(tmp_path: Path) -> None:

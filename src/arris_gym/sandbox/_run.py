@@ -50,6 +50,12 @@ def current_versions() -> Versions:
     )
 
 
+def check_timeout(timeout: float) -> None:
+    """Raise ValueError unless the deadline is a positive finite number of seconds."""
+    if isinstance(timeout, bool) or not (math.isfinite(timeout) and timeout > 0):
+        raise ValueError(f"timeout must be a positive finite number of seconds, got {timeout!r}")
+
+
 def check_arguments(dialect: Dialect | str, timeout: float, memory: int) -> Dialect:
     """The `Dialect` named, or the caller's mistake as an exception.
 
@@ -61,8 +67,7 @@ def check_arguments(dialect: Dialect | str, timeout: float, memory: int) -> Dial
     except ValueError:
         known = ", ".join(d.value for d in Dialect)
         raise ValueError(f"unknown dialect {dialect!r}; known: {known}") from None
-    if isinstance(timeout, bool) or not (math.isfinite(timeout) and timeout > 0):
-        raise ValueError(f"timeout must be a positive finite number of seconds, got {timeout!r}")
+    check_timeout(timeout)
     if isinstance(memory, bool) or not isinstance(memory, int) or memory <= 0:
         raise ValueError(f"memory must be a positive number of bytes, got {memory!r}")
     return resolved
