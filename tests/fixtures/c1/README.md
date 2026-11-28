@@ -142,6 +142,33 @@ scorer applies the same version 1 calculation under ADR-0021.
   match the 0.11.1 table. The face-kind histograms and genus match within
   each pair, so topology is 1.0 on all 100 rows.
 
+### Scoring deadline calibration
+
+In [CI run 46075635078](https://github.com/arris-labs/arris-gym/actions/runs/46075635078)
+at `37b5a61`, the x86-64 score worker hit its 30 s deadline for
+`lobed_knob_006797_s20260505`. The program was `ok` and its program,
+candidate, target and STEP digests matched the committed row. This was
+the only changed row. The aarch64 job reproduced the committed digest.
+
+The [timing probe](../../../tools/rescore_timing_probe.py) builds the pinned
+candidate and reads the committed STEP before timing. It checks all four
+input digests, then times three rounds each at one and four workers with a
+60 s score deadline. Each round starts one score call per worker. The JSON
+records CPU affinity, settings, elapsed times, statuses, score digests
+and the expected digest. A changed score (including a timeout) gives a
+nonzero exit after the measurements are written.
+
+To repeat the original 30 s contention case, set `CPU` to one logical CPU
+allowed by `taskset -pc $$` and run from the repository root.
+
+```sh
+taskset --cpu-list "$CPU" uv run --locked --extra corpus python tools/rescore_timing_probe.py \
+  --workers 4 --deadline 30 --rounds 1
+```
+
+On the original Ryzen 9 7950X, five isolated calls took 10.770–10.783 s.
+Four calls sharing one logical CPU all hit the 30 s score deadline.
+
 ### Earlier digests
 
 On 0.11.1, 200 rows were `ok` and 100 were `arris_refusal`, with 100 exact
