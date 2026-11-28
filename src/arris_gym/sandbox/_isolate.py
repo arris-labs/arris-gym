@@ -50,6 +50,18 @@ from typing import NoReturn
 # limit is also the bound on a program's memory: (NPROC_LIMIT - 1) * memory.
 NPROC_LIMIT = 4
 
+# Linux poll(2) takes its timeout in milliseconds as a signed 32-bit int.
+_MAX_POLL_MS = (1 << 31) - 1
+
+
+def poll_timeout_ms(deadline: float) -> int:
+    """Milliseconds until the monotonic deadline, bounded for one poll call."""
+    remaining = deadline - time.monotonic()
+    # Compare in seconds so converting a large finite delay cannot overflow.
+    if remaining >= _MAX_POLL_MS / 1000:
+        return _MAX_POLL_MS
+    return max(0, int(remaining * 1000) + 1)
+
 
 @dataclass(frozen=True)
 class Limits:
@@ -491,8 +503,11 @@ def _warden(
     pidfd = os.pidfd_open(pid)
     poller = select.poll()
     poller.register(pidfd, select.POLLIN)
-    remaining_ms = max(0, int((deadline - time.monotonic()) * 1000) + 1)
-    timed_out = not poller.poll(remaining_ms)
+    timed_out = False
+    while not poller.poll(poll_timeout_ms(deadline)):
+        if time.monotonic() >= deadline:
+            timed_out = True
+            break
     if timed_out:
         signal.pidfd_send_signal(pidfd, signal.SIGKILL)
     _, status = os.waitpid(pid, 0)

@@ -33,7 +33,6 @@ import struct
 import subprocess
 import sys
 import threading
-import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
@@ -441,7 +440,7 @@ def _collect(status_r: int, result_r: int, stderr_r: int, backstop: float) -> Ou
         poller.register(fd, select.POLLIN)
     try:
         while live:
-            remaining_ms = int((backstop - time.monotonic()) * 1000) + 1
+            remaining_ms = _isolate.poll_timeout_ms(backstop)
             if remaining_ms <= 0:
                 return None
             for fd, _ in poller.poll(remaining_ms):

@@ -117,6 +117,17 @@ def test_invalid_score_timeout_is_rejected_even_if_no_entry_reaches_scoring(limi
         rescore([entry("bad", "result = (")], score_timeout=limit)
 
 
+@pytest.mark.parametrize("limit", [3_000_000.0, 1e308])
+def test_large_finite_score_deadlines_accept_completed_work(
+    sandbox: ag.Sandbox, limit: float
+) -> None:
+    table = rescore([entry("box")], sandbox=sandbox, score_timeout=limit)
+    (row,) = table.rows
+    assert row.stage is Stage.NONE
+    assert row.score.status is Status.OK
+    assert row.score.reward == 1.0
+
+
 def test_every_entry_has_a_row_and_the_table_ignores_order_and_workers(
     sandbox: ag.Sandbox,
 ) -> None:

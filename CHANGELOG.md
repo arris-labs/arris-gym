@@ -5,9 +5,12 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+### Breaking
+
 - Set the deadline per score worker for BenchCAD replays with
-  `--score-timeout SECONDS` or `rescore(..., score_timeout=...)`. The default
-  is 30 seconds. A scoring timeout counts as a failure and keeps both body digests.
+  `--score-timeout SECONDS` or `rescore(..., score_timeout=...)`. Existing
+  calls continue to work with the 30-second default. A scoring timeout
+  counts as a failure and keeps both body digests.
 
 ## 0.2.0 — 2026-11-28
 
