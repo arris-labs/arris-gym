@@ -837,6 +837,11 @@ reason it cannot share an environment with the library. It also holds
 BenchCAD's locked `trimesh` and `scipy` for `tools/oracle/benchcad_score.py`,
 which runs BenchCAD's own scorer on the field metrics' pairs (ADR-0010).
 
+The Vision2Code pilot calls the pinned BenchCAD export, voxel IoU and
+four-view helpers in disposable jobs using the same oracle environment.
+The official record ID joins both grades to the same frozen STEP and
+extracted program (ADR-0032).
+
 The oracle worker selects the last `show_object` argument, else module-level
 `result`, else module-level `r`, by presence even when invalid, exactly as
 the `cq` program worker does (ADR-0015).

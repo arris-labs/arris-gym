@@ -428,3 +428,17 @@ The result of `rescore`: a row per program with its statuses, stage, digests
 and `Score`, and aggregates over all of them, failures included, with its own
 digest, the same on every machine (`RescoreTable`, ADR-0011).
 _Avoid_: results table, leaderboard
+
+**Official record ID**:
+The identifier the upstream benchmark assigns to a task. BenchCAD
+Vision2Code uses the `code_gen` stem as its official record ID (ADR-0032).
+
+**Frozen STEP**:
+The captured STEP bytes used as the common target by both graders and
+as the source of the canonical render. The capture records a full-file
+SHA-256 alongside the STEP data-section hash (ADR-0011, ADR-0032).
+
+**Upstream grade**:
+BenchCAD's per-record voxel IoU at its regrader's reported precision and
+the observed outcome of the isolated grading path (`UpstreamGrade`,
+ADR-0032).

@@ -48,3 +48,4 @@ training cycle starts from.
 | [0029](0029-a-cq-shell-uses-sharp-offsets-where-arc-joins-stay-sharp.md) | A `cq` shell uses sharp offsets where arc joins stay sharp | accepted |
 | [0030](0030-c2-fidelity-replays-committed-oracle-reports.md) | C2 fidelity replays committed oracle reports | accepted |
 | [0031](0031-calibrate-the-benchcad-slice-score-deadline.md) | Calibrate the BenchCAD slice score deadline | accepted |
+| [0032](0032-freeze-benchcad-vision2code-targets-from-the-pinned-regrader.md) | Freeze BenchCAD Vision2Code targets from the pinned regrader's export helper | accepted |
