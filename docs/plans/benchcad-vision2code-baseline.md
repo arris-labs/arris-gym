@@ -96,7 +96,7 @@ algorithm, isolation guarantee or semantic rule to establish.
   Test that a stub model receives only the prompt and render and that a
   failed or blank response leaves one record. Freeze the full manifest's
   ID list before scoring real predictions on the step 1 IDs.
-- [ ] Step 4 **[2]** **[CI]** — Measure the real-output smoke on both CI
+- [x] Step 4 **[2]** **[CI]** — Measure the real-output smoke on both CI
   architectures with four workers and a starting score deadline of 60 s (ADR-0031).
   Include the slowest pairs observed in the local smoke. Record the existing
   program and target limits, per-stage times and the measured score deadline.
@@ -162,5 +162,9 @@ algorithm, isolation guarantee or semantic rule to establish.
   `6776753ed21acfa57e4c1e65bd4253531feb00b6f072f27f7c3c5391c164a9de`.
   Keep all three smoke rows. Add real predictions that reach scoring to
   the timing slice for step 4.
-- ⚠ OPEN: Pilot replay limits, measured by step 4 on both architectures.
-  Agent records the settings used and the measured headroom.
+- **Settled (step 4):** keep four workers and a 60 s score deadline.
+  The [timing smoke and verification rerun](../../tests/fixtures/benchcad-vision2code/timing/README.md#ci-evidence)
+  matched across x86-64 and AArch64, with zero timeouts and 57.873 s of
+  headroom on the slowest score. Program and target workers used the
+  existing 5 s and 512 MiB limits. The smoke exercised one scoreable
+  sampled prediction. Step 6 checks the full greedy prediction set.
