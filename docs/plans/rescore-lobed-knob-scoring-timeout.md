@@ -60,7 +60,7 @@ Complexity grades and tiers follow `.agents/tiers.md`. **[1]** is routine,
   forwarding and the counted failure. Cover CLI forwarding and invalid
   limits, including a batch that never reaches scoring. Update the public
   docstring, architecture, README and changelog with the option.
-- [ ] Step 3 **[2]** **[CI]** **[conductor-run]** — Pin the measured
+- [x] Step 3 **[2]** **[CI]** **[conductor-run]** — Pin the measured
   settings in the CI command on both architectures. Run the complete
   slice after calibration. Keep the existing committed table comparison
   and publish both artifacts. Investigate any timeout or digest difference
