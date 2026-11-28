@@ -151,7 +151,9 @@ The fixture READMEs record the tables and replay commands.
 **Goal.** Compare arris-gym scores for model outputs with published
 benchmark results, counting every failure.
 
-**Status: open 2026-11-28.**
+**Status: open since 2026-11-28.** The 300-program BenchCAD slice
+reproduces its committed table on x86-64 and aarch64 with four workers
+and a 60 s score deadline (ADR-0031).
 
 **In.** Re-score BenchCAD first, then CAD-Recode validation. Include
 Text2CAD-Bench if its data is released and the licence permits use. Decide
