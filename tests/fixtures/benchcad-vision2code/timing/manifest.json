@@ -1,0 +1,54 @@
+{
+  "pins": {
+    "code_gen_revision": "5919f578ab09ec283603a082fab07c7639ab56eb",
+    "oracle_lock_sha256": "761df055d6b5e6868ad5601e8bc5164e8d805cc00aab4a7ca2a8bc4a52d6cef7",
+    "upstream_commit": "77fd16a80a4e5fc39964ee23b6cc3225beefac8f"
+  },
+  "tasks": [
+    {
+      "family": "lobed_knob",
+      "licence": "CC-BY-4.0",
+      "record_id": "lobed_knob_000072_s20260505",
+      "reference_sha256": "be8882b2d1bb494ad4f454dff9eb9348f0286e46015e89adebf4799615103eb8",
+      "render_sha256": "bcf0b33fbfb6c3d43d7b6b7ecc2f4950380119f580f450070498ba239ac277b0",
+      "source": "BenchCAD/BenchCAD",
+      "stem": "lobed_knob_000072_s20260505",
+      "step_sha256": "2b4720e79c9b46dbd664214e62544ac9d9506a06daf15be0effb5d864927c560",
+      "target_sha256": "f02532fd9be2f700184adc0dd91cc544ef53c05359cb562f3ab3f548ac908f08"
+    },
+    {
+      "family": "lobed_knob",
+      "licence": "CC-BY-4.0",
+      "record_id": "lobed_knob_007305_s20260505",
+      "reference_sha256": "b95a94539ccd08d33192fd4ed99fcb8188c573585a4dc488183b8c3f2b49a73a",
+      "render_sha256": "aa7e7d9463c3fdd658c65606a9c6636dd0b7040eda40eba1188afac23df33323",
+      "source": "BenchCAD/BenchCAD",
+      "stem": "lobed_knob_007305_s20260505",
+      "step_sha256": "b9b5f13221a4f64f9cf4bd8d7e51e9e3f974e31bf3db5a4ced4119805d275858",
+      "target_sha256": "0a5a5be6522a7b1228ce5046df0fe4fb16bf7c73898cd08dfa737424e3adcc41"
+    },
+    {
+      "family": "phone_stand",
+      "licence": "CC-BY-4.0",
+      "record_id": "phone_stand_000059_s20260505",
+      "reference_sha256": "50431a33ae2e17fe16210e252ed986a3ea102e6dfbe6f71b9e59555c5bf31eb3",
+      "render_sha256": "b842642d63762510e6ffbf56edaa6acaabbbc4092289c453d061e8445617bee1",
+      "source": "BenchCAD/BenchCAD",
+      "stem": "phone_stand_000059_s20260505",
+      "step_sha256": "4e8144e839134eabde976b69c720bc8ba2f8bb1608c6f1a0c570984a9ab0de90",
+      "target_sha256": "20ecdf0d6f505ccf3a345c73f25935b568ce945a5a20f413954ecfd25f300911"
+    },
+    {
+      "family": "venturi_tube",
+      "licence": "CC-BY-4.0",
+      "record_id": "venturi_tube_000085_s20260507",
+      "reference_sha256": "da64aa45ef97f2f77a409713ec327a7188a67b10c482e90d963b2ed2645fcc9b",
+      "render_sha256": "e3d33ef1c79be0c1205b74d67d99a875d4b7957cd2ae33bc28525ec122d1cedf",
+      "source": "BenchCAD/BenchCAD",
+      "stem": "venturi_tube_000085_s20260507",
+      "step_sha256": "f86a2cef53a017b0080d6e5c3b18352b1e173960e099785ab23ce3b571de5a88",
+      "target_sha256": "646d20095003624af0b68e8a807d88d9999209dcecb089d6f6363fc023b9192f"
+    }
+  ],
+  "version": 1
+}

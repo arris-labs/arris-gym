@@ -1,0 +1,67 @@
+name: Vision2Code score timing
+
+on:
+  push:
+    branches: [plan/benchcad-vision2code-baseline]
+    paths:
+      - .github/workflows/vision2code-timing.yml
+      - tools/benchcad/**
+      - tests/fixtures/benchcad-vision2code/timing/**
+
+permissions:
+  contents: read
+
+jobs:
+  timing:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - name: Measure and replay the frozen smoke
+        run: |
+          mkdir timing
+          {
+            git rev-parse HEAD
+            uname -m
+            lscpu
+          } > timing/machine.txt
+          bundle=tests/fixtures/benchcad-vision2code/timing
+          uv run --locked python tools/benchcad/timing.py "$bundle" | tee timing/stages.json
+          uv run --locked python tools/benchcad/vision2code.py replay \
+            --bundle "$bundle" --out timing/replay --workers 4 --score-timeout 60
+          jq -e '
+            any(.rows[];
+              .score_status == "ok"
+              and ((.four_concurrent_scores | length) == 4)
+            )
+            and all(.rows[];
+              . as $row
+              | .target_status == "ok"
+                and .program_status != "timeout"
+                and (.score_status == null or .score_status == "ok")
+                and all(.four_concurrent_scores[];
+                  .status == "ok" and .digest == $row.score_digest
+                )
+            )
+          ' timing/stages.json
+          jq -e '
+            .aggregates.records == 4
+            and .aggregates.gym_stages.none == 1
+            and (.aggregates.gym_timeouts | length) == 0
+            and (.aggregates.upstream_timeouts | length) == 0
+          ' timing/replay/comparison.json
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: vision2code-timing-${{ matrix.os }}
+          path: timing/
+          if-no-files-found: error
