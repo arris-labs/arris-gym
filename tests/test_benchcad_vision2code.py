@@ -26,6 +26,7 @@ from arris_gym.census import CorpusProgram, benchcad
 from arris_gym.rescore import RescoreEntry, RescoreTable, Stage, rescore
 from arris_gym.sandbox import Dialect
 from benchcad._bundle import _Prediction
+from benchcad._generation import _capture_predictions
 from benchcad.vision2code import Upstream, _slice_programs, open_upstream
 
 _FIXTURE = Path(__file__).parent / "fixtures" / "benchcad-vision2code" / "smoke"
@@ -347,6 +348,80 @@ def bundle(tmp_path: Path) -> Path:
     _write_jsonl(root / "predictions.jsonl", predictions)
     _write_jsonl(root / "upstream.jsonl", grades)
     return root
+
+
+@pytest.mark.oracle
+def test_pinned_prompt_uses_the_frozen_canonical_render(
+    upstream: Upstream, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    stem = "lobed_knob_000072_s20260505"
+    target = gzip.decompress((_FIXTURE / f"{stem}.step.gz").read_bytes())
+    render = (_FIXTURE / f"{stem}.png").read_bytes()
+    # The isolated builder uses the upstream full hint regardless of the host.
+    monkeypatch.setenv("BENCH_VIEW_HINT", "anchor")
+    system, user = upstream._prompt(target, render)
+    assert _hash(system) == "357ab68907383eb86456255e4934a81e2fa32e5139407c97eeb43abbfdd849f0"
+    assert _hash(user) == "bc68c2b8ad55007567c033ad125cb6eb19be06db8e7ed1cf6bfb4d5b0bec9150"
+
+
+def test_generation_sees_only_prompt_and_render_and_captures_each_outcome(
+    bundle: Path, tmp_path: Path
+) -> None:
+    renders = bundle / "renders"
+    renders.mkdir()
+    for task in json.loads((bundle / "manifest.json").read_bytes())["tasks"]:
+        record_id = task["record_id"]
+        (renders / f"{record_id}.png").write_bytes(f"render of {record_id}".encode())
+    system_text, user_text = "Describe the shape — as code", "Recreate this part"
+    responses = {"blank": "", "box": "```python\nprogram\n```", "extraction-failed": "☃"}
+    calls = []
+
+    def prompt(target: bytes, render: bytes) -> tuple[str, str]:
+        assert target == (bundle / "targets/blank.step").read_bytes()
+        assert render == b"render of blank"
+        return system_text, user_text
+
+    def generate(system: str, user: str, render: bytes) -> str | None:
+        assert (system, user) == (system_text, user_text)
+        calls.append(render)
+        return responses.get(render.decode().removeprefix("render of "))
+
+    def extract(raw: str) -> bytes:
+        if raw == "☃":
+            raise RuntimeError("extractor failed")
+        return b"program" if raw else b""
+
+    out = tmp_path / "captured.jsonl"
+    selected = ["generation-failed", "extraction-failed", "box", "blank"]
+    _capture_predictions(
+        bundle, out, prompt=prompt, generate=generate, extract=extract, record_ids=selected
+    )
+    assert calls == [f"render of {record_id}".encode() for record_id in sorted(selected)]
+    rows = [_Prediction.model_validate_json(line) for line in out.read_bytes().splitlines()]
+    assert [row.record_id for row in rows] == sorted(selected)
+    assert [row._outcome() for row in rows] == [
+        "blank",
+        "program",
+        "extraction_failed",
+        "generation_failed",
+    ]
+    assert [row.raw_response for row in rows] == ["", responses["box"], "☃", None]
+    assert [row.program for row in rows] == ["", "program", None, None]
+    assert all(json.loads(row.prompt) == {"system": system_text, "user": user_text} for row in rows)
+
+    # Even an unselected record belongs to the frozen manifest.
+    (renders / "missing.png").write_bytes(b"changed after freeze")
+    calls.clear()
+    with pytest.raises(ValueError, match="render file hash differs at missing"):
+        _capture_predictions(
+            bundle,
+            tmp_path / "bad.jsonl",
+            prompt=prompt,
+            generate=generate,
+            extract=extract,
+            record_ids=selected,
+        )
+    assert calls == []
 
 
 def _run_replay(bundle: Path, out: Path, *args: str) -> subprocess.CompletedProcess[str]:

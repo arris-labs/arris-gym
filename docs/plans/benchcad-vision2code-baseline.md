@@ -28,6 +28,9 @@ on x86-64 and AArch64 from the frozen inputs.
   `RescoreEntry`, `rescore(entries, *, sandbox, workers, score_timeout)`,
   `RescoreTable` and `tools/rescore_diff.py` with the locked arris 0.12.0 wheel.
   The pilot command is `tools/benchcad/vision2code.py` in the checkout.
+  `generate --upstream CHECKOUT --bundle BUNDLE --model-python PYTHON --out FILE`
+  checks the frozen inputs and captures predictions before grading. Repeat
+  `--record-id ID` to generate for a smoke selection from the full manifest.
 - [ADR-0032](../adr/0032-freeze-benchcad-vision2code-targets-from-the-pinned-regrader.md)
   records the upstream scorer contract. Derive official IDs using
   the pinned Vision2Code materializer's mapping. Verify all 300 IDs against
@@ -86,7 +89,7 @@ algorithm, isolation guarantee or semantic rule to establish.
   `replay` command. Test known scores and failures offline. Test
   `replay --record-id` with a complete fixture bundle containing an
   unselected ID. Check that input order leaves the full table digest equal.
-- [ ] Step 3 **[2]** **[conductor-run]** — Select reusable predictions with
+- [x] Step 3 **[2]** **[conductor-run]** — Select reusable predictions with
   matching official inputs and terms, or use one local open-weight VLM.
   Use the pinned prompt builder and extractor around a generation-only
   adapter. Capture each response before scoring.
@@ -141,7 +144,23 @@ algorithm, isolation guarantee or semantic rule to establish.
   hashes join to C1. Capture the pinned regrader's STEP export and grade
   with its voxel IoU helper in a separate isolated job. The wrapper and
   regrader agree at four decimal places on the three frozen STEP pairs.
-- ⚠ OPEN: Reusable predictions or local model revision and artifact terms.
-  Agent resolves in step 3 and records the evidence.
+- **Settled (step 3):** matching reusable predictions could not be verified.
+  Use the Apache-2.0 Qwen/Qwen3-VL-4B-Instruct snapshot at
+  `ebb281ec70b05090aa6165b016eac8ec08e71b17` with the
+  [separate CUDA environment](../../tools/benchcad/README.md#one-shot-generation).
+  The model runs in BF16 with greedy decoding and up to 2,048 new tokens.
+  The full 300-ID manifest was frozen before inference, with SHA-256
+  `4491d1e0f6f1d340ce2b04474dcc0fac05bfe97f76af3287ccfcb3fc377cc994`.
+  The pinned default prompt text pair has SHA-256
+  `eb94505e1d3e73fa17a54abc4f84e7d3765e9b31dd194633d9cc2823c90391f0`.
+  The generation command took 83.17 s for the three step 1 IDs on RTX 5090,
+  driver 595.99.02, Python 3.12.13. All three records matched the prototype
+  run field for field. Each produced an upstream `export_error` and
+  Gym `program/syntax`. Two programs had unclosed fences and the phone
+  stand had too many nested parentheses. The local comparison digest with
+  four workers and a 60 s score deadline was
+  `6776753ed21acfa57e4c1e65bd4253531feb00b6f072f27f7c3c5391c164a9de`.
+  Keep all three smoke rows. Add real predictions that reach scoring to
+  the timing slice for step 4.
 - ⚠ OPEN: Pilot replay limits, measured by step 4 on both architectures.
   Agent records the settings used and the measured headroom.

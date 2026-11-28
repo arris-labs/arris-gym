@@ -97,3 +97,12 @@ software EGL on x86-64. [Smoke record](../../tests/fixtures/benchcad-vision2code
   target and places both programs and the scorer in one writable scratch
   directory. The export and score jobs give each stage its own inputs and
   let the comparison reuse the same frozen target.
+
+## Prediction capture
+
+Add the prompt builder from the same pinned upstream commit to the helper
+files. Use its default four camera hints and provide the frozen canonical
+render as the cached composite. Send only the system text, user text and PNG
+bytes to the local model worker. Keep the raw response and the pinned
+extractor's program in the captured prediction before either grade runs.
+[Pinned prompt builder](https://github.com/BenchCAD/BenchCAD-main/blob/77fd16a80a4e5fc39964ee23b6cc3225beefac8f/Vision2Code/pipeline/prompt.py)

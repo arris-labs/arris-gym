@@ -447,6 +447,11 @@ ADR-0032).
 The versioned record of official record IDs, sources, licences, input hashes
 and upstream pins that defines the denominator of a BenchCAD replay.
 
+**Captured prediction**:
+The model pin, prompt, render hash, decoding settings and raw response for
+one official record ID, with its extracted program or capture failure. Both
+graders use the same captured program.
+
 **Vision2Code comparison**:
 The ordered join of each manifest row, its frozen prediction outcome, the
 upstream grade and the Gym row, with aggregates and a canonical digest.

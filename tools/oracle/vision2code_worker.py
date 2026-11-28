@@ -72,6 +72,21 @@ def _run(operation: str) -> bytes:
         case "render":
             png = _taskmods.views().composite_for_step(_TARGET, Path("/tmp/target.png"))
             return png.read_bytes()
+        case "prompt":
+            sys.path.insert(0, "/upstream")
+            from Vision2Code.pipeline.prompt import build
+
+            # Give the pinned builder its cached composite so it uses the
+            # frozen PNG. The older STEP timestamp makes the cache hit explicit.
+            step = Path("/tmp/target.step")
+            png = step.with_suffix(".png")
+            shutil.copyfile(_TARGET, step)
+            os.utime(step, (0, 0))
+            shutil.copyfile(_INPUT / "render.png", png)
+            system, user, images = build({"step_path": step.name}, step.parent)
+            if images != [png] or png.read_bytes() != (_INPUT / "render.png").read_bytes():
+                raise RuntimeError("the BenchCAD prompt did not use the frozen render")
+            return json.dumps([system, user]).encode("utf-8")
         case _:
             raise ValueError(f"unknown BenchCAD worker operation {operation!r}")
 

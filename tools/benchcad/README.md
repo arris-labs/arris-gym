@@ -30,6 +30,41 @@ are the frozen captured bytes and the upstream IoU record. Fresh capture
 generates fresh STEP headers. Use the frozen files when checking the
 recorded full-file hashes.
 
+## One-shot generation
+
+Use a bundle with the frozen manifest and `targets/ID.step` and
+`renders/ID.png` for every official record ID. The generation command checks
+every target and render hash, including for a smoke that selects a few IDs.
+It runs the pinned upstream prompt builder with the default four camera
+hints and its cached canonical render. The model gets the system and user
+text and one four-view PNG. The pinned extractor converts the raw response
+to the UTF-8 program stored for both graders. Generation runs neither grader.
+
+The local worker uses Qwen/Qwen3-VL-4B-Instruct in BF16 on CUDA, with greedy
+decoding and up to 2,048 generated tokens per image. Install the worker in
+a separate Python 3.12 environment and cache the pinned Apache-2.0 model
+once before running offline. [Model snapshot](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct/tree/ebb281ec70b05090aa6165b016eac8ec08e71b17)
+
+```sh
+uv venv --python 3.12 .scratch/benchcad-vlm
+uv pip install --python .scratch/benchcad-vlm/bin/python \
+  --index-url https://download.pytorch.org/whl/cu128 \
+  'torch==2.10.0+cu128' 'torchvision==0.25.0+cu128'
+uv pip install --python .scratch/benchcad-vlm/bin/python \
+  'transformers==4.57.6' 'pillow==12.1.1' 'safetensors==0.8.0' 'huggingface_hub==0.36.2'
+.scratch/benchcad-vlm/bin/hf download Qwen/Qwen3-VL-4B-Instruct \
+  --revision ebb281ec70b05090aa6165b016eac8ec08e71b17
+uv run --locked python tools/benchcad/vision2code.py generate \
+  --upstream .scratch/benchcad-upstream --bundle BUNDLE \
+  --model-python .scratch/benchcad-vlm/bin/python --out BUNDLE/predictions.jsonl
+```
+
+The destination must be new. For a smoke, pass `--record-id ID` once per
+selected ID and use a separate destination. The command writes one row per
+completed attempt in official record ID order, keeping blank responses and
+generation or extraction failures. A worker process failure exits with an
+error and leaves the completed rows for diagnosis.
+
 ## Offline replay
 
 ```sh
@@ -52,7 +87,8 @@ task. Use a new output directory. The score deadline defaults to Gym's 30 s.
 - `predictions.jsonl` contains one object per captured prediction. Each has
   `record_id`, `model`, `model_revision`, `licence`, `prompt`,
   `prompt_sha256`, `render_sha256`, `decoding` (an object), `raw_response`,
-  `raw_response_sha256`, `program` and `program_sha256`. Text hashes cover
+  `raw_response_sha256`, `program` and `program_sha256`. The `licence` field
+  records the terms of the model snapshot. Text hashes cover
   the recorded UTF-8 bytes, including whitespace. A `generation_failed`
   record has null response and program. An `extraction_failed` record
   keeps the response and has null program. Both use the optional `failure`

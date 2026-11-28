@@ -28,10 +28,13 @@ if __name__ == "__main__" and __package__ is None:
 
 from benchcad._bundle import _ORACLE_LOCK, _UPSTREAM_COMMIT, _sha
 from benchcad._bundle import UpstreamGrade as UpstreamGrade
+from benchcad._generation import _capture_predictions
 from benchcad._isolation import _job
+from benchcad._qwen import _model_process
 from benchcad._replay import _replay
 
 _SOURCES = (
+    "Vision2Code/pipeline/prompt.py",
     "benchcad_core/scoring/exec_cq.py",
     "benchcad_core/scoring/iou.py",
     "benchcad_core/scoring/views.py",
@@ -43,6 +46,7 @@ _REFERENCE_ROWS = _ROOT / "tests/fixtures/c1/oracle.jsonl"
 _SLICE_SIZE = 300
 _SMOKE_TIMEOUT = 60.0
 _IOU = TypeAdapter(float)
+_PROMPT = TypeAdapter(tuple[str, str])
 
 _Failure = Literal["export_error", "timeout", "crash"]
 
@@ -98,6 +102,11 @@ class Upstream:
     def render(self, target: bytes) -> bytes:
         """Render the pinned canonical four-view PNG from the supplied target STEP."""
         return self._call("render", **{"target.step": target})
+
+    def _prompt(self, target: bytes, render: bytes) -> tuple[str, str]:
+        return _PROMPT.validate_json(
+            self._call("prompt", **{"target.step": target, "render.png": render})
+        )
 
     def grade(self, target: bytes, program: bytes | None) -> UpstreamGrade:
         """Grade the given extracted program against the target, with one outcome on failure."""
@@ -263,6 +272,12 @@ def _main() -> None:
     smoke = commands.add_parser("smoke", help="check slice IDs and capture one target per family")
     smoke.add_argument("--upstream", type=Path, required=True)
     smoke.add_argument("--out", type=Path, required=True)
+    generate = commands.add_parser("generate", help="capture one-shot predictions without scoring")
+    generate.add_argument("--upstream", type=Path, required=True)
+    generate.add_argument("--bundle", type=Path, required=True)
+    generate.add_argument("--model-python", type=Path, required=True)
+    generate.add_argument("--out", type=Path, required=True)
+    generate.add_argument("--record-id", action="append", help="generate only these IDs")
     replay = commands.add_parser("replay", help="re-score a frozen bundle offline")
     replay.add_argument("--bundle", type=Path, required=True)
     replay.add_argument("--out", type=Path, required=True)
@@ -272,6 +287,22 @@ def _main() -> None:
     args = parser.parse_args()
     if args.command == "smoke":
         _smoke(args.upstream, args.out)
+    elif args.command == "generate":
+        try:
+            with (
+                open_upstream(args.upstream) as upstream,
+                _model_process(args.model_python) as model,
+            ):
+                _capture_predictions(
+                    args.bundle,
+                    args.out,
+                    prompt=upstream._prompt,
+                    generate=model,
+                    extract=upstream.extract,
+                    record_ids=args.record_id,
+                )
+        except (ValueError, OSError, RuntimeError) as exc:
+            parser.error(str(exc))
     else:
         try:
             _replay(
