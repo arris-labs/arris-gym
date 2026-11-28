@@ -50,7 +50,15 @@ jobs:
           lscpu
           ldd --version | head -n 1
       - name: Re-score the slice
-        run: uv run --locked --extra corpus arris-gym rescore benchcad --out rescore-out
+        run: |
+          workers=4
+          score_timeout=60
+          mkdir -p rescore-out
+          printf 'arch=%s\ncpus=%s\nworkers=%s\nscore_timeout_seconds=%s\n' \
+            "$(uname -m)" "$(nproc)" "$workers" "$score_timeout" | tee rescore-out/run-evidence.txt
+          /usr/bin/time --append --output=rescore-out/run-evidence.txt --format='wall_seconds=%e' \
+            uv run --locked --extra corpus arris-gym rescore benchcad \
+              --workers "$workers" --score-timeout "$score_timeout" --out rescore-out
       - name: Compare with the committed table
         run: |
           echo "committed digest: $(jq -r .digest tests/fixtures/c1/rescore.json)"
