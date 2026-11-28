@@ -90,6 +90,29 @@ A defect a run measured, one block each:
 - State: raw | measured | regression/<slug> | fixed
 ```
 
+### rescore-lobed-knob-scoring-timeout
+
+- What. The x86-64 CI rescore timed out during scoring for one of 300
+  BenchCAD rows. The ARM replay matched the committed table.
+- Where. The score worker's 30 s deadline in `reward/_scoring.py`.
+- Seen. [CI run 46075635078](https://github.com/arris-labs/arris-gym/actions/runs/46075635078)
+  at `37b5a61`, BenchCAD revision `5919f578ab09ec283603a082fab07c7639ab56eb`,
+  stem `lobed_knob_006797_s20260505`. The CI artifact's program, candidate,
+  target and STEP digests match the committed row.
+- Reproduce. Put that stem on its own in a slice file and run
+  `uv run --locked --extra corpus arris-gym rescore benchcad --slice SLICE --workers 1`.
+  To exercise the scoring deadline on a Ryzen 9 7950X, build the candidate
+  with `run` and load the committed STEP with `read_target` first. Then
+  submit four concurrent `score` calls for that pair in a process pinned
+  with `taskset` to one logical CPU.
+- Measured. Five isolated local scoring calls took 10.770–10.783 s,
+  each with exact IoU 1.0 and the committed score digest. All four
+  score calls sharing one logical CPU returned `timeout` at the 30 s
+  deadline. Four concurrent full rows across four logical CPUs all
+  passed.
+- State. Measured. The one-CPU probe shows that contention can trigger the
+  same scoring timeout. The load on the CI runner at the time is unknown.
+
 ### oracle-shell-measures
 
 - What: the oracle's reported measures differ from the construction after
