@@ -1,0 +1,69 @@
+name: Vision2Code baseline replay
+
+on:
+  push:
+    branches: [plan/benchcad-vision2code-baseline]
+    paths:
+      - .github/workflows/vision2code-replay.yml
+      - tools/benchcad/**
+      - tests/fixtures/benchcad-vision2code/baseline/**
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - name: Replay the frozen baseline offline
+        run: |
+          out="$RUNNER_TEMP/vision2code-replay"
+          workers=4
+          score_timeout=60
+          mkdir "$out"
+          {
+            git rev-parse HEAD
+            uname -m
+            lscpu
+            printf 'workers=%s\nscore_timeout_seconds=%s\n' "$workers" "$score_timeout"
+          } | tee "$out/machine.txt"
+
+          archive=tests/fixtures/benchcad-vision2code/baseline/bundle.tar.gz
+          printf '%s  %s\n' aa0e493237473f381c52f2fad644564eb6fa17217ba3e6629cb49994421a2d05 "$archive" \
+            | sha256sum --check
+          bundle=$(mktemp -d)
+          tar -xzf "$archive" -C "$bundle" manifest.json predictions.jsonl upstream.jsonl targets/
+          /usr/bin/time --append --output="$out/machine.txt" --format='wall_seconds=%e' \
+            uv run --locked --offline python tools/benchcad/vision2code.py replay \
+              --bundle "$bundle" --out "$out/replay" --workers "$workers" --score-timeout "$score_timeout"
+        shell: bash
+      - name: Check row counts and digests
+        run: |
+          replay="$RUNNER_TEMP/vision2code-replay/replay"
+          gym_digest=97da9681dc822f042a87530fc11ff905ea73e8c34ebb65b7ddbf8d6212eed72a
+          comparison_digest=63c6626e60116b3ac0eee622a4db118e49a44793475a496db3b1eebc5119dbba
+          jq '{digest, gym_digest, timeouts: (.aggregates | {gym_timeouts, upstream_timeouts})}' "$replay/comparison.json"
+          jq -e --arg digest "$gym_digest" '
+            .programs == 300 and (.rows | length) == 300 and .digest == $digest
+          ' "$replay/rescore.json"
+          jq -e --arg digest "$comparison_digest" --arg gym_digest "$gym_digest" '
+            .aggregates.records == 300 and (.rows | length) == 300
+            and .digest == $digest and .gym_digest == $gym_digest
+          ' "$replay/comparison.json"
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: vision2code-replay-${{ matrix.os }}
+          path: ${{ runner.temp }}/vision2code-replay/
+          if-no-files-found: error
