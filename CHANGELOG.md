@@ -5,6 +5,8 @@ break with its fix. Pre-1.0, `0.y.z` is `y` breaking.
 
 ## Unreleased
 
+## 0.3.0 — 2026-11-28
+
 ### Breaking
 
 - Set the deadline per score worker for BenchCAD replays with

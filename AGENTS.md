@@ -33,7 +33,7 @@ and aarch64 (ADR-0001 to ADR-0011). **0.1.0 published** (2026-11-10).
 968/968 on CAD-Recode on arris 0.12.0, zero in-subset `cq_bug` rows,
 unclassified rows and timeouts, and matching fidelity digests on x86-64
 and aarch64 against committed oracle reports (ADR-0030).
-**0.2.0 release prepared** (2026-11-28).
+**0.2.0 published** (2026-11-28). **0.3.0 release prepared** (2026-11-28).
 **C3 open.** The 300-program BenchCAD slice replays with zero timeouts
 on both CI architectures (ADR-0031). **Next:** re-score BenchCAD model
 outputs for the first technical report.
