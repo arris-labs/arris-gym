@@ -47,7 +47,8 @@ on x86-64 and AArch64 from the frozen inputs.
   Freeze voxel IoU at the regrader's reported precision.
   Checkout tooling exposes `open_upstream(checkout, *, timeout)` and
   `Upstream.extract`, `export`, `render` and `grade`. A grade returns an
-  `UpstreamGrade` with voxel IoU and the observed outcome.
+  `UpstreamGrade` with voxel IoU, the observed outcome and the export or scoring
+  stage on a timeout or crash.
 - Freeze a versioned manifest keyed by official record ID with stem, family,
   source, licences, reference and STEP hashes, and upstream commit and
   environment pins. The prediction records add model revision, prompt and
@@ -81,7 +82,7 @@ algorithm, isolation guarantee or semantic rule to establish.
   reported precision on the same extracted bytes and captured STEP inputs.
   Verify per-job isolation with bounded test programs and a Hypothesis property
   over program text. Record the verified path and pins in the ADR.
-- [ ] Step 2 **[2]** — Build manifest validation, Gym adapter, joined table and
+- [x] Step 2 **[2]** — Build manifest validation, Gym adapter, joined table and
   `replay` command. Test known scores and failures offline. Test
   `replay --record-id` with a complete fixture bundle containing an
   unselected ID. Check that input order leaves the full table digest equal.

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Capture and check the BenchCAD Vision2Code smoke inputs (ADR-0032)."""
+"""Capture Vision2Code smoke inputs and replay the frozen comparison (ADR-0032)."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import re
@@ -17,18 +16,21 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from arris_gym import Sandbox, Status, dump_png, dump_text
 from arris_gym.census import CorpusProgram, benchcad
 from arris_gym.rescore.benchcad import SLICE, read_stems
+from arris_gym.reward._scoring import DEFAULT_SCORE_TIMEOUT
 
 if __name__ == "__main__" and __package__ is None:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from benchcad._bundle import _ORACLE_LOCK, _UPSTREAM_COMMIT, _sha
+from benchcad._bundle import UpstreamGrade as UpstreamGrade
 from benchcad._isolation import _job
+from benchcad._replay import _replay
 
-_UPSTREAM_COMMIT = "77fd16a80a4e5fc39964ee23b6cc3225beefac8f"
 _SOURCES = (
     "benchcad_core/scoring/exec_cq.py",
     "benchcad_core/scoring/iou.py",
@@ -38,22 +40,11 @@ _SOURCES = (
 )
 _ROOT = Path(__file__).resolve().parents[2]
 _REFERENCE_ROWS = _ROOT / "tests/fixtures/c1/oracle.jsonl"
-_ORACLE_LOCK = _ROOT / "tools/oracle/uv.lock"
 _SLICE_SIZE = 300
 _SMOKE_TIMEOUT = 60.0
 _IOU = TypeAdapter(float)
 
-_Outcome = Literal["missing", "blank", "export_error", "timeout", "crash", "scored"]
 _Failure = Literal["export_error", "timeout", "crash"]
-
-
-class UpstreamGrade(BaseModel):
-    """One official voxel IoU and the outcome observable in the wrapper."""
-
-    model_config = ConfigDict(frozen=True, extra="forbid")
-    outcome: _Outcome
-    iou: float = Field(ge=0, le=1)
-    message: str = ""
 
 
 class _JobError(RuntimeError):
@@ -126,9 +117,18 @@ class Upstream:
             iou = _IOU.validate_json(raw, strict=True)
             return UpstreamGrade(outcome="scored", iou=iou), candidate
         except _JobError as exc:
-            return UpstreamGrade(outcome=exc.outcome, iou=0, message=str(exc)), candidate
+            return UpstreamGrade(
+                outcome=exc.outcome,
+                iou=0,
+                message=str(exc),
+                stage=None
+                if exc.outcome == "export_error"
+                else ("export" if candidate is None else "scoring"),
+            ), candidate
         except ValidationError as exc:
-            return UpstreamGrade(outcome="crash", iou=0, message=str(exc)), candidate
+            return UpstreamGrade(
+                outcome="crash", iou=0, message=str(exc), stage="scoring"
+            ), candidate
 
     def _regrade(
         self, target: bytes, raw: str, program: bytes | None, candidate: bytes | None
@@ -168,10 +168,6 @@ def open_upstream(checkout: Path, *, timeout: float = _SMOKE_TIMEOUT) -> Iterato
                 )
             )
         yield Upstream(root, timeout)
-
-
-def _sha(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
 
 
 def _slice_programs(
@@ -267,8 +263,26 @@ def _main() -> None:
     smoke = commands.add_parser("smoke", help="check slice IDs and capture one target per family")
     smoke.add_argument("--upstream", type=Path, required=True)
     smoke.add_argument("--out", type=Path, required=True)
+    replay = commands.add_parser("replay", help="re-score a frozen bundle offline")
+    replay.add_argument("--bundle", type=Path, required=True)
+    replay.add_argument("--out", type=Path, required=True)
+    replay.add_argument("--record-id", help="score just this ID after validating the bundle")
+    replay.add_argument("--workers", type=int)
+    replay.add_argument("--score-timeout", type=float, default=DEFAULT_SCORE_TIMEOUT)
     args = parser.parse_args()
-    _smoke(args.upstream, args.out)
+    if args.command == "smoke":
+        _smoke(args.upstream, args.out)
+    else:
+        try:
+            _replay(
+                args.bundle,
+                args.out,
+                record_id=args.record_id,
+                workers=args.workers,
+                score_timeout=args.score_timeout,
+            )
+        except (ValueError, OSError) as exc:
+            parser.error(str(exc))
 
 
 if __name__ == "__main__":

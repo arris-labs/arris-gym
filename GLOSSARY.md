@@ -442,3 +442,11 @@ SHA-256 alongside the STEP data-section hash (ADR-0011, ADR-0032).
 BenchCAD's per-record voxel IoU at its regrader's reported precision and
 the observed outcome of the isolated grading path (`UpstreamGrade`,
 ADR-0032).
+
+**Vision2Code manifest**:
+The versioned record of official record IDs, sources, licences, input hashes
+and upstream pins that defines the denominator of a BenchCAD replay.
+
+**Vision2Code comparison**:
+The ordered join of each manifest row, its frozen prediction outcome, the
+upstream grade and the Gym row, with aggregates and a canonical digest.

@@ -20,6 +20,7 @@ src/arris_gym/
   rescore/   per-benchmark adapters, the re-scored table (`arris-gym rescore`)
   _cli.py    the `arris-gym` command; _markdown.py, the code span fidelity and rescore share
 tools/oracle/  its own uv env: CadQuery/OCP, run and never imported
+tools/benchcad/  Vision2Code capture and offline comparison (ADR-0032)
 ```
 
 Later cycles add `describe/`, `synth/`, `train/` (behind the `[train]` extra)
@@ -1258,6 +1259,15 @@ on x86-64 and aarch64 (ADR-0031).
   are in `tests/fixtures/c1/README.md`.
 - `tools/rescore_diff.py A B` names the rows two tables differ at and the first
   stage each differs at.
+
+The Vision2Code replay reuses the re-scored table for frozen model
+predictions. Its manifest defines the
+official record IDs and the target for each of them (ADR-0032). The tool
+joins the Gym rows to frozen upstream grades in official ID order. Its
+comparison digest covers the canonical rows, aggregates and input pins.
+The comparison excludes worker diagnostics, which the Gym table and the
+frozen upstream rows carry verbatim.
+[Replay instructions](../tools/benchcad/README.md#offline-replay)
 
 ## Inspection
 
