@@ -1,6 +1,6 @@
 # Idea: rescore-lobed-knob-scoring-timeout
 
-- Status: Open
+- Status: Accepted → plans/rescore-lobed-knob-scoring-timeout
 - Raised: 2026-11-28
 - Prompt (verbatim from the human): "$idea rescore-lobed-knob-scoring-timeout"
 
@@ -135,3 +135,6 @@ calibration settles them. No follow-up decision is ready before those
 measurements.
 
 ## Decision
+
+- Q1 — “yes”. Accepted A, a scoring-only deadline for benchmark replays,
+  calibrated on both architectures. The 60 s value is an initial probe.
